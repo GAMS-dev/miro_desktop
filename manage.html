@@ -32,10 +32,7 @@
 <body class="body-orange">
 <div id="loading-screen" style="display:none;"><div class="lds-ellipsis" style="position:relative;top:50%;left:50%">
        <div></div><div></div><div></div><div></div></div></div>
-    <!--#include virtual="/wbody.html" -->
     <div class="page-wrapper">
-
-        <!--TYPO3SEARCH_begin-->
 
         <!-- ******Header****** -->
         <header id="header" class="sub-header">
@@ -45,6 +42,17 @@
                         <p class = "header-text">GAMS MIRO Launcher</p>
                     </h1>
                 </div><!--//branding-->
+                <div class="header-item-right">
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <button class="btn btn-outline-secondary dropdown-toggle btn-menu" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Options</button>
+                      <div class="dropdown-menu">
+                        <a class="header-item" href="./manage.html">Manage apps</a>
+                        <a class="header-item" href="./add.html">Add app</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
             </div><!--//container-->
         </header><!--//header-->
         <div class="doc-wrapper">
@@ -54,28 +62,34 @@
                         <div class="content-inner">     
                             <section id="gallery" class="doc-section">
                                 <div class="section-block" id="configure-graphs">
-                                  <div id="gallery-wrapper" class="cards-section text-center cards-wrapper add-app" style="margin: auto;">
+                                  <div id="gallery-wrapper" class="cards-section text-center cards-wrapper" style="margin: auto;">
                                       <div class="item">
                                          <div class="item-inner">
-                                             <h1>Add app</h1>
-                                             <div>
-                                             <div style = "text-align:left; margin-top: 15px;">
-                                             <p class="step-wrapper">1. Define the model name</p>
-                                             <input type="text" name="alias" placeholder="Display name"> <br>
-                                             <p class="step-wrapper">2. Short model description (optional)</p>
-                                             <textarea class="model-description" type="text" name="desc" cols="60" rows="2" placeholder="Description"></textarea><br>
-                                             <p class="step-wrapper">3. Upload model files here</p>
-                                             <input type="file" id="model"/>
-                                             <p class="step-wrapper">4. Upload model image here</p>
-                                             <input type="file" id="logo" />
-                                             </div>
-                                             <hr>
-                                             <div style = "text-align:right;">
-                                             <button id="cancel" type="button">Cancel</button>
-                                             <button id="addApp" type="button">Upload</button>
-                                             </div>
-                                             <span id=result></span>
-                                             </div>
+                                            <div id="doc-header" class="doc-header text-center">
+                                                 <a href="./index.html">
+                                                    <div class="back-btn"><i class="fas fa-chevron-left"></i> back</div>
+                                                 </a>
+                                                 <div><h2 class="section-title">Manage apps</h2></div>
+                                            </div>
+                                                 <div class="section-block overflow-auto">
+                                                     <table id="manage">
+                                                         <tr>
+                                                           <th class="column1">Name</th>
+                                                           <th class="column2">Description</th>
+                                                           <th class="column3">Action</th>
+                                                         </tr>
+                                                         <tr>
+                                                           <td>Transport</td>
+                                                           <td>A transportation problem</td>
+
+                                                           <td>
+                                                               <a class="aButton" href="./modify.html">Modify</a>
+                                                               <a class="aButton" id="shortcut-btn">Create shortcut</a>
+                                                               <a class="aButton" id="remove-model-btn">Remove</a>
+                                                           </td>
+                                                         </tr>
+                                                     </table>
+                                                 </div>
                                          </div><!--//item-inner-->
                                      </div><!--//item-->
                                  </div><!--//cards-wrapper-->
@@ -87,8 +101,61 @@
             </div><!--//container-->
         </div><!--//doc-wrapper-->
 
-    <!--TYPO3SEARCH_end-->
-    </div><!--//page-wrapper--><!--#include virtual="/footer_miro.html" -->
+        <!-- Add shortcut Modal -->
+        <div id="new-shortcut" class="modal-custom">
+          <!-- Modal content -->
+          <div class="modal-content">
+            <div class="modal-header">
+              <span class="modal-close">&times;</span>
+              <h2 class="modal-header-text">Create shortcut</h2>
+            </div>
+            <div class="modal-body shortcut">
+              <p>Shortcut text description</p>
+              <div>
+                <p>Mode</p>
+                <label class="radiobutton">Single-user
+                  <input type="radio" name="radio" checked="checked">
+                  <span class="checkmark"></span>
+                </label>
+                <br>
+                <label class="radiobutton">Multi-user
+                  <input type="radio" name="radio">
+                  <span class="checkmark"></span>
+                </label>
+                <br>
+                <label class="radiobutton">tmp/idir
+                  <input type="radio" name="radio">
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <div>
+                <br><p>Custom database location (leave empty if not needed):<br>
+                <input class="textinput-modal" type="text" placeholder="e.g. C:\Users\GAMS\Documents\.miro\miro.sqlite3"></p>
+              </div>
+            </div>
+            <div class="modal-footer">
+            <input type="submit" value="Create">
+            </div>
+          </div>
+        </div>
+        
+        <!-- Remove model Modal -->    
+        <div id="remove-model" class="modal-custom">
+          <!-- Modal content -->
+          <div class="modal-content">
+            <div class="modal-header">
+              <span class="close-model">&times;</span>
+              <h2 class="modal-header-text">Remove model</h2>
+            </div>
+            <div class="modal-body">
+              <p>Are you sure you want to permanently remove the model?</p>
+            </div>
+            <div class="modal-footer">
+            <input type="submit" value="Remove">
+            </div>
+          </div>
+        </div>
+    </div><!--//page-wrapper-->
 
     <!-- Main Javascript -->
     <script type="text/javascript" src="assets/plugins/jquery-3.3.1.min.js"></script>
@@ -111,6 +178,58 @@
     <script>
     	$('.gifplayer').gifplayer();
     </script>
+    <script>
+// Get the modal
+var modal = document.getElementById("new-shortcut");
+
+// Get the button that opens the modal
+var btn = document.getElementById("shortcut-btn");
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("modal-close")[0];
+
+// When the user clicks the button, open the modal 
+btn.onclick = function() {
+  modal.style.display = "block";
+}
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+  modal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+
+
+var removeModelModal = document.getElementById("remove-model");
+// Get the button that opens the modal
+var btn = document.getElementById("remove-model-btn");
+
+// Get the <span> element that closes the modal
+var spanRemove = document.getElementsByClassName("close-model")[0];
+
+// When the user clicks the button, open the modal 
+btn.onclick = function() {
+  removeModelModal.style.display = "block";
+}
+
+// When the user clicks on <span> (x), close the modal
+spanRemove.onclick = function() {
+  removeModelModal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == removeModelModal) {
+    removeModelModal.style.display = "none";
+  }
+}
+</script>
 
 </body>
 </html>

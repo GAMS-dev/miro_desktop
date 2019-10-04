@@ -413,7 +413,6 @@ body{
 }
 .page-wrapper input[type="email"],
 .page-wrapper input[type="password"],
-.page-wrapper input[type="submit"],
 .page-wrapper input[type="button"],
 
 .page-wrapper .sub-header {
@@ -1250,6 +1249,299 @@ body{
     resize: none;
     width: 100%; 
     box-sizing: border-box;
+}
+
+#manage,
+#job-submissions {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+  text-align: left;
+}
+
+#manage td, #manage th,
+#job-submissions td,
+#job-submissions th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+#manage tr:nth-child(even),
+#job-submissions tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+#manage tr:hover,
+#job-submissions tr:hover {
+    background-color: #ddd;
+}
+
+#manage th,
+#job-submissions th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #494d55;
+  color: white;
+}
+.column1 {
+    width: 20%;
+}
+.column2 {
+    width: 40%;
+}
+.column3 {
+    width: 40%;
+}
+.overflow-auto {
+  overflow: auto;
+}
+
+.aButton {
+	-moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
+	-webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
+	box-shadow:inset 0px 1px 0px 0px #ffffff;
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #ffffff), color-stop(1, #f6f6f6));
+	background:-moz-linear-gradient(top, #ffffff 5%, #f6f6f6 100%);
+	background:-webkit-linear-gradient(top, #ffffff 5%, #f6f6f6 100%);
+	background:-o-linear-gradient(top, #ffffff 5%, #f6f6f6 100%);
+	background:-ms-linear-gradient(top, #ffffff 5%, #f6f6f6 100%);
+	background:linear-gradient(to bottom, #ffffff 5%, #f6f6f6 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#f6f6f6',GradientType=0);
+	background-color:#ffffff;
+	-moz-border-radius:6px;
+	-webkit-border-radius:6px;
+	border-radius:6px;
+	border:1px solid #dcdcdc;
+	display:inline-block;
+	cursor:pointer;
+	color:#666666 !important;
+	font-family:Arial;
+	font-size:15px;
+	font-weight:bold;
+	padding:6px 24px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #ffffff;
+}
+.aButton:hover {
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #f6f6f6), color-stop(1, #ffffff));
+	background:-moz-linear-gradient(top, #f6f6f6 5%, #ffffff 100%);
+	background:-webkit-linear-gradient(top, #f6f6f6 5%, #ffffff 100%);
+	background:-o-linear-gradient(top, #f6f6f6 5%, #ffffff 100%);
+	background:-ms-linear-gradient(top, #f6f6f6 5%, #ffffff 100%);
+	background:linear-gradient(to bottom, #f6f6f6 5%, #ffffff 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#f6f6f6', endColorstr='#ffffff',GradientType=0);
+	background-color:#f6f6f6;
+    text-decoration:none !important;
+}
+.aButton:active {
+	position:relative;
+	top:1px;
+}
+.confirm-btn {
+    background: #f90;
+    text-shadow: none;
+}
+.confirm-btn:hover {
+    background: #c47e14;
+}
+/* The Modal (background) */
+.modal-custom {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+  position: relative;
+  background-color: #fefefe;
+  margin: auto;
+  padding: 0;
+  border: 1px solid #888;
+  width: 40% !important;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+  -webkit-animation-name: animatetop;
+  -webkit-animation-duration: 0.4s;
+  animation-name: animatetop;
+  animation-duration: 0.4s
+}
+/* Add Animation */
+@-webkit-keyframes animatetop {
+  from {top:-300px; opacity:0} 
+  to {top:0; opacity:1}
+}
+
+@keyframes animatetop {
+  from {top:-300px; opacity:0}
+  to {top:0; opacity:1}
+}
+
+/* The Close Button */
+.modal-close,
+.close-model,
+.close-ns {
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.modal-close:hover,
+.modal-close:focus,
+.close-model:hover,
+.close-model:focus,
+.close-ns:hover,
+.close-ns:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.modal-header {
+  padding: 2px 16px !important;
+  display: block !important;
+}
+.modal-header-text {
+    display: block !important;
+    font-size: 1.5em !important;
+    margin-block-start: 0.83em !important;
+    margin-block-end: 0.83em !important;
+    margin-inline-start: 0px !important;
+    margin-inline-end: 0px !important;
+    font-weight: bold !important;
+}
+.modal-body {
+    padding: 2px 16px;
+    text-align:center;
+    margin-top: 14px !important;
+    margin-buttom: 14px !important;
+    font-size: 16px;
+}
+.shortcut {
+    text-align: left;
+}
+.modal-margin {
+    margin-bottom: 20px;
+}
+.modal-footer {
+  padding: 2px 16px;
+  background-color: #fff;
+  color: white;
+}
+input[type=text], select {
+  width: 50%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  resize: vertical;
+}
+
+input[type=submit] {
+  width: 100%;
+  background-color: #f90;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+input[type=submit]:hover {
+  background-color: #c47e14;
+}
+
+
+/* Customize the label (the container) */
+.radiobutton {
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Hide the browser's default radio button */
+.radiobutton input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom radio button */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 20px;
+  width: 20px;
+  background-color: #eee;
+  border-radius: 50%;
+}
+
+/* On mouse-over, add a grey background color */
+.radiobutton:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+
+/* When the radio button is checked, add a blue background */
+.radiobutton input:checked ~ .checkmark {
+  background-color: #f90;
+}
+
+/* Create the indicator (the dot/circle - hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the indicator (dot/circle) when checked */
+.radiobutton input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the indicator (dot/circle) */
+.radiobutton .checkmark:after {
+  top: 6px;
+  left: 6px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: white;
+}
+.textinput-modal {
+  width: 100% !important;
+}
+.nohover:hover {
+    background: white !important;
+}
+.back-btn {
+    float:left;
+    color:#494d55;
+    font-size:18px;
+    cursor: pointer;
+    padding:5px;
+}
+.back-btn:hover {
+    color:#6c757d;
 }
 @charset "UTF-8";@import url(https://fonts.googleapis.com/css?family=PT+Mono);#gams-scope .fa,#gams-scope .glyphicon,#gams-scope .lg-icon{-moz-osx-font-smoothing:grayscale}#gams-scope .fa-ul,#gams-scope ol.list-unstyled{list-style-type:none}@font-face{font-family:montserratbold;src:url(../../../webfonts/montserrat-bold-webfont.eot);src:url(../../../webfonts/montserrat-bold-webfont.eot?#iefix) format("embedded-opentype"),url(../../../webfonts/montserrat-bold-webfont.woff2) format("woff2"),url(../../../webfonts/montserrat-bold-webfont.woff) format("woff"),url(../../../webfonts/montserrat-bold-webfont.ttf) format("truetype"),url(../../../webfonts/montserrat-bold-webfont.svg#montserratbold) format("svg");font-weight:400;font-style:normal}@font-face{font-family:montserratlight;src:url(../../../webfonts/montserrat-light-webfont.eot);src:url(../../../webfonts/montserrat-light-webfont.eot?#iefix) format("embedded-opentype"),url(../../../webfonts/montserrat-light-webfont.woff2) format("woff2"),url(../../../webfonts/montserrat-light-webfont.woff) format("woff"),url(../../../webfonts/montserrat-light-webfont.ttf) format("truetype"),url(../../../webfonts/montserrat-light-webfont.svg#montserratlight) format("svg");font-weight:400;font-style:normal}@font-face{font-family:montserratregular;src:url(../../../webfonts/montserrat-regular-webfont.eot);src:url(../../../webfonts/montserrat-regular-webfont.eot?#iefix) format("embedded-opentype"),url(../../../webfonts/montserrat-regular-webfont.woff2) format("woff2"),url(../../../webfonts/montserrat-regular-webfont.woff) format("woff"),url(../../../webfonts/montserrat-regular-webfont.ttf) format("truetype"),url(../../../webfonts/montserrat-regular-webfont.svg#montserratregular) format("svg");font-weight:400;font-style:normal}@font-face{font-family:montserratsemi_bold;src:url(../../../webfonts/montserrat-semibold-webfont.eot);src:url(../../../webfonts/montserrat-semibold-webfont.eot?#iefix) format("embedded-opentype"),url(../../../webfonts/montserrat-semibold-webfont.woff2) format("woff2"),url(../../../webfonts/montserrat-semibold-webfont.woff) format("woff"),url(../../../webfonts/montserrat-semibold-webfont.ttf) format("truetype"),url(../../../webfonts/montserrat-semibold-webfont.svg#montserratsemi_bold) format("svg");font-weight:400;font-style:normal}#gams-scope{/*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */
   /*! Source: https://github.com/h5bp/html5-boilerplate/blob/master/src/css/main.css */
