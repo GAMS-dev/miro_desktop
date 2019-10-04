@@ -116,6 +116,9 @@ body {
   /* Medium devices (desktops, 1075px and up) */
   /* Large devices (large desktops, 1200px and up) */
   /* ======= Landing Page ======= */
+.page-wrapper {
+    position: relative;
+}
 .doc-wrapper .container, .cards-section .container{
     margin-bottom:45px;
     background-color: #e5e7ee;
@@ -256,7 +259,6 @@ body{
   font-size: 14px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  height: 100%;
   background-color: #e5e7ee;
   margin: 0px;
   min-height: 100%;
@@ -520,6 +522,7 @@ body{
   position: absolute;
   bottom: 0;
   width: 100%;
+  min-height:45px;
 }
 .page-wrapper .footer a {
   color: #f90;
@@ -530,6 +533,7 @@ body{
 .page-wrapper .doc-wrapper {
   padding: 45px 0;
   background: #e5e7ee;
+  padding-bottom:45px;
 }
 .page-wrapper .doc-body {
   position: relative;
