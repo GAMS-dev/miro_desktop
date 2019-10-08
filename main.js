@@ -265,7 +265,7 @@ function createSettingsWindow () {
   }
   settingsWindow = new BrowserWindow({
     title: "Settings",
-    width: 800,
+    width: 1000,
     height: 600,
     titleBarStyle: 'hidden',
     resizable: false,
@@ -298,8 +298,9 @@ function createAddAppWindow () {
   }
   addAppWindow = new BrowserWindow({
     title: "Add MIRO application",
-    width: 385,
-    height: 640,
+    width: 525,
+    height: 800,
+    resizable:false,
     titleBarStyle: 'hidden',
     parent: mainWindow,
     webPreferences: {

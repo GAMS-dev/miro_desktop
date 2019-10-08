@@ -8,14 +8,15 @@ ipcRenderer.on('apps-received', (e, apps, appDataPath) => {
   const appList = document.getElementById('appsWrapper');
   const noAppsNotice = document.getElementById('noAppsDiv');
   const appItems = apps.reduce((html, app) => {
-    let logoPath = path.join("..", "static", "default_logo.png");
+    let logoPath = "../static/default_logo.png";
+    console.log(appDataPath);
     if ( app.logoPath ) {
         logoPath = path.join(appDataPath, app.id, app.logoPath);
     }
-    html += `<div class="item col-lg-4 col-6 miro-app-item" data-id="${app.id}" 
+    html += `<div class="app-box col-lg-4 col-6 miro-app-item" data-id="${app.id}" 
                data-usetmp="${app.useTmpDir}" data-mode="${app.modesAvailable[0]}" 
                data-apiver="${app.APIVersion}" data-mirover="${app.MIROVersion}">
-                 <div class="item-inner">
+                 <div>
                      <div style="height:200px;">
                          <p style="height:180px;display:block;\
 margin:auto;background-image:url('${logoPath}');background-size:cover;" \
@@ -36,8 +37,8 @@ title="${app.title} logo">
                            </div>
                         </div>
                     </div>
-                 </div><!--//item-inner-->
-             </div><!--//item-->`
+                 </div>
+             </div>`
     return html
   }, '')
   if (appItems.length !== 0) {

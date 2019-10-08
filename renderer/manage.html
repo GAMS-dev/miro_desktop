@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <head>
     <title>GAMS MIRO - Gallery</title>
-    <!-- Meta -->
     <meta charset="utf-8">
     <meta http-equiv="Content-Security-Policy" content="script-src 'self';" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,97 +8,45 @@
     <link id="theme-style" rel="stylesheet" href="../css/styles.css">
 </head>
 
-<body class="body-orange">
-    <div class="page-wrapper">
-      <!-- ******Header****** -->
+<body>
+    <div>
         <header id="header" class="sub-header">
             <div class="container">
-                <div class="branding header-menu">
-                    <h1 class="logo">
-                        <p class = "header-text">Manage apps</p>
-                    </h1>
-                </div><!--//branding-->
-            </div><!--//container-->
-        </header><!--//header-->
-        <div class="doc-wrapper">
-            <div class="container">
-                <div class="doc-body">
-                    <div class="doc-content">
-                        <div class="content-inner">     
-                            <section id="gallery" class="doc-section">
-                                <div class="section-block" id="configure-graphs">
-                                  <div id="gallery-wrapper" class="cards-section text-center cards-wrapper" style="margin: auto;">
-                                      <div class="item">
-                                         <div class="item-inner">
-                                                 <div class="section-block overflow-auto" id="manageApps">
-                                                    No apps
-                                                 </div>
-                                         </div><!--//item-inner-->
-                                     </div><!--//item-->
-                                 </div><!--//cards-wrapper-->
-                                </div><!--//section-block-->
-                            </section>
-                        </div><!--//content-inner-->
-                    </div><!--//doc-content-->
-                </div><!--//doc-body-->
-            </div><!--//container-->
-        </div><!--//doc-wrapper-->
-
-        <!-- Add shortcut Modal -->
-        <div id="new-shortcut" class="modal-custom">
-          <!-- Modal content -->
-          <div class="modal-content">
-            <div class="modal-header">
-              <span class="modal-close">&times;</span>
-              <h2 class="modal-header-text">Create shortcut</h2>
+                <h1><p>Manage apps</p></h1>
             </div>
-            <div class="modal-body shortcut">
-              <p>Shortcut text description</p>
-              <div>
-                <p>Mode</p>
-                <label class="radiobutton">Single-user
-                  <input type="radio" name="radio" checked="checked">
-                  <span class="checkmark"></span>
-                </label>
-                <br>
-                <label class="radiobutton">Multi-user
-                  <input type="radio" name="radio">
-                  <span class="checkmark"></span>
-                </label>
-                <br>
-                <label class="radiobutton">tmp/idir
-                  <input type="radio" name="radio">
-                  <span class="checkmark"></span>
-                </label>
+        </header>
+        <div class="container">
+            <section>
+                <div style="margin: auto;">
+                    <div class="overflow-auto manage-box" id="manageApps">
+                       No apps
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <!-- Modal -->
+        <div class="modal fade" id="remove-model" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-custom" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Remove model</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
               </div>
-              <div>
-                <br><p>Custom database location (leave empty if not needed):<br>
-                <input class="textinput-modal" type="text" placeholder="e.g. C:\Users\GAMS\Documents\.miro\miro.sqlite3"></p>
+              <div class="modal-body">
+                <p>Are you sure you want to permanently remove the model?</p>
               </div>
-            </div>
-            <div class="modal-footer">
-            <input type="submit" value="Create">
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary cancel-btn" data-dismiss="modal">Cancel</button>
+                <input id="btRemoveModel" class="btn btn-secondary confirm-btn" type="submit" value="Remove" data-dismiss="modal"></input>
+              </div>
             </div>
           </div>
         </div>
         
-        <!-- Remove model Modal -->    
-        <div id="remove-model" class="modal-custom">
-          <!-- Modal content -->
-          <div class="modal-content">
-            <div class="modal-header">
-              <span class="close-modal">&times;</span>
-              <h2 class="modal-header-text">Remove model</h2>
-            </div>
-            <div class="modal-body">
-              <p>Are you sure you want to permanently remove the model?</p>
-            </div>
-            <div class="modal-footer">
-            <input type="submit" id="btRemoveModel" value="Remove">
-            </div>
-          </div>
-        </div>
-    </div><!--//page-wrapper-->
+    </div>
     <!-- Main Javascript -->
     <script type="text/javascript" src="./manage.js"></script>
 </body>

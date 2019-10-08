@@ -5,20 +5,20 @@ window.Bootstrap = require('bootstrap');
 
 let activeAppId
 
-const removeModelModal = document.getElementById("remove-model");
-
-const spanRemove = document.getElementsByClassName("close-modal")[0];
-spanRemove.addEventListener('click', (e) => {
-  removeModelModal.style.display = "none";
-})
-window.addEventListener('click', (e) => {
-  if (event.target == removeModelModal) {
-    removeModelModal.style.display = "none";
-  }
-})
+//const removeModelModal = document.getElementById("remove-model");
+//
+//const spanRemove = document.getElementsByClassName("close-modal")[0];
+//spanRemove.addEventListener('click', (e) => {
+//  removeModelModal.style.display = "none";
+//})
+//window.addEventListener('click', (e) => {
+//  if (event.target == removeModelModal) {
+//    removeModelModal.style.display = "none";
+//  }
+//})
 
 document.getElementById("btRemoveModel").addEventListener('click', (e) => {
-  removeModelModal.style.display = "none";
+//  removeModelModal.style.display = "none";
   ipcRenderer.send('delete-app', activeAppId);
 })
 
@@ -30,15 +30,15 @@ ipcRenderer.on('manage-apps-received', (e, apps) => {
                <td>${app.description}</td>
 
                <td>
-                   <a class="aButton" href="./modify.html">Modify</a>
-                   <a class="aButton" id="shortcut-btn">Create shortcut</a>
-                   <a class="aButton delete-app-button" data-id="${app.id}">Remove</a>
+                   <a class="btn btn-secondary cancel-btn" href="./modify.html">Modify</a>
+                   <a class="btn btn-secondary cancel-btn" id="shortcut-btn">Create shortcut</a>
+                   <button class="btn btn-secondary cancel-btn delete-app-button" data-id="${app.id}" data-toggle="modal" data-target="#remove-model">Remove</button>
                </td>
             </tr>`
     return html
   }, '')
   if (appItems.length !== 0) {
-        appList.innerHTML = `<table><tr>
+        appList.innerHTML = `<table class="manage"><tr>
                                <th class="column1">Title</th>
                                <th class="column2">Description</th>
                                <th class="column3">Action</th>

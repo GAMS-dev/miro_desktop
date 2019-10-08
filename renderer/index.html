@@ -11,18 +11,14 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 -->
 <head>
     <title>GAMS MIRO - Gallery</title>
-    <!-- Meta -->
     <meta charset="utf-8">
     <meta http-equiv="Content-Security-Policy" content="script-src 'self';" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link id="theme-style" rel="stylesheet" href="../css/styles.css">
 </head>
-<body class="body-orange">
-    <div id="loading-screen" style="display:none;
-  align-items:center;
-  justify-content:center;
-  min-height:100vh;background-color:rgba(0,0,0,0.9);">
+<body>
+    <div id="loading-screen" class="loading-screen">
         <div class="deconstructed">
           WELCOME TO GAMS MIRO
           <div>WELCOME TO GAMS MIRO</div>
@@ -31,36 +27,24 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
           <div>WELCOME TO GAMS MIRO</div>
         </div>
     </div>
-    <div class="page-wrapper">
-
-        <!-- ******Header****** -->
-        <header id="header" class="sub-header">
-            <div class="container">
-                <div class="branding header-menu">
-                    <h1 class="logo">
-                        <p class = "header-text">GAMS MIRO Launcher</p>
-                    </h1>
-                </div><!--//branding-->
-            </div><!--//container-->
-        </header><!--//header-->
-        <div class="doc-wrapper">
-            <div class="container">
-                <div class="doc-body row">
-                    <div class="doc-content col-md-12 col-12 order-1">
-                        <div class="content-inner">     
-                            <section id="apps" class="doc-section">
-                                <h3 id="noAppsDiv" style="text-align:center;margin-top:50px;">No apps</h3>
-                                <div class="section-block" id="configure-graphs">
-                                  <div id="appsWrapper" class="cards-section text-center cards-wrapper row">
-                                 </div><!--//cards-wrapper-->
-                                </div><!--//section-block-->
-                            </section>
-                        </div><!--//content-inner-->
-                    </div><!--//doc-content-->
-                </div><!--//doc-body-->
-            </div><!--//container-->
-        </div><!--//doc-wrapper-->
-    </div><!--//page-wrapper-->
+    <header id="header" class="sub-header">
+        <div class="container">
+            <h1><p class = "header-text">GAMS MIRO Launcher</p></h1>
+        </div>
+    </header>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 col-12 order-1">  
+                <section id="apps" class="doc-section">
+                    <h3 id="noAppsDiv" class="no-apps">No apps</h3>
+                    <div>
+                      <div id="appsWrapper" class="app-wrapper row">
+                     </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
    <script type="text/javascript" src="./index.js"></script>
 </body>
 </html>
