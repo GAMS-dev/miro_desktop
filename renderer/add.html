@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<head>
+    <title>GAMS MIRO - Gallery</title>
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self';" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link id="theme-style" rel="stylesheet" href="../css/styles.css">
+</head>
+
+<body class="body-orange">
+    <div class="page-wrapper">
+         <!-- ******Header****** -->
+        <header id="header" class="sub-header">
+            <div class="container">
+                <div class="branding header-menu">
+                    <h1 class="logo">
+                        <p class = "header-text">Add new MIRO app</p>
+                    </h1>
+                </div><!--//branding-->
+            </div><!--//container-->
+        </header><!--//header-->
+         <div class="doc-wrapper">
+            <div class="container">
+                <div class="doc-body row">
+                    <div class="doc-content col-md-12 col-12 order-1">
+                        <div class="content-inner">     
+                            <section id="apps" class="doc-section">
+                                <div class="section-block">
+                                    <div id="appsWrapper" class="cards-section text-center cards-wrapper row">
+                                      <form>
+                                        <div class="item col-lg-12 col-12">
+                                             <div class="item-inner nohover">
+                                                 <div style="height:200px;">
+                                                    <p class="drag-drop-area" id="appFiles" style= "height:180px; display: block; margin:auto;">
+                                                        Drop your MIRO app here or click to browse.
+                                                    </p>
+                                                     <p class="drag-drop-area" id="appLogo" style= "height:180px;margin:auto;display:none;background-image:url('../static/default_logo.png');background-size: cover;">
+                                                        Drop your MIRO app logo here or click to browse.
+                                                    </p>
+                                                 </div>
+                                                 <div>
+                                                 <h3 id="appName" class="title editable" style="text-align:left;margin-top:15pt;" contenteditable="true">
+                                                    Define the app title
+                                                </h3>
+                                                 <p id="appDesc" class="intro editable" style="text-align:left;" contenteditable="true">
+                                                    Short model description (optional)
+                                                 </p>
+                                                 </div>
+                                                 <div class="input-group mb-3" style="visibility:hidden;">
+                                                   <div class="input-group-prepend">
+                                                     <button class="btn btn-outline-secondary dropdown-toggle btn-launch" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Launch</button>
+                                                     <div class="dropdown-menu">
+                                                       <a class="dropdown-item" href="#">Base mode</a>
+                                                       <a class="dropdown-item" href="#">Hypercube mode</a>
+                                                     </div>
+                                                   </div>
+                                                 </div>
+                                                 <div style = "text-align:right;">
+                                                    
+                                                     <input class="aButton" id="btReset" value="Reset" type="reset">
+                                                     <button class="aButton confirm-btn" id="btAddApp" disabled type="button">Add app</button>
+                                                 </div>
+                                             </div><!--//item-inner-->
+                                         </div><!--//item-->
+                                     </form>
+                                     </div><!--//cards-wrapper-->
+                                </div><!--//section-block-->
+                            </section>
+                        </div><!--//content-inner-->
+                    </div><!--//doc-content-->
+                </div><!--//doc-body-->
+            </div><!--//container-->
+        </div><!--//doc-wrapper-->
+     </div>
+    <script type="text/javascript" src="./add-app.js"></script>
+</body>
+</html>

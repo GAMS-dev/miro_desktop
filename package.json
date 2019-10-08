@@ -1,0 +1,30 @@
+{
+  "name": "com.gams.miro",
+  "version": "0.0.1",
+  "description": "GAMS MIRO Launcher",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@git.gams.com:rschuchmann/miro-launcher.git"
+  },
+  "keywords": [
+    "GAMS",
+    "MIRO",
+    "Launcher"
+  ],
+  "author": "GAMS Development Corp.",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^6.0.11",
+    "electron-store": "^5.0.0"
+  },
+  "dependencies": {
+    "bootstrap": "^4.3.1",
+    "jquery": "^3.4.1",
+    "popper.js": "^1.15.0"
+  }
+}
