@@ -15,6 +15,7 @@ const appDescField = document.getElementById('appDesc');
 const appDbPathField = document.getElementById('appDbPath');
 const appNamePlaceholder = "Define the app title";
 const appDescPlaceholder = "Short model description (optional)";
+const appDbPathPlaceholder = "Select databse path (optional)"; 
 
 function validateAppLogo(filePath){
     const filteredPath = filePath.filter( el => el
@@ -97,6 +98,18 @@ btAddApp.addEventListener('click', (e) => {
             message: "Please enter a title for your MIRO app!"
         }})
     }
+    const appDbPathTmp = appDbPathField.textContent.trim();
+    if ( appDbPathTmp !== "" && appDbPathTmp !== appDbPathPlaceholder ) {
+        if ( fs.existsSync(appDbPathTmp) ) {
+            currentAppConf.dbPath = appDbPathTmp;
+        } else {
+            return ipcRenderer.send("show-error-msg", {id: 'add-app', options: {
+                type: "info",
+                title: "Invalid database path",
+                message: "The database path you selected does not exist."
+            }})
+        }
+    }
     let descTmp  = appDescField.textContent.trim();
     if ( descTmp === appDescPlaceholder ) {
         descTmp = "";
@@ -107,12 +120,13 @@ btAddApp.addEventListener('click', (e) => {
 });
 btReset.addEventListener('click', (e) => {
     currentAppConf = null;
-    appLogo.style.backgroundImage = null;
+    appLogo.style.backgroundImage = "url('../static/default_logo.png')";
     btAddApp.disabled = true;
     appFiles.style.display = "block";
     appLogo.style.display = "none";
     appNameField.textContent = appNamePlaceholder;
     appDescField.textContent = appDescPlaceholder;
+    appDbPathField.textContent = appDbPathPlaceholder;
 });
 appFiles.addEventListener("click", (e) => {
     ipcRenderer.send("browse-app", {id: "add-app", options: {

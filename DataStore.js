@@ -23,6 +23,10 @@ const schema = {
             type: "string",
             minLength: 1
           },
+          dbPath: {
+            type: "string",
+            minLength: 1
+          },
           APIVersion: {
             type: "integer",
             minimum: 1
