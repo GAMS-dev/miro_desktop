@@ -22,11 +22,11 @@
                           <form>
                               <div class="main-box">
                                   <div style="height:200px;">
-                                     <p class="drag-drop-area" id="appFiles" style= "height:180px; display: block; margin:auto;">
+                                     <p class="drag-drop-area app-window" id="appFiles">
                                          Drop your MIRO app here or click to browse.
                                      </p>
-                                      <p class="drag-drop-area" id="appLogo" style= "height:180px;margin:auto;display:none;background-image:url('../static/default_logo.png');background-size: cover;">
-                                         Drop your MIRO app logo here or click to browse.
+                                      <p class="drag-drop-area app-window" id="appLogo" style= "height:180px;margin:auto;display:none;background-image:url('../static/default_logo.png');background-size: cover;">
+                                         Different app logo? Drop your MIRO app logo here or click to browse.
                                      </p>
                                   </div>
                                   <div>
@@ -36,9 +36,10 @@
                                   <p id="appDesc" class="editable" contenteditable="true">
                                      Short model description (optional)
                                   </p>
-                                  <p id="appDbPath" class="editable" contenteditable="true">
-                                     Custom database location
-                                  </p>
+                                  <div class="custom-file dbpathField">
+                                    <div class="custom-file-input browseFiles" id="appDbPath"></div>
+                                    <label id="appDbPathLabel" class="custom-file-label dbpath" for="appDbPath">Custom database location (optional)</label>
+                                  </div>
                                   </div>
                                   <div class="input-group mb-3" style="visibility:hidden;">
                                     <div class="input-group-prepend">

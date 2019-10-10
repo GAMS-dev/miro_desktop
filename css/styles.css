@@ -28,7 +28,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  color: #F39619;
+  color: #F90;
   pointer-events: none;
 }
 
@@ -37,7 +37,7 @@ body {
   mask-image: linear-gradient(black 25%, transparent 25%);
   animation: deconstructed1 3s 1;
 }
-
+E
 .deconstructed > div:nth-child(2) {
   -webkit-mask-image: linear-gradient(transparent 25%, black 25%, black 50%, transparent 50%);
   mask-image: linear-gradient(transparent 25%, black 25%, black 50%, transparent 50%);
@@ -177,9 +177,21 @@ body {
     box-shadow: 0 2px 4px 0 rgba(0,0,0,0.25), 0 2px 10px 0 rgba(0,0,0,0.20);
 }
 .drag-drop-area {
-  background-color: #F39619;
-  border: 3px solid #000;
+  background-color: #F90;
+  border: 1px solid #000;
   padding: 20px;
+  outline: #63594a dashed 1px;
+  outline-offset: -10px;
+}
+.drag-drop-area:hover {
+  cursor: pointer;
+}
+.app-window {
+  height:180px; 
+  display: block; 
+  margin:auto; 
+  padding: 65px;
+  text-align: center;
 }
 .sub-header {
   -webkit-user-select: none;
@@ -234,7 +246,7 @@ body {
     background-color: rgba(0,0,0,0.5);
     z-index: 10000;
 }
-.editable {
+.editable .fileInput{
   cursor: pointer;
   border: 1px solid #fff;
   text-align:left;
@@ -252,15 +264,19 @@ body {
   background-color: #fff;
   outline-color:#494d55;
 }
-.editable {
+.editable .fileInput{
     white-space: nowrap;
     padding: 5px;
     width:323px;
-    overflow: hidden;
+    overflow: hidden !important;
 }
 .editable.title * {
     display:inline;
     white-space:nowrap;
+}
+.fileInput:hover{
+    cursor: pointer;
+    border: 1px solid #000;
 }
 .manage {
   width: 100%;
@@ -297,6 +313,28 @@ body {
     margin-top: 15px;
     margin-bottom:5px;
 }
-
-
-
+.dragover {
+  /* some parts from https://css-tricks.com/drag-and-drop-file-uploading/ : */
+  outline-offset: -20px;
+  background-color: #ffc671 !important;
+  -webkit-transition: outline-offset .15s ease-in-out, background-color .15s linear;
+  transition: outline-offset .15s ease-in-out, background-color .15s linear;
+}
+.dbpathField {
+  margin-top: 20px;
+}
+.browse-btn {
+  padding: .15rem .5rem;
+  font-weight: unset;
+}
+.dbpath {
+  overflow: hidden;
+  font-weight: 200;
+  padding: .375rem .5rem;
+}
+.custom-file-label::after {
+  padding: .375rem .5rem;
+}
+.browseFiles {
+  cursor:pointer;
+}

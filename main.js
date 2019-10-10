@@ -11,7 +11,7 @@ const unzip     = require('./Unzip');
 
 const isMac = process.platform === 'darwin';
 const appDataPath = path.join(app.getPath("userData"), "miro_apps")
-const DEVELOPMENT_MODE = !app.isPackaged();
+const DEVELOPMENT_MODE = !app.isPackaged;
 
 const template = [
   // { role: 'appMenu' }
@@ -263,7 +263,7 @@ function createMainWindow () {
   mainWindow.webContents.on('did-finish-load', () => {
     mainWindow.webContents.send('apps-received', appsData.apps, appDataPath);
     if (process.platform == 'win32' && 
-      process.argv.length >= 2) {
+      process.argv.length >= 2 && !DEVELOPMENT_MODE ) {
       createAddAppWindow(process.argv[1]);
     }else if( fileToOpen ) {
       createAddAppWindow(fileToOpen);

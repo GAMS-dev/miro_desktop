@@ -12,9 +12,11 @@ const appFiles = document.getElementById("appFiles");
 const appLogo = document.getElementById("appLogo");
 const appNameField = document.getElementById('appName');
 const appDescField = document.getElementById('appDesc');
-const appDbPathField = document.getElementById('appDbPath');
+const appDbPathButton = document.getElementById('appDbPath');
+const appDbPathField = document.getElementById('appDbPathLabel');
 const appNamePlaceholder = "Define the app title";
 const appDescPlaceholder = "Short model description (optional)";
+const appDbPathPlaceholder = "Custom database location (optional)";
 
 function validateAppLogo(filePath){
     const filteredPath = filePath.filter( el => el
@@ -67,7 +69,7 @@ appDescField.addEventListener("focusout", (e) => {
         appDescField.textContent = appDescPlaceholder;
     }
 });
-appDbPathField.addEventListener("click", (e) => {
+appDbPathButton.addEventListener("click", (e) => {
     ipcRenderer.send("browse-app", {id: "add-app", options: {
         title: "Select database path",
         message: "Please select a directory in which the database should be located.",
@@ -111,8 +113,10 @@ btReset.addEventListener('click', (e) => {
     btAddApp.disabled = true;
     appFiles.style.display = "block";
     appLogo.style.display = "none";
+    appFiles.classList.remove("dragover");
     appNameField.textContent = appNamePlaceholder;
     appDescField.textContent = appDescPlaceholder;
+    appDbPathField.textContent = appDbPathPlaceholder;
 });
 appFiles.addEventListener("click", (e) => {
     ipcRenderer.send("browse-app", {id: "add-app", options: {
@@ -128,7 +132,8 @@ appFiles.addEventListener("click", (e) => {
 appFiles.addEventListener('drop', (e) => {
     e.preventDefault();
     e.stopPropagation();
-    appFiles.style.background = "#F39619";
+    appFiles.style.background = "#F90";
+    appFiles.classList.remove("dragover");
     appFiles.textContent = "Drop your MIRO app here or click to browse.";
     const filePaths = [...e.dataTransfer.files].map(el => el.path)
     ipcRenderer.send("validate-app", filePaths);
@@ -160,7 +165,7 @@ ipcRenderer.on("logopath-received", (e, filePath) => {
 appLogo.addEventListener('drop', (e) => {
     e.preventDefault();
     e.stopPropagation();
-    appFiles.style.background = "#F39619";
+    appFiles.style.background = "#F90";
     appFiles.textContent = "Drop your MIRO app here or click to browse.";
     const filePath = [...e.dataTransfer.files].map(el => el.path);
     validateAppLogo(filePath);
