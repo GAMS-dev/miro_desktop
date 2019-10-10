@@ -11,6 +11,7 @@ const unzip     = require('./Unzip');
 
 const isMac = process.platform === 'darwin';
 const appDataPath = path.join(app.getPath("userData"), "miro_apps")
+const DEVELOPMENT_MODE = !app.isPackaged();
 
 const template = [
   // { role: 'appMenu' }
@@ -115,6 +116,11 @@ function validateMIROApp ( filePath ) {
         let appFileNames = [];
         const incAmt = 0.8/zipfile.entryCount;
         let fileCnt = 0;
+        let skipCnt = 0;
+        newAppConf = {
+          modesAvailable: [],
+          useTmpDir: true
+        }
         if (err) throw err;
         zipfile.on("error", (err) => {
           throw err;
@@ -125,14 +131,33 @@ function validateMIROApp ( filePath ) {
           }
           addAppWindow.setProgressBar(++fileCnt * incAmt);
           appFileNames.push(entry.fileName);
+          if ( skipCnt < 2 ) {
+            if ( path.dirname(entry.fileName) === "static" ) {
+              const logoExt = entry.fileName.toLowerCase().match(/.*_logo\.(jpg|jpeg|png)$/);
+              if ( logoExt ) {
+                newAppConf.logoPath = entry.fileName;
+                const logoPathTmp = path.join(app.getPath("temp"), `logo.${logoExt[1]}`);
+                zipfile.openReadStream(entry, function(err, readStream) {
+                  if (err) throw err;
+                  readStream.pipe(fs.createWriteStream(logoPathTmp));
+                  readStream.on("end", () => {
+                    newAppConf.logoPathTmp = logoPathTmp;
+                    if ( addAppWindow ) {
+                      addAppWindow.webContents.send("validated-logo-received", logoPathTmp);
+                    }
+                  });
+                });
+                skipCnt++
+              }
+            } else if ( entry.fileName === ".no_tmp" ) {
+              newAppConf.useTmpDir = false;
+              skipCnt++
+            }
+          }
         });
         zipfile.once("end", () => {
           if ( !addAppWindow ) {
             return
-          }
-          newAppConf = {
-            modesAvailable: [],
-            useTmpDir: true
           }
           let errMsg
           const errMsgTemplate = "The MIRO app you want to add is invalid. Please make sure to upload a valid MIRO app!"
@@ -157,6 +182,7 @@ function validateMIROApp ( filePath ) {
               }
             }
           }
+          addAppWindow.setProgressBar(0.9);
           if ( !addAppWindow ){
             return
           }
@@ -169,24 +195,10 @@ function validateMIROApp ( filePath ) {
             }});
             return
           }
-          addAppWindow.setProgressBar(0.9);
-          let skipCnt = 0;
-          for ( const fileName of appFileNames ) {
-            if ( skipCnt === 2 ) {
-              break
-            }
-            if ( path.dirname(fileName) === "static" && 
-              fileName.toLowerCase().match(/.*_logo\.(jpg|jpeg|png)$/) ) {
-              newAppConf.logoPath = fileName;
-              skipCnt++
-            } else if ( fileName === ".no_tmp" ) {
-              newAppConf.useTmpDir = false;
-              skipCnt++
-            }
-          }
           if ( !addAppWindow ){
             return
           }
+
           addAppWindow.setProgressBar(-1);
           if ( addAppWindow ) {
             addAppWindow.webContents.send('app-validated', newAppConf)
@@ -227,6 +239,7 @@ const mainWindowTouchBar = new TouchBar({
 })
 
 let mainWindow
+let fileToOpen
 
 function createMainWindow () {
   mainWindow = new BrowserWindow({
@@ -242,11 +255,19 @@ function createMainWindow () {
   })
   mainWindow.loadFile(path.join(__dirname, "renderer", "index.html"))
   mainWindow.once('ready-to-show', () => {
-    mainWindow.show()
+    mainWindow.show();
   })
-  mainWindow.webContents.openDevTools()
+  if ( DEVELOPMENT_MODE ) {
+    mainWindow.webContents.openDevTools();
+  }
   mainWindow.webContents.on('did-finish-load', () => {
-    mainWindow.webContents.send('apps-received', appsData.apps, appDataPath)
+    mainWindow.webContents.send('apps-received', appsData.apps, appDataPath);
+    if (process.platform == 'win32' && 
+      process.argv.length >= 2) {
+      createAddAppWindow(process.argv[1]);
+    }else if( fileToOpen ) {
+      createAddAppWindow(fileToOpen);
+    }
   })
   mainWindow.setTouchBar(mainWindowTouchBar)
   mainWindow.on('page-title-updated', (e) => {
@@ -274,8 +295,10 @@ function createSettingsWindow () {
       nodeIntegration: true
     }
   })
-  settingsWindow.loadFile(path.join(__dirname, "renderer", "manage.html"))
-  settingsWindow.webContents.openDevTools()
+  settingsWindow.loadFile(path.join(__dirname, "renderer", "manage.html"));
+  if ( DEVELOPMENT_MODE ) {
+    settingsWindow.webContents.openDevTools();
+  }
   settingsWindow.once('ready-to-show', () => {
     settingsWindow.show()
   })
@@ -292,7 +315,7 @@ function createSettingsWindow () {
 
 let addAppWindow
 
-function createAddAppWindow () {
+function createAddAppWindow ( filePath = null ) {
   if ( addAppWindow != null ) {
     return
   }
@@ -306,12 +329,19 @@ function createAddAppWindow () {
     webPreferences: {
       nodeIntegration: true
     }
-  })
-  //addAppWindow.webContents.openDevTools()
+  });
+  if ( DEVELOPMENT_MODE ) {
+    addAppWindow.webContents.openDevTools()
+  }
   addAppWindow.loadFile(path.join(__dirname, "renderer", "add.html"))
   addAppWindow.once('ready-to-show', () => {
-    addAppWindow.show()
+    addAppWindow.show();
   })
+  addAppWindow.webContents.on('did-finish-load', () => {
+    if (filePath ) {
+      validateMIROApp([filePath]);
+    }
+  });
   addAppWindow.on('page-title-updated', (e) => {
     e.preventDefault();
   });
@@ -361,6 +391,9 @@ ipcMain.on("browse-app", (e, options, callback) => {
 
 ipcMain.on("add-app", (e, app) => {
   try {
+     if ( !appsData.isUniqueId(app.id) ) {
+       throw new Error('DuplicatedId');
+     }
      let appConf = app;
      const appDir = path.join(appDataPath, appConf.id)
      unzip(appConf.path, appDir, () => {
@@ -404,7 +437,14 @@ ipcMain.on('delete-app', (e, appId) => {
   mainWindow.send('apps-received', updatedApps, appDataPath)
 });
 
-app.on('ready', createMainWindow)
+app.on('will-finish-launching', () => {
+  app.on('open-file', (e, path) => {
+    e.preventDefault();
+    fileToOpen = path;
+  });
+});
+
+app.on('ready', createMainWindow);
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {

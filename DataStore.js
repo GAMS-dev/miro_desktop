@@ -68,8 +68,15 @@ class DataStore extends Store {
     return this
   }
 
+  isUniqueId (id) {
+    if ( this.apps.filter(t => t.id === id).length ) {
+      return false;
+    }
+    return true;
+  }
+
   addApp (app) {
-    if ( this.apps.filter(t => t.id === app.id).length ) {
+    if ( !this.isUniqueId(app.id) ) {
       throw new Error('DuplicatedId');
     }
     this.apps = [ ...this.apps, app ]

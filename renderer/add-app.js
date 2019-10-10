@@ -12,6 +12,7 @@ const appFiles = document.getElementById("appFiles");
 const appLogo = document.getElementById("appLogo");
 const appNameField = document.getElementById('appName');
 const appDescField = document.getElementById('appDesc');
+const appDbPathField = document.getElementById('appDbPath');
 const appNamePlaceholder = "Define the app title";
 const appDescPlaceholder = "Short model description (optional)";
 
@@ -66,6 +67,19 @@ appDescField.addEventListener("focusout", (e) => {
         appDescField.textContent = appDescPlaceholder;
     }
 });
+appDbPathField.addEventListener("click", (e) => {
+    ipcRenderer.send("browse-app", {id: "add-app", options: {
+        title: "Select database path",
+        message: "Please select a directory in which the database should be located.",
+        buttonLabel: "Select",
+        properties: [ "openDirectory", "createDirectory" ]
+    }}, "dbpath-received");
+});
+ipcRenderer.on("dbpath-received", (e, filePath) => {
+    if ( filePath ) {
+        appDbPathField.textContent = filePath[0];
+    }
+});
 
 btAddApp.addEventListener('click', (e) => {
     if ( !currentAppConf ) {
@@ -92,8 +106,8 @@ btAddApp.addEventListener('click', (e) => {
     ipcRenderer.send('add-app', currentAppConf);
 });
 btReset.addEventListener('click', (e) => {
-    console.log('asdasd')
     currentAppConf = null;
+    appLogo.style.backgroundImage = null;
     btAddApp.disabled = true;
     appFiles.style.display = "block";
     appLogo.style.display = "none";
@@ -122,12 +136,12 @@ appFiles.addEventListener('drop', (e) => {
 appFiles.addEventListener('dragover', function (e) {
       e.preventDefault();
       e.stopPropagation();
-      appFiles.style.background = "#F4B562"
+      appFiles.classList.add("dragover");
 });
 appFiles.addEventListener('dragleave', function (e) {
       e.preventDefault();
       e.stopPropagation();
-      appFiles.style.background = "#F39619";
+      appFiles.classList.remove("dragover");
 });
 appLogo.addEventListener("click", (e) => {
     ipcRenderer.send("browse-app", {id: "add-app", options: {
@@ -154,18 +168,27 @@ appLogo.addEventListener('drop', (e) => {
 appLogo.addEventListener('dragover', function (e) {
       e.preventDefault();
       e.stopPropagation();
-      appFiles.style.background = "#F4B562"
+      appFiles.classList.add("dragover");
 });
 appLogo.addEventListener('dragleave', function (e) {
       e.preventDefault();
       e.stopPropagation();
-      appFiles.style.background = "#F39619";
+      appFiles.classList.remove("dragover");
+});
+ipcRenderer.on("validated-logo-received", (e, logoPath) => {
+    if ( currentAppConf ) {
+        appLogo.style.backgroundImage = `url('${logoPath}')`;
+    }
 });
 ipcRenderer.on("app-validated", (e, appConf) => {
     currentAppConf = appConf;    
     btAddApp.disabled = false;
-    if ( appConf.logoPath ) {
-        appLogo.style.backgroundImage = `url('${appConf.logoPath}')`;
+    if ( appConf.logoPathTmp ) {
+        appLogo.style.backgroundImage = `url('${appConf.logoPathTmp}')`;
+        delete currentAppConf.logoPathTmp;
+    }
+    if ( appNameField.textContent.trim() === appNamePlaceholder ) {
+        appNameField.textContent = appConf.id;
     }
     appFiles.style.display = "none";
     appLogo.style.display = "block";
