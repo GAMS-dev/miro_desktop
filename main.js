@@ -240,6 +240,7 @@ const mainWindowTouchBar = new TouchBar({
 
 let mainWindow
 let fileToOpen
+let appLoaded = false;
 
 function createMainWindow () {
   mainWindow = new BrowserWindow({
@@ -262,6 +263,10 @@ function createMainWindow () {
   }
   mainWindow.webContents.on('did-finish-load', () => {
     mainWindow.webContents.send('apps-received', appsData.apps, appDataPath);
+    if ( appLoaded ) {
+      return;
+    }
+    appLoaded = true;
     if (process.platform == 'win32' && 
       process.argv.length >= 2 && !DEVELOPMENT_MODE ) {
       createAddAppWindow(process.argv[1]);
@@ -357,7 +362,7 @@ function showErrorMsg (options) {
     } else if ( options.id === 'manage' ) {
       parentWin = settingsWindow
     } else {
-      parentWin = mainWindow
+      parentWin = mappDbPathainWindow
     }
   }
   if ( parentWin ){
@@ -440,6 +445,10 @@ ipcMain.on('delete-app', (e, appId) => {
 app.on('will-finish-launching', () => {
   app.on('open-file', (e, path) => {
     e.preventDefault();
+    if ( appLoaded ) {
+      createAddAppWindow(path);
+      return;
+    }
     fileToOpen = path;
   });
 });
