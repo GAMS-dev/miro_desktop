@@ -137,19 +137,16 @@ E
     box-sizing: border-box;
     font-family: montserratregular,'Open Sans',sans-serif;
     font-size: 14px;
-    overflow: auto;
 }
 .app-box {
     margin: 50px auto;
-    height: 500px;
-    width: 385px;
+    height: auto;
     padding: 45px 30px;
     background: #fff;
     position: relative;
     border: 1px solid #f0f0f0;
     border-radius: 5px;
     background-clip: padding-box;
-    height: 100%;
     box-shadow: 0 2px 4px 0 rgba(0,0,0,0.25), 0 2px 10px 0 rgba(0,0,0,0.20);
 }
 .manage-box {
@@ -345,49 +342,87 @@ E
 .browseFiles {
   cursor:pointer;
 }
-.delete-app-button,
-.options-app-button{
+.delete-app-button {
   position:absolute;
   text-align:center;
-  font-size: 20px;
+  font-size: 30px;
   font-weight: bold;
   cursor:context-menu;
   background:white;
-  border-radius: 15px;
-  border: 1px solid white;
-  width: 30px;
+  border-radius: 22.5px;
+  width: 45px;
 }
 .delete-app-button {
-  top: 0;
-  right: 0;
+  top: -22.5px;
+  right: -22.5px;
   color:red !important;
 }
-.options-app-button{
-  top: 0;
-  left: 0;
-  color:black !important;
-}
 .delete-app-button:hover,
-.delete-app-button:focus,
-.options-app-button:hover,
-.options-app-button:focus {
+.delete-app-button:focus {
   color: #000;
   text-decoration: none;
   cursor: pointer;
   background-color:lightgray;
 }
-.add-app-button {
+.btn-add-app {
   position:absolute;
-  text-align:center;
   font-size: 100px;
-  font-weight: bold;
-  width: 30px;  
-  bottom: 0;
-  right: -50px;
-  color:#acadb1 !important;
+  font-weight: bold;  
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color:#b4b6bd !important;
 }
-.add-app-button:hover,
-.add-app-button:focus {
-  color: #000;
-  cursor: pointer;
+.add-app-box {
+    margin: 50px auto;
+    height: auto;
+    padding: 45px 30px;
+    position: relative;
+    outline: #c7c9d0 dashed 2px;
+    /*border: 2px dashed #c7c9d0;
+    border-radius: 5px;*/
+    background-clip: padding-box;
+}
+.add-app-box:hover,
+.add-app-box:focus {
+    background-color:#ced1da;
+    cursor:pointer;
+    webkit-transition: background-color .15s linear;
+    transition: background-color .15s linear;
+}
+.index-dragover {
+  /* some parts from https://css-tricks.com/drag-and-drop-file-uploading/ : */
+  outline-offset: -20px;
+  outline-color: #b1b3b9;
+  background-color: #ced1da;
+  -webkit-transition: outline-offset .15s ease-in-out, background-color .15s linear;
+  transition: outline-offset .15s ease-in-out, background-color .15s linear;
+}
+.btn-add-app-dragover {
+  font-size: 120px;
+  -webkit-transition: font-size .15s ease-in-out;
+  transition: font-size .15s ease-in-out;
+}
+.add-app-box-logo {
+    height:180px;
+    display:block;
+    margin:auto;
+    background-color:#d9dbe2;
+}
+.add-app-box-title {
+    width:30%;
+    height:25px;
+    background-color:#d9dbe2;
+    margin-top: 15pt;
+    margin-bottom: .5rem;
+    font-weight: 500;
+    line-height: 1.2;
+}
+.add-app-box-desc {
+    width:80%;
+    height:15px;
+    background-color:#d9dbe2;
+    margin-top: 0;
+    margin-bottom: 1rem;
 }

@@ -150,7 +150,7 @@ appFiles.addEventListener('drop', (e) => {
     const filePaths = [...e.dataTransfer.files].map(el => el.path)
     ipcRenderer.send("validate-app", filePaths);
 });
-appFiles.addEventListener('dragover', function (e) {
+appFiles.addEventListener('dragenter', function (e) {
       e.preventDefault();
       e.stopPropagation();
       appFiles.classList.add("dragover");
@@ -182,7 +182,7 @@ appLogo.addEventListener('drop', (e) => {
     const filePath = [...e.dataTransfer.files].map(el => el.path);
     validateAppLogo(filePath);
 });
-appLogo.addEventListener('dragover', function (e) {
+appLogo.addEventListener('dragenter', function (e) {
       e.preventDefault();
       e.stopPropagation();
       appFiles.classList.add("dragover");
