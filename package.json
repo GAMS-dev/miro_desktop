@@ -16,7 +16,9 @@
     "productName": "GAMS MIRO",
     "afterSign": "scripts/notarize.js",
     "fileAssociations": {
-      "ext": [ "miroapp" ],
+      "ext": [
+        "miroapp"
+      ],
       "name": "MIRO App",
       "description": "MIRO Application",
       "mimeType": "application/zip"
@@ -49,10 +51,11 @@
     "electron-notarize": "^0.1.1"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.11.2",
     "bootstrap": "^4.3.1",
+    "electron-store": "^5.0.0",
     "jquery": "^3.4.1",
     "popper.js": "^1.15.0",
-    "yauzl": "^2.10.0",
-    "electron-store": "^5.0.0"
+    "yauzl": "^2.10.0"
   }
 }

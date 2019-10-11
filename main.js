@@ -328,7 +328,7 @@ function createAddAppWindow ( filePath = null ) {
     title: "Add MIRO application",
     width: 525,
     height: 800,
-    resizable:false,
+    //resizable:false,
     titleBarStyle: 'hidden',
     parent: mainWindow,
     webPreferences: {

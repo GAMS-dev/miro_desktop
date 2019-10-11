@@ -15,6 +15,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
     <meta http-equiv="Content-Security-Policy" content="script-src 'self';" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../node_modules/@fortawesome/fontawesome-free/css/all.min.css">
     <link id="theme-style" rel="stylesheet" href="../css/styles.css">
 </head>
 <body>
@@ -45,6 +46,29 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             </div>
         </div>
     </div>
+    
+    <!-- Modal -->
+        <div class="modal fade" id="remove-model" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-custom" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Remove model</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p>Are you sure you want to permanently remove the model?</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary cancel-btn" data-dismiss="modal">Cancel</button>
+                <input id="btRemoveModel" class="btn btn-secondary confirm-btn" type="submit" value="Remove" data-dismiss="modal"></input>
+              </div>
+            </div>
+          </div>
+        </div>
+        
    <script type="text/javascript" src="./index.js"></script>
+   <script type="text/javascript" src="../node_modules/@fortawesome/fontawesome-free/js/all.js"></script>
 </body>
 </html>

@@ -4,6 +4,26 @@ const { ipcRenderer } = require('electron')
 const path = require('path');
 window.Bootstrap = require('bootstrap');
 
+const btRemoveConfirm = document.getElementById("btRemoveModel");
+const appsWrapper = document.getElementById("appsWrapper");
+
+//const optionsApp = document.getElementById('optionsApp_' + appItems.app.id);
+//const btdeleteApp = document.getElementById('deleteApp_' + appItems.app.id);
+    
+btRemoveConfirm.addEventListener('click', (e) => {
+//  removeModelModal.style.display = "none";
+  if ( this.dataset.id ) {
+    ipcRenderer.send('delete-app', this.dataset.id);
+  }
+});
+
+appsWrapper.addEventListener('click', function(e) {
+    if ( e.target.className === "delete-app-button" ) {
+        btRemoveConfirm.dataset.id = this.dataset.id;
+        removeModelModal.style.display = "block";
+    }
+})
+
 ipcRenderer.on('apps-received', (e, apps, appDataPath) => {
   const appList = document.getElementById('appsWrapper');
   const noAppsNotice = document.getElementById('noAppsDiv');
@@ -22,10 +42,17 @@ ipcRenderer.on('apps-received', (e, apps, appDataPath) => {
 margin:auto;background-image:url('${logoPath}');background-size:cover;" \
 title="${app.title} logo">
                         </p>
+                        <p class="drag-drop-area add-app-logo" id="appLogo">
+                            Different app logo? Drop your MIRO app logo here or click to browse.
+                        </p>
                      </div>
                      <div>
                          <h3 class="title" style="text-align:left;margin-top:15pt;">${app.title}</h3>
                          <p class="intro" style="text-align:left;">${app.description}</p>
+                         <div class="custom-file dbpathField">
+                           <div class="custom-file-input browseFiles" id="appDbPath"></div>
+                           <label id="appDbPathLabel" class="custom-file-label dbpath" for="appDbPath">Custom database location (optional)</label>
+                         </div>
                      </div>
                      <div class="input-group mb-3"${app.modesAvailable.length <= 1 ? ' style="visibility:hidden;"' : ''}>
                          <div class="input-group-prepend">
@@ -38,6 +65,13 @@ title="${app.title} logo">
                         </div>
                     </div>
                  </div>
+                 <div style = "text-align:right;">
+                     <input class="btn btn-secondary cancel-btn" id="btCancelChanges" value="Cancel" type="reset">
+                     <button class="btn btn-secondary confirm-btn" id="btSaveChanges" type="button">Save</button>
+                 </div>
+                 <a class="delete-app-button" data-id="${app.id}">✖</a>
+                 <a class="options-app-button" data-id="${app.id}">o</a>
+                 <a class="add-app-button" id="addApp"><i class="fa fa-plus-circle"></i></a>
              </div>`
     return html
   }, '')
@@ -50,10 +84,4 @@ title="${app.title} logo">
         appList.innerHTML = "";
        noAppsNotice.style.display = "block";
     }
-
-  appList.querySelectorAll('.miro-app-item').forEach( (el) => {
-    el.addEventListener('click', function(e) {
-        console.log(this.dataset.id)
-    })
-  })
 })
