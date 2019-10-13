@@ -7,6 +7,7 @@ const yauzl = require("yauzl");
 
 const DataStore = require('./DataStore');
 const unzip     = require('./Unzip');
+const { isFunction } = require('./util');
 
 
 const isMac = process.platform === 'darwin';
@@ -99,13 +100,13 @@ let newAppConf
 function validateMIROApp ( filePath ) {
     filePath = filePath.filter( el => el.toLowerCase().endsWith('.miroapp') )
     if ( filePath.length === 0 ) {
-      return showErrorMsg({id: 'add-app', options: {
+      return showErrorMsg({id: 'main', options: {
             type: "info",
             title: "Invalid MIRO app file",
             message: "The file you selected is not a valid MIRO app!"
         }});
     } else if ( filePath.length > 1 ) {
-      return showErrorMsg({id: 'add-app', options: {
+      return showErrorMsg({id: 'main', options: {
             type: "info",
             title: "Invalid MIRO app file",
             message: "Please drop only a single MIRO app file!"
@@ -126,10 +127,10 @@ function validateMIROApp ( filePath ) {
           throw err;
         });
         zipfile.on("entry", (entry) => {
-          if ( !addAppWindow ) {
+          if ( !mainWindow ) {
             zipfile.close()
           }
-          addAppWindow.setProgressBar(++fileCnt * incAmt);
+          mainWindow.setProgressBar(++fileCnt * incAmt);
           appFileNames.push(entry.fileName);
           if ( skipCnt < 2 ) {
             if ( path.dirname(entry.fileName) === "static" ) {
@@ -142,8 +143,8 @@ function validateMIROApp ( filePath ) {
                   readStream.pipe(fs.createWriteStream(logoPathTmp));
                   readStream.on("end", () => {
                     newAppConf.logoPathTmp = logoPathTmp;
-                    if ( addAppWindow ) {
-                      addAppWindow.webContents.send("validated-logo-received", logoPathTmp);
+                    if ( mainWindow ) {
+                      mainWindow.webContents.send("validated-logo-received", {path: logoPathTmp});
                     }
                   });
                 });
@@ -156,7 +157,7 @@ function validateMIROApp ( filePath ) {
           }
         });
         zipfile.once("end", () => {
-          if ( !addAppWindow ) {
+          if ( !mainWindow ) {
             return
           }
           let errMsg
@@ -182,39 +183,71 @@ function validateMIROApp ( filePath ) {
               }
             }
           }
-          addAppWindow.setProgressBar(0.9);
-          if ( !addAppWindow ){
+          mainWindow.setProgressBar(0.9);
+          if ( !mainWindow ){
             return
           }
           if ( !newAppConf.id || errMsg ) {
-            addAppWindow.setProgressBar(-1);
-            showErrorMsg({id: 'add-app', options: {
+            mainWindow.setProgressBar(-1);
+            showErrorMsg({id: 'main', options: {
                 type: "info",
                 title: "Invalid app",
                 message: errMsgTemplate
             }});
             return
           }
-          if ( !addAppWindow ){
+          if ( !mainWindow ){
             return
           }
 
-          addAppWindow.setProgressBar(-1);
-          if ( addAppWindow ) {
-            addAppWindow.webContents.send('app-validated', newAppConf)
+          mainWindow.setProgressBar(-1);
+          if ( mainWindow ) {
+            mainWindow.webContents.send('app-validated', newAppConf)
           }
         });
       })
     } catch (e) {
-      if ( addAppWindow ) {
-        addAppWindow.setProgressBar(-1);
+      if ( mainWindow ) {
+        mainWindow.setProgressBar(-1);
       }
-      showErrorMsg({id: 'add-app', options: {
+      showErrorMsg({id: 'main', options: {
           type: "error",
           title: "Unexpected error",
           message: `There was a problem reading the MIRO app file. Error message: '${e.message}'`
       }});
     }
+}
+
+function validateAppLogo(filePath, id = null){
+    const filteredPath = filePath.filter( el => el
+        .toLowerCase()
+        .match(/\.(jpg|jpeg|png)$/) );
+    if ( filteredPath.length === 0 ) {
+      showErrorMsg({id: 'main', options: {
+            type: "info",
+            title: "Invalid MIRO app logo",
+            message: "The file you selected is not a valid MIRO logo. Only jpg/jpeg and png supported!"
+        }})
+       return
+    } else if ( filteredPath.length > 1 ) {
+      showErrorMsg({id: 'main', options: {
+            type: "info",
+            title: "Invalid MIRO app logo",
+            message: "Please drop only a single MIRO app logo!"
+        }})
+      return
+    }
+    const logoSize = fs.statSync(filteredPath[0]).size / 1000000.0;
+    if ( logoSize > 10 ) {
+      showErrorMsg({id: 'main', options: {
+            type: "info",
+            title: "Logo too large",
+            message: "Logos must not be larger than 10MB!"
+        }})
+        return
+    }
+    addAppWindow.webContents.send("validated-logopath-received", 
+      {id: id, path: filteredPath[0]});
 }
 
 const btAddApp = new TouchBarButton({
@@ -362,7 +395,7 @@ function showErrorMsg (options) {
     } else if ( options.id === 'manage' ) {
       parentWin = settingsWindow
     } else {
-      parentWin = mappDbPathainWindow
+      parentWin = mainWindow
     }
   }
   if ( parentWin ){
@@ -373,7 +406,7 @@ ipcMain.on('show-error-msg', (e, options) => {
   showErrorMsg(options)
 })
 
-ipcMain.on("browse-app", (e, options, callback) => {
+ipcMain.on("browse-app", (e, options, callback, id = null) => {
   let parentWin
   if( options.id ){
     if ( options.id === "add-app" ) {
@@ -381,13 +414,15 @@ ipcMain.on("browse-app", (e, options, callback) => {
     } else if ( options.id === 'manage' ) {
       parentWin = settingsWindow
     } else {
-      errWin = mainWindow
+      parentWin = mainWindow
     }
   }
   const filePaths = dialog.showOpenDialogSync(parentWin, options.options)
   if ( filePaths ) {
-    if( callback ) {
+    if( isFunction(callback) ) {
       e.reply(callback, filePaths);
+    } else if( callback === "validateLogo" ) {
+      validateAppLogo(filePaths, id);
     } else {
       validateMIROApp(filePaths);
     }
@@ -435,11 +470,20 @@ ipcMain.on("add-app", (e, app) => {
 ipcMain.on('validate-app', (e, filePath) => {
   validateMIROApp(filePath);
 });
+ipcMain.on('validate-logo', (e, filePath) => {
+  validateAppLogo(filePath);
+});
 
 ipcMain.on('delete-app', (e, appId) => {
-  const updatedApps = appsData.deleteApp(appId).apps
-  settingsWindow.send('manage-apps-received', updatedApps)
-  mainWindow.send('apps-received', updatedApps, appDataPath)
+  const deleteAppConfirmedId = dialog.showMessageBoxSync(mainWindow, {
+   buttons: [ "Remove", "Cancel" ],
+   message: "Are you sure you want to permanently remove the app?"
+  });
+  if ( deleteAppConfirmedId !== 0 ) {
+    return
+  }
+  const updatedApps = appsData.deleteApp(appId).apps;
+  mainWindow.send('apps-received', updatedApps, appDataPath);
 });
 
 app.on('will-finish-launching', () => {

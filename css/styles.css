@@ -3,6 +3,30 @@ body {
     height: 100%;
     background-color: #e2e3e8;
 }
+:not(input):not(textarea),
+:not(input):not(textarea)::after,
+:not(input):not(textarea)::before {
+    -webkit-user-select: none;
+    user-select: none;
+    cursor: default;
+}
+input, button, textarea, :focus {
+    outline: none; // You should add some other style for :focus to help UX/a11y
+}
+#btEdit {
+  cursor: pointer;
+}
+#btEdit:hover {
+  transition: 1s ease;
+  color: #f90;
+}
+#overlayScreen {
+  z-index:10;
+  position:fixed;
+  height:100%;
+  width:100%;
+  background-color:rgba(0,0,0,0.5);
+}
 .loading-screen {
     display:none;
     align-items:center;
@@ -21,7 +45,6 @@ body {
   letter-spacing: -0.02em;
   line-height: 1.03em;
 }
-
 .deconstructed > div {
   position: absolute;
   top: 0;
@@ -54,6 +77,12 @@ E
    -webkit-mask-image: linear-gradient(transparent 75%, black 75%);
   mask-image: linear-gradient(transparent 75%, black 75%);
   animation: deconstructed4 3s 1;
+}
+
+@keyframes wiggle {
+    0% {-webkit-transform:rotate(4deg);}
+    50% {-webkit-transform:rotate(-4deg);}
+    100% {-webkit-transform:rotate(4deg);}
 }
 
 @keyframes deconstructed1 {
@@ -180,6 +209,13 @@ E
   outline: #63594a dashed 1px;
   outline-offset: -10px;
 }
+.drag-drop-area-text {
+  padding: 8px;
+  margin:auto;
+  cursor: pointer;
+  background-color: rgba(0,0,0,0.3);
+  color: #fff;
+}
 .drag-drop-area:hover {
   cursor: pointer;
 }
@@ -258,6 +294,9 @@ E
   color: #494d55;
   background-clip: padding-box;
 }
+.editable {
+  border: 1px solid #fff;
+}
 .editable:hover {
   cursor: text;
   border: 1px dashed #000;
@@ -274,7 +313,7 @@ E
     width:323px;
     overflow: hidden !important;
 }
-.editable.title * {
+.editable.app-title * {
     display:inline;
     white-space:nowrap;
 }
@@ -347,6 +386,7 @@ E
   text-align:center;
   font-size: 30px;
   font-weight: bold;
+  animation: wiggle 0.4s infinite;
   cursor:context-menu;
   background:white;
   border-radius: 22.5px;
@@ -396,7 +436,6 @@ E
   outline-offset: -20px;
   outline-color: #b1b3b9;
   background-color: #ced1da;
-  -webkit-transition: outline-offset .15s ease-in-out, background-color .15s linear;
   transition: outline-offset .15s ease-in-out, background-color .15s linear;
 }
 .btn-add-app-dragover {

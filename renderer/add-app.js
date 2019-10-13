@@ -18,37 +18,6 @@ const appNamePlaceholder = "Define the app title";
 const appDescPlaceholder = "Short model description (optional)";
 const appDbPathPlaceholder = "Custom database location (optional)";
 
-function validateAppLogo(filePath){
-    const filteredPath = filePath.filter( el => el
-        .toLowerCase()
-        .match(/\.(jpg|jpeg|png)$/) );
-    if ( filteredPath.length === 0 ) {
-      return ipcRenderer.send("show-error-msg", {id: 'add-app', options: {
-            type: "info",
-            title: "Invalid MIRO app logo",
-            message: "The file you selected is not a valid MIRO logo. Only jpg/jpeg and png supported!"
-        }});
-        return
-    } else if ( filteredPath.length > 1 ) {
-      return ipcRenderer.send("show-error-msg", {id: 'add-app', options: {
-            type: "info",
-            title: "Invalid MIRO app logo",
-            message: "Please drop only a single MIRO app logo!"
-        }});
-    }
-    const logoSize = fs.statSync(filteredPath[0]).size / 1000000.0;
-    if ( logoSize > 10 ) {
-        return ipcRenderer.send("show-error-msg", {id: 'add-app', options: {
-            type: "info",
-            title: "Logo too large",
-            message: "Logos must not be larger than 10MB!"
-        }});
-    }
-    currentAppConf.logoPath = filteredPath[0];
-    currentAppConf.logoNeedsMove = true;
-    appLogo.style.backgroundImage = `url('${currentAppConf.logoPath}')`;
-}
-
 appNameField.addEventListener("focus", (e) => {
     if ( appNameField.textContent.trim() === appNamePlaceholder ) {
         appNameField.textContent = "";
@@ -169,10 +138,12 @@ appLogo.addEventListener("click", (e) => {
         filters: [
             { name: 'Images', extensions: ['jpg', 'png', 'jpeg'] }
         ]
-    }}, "logopath-received");
+    }}, "validateLogo");
 });
-ipcRenderer.on("logopath-received", (e, filePath) => {
-    validateAppLogo(filePath);
+ipcRenderer.on("validated-logopath-received", (e, filePath) => {
+    currentAppConf.logoPath = filePath;
+    currentAppConf.logoNeedsMove = true;
+    appLogo.style.backgroundImage = `url('${currentAppConf.logoPath}')`;
 });
 appLogo.addEventListener('drop', (e) => {
     e.preventDefault();
@@ -180,7 +151,7 @@ appLogo.addEventListener('drop', (e) => {
     appFiles.style.background = "#F90";
     appFiles.textContent = "Drop your MIRO app here or click to browse.";
     const filePath = [...e.dataTransfer.files].map(el => el.path);
-    validateAppLogo(filePath);
+    ipcRenderer.send("validate-logo", filePath);
 });
 appLogo.addEventListener('dragenter', function (e) {
       e.preventDefault();
