@@ -7,8 +7,6 @@ const yauzl = require("yauzl");
 
 const DataStore = require('./DataStore');
 const unzip     = require('./Unzip');
-const { isFunction } = require('./util');
-
 
 const isMac = process.platform === 'darwin';
 const appDataPath = path.join(app.getPath("userData"), "miro_apps")
