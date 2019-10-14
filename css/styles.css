@@ -8,12 +8,11 @@ body {
 :not(input):not(textarea)::before {
     -webkit-user-select: none;
     user-select: none;
-    cursor: default;
 }
 input, button, textarea, :focus {
     outline: none; // You should add some other style for :focus to help UX/a11y
 }
-#btEdit {
+#btEditWrapper {
   cursor: pointer;
 }
 #btEdit:hover {
@@ -169,7 +168,6 @@ input, button, textarea, :focus {
 }
 .app-box {
     margin: 50px auto;
-    height: auto;
     padding: 45px 30px;
     background: #fff;
     position: relative;
@@ -177,6 +175,9 @@ input, button, textarea, :focus {
     border-radius: 5px;
     background-clip: padding-box;
     box-shadow: 0 2px 4px 0 rgba(0,0,0,0.25), 0 2px 10px 0 rgba(0,0,0,0.20);
+}
+.app-box-fixed-height {
+    height: 500px;
 }
 .manage-box {
     margin: 50px auto;
@@ -203,7 +204,7 @@ input, button, textarea, :focus {
     box-shadow: 0 2px 4px 0 rgba(0,0,0,0.25), 0 2px 10px 0 rgba(0,0,0,0.20);
 }
 .drag-drop-area {
-  background-color: #F90;
+  background-color: #e9ecef;
   border: 1px solid #000;
   padding: 20px;
   outline: #63594a dashed 1px;
@@ -216,8 +217,28 @@ input, button, textarea, :focus {
   background-color: rgba(0,0,0,0.3);
   color: #fff;
 }
+.empty {
+  color: #494d55;
+  background-color: unset;
+}
+.not-empty {
+  background-color: rgba(0,0,0,0.3);
+  color: #fff;
+}
+.drag-drop-area-icon {
+  color:#f90;
+  font-size:30px;
+  margin:10px;
+}
 .drag-drop-area:hover {
   cursor: pointer;
+}
+.drag-drop-area-dragover {
+  /* some parts from https://css-tricks.com/drag-and-drop-file-uploading/ : */
+  outline-offset: -20px;
+  background-color: #d5dce2 !important;
+  -webkit-transition: outline-offset .15s ease-in-out, background-color .15s linear;
+  transition: outline-offset .15s ease-in-out, background-color .15s linear;
 }
 .app-window {
   height:180px; 
@@ -226,10 +247,28 @@ input, button, textarea, :focus {
   text-align: center;
 }
 .add-app-logo {
-    padding:55px;
-    background-image:url('../static/default_logo.png');
-    background-size: cover;
-    text-align: center;
+  padding: 55px 20px;
+  background-image:url('../static/default_logo.png');
+  background-size: cover;
+  text-align: center;
+}
+.app-logo {
+  height:180px;
+  display:block;
+  margin:auto;
+  padding: 55px 20px;
+  background-size:cover;
+  text-align:center;
+}
+.app-title,
+.app-desc {
+  overflow: hidden;
+  text-align: left;
+}
+.app-desc {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
 }
 .sub-header {
   -webkit-user-select: none;
@@ -354,13 +393,6 @@ input, button, textarea, :focus {
     margin-top: 15px;
     margin-bottom:5px;
 }
-.dragover {
-  /* some parts from https://css-tricks.com/drag-and-drop-file-uploading/ : */
-  outline-offset: -20px;
-  background-color: #ffc671 !important;
-  -webkit-transition: outline-offset .15s ease-in-out, background-color .15s linear;
-  transition: outline-offset .15s ease-in-out, background-color .15s linear;
-}
 .dbpathField {
   margin-top: 20px;
 }
@@ -414,12 +446,9 @@ input, button, textarea, :focus {
 }
 .add-app-box {
     margin: 50px auto;
-    height: auto;
     padding: 45px 30px;
     position: relative;
     outline: #c7c9d0 dashed 2px;
-    /*border: 2px dashed #c7c9d0;
-    border-radius: 5px;*/
     background-clip: padding-box;
 }
 .add-app-box:hover,
@@ -462,4 +491,28 @@ input, button, textarea, :focus {
     background-color:#d9dbe2;
     margin-top: 0;
     margin-bottom: 1rem;
+}
+.reset-db-path {
+    color: #f90;
+    display:none;
+}
+.reset-db-path:hover {
+    cursor: pointer;
+    color: #e18d0f;
+    text-decoration:underline;
+}
+.btn-launch-wrapper {
+    text-align: right;
+}
+.btn-launch {
+    background-color: #f90;
+    text-shadow: none;
+    border: none;
+    color: #494d55;
+}
+.btn-launch:hover,
+.btn-launch:active,
+.btn-launch:focus {
+    background-color: #e18d0f !important;
+    color: #494d55 !important;
 }

@@ -7,8 +7,10 @@ const $ = require('jquery');
 
 const btRemoveConfirm = document.getElementById("btRemoveModel");
 const appsWrapper = $("#appsWrapper");
+const btEditWrapper = document.getElementById("btEditWrapper");
 const btEdit = document.getElementById("btEdit");
-const addAppWrapperHTML = `<div id="addAppBox" class="add-app-box">
+const btEditIcon = document.getElementById("editIcon");
+const addAppWrapperHTML = `<div id="addAppBox" class="add-app-box app-box-fixed-height">
                            <div style="height:200px;">
                                <p class="add-app-box-logo">
                               </p>
@@ -23,6 +25,7 @@ const appFilesPlaceholder = "Drop your MIRO app here or click to browse.";
 const appNamePlaceholder = "Define the app title";
 const appDescPlaceholder = "Short model description (optional)";
 const appDbPathPlaceholder = "Custom database location (optional)";
+const appDbPathReset = "Reset to default";
 const appLogoPlaceholder = "Different app logo? Drop your MIRO app logo here or click to browse.";
   
 let appData
@@ -51,6 +54,7 @@ function toggleEditMode(){
     $("#addAppWrapper").fadeIn(200);
     isInEditMode = true;
   }
+  $("#editIcon").toggleClass("fa-lock fa-lock-open");
 }
 function exitOverlayMode(){
   if ( $('#expandedAddAppWrapper').is(':visible') ) {
@@ -62,6 +66,7 @@ function exitOverlayMode(){
     $('.app-item-desc').removeClass('editable').attr('contenteditable', false);
     $('.db-path-field').slideUp(200);
     $('.edit-bt-group').slideUp(200);
+    $('.app-box').addClass('app-box-fixed-height');
     $overlay.hide();
     $overlay.data('current').css('z-index', 1);
   }
@@ -76,15 +81,16 @@ function expandAddAppForm(){
   const addAppWrapper = $("#addAppWrapper");
   addAppWrapper.css( 'z-index', 11 );
   $overlay.data('current', addAppWrapper).fadeIn(300);
-  addAppWrapper.html(`<div class="app-box" id="expandedAddAppWrapper">
+  addAppWrapper.html(`<div class="app-box app-box-fixed-height" id="expandedAddAppWrapper">
                         <div style="height:200px;">
                            <div class="drag-drop-area app-window" id="newAppFiles">
-                              <div class="drag-drop-area-text">
+                              <div class="drag-drop-area-text empty">
+                                <div><i class="fas fa-plus-circle drag-drop-area-icon"></i></div>
                                  ${appFilesPlaceholder}
                               </div>
                            </div>
                             <div class="drag-drop-area add-app-logo app-logo" id="newAppLogo" style="display:none">
-                              <div class="drag-drop-area-text">
+                              <div class="drag-drop-area-text not-empty">
                                ${appLogoPlaceholder}
                               </div>
                            </div>
@@ -100,6 +106,7 @@ function expandAddAppForm(){
                           <div id="newAppDbPath" class="custom-file-input browseFiles app-db-path"></div>
                           <label id="newAppDbPathLabel" class="custom-file-label dbpath" for="newAppDbPath">
                             ${appDbPathPlaceholder}</label>
+                            <small class="form-text reset-db-path">${appDbPathReset}</small>
                         </div>
                         </div>
                         <div class="input-group mb-3" style="visibility:hidden;">
@@ -137,6 +144,7 @@ $body.on('click', '.app-box', function(e) {
         });
         return;
       }
+      $(`#appBox_${appID}`).removeClass('app-box-fixed-height');
       $(`#appLogo_${appID}`).html(`<div class="drag-drop-area-text">${appLogoPlaceholder}</div>`).addClass('drag-drop-area');
       $(`#appTitle_${appID}`).addClass('editable').attr('contenteditable', true);
       const appDescField = $(`#appDesc_${appID}`);
@@ -274,7 +282,7 @@ appsWrapper.on('drop', '.app-logo', function(e){
     ipcRenderer.send("validate-logo", filePath, $this.data('id'));
 });
 appsWrapper.on('click', '.app-logo', function(){
-  if ( !isInEditMode ) {
+  if ( !isInEditMode || !$overlay.is(":visible") ) {
     return
   }
   ipcRenderer.send("browse-app", {
@@ -336,7 +344,7 @@ appsWrapper.on('dragenter', '.drag-drop-area', function(e){
     return
   }
   dragAddAppCounter++;
-  $(this).addClass("index-dragover");
+  $(this).addClass("drag-drop-area-dragover");
 });
 appsWrapper.on('dragleave', '.drag-drop-area', function(e){
   e.preventDefault();
@@ -346,7 +354,7 @@ appsWrapper.on('dragleave', '.drag-drop-area', function(e){
   }
   dragAddAppCounter--;
   if ( dragAddAppCounter === 0 ) {
-    $(this).removeClass("index-dragover");
+    $(this).removeClass("drag-drop-area-dragover");
   }
 });
 appsWrapper.on('drop', '#newAppFiles', function(e){
@@ -368,7 +376,7 @@ appsWrapper.on('click', '#newAppFiles', () => {
       ]
   }, "validateApp");
 });
-btEdit.addEventListener('click', (e) => {
+btEditWrapper.addEventListener('click', (e) => {
   toggleEditMode();
 });
 appsWrapper.on('click', '.app-db-path', function(){
@@ -394,31 +402,29 @@ ipcRenderer.on('apps-received', (e, apps, appDataPath) => {
     html += `<div class="col-lg-4 col-6 miro-app-item" data-id="${app.id}" 
                data-usetmp="${app.useTmpDir}" data-mode="${app.modesAvailable[0]}" 
                data-apiver="${app.APIVersion}" data-mirover="${app.MIROVersion}">
-                 <div class="app-box" data-id="${app.id}">
+                 <div id="appBox_${app.id}" class="app-box app-box-fixed-height" data-id="${app.id}">
                    <div>
                      <div style="height:200px;">
-                         <div id="appLogo_${app.id}" style="height:180px;display:block;\
-margin:auto;background-image:url('${logoPath}');background-size:cover;" \
+                         <div id="appLogo_${app.id}" style="background-image:url('${logoPath}');" \
 title="${app.title} logo" data-id="${app.id}" class="app-logo">
                         </div>
                      </div>
                      <div>
-                         <h3 id="appTitle_${app.id}" class="app-title app-item-title" style="text-align:left;margin-top:15pt;">${app.title}</h3>
-                         <p id="appDesc_${app.id}" class="app-desc app-item-desc" style="text-align:left;">${app.description}</p>
+                         <h3 id="appTitle_${app.id}" class="app-title app-item-title" style="margin-top:15pt;">${app.title}</h3>
+                         <p id="appDesc_${app.id}" class="app-desc app-item-desc">${app.description}</p>
                          <div class="custom-file db-path-field" style="display:none;">
-                           <div id="appDbPath_${app.id}" class="custom-file-input browseFiles app-db-path" data-id="${app.id}"></div>
+                           <div id="appDbPath_${app.id}" class="custom-file-input browseFiles app-db-path" data-id="${app.id}" aria-describedby="resetDbPath"></div>
                            <label id="appDbPathLabel_${app.id}" class="custom-file-label dbpath" for="appDbPath_${app.id}">${app.dbPath? app.dbPath: appDbPathPlaceholder}</label>
+                           <small class="form-text reset-db-path">${appDbPathReset}</small>
                          </div>
                      </div>
-                     <div class="input-group mb-3"${app.modesAvailable.length <= 1 ? ' style="visibility:hidden;"' : ''}>
-                         <div class="input-group-prepend">
+                     <div class="dropdown mb-3 btn-launch-wrapper"${app.modesAvailable.length <= 1 ? ' style="visibility:hidden;"' : ''}>
                            <button class="btn btn-outline-secondary dropdown-toggle btn-launch" 
                              type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Launch</button>
                            <div class="dropdown-menu">
                                <a class="dropdown-item" href="#">Base mode</a>
                                <a class="dropdown-item" href="#">Hypercube mode</a>
                            </div>
-                        </div>
                     </div>
                  </div>
                  <div style="text-align:right;display:none;" class="edit-bt-group">
@@ -449,13 +455,14 @@ ipcRenderer.on("dbpath-received", (e, dbpathData) => {
     return;
   }
   const appID = dbpathData.id;
-  let dpPathField;
+  let dpPathFieldID;
   if ( appID == null ) {
-    dpPathField = $("#newAppDbPathLabel");
+    dpPathFieldID = "#newAppDbPathLabel";
   } else {
-    dpPathField = $(`#appDbPathLabel_${appID}`);
+    dpPathFieldID = `#appDbPathLabel_${appID}`;
   }
-  dpPathField.text(dbpathData.path[0]);
+  $(`${dpPathFieldID} + .reset-db-path`).show();
+  $(dpPathFieldID).text(dbpathData.path[0]);
 });
 ipcRenderer.on("validated-logopath-received", (e, logoData) => {
   if ( !newAppConfig ) {
