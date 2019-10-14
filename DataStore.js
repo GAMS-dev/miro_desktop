@@ -58,13 +58,18 @@ const schema = {
 
 class DataStore extends Store {
   constructor () {
-    super({schema})
+    super({schema, encryptionKey: "MIROobfuscatedConfigFile"})
     this.apps = this.get('apps') || []
   }
 
   saveApps () {
     this.set('apps', this.apps)
     return this
+  }
+
+  updateApp (app) {
+    this.apps = [ ...this.apps.filter(t => t.id !== app.id), app ];
+    return this.saveApps()
   }
 
   getApps () {

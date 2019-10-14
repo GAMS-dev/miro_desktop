@@ -25,6 +25,8 @@ const appDescPlaceholder = "Short model description (optional)";
 const appDbPathPlaceholder = "Custom database location (optional)";
 const appLogoPlaceholder = "Different app logo? Drop your MIRO app logo here or click to browse.";
   
+let appData
+let dataPath
 let newAppConfig
 
 let dragAddAppCounter = 0;
@@ -55,14 +57,7 @@ function exitOverlayMode(){
     $("#addAppWrapper").html(addAppWrapperHTML);
   }
   if ( $overlay.is(":visible") ) {
-    $('.app-desc').each(function( index ){
-      const $this = $( this );
-      console.log($this.text())
-      if ( $this.text() === appDescPlaceholder ) {
-        $this.text('');
-      }
-    });
-    $('.app-logo').text('').removeClass('drag-drop-area');
+    $('.app-logo').empty().removeClass('drag-drop-area');
     $('.app-item-title').removeClass('editable').attr('contenteditable', false);
     $('.app-item-desc').removeClass('editable').attr('contenteditable', false);
     $('.db-path-field').slideUp(200);
@@ -133,6 +128,15 @@ $body.on('click', '.app-box', function(e) {
     const $this = $(this);
     const appID = this.dataset.id;
     if ( appID ) {
+      newAppConfig = appData.find(app => app.id === appID);
+      if ( !newAppConfig ) {
+        ipcRenderer.send("show-error-msg", {
+            type: "error",
+            title: "Unexpected error",
+            message: "No MIRO app configuration was found. If this problem persists, please contact GAMS!"
+        });
+        return;
+      }
       $(`#appLogo_${appID}`).html(`<div class="drag-drop-area-text">${appLogoPlaceholder}</div>`).addClass('drag-drop-area');
       $(`#appTitle_${appID}`).addClass('editable').attr('contenteditable', true);
       const appDescField = $(`#appDesc_${appID}`);
@@ -170,35 +174,64 @@ appsWrapper.on('focusout', '.app-desc', (e) => {
     $target.text(appDescPlaceholder);
   }
 });
+appsWrapper.on('click', '.btn-save-changes', function(){
+  const appID = $(this).data('id');
+  if ( !appID ) {
+    return;
+  }
+  if ( !newAppConfig ) {
+    ipcRenderer.send("show-error-msg", {
+        type: "error",
+        title: "Unexpected error",
+        message: "No MIRO app configuration was found. If this problem persists, please contact GAMS!"
+    });
+    return
+  }
+  const appTitle = $(`#appTitle_${appID}`).text().trim();
+  if ( !appTitle || appTitle === appNamePlaceholder ) {
+    ipcRenderer.send("show-error-msg", {
+        type: "info",
+        title: "No title",
+        message: "Please enter a title for your MIRO app!"
+    });
+    return
+  }
+  newAppConfig.title = appTitle;
+  const appDescription = $(`#appDesc_${appID}`).text().trim();
+  if ( appDescription && appDescription !== appDescPlaceholder ) {
+    newAppConfig.description = appDescription
+  }
+  ipcRenderer.send('update-app', newAppConfig);
+});
 appsWrapper.on('click', '.delete-app-button', function(){
   ipcRenderer.send("delete-app", $(this).data('id'));
 });
 appsWrapper.on('click', '#btAddApp', () => {
     if ( !newAppConfig ) {
-        return ipcRenderer.send("show-error-msg", {id: 'main', options: {
+        return ipcRenderer.send("show-error-msg", {
             type: "error",
             title: "Unexpected error",
             message: "No MIRO app configuration was found. If this problem persists, please contact GAMS!"
-        }});
+        });
     }
     const titleTmp = $('#newAppName').text().trim();
     if ( titleTmp === appNamePlaceholder || titleTmp.length < 1 ) {
-        return ipcRenderer.send("show-error-msg", {id: 'main', options: {
+        return ipcRenderer.send("show-error-msg", {
             type: "info",
             title: "No title",
             message: "Please enter a title for your MIRO app!"
-        }});
+        });
     }
     const appDbPathTmp = $('#newAppDbPathLabel').text().trim();
     if ( appDbPathTmp !== "" && appDbPathTmp !== appDbPathPlaceholder ) {
         if ( fs.existsSync(appDbPathTmp) ) {
             newAppConfig.dbPath = appDbPathTmp;
         } else {
-            return ipcRenderer.send("show-error-msg", {id: 'main', options: {
+            return ipcRenderer.send("show-error-msg", {
                 type: "info",
                 title: "Invalid database path",
                 message: "The database path you selected does not exist."
-            }});
+            });
         }
     }
     let descTmp  = $('#newAppDesc').text().trim();
@@ -210,6 +243,18 @@ appsWrapper.on('click', '#btAddApp', () => {
     ipcRenderer.send('add-app', newAppConfig);
 });
 appsWrapper.on('click', '.cancel-btn', function(){
+  const appID = $(this).data('id');
+  if ( appID ) {
+    const oldAppData = appData.find(app => app.id === appID);
+    let logoPath = "../static/default_logo.png";
+    if ( oldAppData.logoPath ) {
+        logoPath = path.join(dataPath, appID, oldAppData.logoPath);
+    }
+    $(`#appLogo_${appID}`).css('background-image', `url('${logoPath}')`);
+    $(`#appTitle_${appID}`).text(oldAppData.title);
+    $(`#appDesc_${appID}`).text(oldAppData.description);
+    $(`#appDbPathLabel_${appID}`).text(oldAppData.dbPath? oldAppData.dbPath: appDbPathPlaceholder);
+  }
   exitOverlayMode();
 });
 appsWrapper.on('click', '#addAppBox', function(){
@@ -232,7 +277,7 @@ appsWrapper.on('click', '.app-logo', function(){
   if ( !isInEditMode ) {
     return
   }
-  ipcRenderer.send("browse-app", {id: "main", options: {
+  ipcRenderer.send("browse-app", {
       title: "Select MIRO app logo",
       message: "Please select a logo for your MIRO app (jpg/jpeg/png supported)",
       buttonLabel: "Choose",
@@ -240,7 +285,7 @@ appsWrapper.on('click', '.app-logo', function(){
       filters: [
           { name: 'Images', extensions: ['jpg', 'png', 'jpeg'] }
       ]
-  }}, "validateLogo", $(this).data('id'));
+  }, "validateLogo", $(this).data('id'));
 });
 appsWrapper.on('dragenter', '#addAppBox', function(e){
   e.preventDefault();
@@ -313,7 +358,7 @@ appsWrapper.on('drop', '#newAppFiles', function(e){
   ipcRenderer.send("validate-app", filePaths);
 });
 appsWrapper.on('click', '#newAppFiles', () => {
-  ipcRenderer.send("browse-app", {id: "main", options: {
+  ipcRenderer.send("browse-app", {
       title: "Select MIRO app",
       message: "Please select the MIRO app you want to add",
       buttonLabel: "Add app",
@@ -321,25 +366,30 @@ appsWrapper.on('click', '#newAppFiles', () => {
       filters: [
           { name: 'MIRO apps', extensions: ['miroapp'] }
       ]
-  }}, "validateApp");
+  }, "validateApp");
 });
 btEdit.addEventListener('click', (e) => {
   toggleEditMode();
 });
 appsWrapper.on('click', '.app-db-path', function(){
-  ipcRenderer.send("browse-app", {id: "main", options: {
+  ipcRenderer.send("browse-app", {
       title: "Select database path",
       message: "Please select a directory in which the database should be located.",
       buttonLabel: "Select",
       properties: [ "openDirectory", "createDirectory" ]
-  }}, "dbpath-received", $(this).data('id'));
+  }, "dbpath-received", $(this).data('id'));
 });
 ipcRenderer.on('apps-received', (e, apps, appDataPath) => {
+  if ( isInEditMode ) {
+    toggleEditMode();
+  }
   const noAppsNotice = document.getElementById('noAppsDiv');
+  appData = apps;
+  dataPath = appDataPath;
   const appItems = apps.reduce((html, app) => {
     let logoPath = "../static/default_logo.png";
     if ( app.logoPath ) {
-        logoPath = path.join(appDataPath, app.id, app.logoPath);
+        logoPath = path.join(appDataPath, app.id, `${app.logoPath}?v=${new Date().getTime()}`);
     }
     html += `<div class="col-lg-4 col-6 miro-app-item" data-id="${app.id}" 
                data-usetmp="${app.useTmpDir}" data-mode="${app.modesAvailable[0]}" 
@@ -347,10 +397,10 @@ ipcRenderer.on('apps-received', (e, apps, appDataPath) => {
                  <div class="app-box" data-id="${app.id}">
                    <div>
                      <div style="height:200px;">
-                         <p id="appLogo_${app.id}" style="height:180px;display:block;\
+                         <div id="appLogo_${app.id}" style="height:180px;display:block;\
 margin:auto;background-image:url('${logoPath}');background-size:cover;" \
 title="${app.title} logo" data-id="${app.id}" class="app-logo">
-                        </p>
+                        </div>
                      </div>
                      <div>
                          <h3 id="appTitle_${app.id}" class="app-title app-item-title" style="text-align:left;margin-top:15pt;">${app.title}</h3>
@@ -372,8 +422,8 @@ title="${app.title} logo" data-id="${app.id}" class="app-logo">
                     </div>
                  </div>
                  <div style="text-align:right;display:none;" class="edit-bt-group">
-                     <input class="btn btn-secondary cancel-btn" id="btCancelChanges" value="Cancel" type="reset">
-                     <button class="btn btn-secondary confirm-btn" id="btSaveChanges" type="button">Save</button>
+                     <input data-id="${app.id}" class="btn btn-secondary cancel-btn" id="btCancelChanges" value="Cancel" type="reset">
+                     <button class="btn btn-secondary confirm-btn btn-save-changes" data-id="${app.id}" type="button">Save</button>
                  </div>
                  <a class="delete-app-button" data-id="${app.id}" style="display:none;"><i class="fas fa-times"></i></a>
                </div>
@@ -416,11 +466,11 @@ ipcRenderer.on("validated-logopath-received", (e, logoData) => {
   if ( appID == null ) {
     logoEl = $("#newAppLogo");
   } else {
-    logoEl = $(`appLogo_${appID}`);
+    logoEl = $(`#appLogo_${appID}`);
   }
   newAppConfig.logoPath = logoData.path;
   newAppConfig.logoNeedsMove = true;
-  appLogo.style.backgroundImage = `url('${newAppConfig.logoPath}')`;
+  logoEl.css('background-image', `url('${newAppConfig.logoPath}')`);
 });
 ipcRenderer.on("validated-logo-received", (e, logoData) => {
   if ( !newAppConfig ) {
@@ -449,4 +499,11 @@ ipcRenderer.on("app-validated", (e, appConf) => {
     }
     $('#newAppFiles').css('display', 'none');
     $('#newAppLogo').css('display', 'block');
+});
+ipcRenderer.on('activate-edit-mode', (e, openNewAppForm) => {
+  if ( openNewAppForm ) {
+    expandAddAppForm();
+  }else if ( !isInEditMode ) {
+    toggleEditMode();
+  }
 });

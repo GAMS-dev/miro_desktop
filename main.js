@@ -41,21 +41,24 @@ const template = [
     label: 'Edit',
     submenu: [
     {
-      label: 'Add new MIRO application',
+      label: '➕ Add MIRO app',
+      accelerator: 'CmdOrCtrl+A',
       click: async () => {
-          await createAddAppWindow()
+          await activateEditMode(true);
         }
     },
     {
-      label: 'Update app settings',
+      label: '⚙️ Edit apps',
+      accelerator: 'CmdOrCtrl+E',
       click: async () => {
-          await createSettingsWindow()
+          await activateEditMode();
       }
     }]
   },
   // { role: 'viewMenu' }
   {
     label: 'View',
+    accelerator: isMac ? 'Ctrl+Cmd+F' : 'F11',
     submenu: [
       { role: 'togglefullscreen' }
     ]
@@ -100,17 +103,17 @@ let newAppConf
 function validateMIROApp ( filePath ) {
     filePath = filePath.filter( el => el.toLowerCase().endsWith('.miroapp') )
     if ( filePath.length === 0 ) {
-      return showErrorMsg({id: 'main', options: {
+      return showErrorMsg({
             type: "info",
             title: "Invalid MIRO app file",
             message: "The file you selected is not a valid MIRO app!"
-        }});
+        });
     } else if ( filePath.length > 1 ) {
-      return showErrorMsg({id: 'main', options: {
+      return showErrorMsg({
             type: "info",
             title: "Invalid MIRO app file",
             message: "Please drop only a single MIRO app file!"
-        }});
+        });
     }
     try {
       yauzl.open(filePath[0], (err, zipfile) => {
@@ -189,11 +192,11 @@ function validateMIROApp ( filePath ) {
           }
           if ( !newAppConf.id || errMsg ) {
             mainWindow.setProgressBar(-1);
-            showErrorMsg({id: 'main', options: {
+            showErrorMsg({
                 type: "info",
                 title: "Invalid app",
                 message: errMsgTemplate
-            }});
+            });
             return
           }
           if ( !mainWindow ){
@@ -210,11 +213,11 @@ function validateMIROApp ( filePath ) {
       if ( mainWindow ) {
         mainWindow.setProgressBar(-1);
       }
-      showErrorMsg({id: 'main', options: {
+      showErrorMsg({
           type: "error",
           title: "Unexpected error",
           message: `There was a problem reading the MIRO app file. Error message: '${e.message}'`
-      }});
+      });
     }
 }
 
@@ -223,44 +226,50 @@ function validateAppLogo(filePath, id = null){
         .toLowerCase()
         .match(/\.(jpg|jpeg|png)$/) );
     if ( filteredPath.length === 0 ) {
-      showErrorMsg({id: 'main', options: {
+      showErrorMsg({
             type: "info",
             title: "Invalid MIRO app logo",
             message: "The file you selected is not a valid MIRO logo. Only jpg/jpeg and png supported!"
-        }})
+        })
        return
     } else if ( filteredPath.length > 1 ) {
-      showErrorMsg({id: 'main', options: {
+      showErrorMsg({
             type: "info",
             title: "Invalid MIRO app logo",
             message: "Please drop only a single MIRO app logo!"
-        }})
+        })
       return
     }
     const logoSize = fs.statSync(filteredPath[0]).size / 1000000.0;
     if ( logoSize > 10 ) {
-      showErrorMsg({id: 'main', options: {
+      showErrorMsg({
             type: "info",
             title: "Logo too large",
             message: "Logos must not be larger than 10MB!"
-        }})
+        })
         return
     }
-    addAppWindow.webContents.send("validated-logopath-received", 
+    mainWindow.webContents.send("validated-logopath-received", 
       {id: id, path: filteredPath[0]});
 }
 
+function activateEditMode( openNewAppForm = false ){
+  if ( mainWindow ) {
+    mainWindow.send('activate-edit-mode', openNewAppForm);
+  }
+}
+
 const btAddApp = new TouchBarButton({
-  label: '➕ Add app',
+  label: '➕ Add MIRO app',
   backgroundColor: '#F39619',
   click: () => {
-    createAddAppWindow()
+    activateEditMode(true);
   }
 })
 const btManageApps = new TouchBarButton({
-  label: '⚙️ Manage apps',
+  label: '⚙️ Edit apps',
   click: () => {
-    createSettingsWindow()
+    activateEditMode();
   }
 })
 
@@ -302,9 +311,11 @@ function createMainWindow () {
     appLoaded = true;
     if (process.platform == 'win32' && 
       process.argv.length >= 2 && !DEVELOPMENT_MODE ) {
-      createAddAppWindow(process.argv[1]);
+      activateEditMode();
+      validateMIROApp(process.argv[1]);
     }else if( fileToOpen ) {
-      createAddAppWindow(fileToOpen);
+      activateEditMode();
+      validateMIROApp(fileToOpen);
     }
   })
   mainWindow.setTouchBar(mainWindowTouchBar)
@@ -316,90 +327,9 @@ function createMainWindow () {
   })
 }
 
-let settingsWindow
-
-function createSettingsWindow () {
-  if ( settingsWindow != null ) {
-    return
-  }
-  settingsWindow = new BrowserWindow({
-    title: "Settings",
-    width: 1000,
-    height: 600,
-    titleBarStyle: 'hidden',
-    resizable: false,
-    parent: mainWindow,
-    webPreferences: {
-      nodeIntegration: true
-    }
-  })
-  settingsWindow.loadFile(path.join(__dirname, "renderer", "manage.html"));
-  if ( DEVELOPMENT_MODE ) {
-    settingsWindow.webContents.openDevTools();
-  }
-  settingsWindow.once('ready-to-show', () => {
-    settingsWindow.show()
-  })
-  settingsWindow.webContents.on('did-finish-load', () => {
-    settingsWindow.webContents.send('manage-apps-received', appsData.apps)
-  })
-  settingsWindow.on('page-title-updated', (e) => {
-    e.preventDefault();
-  });
-  settingsWindow.on('closed', () => {
-    settingsWindow = null
-  })
-}
-
-let addAppWindow
-
-function createAddAppWindow ( filePath = null ) {
-  if ( addAppWindow != null ) {
-    return
-  }
-  addAppWindow = new BrowserWindow({
-    title: "Add MIRO application",
-    width: 525,
-    height: 800,
-    //resizable:false,
-    titleBarStyle: 'hidden',
-    parent: mainWindow,
-    webPreferences: {
-      nodeIntegration: true
-    }
-  });
-  if ( DEVELOPMENT_MODE ) {
-    addAppWindow.webContents.openDevTools()
-  }
-  addAppWindow.loadFile(path.join(__dirname, "renderer", "add.html"))
-  addAppWindow.once('ready-to-show', () => {
-    addAppWindow.show();
-  })
-  addAppWindow.webContents.on('did-finish-load', () => {
-    if (filePath ) {
-      validateMIROApp([filePath]);
-    }
-  });
-  addAppWindow.on('page-title-updated', (e) => {
-    e.preventDefault();
-  });
-  addAppWindow.on('closed', () => {
-    addAppWindow = null
-  })
-}
 function showErrorMsg (options) {
-  let parentWin
-  if( options.id ){
-    if ( options.id === "add-app" ) {
-      parentWin = addAppWindow
-    } else if ( options.id === 'manage' ) {
-      parentWin = settingsWindow
-    } else {
-      parentWin = mainWindow
-    }
-  }
-  if ( parentWin ){
-    dialog.showMessageBoxSync(parentWin, options.options)
+  if ( mainWindow ){
+    dialog.showMessageBoxSync(mainWindow, options)
   }  
 }
 ipcMain.on('show-error-msg', (e, options) => {
@@ -407,17 +337,7 @@ ipcMain.on('show-error-msg', (e, options) => {
 })
 
 ipcMain.on("browse-app", (e, options, callback, id = null) => {
-  let parentWin
-  if( options.id ){
-    if ( options.id === "add-app" ) {
-      parentWin = addAppWindow
-    } else if ( options.id === 'manage' ) {
-      parentWin = settingsWindow
-    } else {
-      parentWin = mainWindow
-    }
-  }
-  const filePaths = dialog.showOpenDialogSync(parentWin, options.options)
+  const filePaths = dialog.showOpenDialogSync(mainWindow, options.options)
   if ( filePaths ) {
     if( callback === "validateLogo" ) {
       validateAppLogo(filePaths, id);
@@ -448,19 +368,39 @@ ipcMain.on("add-app", (e, app) => {
          delete appConf.logoNeedsMove;
        }
        const updatedApps = appsData.addApp(appConf).apps;
-       mainWindow.send('apps-received', updatedApps, appDataPath)
-       addAppWindow.close();
+       mainWindow.send('apps-received', updatedApps, appDataPath);
      });
   } catch (e) {
      if ( e.message === "DuplicatedId" ) {
-        dialog.showMessageBoxSync(addAppWindow, {
+        dialog.showMessageBoxSync(mainWindow, {
           type: "info",
           title: "Model exists",
           message: "A model with the same name already exists. Please first delete this model before trying again."
         })
         return
      }
-     dialog.showMessageBoxSync(addAppWindow, {
+     dialog.showMessageBoxSync(mainWindow, {
+        type: "error",
+        title: "Unexpected error",
+        message: `An unexpected error occurred. Error message: '${e.message}'`
+      })
+     return
+  }
+});
+ipcMain.on('update-app', (e, app) => {
+  try{
+     let appConf = app;
+     if ( appConf.logoNeedsMove ) {
+      const newLogoPath = path.join("static", 
+        appConf.id + "_logo" + path.extname(appConf.logoPath));
+       fs.copyFileSync(appConf.logoPath, path.join(appDataPath, appConf.id, newLogoPath));
+       appConf.logoPath = newLogoPath;
+       delete appConf.logoNeedsMove;
+     }
+     const updatedApps = appsData.updateApp(appConf).apps;
+     mainWindow.send('apps-received', updatedApps, appDataPath);
+  } catch (e) {
+     dialog.showMessageBoxSync(mainWindow, {
         type: "error",
         title: "Unexpected error",
         message: `An unexpected error occurred. Error message: '${e.message}'`
@@ -472,8 +412,8 @@ ipcMain.on("add-app", (e, app) => {
 ipcMain.on('validate-app', (e, filePath) => {
   validateMIROApp(filePath);
 });
-ipcMain.on('validate-logo', (e, filePath) => {
-  validateAppLogo(filePath);
+ipcMain.on('validate-logo', (e, filePath, id) => {
+  validateAppLogo(filePath, id);
 });
 
 ipcMain.on('delete-app', (e, appId) => {
@@ -492,7 +432,8 @@ app.on('will-finish-launching', () => {
   app.on('open-file', (e, path) => {
     e.preventDefault();
     if ( appLoaded ) {
-      createAddAppWindow(path);
+      activateEditMode();
+      validateMIROApp(filePath);
       return;
     }
     fileToOpen = path;
