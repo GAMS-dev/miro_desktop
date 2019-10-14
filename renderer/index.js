@@ -9,15 +9,15 @@ const btRemoveConfirm = document.getElementById("btRemoveModel");
 const appsWrapper = $("#appsWrapper");
 const btEdit = document.getElementById("btEdit");
 const addAppWrapperHTML = `<div id="addAppBox" class="add-app-box">
-                           <div style="height:200px;">
-                               <p class="add-app-box-logo">
-                              </p>
-                           </div>
-                           <div>
-                             <div class="add-app-box-title"></div>
-                             <div class="add-app-box-desc"></div>
-                           </div>
-                          <a class="btn-add-app" id="addApp"><i class="fas fa-plus-circle"></i></a>
+                             <div style="height:200px;">
+                                 <p class="add-app-box-logo">
+                                </p>
+                             </div>
+                             <div>
+                               <div class="add-app-box-title"></div>
+                               <div class="add-app-box-desc"></div>
+                             </div>
+                            <a class="btn-add-app" id="addApp"><i class="fas fa-plus-circle"></i></a>
                           </div>`;
 const appFilesPlaceholder = "Drop your MIRO app here or click to browse.";
 const appNamePlaceholder = "Define the app title";
