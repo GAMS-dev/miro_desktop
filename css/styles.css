@@ -223,12 +223,10 @@ E
   height:180px; 
   display: block; 
   margin:auto; 
-  padding: 65px;
   text-align: center;
 }
 .add-app-logo {
     padding:55px;
-    display:none;
     background-image:url('../static/default_logo.png');
     background-size: cover;
     text-align: center;

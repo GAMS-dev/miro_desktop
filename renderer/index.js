@@ -83,16 +83,16 @@ function expandAddAppForm(){
   $overlay.data('current', addAppWrapper).fadeIn(300);
   addAppWrapper.html(`<div class="app-box" id="expandedAddAppWrapper">
                         <div style="height:200px;">
-                           <p class="drag-drop-area app-window" id="newAppFiles">
+                           <div class="drag-drop-area app-window" id="newAppFiles">
                               <div class="drag-drop-area-text">
                                  ${appFilesPlaceholder}
                               </div>
-                           </p>
-                            <p class="drag-drop-area add-app-logo app-logo" id="newAppLogo">
+                           </div>
+                            <div class="drag-drop-area add-app-logo app-logo" id="newAppLogo" style="display:none">
                               <div class="drag-drop-area-text">
                                ${appLogoPlaceholder}
-                              </div
-                           </p>
+                              </div>
+                           </div>
                         </div>
                         <div>
                         <h3 id="newAppName" class="app-title editable" style="margin-top:15pt;" contenteditable="true">
@@ -321,7 +321,7 @@ appsWrapper.on('click', '#newAppFiles', () => {
       filters: [
           { name: 'MIRO apps', extensions: ['miroapp'] }
       ]
-  }});
+  }}, "validateApp");
 });
 btEdit.addEventListener('click', (e) => {
   toggleEditMode();
@@ -398,7 +398,7 @@ ipcRenderer.on("dbpath-received", (e, dbpathData) => {
   if ( !dbpathData.path ) {
     return;
   }
-  const appID = logoData.id;
+  const appID = dbpathData.id;
   let dpPathField;
   if ( appID == null ) {
     dpPathField = $("#newAppDbPathLabel");

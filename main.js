@@ -419,12 +419,14 @@ ipcMain.on("browse-app", (e, options, callback, id = null) => {
   }
   const filePaths = dialog.showOpenDialogSync(parentWin, options.options)
   if ( filePaths ) {
-    if( isFunction(callback) ) {
-      e.reply(callback, filePaths);
-    } else if( callback === "validateLogo" ) {
+    if( callback === "validateLogo" ) {
       validateAppLogo(filePaths, id);
-    } else {
+    } else if( callback === "validateApp" ) {
       validateMIROApp(filePaths);
+    } else if ( id ) {
+      e.reply(callback, {id: id, path: filePaths});
+    } else {
+      e.reply(callback, filePaths);
     }
   }
 })
