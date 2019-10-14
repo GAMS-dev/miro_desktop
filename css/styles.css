@@ -60,7 +60,7 @@ input, button, textarea, :focus {
   mask-image: linear-gradient(black 25%, transparent 25%);
   animation: deconstructed1 3s 1;
 }
-E
+
 .deconstructed > div:nth-child(2) {
   -webkit-mask-image: linear-gradient(transparent 25%, black 25%, black 50%, transparent 50%);
   mask-image: linear-gradient(transparent 25%, black 25%, black 50%, transparent 50%);
