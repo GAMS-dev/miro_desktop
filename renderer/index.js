@@ -274,7 +274,7 @@ appsWrapper.on('drop', '.app-logo', function(e){
     ipcRenderer.send("validate-logo", filePath, $this.data('id'));
 });
 appsWrapper.on('click', '.app-logo', function(){
-  if ( !isInEditMode ) {
+  if ( !isInEditMode || !$overlay.is(":visible") ) {
     return
   }
   ipcRenderer.send("browse-app", {
