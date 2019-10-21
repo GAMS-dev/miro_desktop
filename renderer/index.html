@@ -21,7 +21,19 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 <body>
     <div id="overlayScreen" style="display:none;">
     </div>
-    <div id="loading-screen" class="loading-screen">
+    <div id="loadingScreen" class="loading-screen">
+      <div class="lds-ellipsis" style="position:relative;top:50%;left:50%">
+        <div>
+        </div>
+        <div>
+        </div>
+        <div>
+        </div>
+        <div>
+        </div>
+      </div>
+    </div>
+    <div id="animationScreen" class="loading-screen">
         <div class="deconstructed">
           WELCOME TO GAMS MIRO
           <div>WELCOME TO GAMS MIRO</div>
@@ -34,18 +46,18 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
       <div class="container">
         <div class="row">
           <div class="col-md-11 col-sm-11 text-md-center">
-              <h1><p class="header-text">GAMS MIRO Launcher</p></h1>
+              <h1><p class="header-text">MIRO Library</p></h1>
           </div>
-          <div class="col-md-1 col-sm-11 text-md-right" style="padding-top:30px;">
-              <a id="btEdit">Edit</a>
+          <div class="col-md-1 col-sm-11 text-md-left" style="padding-top:30px;">
+              <div id="btEditWrapper"><i id="editIcon" style="width: 18px;text-align: left;margin-right: 7px;" class="fas fa-lock"></i><a id="btEdit">Edit</a></div>
           </div>
         </div>
       </div>
     </header>
     <div class="container">
-        <h3 id="noAppsDiv" class="no-apps">No apps</h3>
         <div id="appsWrapper" class="app-wrapper row">
         </div>
+        <h3 id="noAppsDiv" class="no-apps">No apps</h3>
     </div>
         
    <script type="text/javascript" src="./index.js"></script>

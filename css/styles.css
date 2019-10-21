@@ -8,12 +8,11 @@ body {
 :not(input):not(textarea)::before {
     -webkit-user-select: none;
     user-select: none;
-    cursor: default;
 }
 input, button, textarea, :focus {
     outline: none; // You should add some other style for :focus to help UX/a11y
 }
-#btEdit {
+#btEditWrapper {
   cursor: pointer;
 }
 #btEdit:hover {
@@ -28,11 +27,89 @@ input, button, textarea, :focus {
   background-color:rgba(0,0,0,0.5);
 }
 .loading-screen {
-    display:none;
-    align-items:center;
-    justify-content:center;
-    min-height:100vh;
-    background-color:rgba(0,0,0,0.9);
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 10000;
+}
+.app-loading-screen {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 10;
+}
+#animationScreen {
+  display:none;
+  align-items:center;
+  justify-content:center;
+  min-height:100vh;
+  background-color:rgba(0,0,0,0.9);
+}
+/* loading spinner (https://loading.io/css/)*/
+.lds-ellipsis {
+  display: inline-block;
+  position: relative;
+  width: 64px;
+  height: 64px;
+}
+.lds-ellipsis div {
+  position: absolute;
+  top: 27px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #fff;
+  animation-timing-function: cubic-bezier(0, 1, 1, 0);
+}
+.lds-ellipsis div:nth-child(1) {
+  left: 6px;
+  animation: lds-ellipsis1 0.6s infinite;
+}
+.lds-ellipsis div:nth-child(2) {
+  left: 6px;
+  animation: lds-ellipsis2 0.6s infinite;
+}
+.lds-ellipsis div:nth-child(3) {
+  left: 26px;
+  animation: lds-ellipsis2 0.6s infinite;
+}
+.lds-ellipsis div:nth-child(4) {
+  left: 45px;
+  animation: lds-ellipsis3 0.6s infinite;
+}
+@keyframes lds-ellipsis1 {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes lds-ellipsis3 {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0);
+  }
+}
+@keyframes lds-ellipsis2 {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(19px, 0);
+  }
 }
 .deconstructed {
   position: relative;
@@ -77,12 +154,6 @@ input, button, textarea, :focus {
    -webkit-mask-image: linear-gradient(transparent 75%, black 75%);
   mask-image: linear-gradient(transparent 75%, black 75%);
   animation: deconstructed4 3s 1;
-}
-
-@keyframes wiggle {
-    0% {-webkit-transform:rotate(4deg);}
-    50% {-webkit-transform:rotate(-4deg);}
-    100% {-webkit-transform:rotate(4deg);}
 }
 
 @keyframes deconstructed1 {
@@ -169,7 +240,6 @@ input, button, textarea, :focus {
 }
 .app-box {
     margin: 50px auto;
-    height: auto;
     padding: 45px 30px;
     background: #fff;
     position: relative;
@@ -177,6 +247,9 @@ input, button, textarea, :focus {
     border-radius: 5px;
     background-clip: padding-box;
     box-shadow: 0 2px 4px 0 rgba(0,0,0,0.25), 0 2px 10px 0 rgba(0,0,0,0.20);
+}
+.app-box-fixed-height {
+    height: 500px;
 }
 .manage-box {
     margin: 50px auto;
@@ -203,7 +276,7 @@ input, button, textarea, :focus {
     box-shadow: 0 2px 4px 0 rgba(0,0,0,0.25), 0 2px 10px 0 rgba(0,0,0,0.20);
 }
 .drag-drop-area {
-  background-color: #F90;
+  background-color: #e9ecef;
   border: 1px solid #000;
   padding: 20px;
   outline: #63594a dashed 1px;
@@ -216,8 +289,27 @@ input, button, textarea, :focus {
   background-color: rgba(0,0,0,0.3);
   color: #fff;
 }
+.empty {
+  color: #494d55;
+  background-color: unset;
+}
+.not-empty {
+  background-color: rgba(0,0,0,0.3);
+  color: #fff;
+}
+.drag-drop-area-icon {
+  color:#f90;
+  font-size:30px;
+  margin:10px;
+}
 .drag-drop-area:hover {
   cursor: pointer;
+}
+.drag-drop-area-dragover {
+  /* some parts from https://css-tricks.com/drag-and-drop-file-uploading/ : */
+  outline-offset: -20px;
+  background-color: #d5dce2 !important;
+  transition: outline-offset .15s ease-in-out, background-color .15s linear;
 }
 .app-window {
   height:180px; 
@@ -226,10 +318,28 @@ input, button, textarea, :focus {
   text-align: center;
 }
 .add-app-logo {
-    padding:55px;
-    background-image:url('../static/default_logo.png');
-    background-size: cover;
-    text-align: center;
+  padding: 55px 20px;
+  background-image:url('../static/default_logo.png');
+  background-size: cover;
+  text-align: center;
+}
+.app-logo {
+  height:180px;
+  display:block;
+  margin:auto;
+  padding: 55px 20px;
+  background-size:cover;
+  text-align:center;
+}
+.app-title,
+.app-desc {
+  overflow: hidden;
+  text-align: left;
+}
+.app-desc-fixed {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
 }
 .sub-header {
   -webkit-user-select: none;
@@ -265,24 +375,11 @@ input, button, textarea, :focus {
     color: #494d55 !important;
     border-color: #9a9fa8;
     cursor: pointer;
-    cursor: pointer;
 }
 .cancel-btn:hover {
     background: #f6f5f5;
     color: #494d55 !important;
     border-color: #9a9fa8;
-}
-#loading-screen {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgb(0,0,0);
-    background-color: rgba(0,0,0,0.5);
-    z-index: 10000;
 }
 .editable .fileInput{
   cursor: pointer;
@@ -354,13 +451,6 @@ input, button, textarea, :focus {
     margin-top: 15px;
     margin-bottom:5px;
 }
-.dragover {
-  /* some parts from https://css-tricks.com/drag-and-drop-file-uploading/ : */
-  outline-offset: -20px;
-  background-color: #ffc671 !important;
-  -webkit-transition: outline-offset .15s ease-in-out, background-color .15s linear;
-  transition: outline-offset .15s ease-in-out, background-color .15s linear;
-}
 .dbpathField {
   margin-top: 20px;
 }
@@ -370,6 +460,8 @@ input, button, textarea, :focus {
 }
 .dbpath {
   overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-weight: 200;
   padding: .375rem .5rem;
 }
@@ -379,21 +471,24 @@ input, button, textarea, :focus {
 .browseFiles {
   cursor:pointer;
 }
-.delete-app-button {
+.app-corner-button {
   position:absolute;
   text-align:center;
   font-size: 30px;
   font-weight: bold;
-  animation: wiggle 0.4s infinite;
-  cursor:context-menu;
   background:white;
   border-radius: 22.5px;
   width: 45px;
+}
+.running-app-icon {
+  top: -22.5px;
+  right: -22.5px;
 }
 .delete-app-button {
   top: -22.5px;
   right: -22.5px;
   color:red !important;
+  cursor:pointer;
 }
 .delete-app-button:hover,
 .delete-app-button:focus {
@@ -405,8 +500,7 @@ input, button, textarea, :focus {
 .btn-add-app {
   position:absolute;
   font-size: 100px;
-  font-weight: bold;  
-  position: absolute;
+  font-weight: bold;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
@@ -414,19 +508,15 @@ input, button, textarea, :focus {
 }
 .add-app-box {
     margin: 50px auto;
-    height: auto;
     padding: 45px 30px;
     position: relative;
     outline: #c7c9d0 dashed 2px;
-    /*border: 2px dashed #c7c9d0;
-    border-radius: 5px;*/
     background-clip: padding-box;
 }
 .add-app-box:hover,
 .add-app-box:focus {
     background-color:#ced1da;
     cursor:pointer;
-    webkit-transition: background-color .15s linear;
     transition: background-color .15s linear;
 }
 .index-dragover {
@@ -438,7 +528,6 @@ input, button, textarea, :focus {
 }
 .btn-add-app-dragover {
   font-size: 120px;
-  -webkit-transition: font-size .15s ease-in-out;
   transition: font-size .15s ease-in-out;
 }
 .add-app-box-logo {
@@ -462,4 +551,147 @@ input, button, textarea, :focus {
     background-color:#d9dbe2;
     margin-top: 0;
     margin-bottom: 1rem;
+}
+.reset-db-path {
+    color: #f90;
+}
+.reset-db-path:hover {
+    cursor: pointer;
+    color: #e18d0f;
+    text-decoration:underline;
+}
+.btn-launch-wrapper {
+    text-align: right;
+}
+.btn-launch {
+    background-color: #f90;
+    text-shadow: none;
+    border: none;
+    color: #494d55;
+}
+.btn-launch:hover,
+.btn-launch:active,
+.btn-launch:focus {
+    background-color: #e18d0f !important;
+    color: #494d55 !important;
+}
+.bt-disabled {
+  opacity: 0.8;
+  cursor: not-allowed !important;
+}
+.checkbox-material .checkbox{
+    display: inline-block;
+    line-height: 1;
+}
+
+.checkbox-material .checkbox input {
+    opacity: 0;
+}
+.checkbox-material .checkbox input[disabled] + span {
+    opacity: 0.5;
+}
+.checkbox-material .checkbox span {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    padding: .15em 1.5em .15em .15em;
+    transition: all ease 0.2s;
+    border-radius: 1em;
+    background-color: gray;
+    overflow: hidden;
+}
+.checkbox-material .checkbox span::before {
+    display: block;
+    content: '';
+    width: 1em;
+    height: 1em;
+    border-radius: 1em;
+    background: white;
+}
+
+.checkbox-material .checkbox span::after {
+  position: absolute;
+  display: block;
+  text-transform: uppercase;
+  font-size: .5em;
+  font-style: normal;
+  top: 0;
+  color: #fff;
+  line-height: 1;
+  left: 0;
+  padding-left: 2em;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  height: 1em;
+  bottom: 0;
+  margin: auto;
+}
+
+.checkbox-material .checkbox :checked + span::after {
+  padding-left: 0;
+  padding-right: 2em;
+}
+
+.checkbox-material .checkbox :checked + span {
+    padding-right: .15em;
+    padding-left: 1.5em;
+    background-color: #f90;
+}
+.checkbox-material .shiny-input-container {
+  display: inline-block;
+  zoom: 1;
+  *display: inline;
+  width: 75px;
+  margin: 0;
+}
+.checkbox-material {
+  cursor: pointer;
+  align-items: center;
+}
+/* Settings dialog */
+.settings-header-wrapper {
+  padding-top: 5px;
+  position: sticky;
+  top: 0;
+  z-index: 2000;
+  text-align: left;
+  background: #494d55;
+  color: rgba(255, 255, 255, 0.85);
+  border-bottom: 4px solid #f90;
+  margin-left: auto;
+  margin-right: auto;
+}
+.settings-header {
+  margin-bottom: 0px;
+}
+.settings-title {
+  font-size: 24px;
+  margin-bottom: -15px;
+}
+.settings-border {
+  margin-bottom: 20px;
+}
+.settings-body {
+  margin: 50px auto;
+  padding: 45px 30px 90px 30px;
+  background: #fff;
+  position: relative;
+  border: 1px solid #f0f0f0;
+  border-radius: 5px;
+  background-clip: padding-box;
+  box-shadow: 0 2px 4px 0 rgba(0,0,0,0.25), 0 2px 10px 0 rgba(0,0,0,0.20);
+  position: relative;
+  font-family: montserratregular,'Open Sans',sans-serif;
+  font-size: 14px;
+}
+.settings-label {
+  margin-bottom: 10px;
+}
+.settings-item {
+  margin-bottom:25px;
+}
+.settings-footer {
+  margin-bottom: 50px;
+  float: right;
 }

@@ -4,61 +4,62 @@ const Store = require('electron-store')
 
 const schema = {
   apps: {
-     type: "array",
+     type: 'array',
      items: {
-        type: "object",
+        type: 'object',
         properties: {
            id: {
-            type: "string",
+            type: 'string',
             minLength: 1
            },
            title: {
-            type: "string",
+            type: 'string',
             minLength: 1
           },
           description: {
-            type: "string"
+            type: 'string'
           },
           logoPath: {
-            type: "string",
+            type: 'string',
             minLength: 1
           },
           dbPath: {
-            type: "string",
+            type: 'string',
             minLength: 1
           },
           APIVersion: {
-            type: "integer",
+            type: 'integer',
             minimum: 1
           },
           useTmpDir: {
-            type: "boolean"
+            type: 'boolean'
           },
           MIROVersion: {
-            type: "string",
-            pattern: "^[0-9]+\.[0-9]+\.[0-9]+$"
+            type: 'string',
+            pattern: '^[0-9]+\.[0-9]+\.[0-9]+$'
           },
           modesAvailable: {
-            type: "array",
+            type: 'array',
             uniqueItems: true,
             minItems: 1,
             items: {
-              type: "string",
+              type: 'string',
               enum: [
-                "base",
-                "hcube"
+                'base',
+                'hcube'
               ]
             }
           }
         },
-        required: [ "id", "title", "modesAvailable", "useTmpDir" ]
+        required: [ 'id', 'title', 'modesAvailable', 'useTmpDir' ]
       }
   }
 };
 
 class DataStore extends Store {
-  constructor () {
-    super({schema, encryptionKey: "MIROobfuscatedConfigFile"})
+  constructor (configPath) {
+    super({schema, cwd: configPath, 
+      encryptionKey: 'MIROobfuscatedConfigFile'})
     this.apps = this.get('apps') || []
   }
 
