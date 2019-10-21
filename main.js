@@ -492,7 +492,9 @@ function createMainWindow () {
     }
   });
   mainWindow.setTouchBar(mainWindowTouchBar);
-  app.dock.setMenu(dockMenu);
+  if ( isMac ) {
+    app.dock.setMenu(dockMenu);
+  }
   mainWindow.on('page-title-updated', (e) => {
     e.preventDefault();
   });
