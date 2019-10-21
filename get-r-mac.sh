@@ -19,7 +19,7 @@ sed -i.bak '/^R_HOME_DIR=/d' bin/R
 sed -i.bak 's;/Library/Frameworks/R.framework/Resources;${R_HOME};g' \
     bin/R
 chmod +x bin/R
-rm -f bin/R.bak
+rm -f bin/R.bak SVN-REVISION
 
 # Remove unneccessary files TODO: What else
 rm -r doc tests

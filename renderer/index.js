@@ -276,7 +276,7 @@ appsWrapper.on('click', '.cancel-btn', function(){
   const appID = this.dataset.id;
   if ( appID ) {
     const oldAppData = appData.find(app => app.id === appID);
-    let logoPath = '../static/default_logo.png';
+    let logoPath = path.join(remote.app.getAppPath(), 'static', 'default_logo.png');
     if ( oldAppData.logoPath ) {
         logoPath = path.join(dataPath, appID, oldAppData.logoPath);
     }

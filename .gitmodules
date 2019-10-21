@@ -1,0 +1,3 @@
+[submodule "miro"]
+	path = miro
+	url = git@git.gams.com:fproske/gmswebui.git
