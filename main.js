@@ -894,7 +894,6 @@ app.on('window-all-closed', () => {
        });
        } catch (e) {}
      });
-    processIdMap = {};
     app.quit()
   }
 });
