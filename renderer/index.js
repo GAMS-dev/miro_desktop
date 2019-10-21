@@ -1,6 +1,6 @@
 'use strict'
 
-const { ipcRenderer } = require('electron')
+const { app, ipcRenderer } = require('electron')
 const path = require('path');
 const { pathToFileURL } = require('url');
 window.Bootstrap = require('bootstrap');
@@ -437,7 +437,7 @@ ipcRenderer.on('apps-received', (e, apps, appDataPath, startup = false) => {
   appData = apps;
   dataPath = appDataPath;
   const appItems = apps.reduce((html, app) => {
-    let logoPath = './static/default_logo.png';
+    let logoPath = path.join(app.getAppPath(), 'static', 'default_logo.png');
     if ( app.logoPath ) {
         logoPath = path.join(appDataPath, app.id, app.logoPath);
     }
