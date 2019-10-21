@@ -30,7 +30,7 @@ const miroWorkspaceDir = path.join(app.getPath('home'), '.miro');
   }
 })();
 let errMsg;
-const appRootDir = (DEVELOPMENT_MODE || !isMac) ? 
+const appRootDir = DEVELOPMENT_MODE ? 
    app.getAppPath(): path.dirname(process.execPath);
 const configData = (() => { try { 
   return new ConfigManager(appRootDir, miroWorkspaceDir);
