@@ -1,6 +1,6 @@
 'use strict'
 
-const { app, ipcRenderer } = require('electron')
+const { remote, ipcRenderer } = require('electron')
 const path = require('path');
 const { pathToFileURL } = require('url');
 window.Bootstrap = require('bootstrap');
@@ -437,7 +437,7 @@ ipcRenderer.on('apps-received', (e, apps, appDataPath, startup = false) => {
   appData = apps;
   dataPath = appDataPath;
   const appItems = apps.reduce((html, app) => {
-    let logoPath = path.join(app.getAppPath(), 'static', 'default_logo.png');
+    let logoPath = path.join(remote.app.getAppPath(), 'static', 'default_logo.png');
     if ( app.logoPath ) {
         logoPath = path.join(appDataPath, app.id, app.logoPath);
     }
@@ -463,7 +463,7 @@ ipcRenderer.on('apps-received', (e, apps, appDataPath, startup = false) => {
 title="${app.title} logo" data-id="${app.id}" class="app-logo">
                         </div>
                      </div>
-                     <div>
+                     <div style="height:150px;">
                          <h3 id="appTitle_${app.id}" class="app-title app-item-title" style="margin-top:15pt;">${app.title}</h3>
                          <p id="appDesc_${app.id}" class="app-desc app-desc-fixed app-item-desc">${app.description}</p>
                          <div class="custom-file db-path-field" style="display:none;">
