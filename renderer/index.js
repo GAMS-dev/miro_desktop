@@ -437,7 +437,7 @@ ipcRenderer.on('apps-received', (e, apps, appDataPath, startup = false) => {
   appData = apps;
   dataPath = appDataPath;
   const appItems = apps.reduce((html, app) => {
-    let logoPath = '../static/default_logo.png';
+    let logoPath = './static/default_logo.png';
     if ( app.logoPath ) {
         logoPath = path.join(appDataPath, app.id, app.logoPath);
     }
