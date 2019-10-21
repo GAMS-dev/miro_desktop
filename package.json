@@ -8,8 +8,8 @@
     "postinstall": "electron-builder install-app-deps",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "electron .",
-    "pack": "electron-builder --dir",
-    "dist": "electron-builder"
+    "pack": "node ./build/scripts/pre-pack.js && electron-builder --dir",
+    "dist": "node ./build/scripts/pre-pack.js && electron-builder"
   },
   "build": {
     "appId": "com.gams.miro",
