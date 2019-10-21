@@ -42,6 +42,9 @@ const configData = (() => { try {
 if ( ! errMsg ) {
   (async _ => {
     const logPath = await configData.get('logpath');
+    if ( !fs.existsSync(logPath)) {
+      fs.mkdirSync(logPath, {recursive: true});
+    }
     log.transports.file.file = path.join(logPath, 
       'launcher.log');
     log.info(`Log path: ${logPath}.`)
