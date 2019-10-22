@@ -1,7 +1,7 @@
 {
   "name": "com.gams.miro",
   "version": "0.0.1",
-  "description": "GAMS MIRO Launcher",
+  "description": "GAMS MIRO is an interactive web application for GAMS models. It is designed for people working with GAMS looking for an easy and automated way to deploy their models. Extensive visualization options support you to make decisions based on optimization.",
   "homepage": "https://gams.com/miro",
   "main": "main.js",
   "scripts": {
@@ -58,6 +58,9 @@
       ]
     },
     "win": {
+      "extraFiles": [
+        "r/**"
+      ],
       "target": "nsis",
       "icon": "./build/icon.ico"
     },
@@ -69,6 +72,13 @@
       "license": "../miro/LICENSE",
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true
+    },
+    "linux": {
+      "extraFiles": [
+        "r/**"
+      ],
+      "target": "AppImage",
+      "category": "Science"
     }
   },
   "repository": {
