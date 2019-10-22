@@ -65,7 +65,7 @@
       "perMachine": false,
       "allowToChangeInstallationDirectory": true,
       "installerSidebar": "./build/installerSidebar.bmp",
-      "license": "license.txt",
+      "license": "../miro/LICENSE",
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true
     }
