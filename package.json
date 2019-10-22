@@ -16,7 +16,6 @@
     "productName": "GAMS MIRO",
     "afterSign": "build/scripts/notarize.js",
     "extraResources": [
-    "extraResources": [
       "miro/conf/*",
       "miro/global.R",
       "miro/app.R",
