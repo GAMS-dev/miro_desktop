@@ -483,11 +483,11 @@ function createMainWindow () {
       process.argv.length >= 2 && !DEVELOPMENT_MODE ) {
       log.debug(`MIRO launcher opened by double clicking MIRO app at path: ${process.argv[1]}.`);
       activateEditMode();
-      validateMIROApp(process.argv[1]);
+      validateMIROApp([process.argv[1]]);
     }else if( fileToOpen ) {
       activateEditMode();
       log.debug(`MIRO launcher opened by double clicking MIRO app at path: ${fileToOpen}.`);
-      validateMIROApp(fileToOpen);
+      validateMIROApp([fileToOpen]);
     }
   });
   mainWindow.setTouchBar(mainWindowTouchBar);
