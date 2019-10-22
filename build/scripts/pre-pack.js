@@ -33,7 +33,7 @@ if ( fs.existsSync('./r') ) {
         await subproc;
     } catch (e) {
         console.log(`Problems installing R packages. Error message: ${e.message}`);
-        //rimraf.sync('./r');
+        rimraf.sync('./r');
         process.exit(1);
     }
 })();

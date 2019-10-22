@@ -14,6 +14,7 @@
   "build": {
     "appId": "com.gams.miro",
     "productName": "GAMS MIRO",
+    "afterPack": "build/scripts/after-pack.js",
     "afterSign": "build/scripts/notarize.js",
     "extraResources": [
       "miro/conf/*",

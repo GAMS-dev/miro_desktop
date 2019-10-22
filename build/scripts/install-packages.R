@@ -96,6 +96,8 @@ packageVersionMap <- list(
     c('future', '1.14.0'),
     'rhandsontable')
 
+isLinux <- grepl("linux-gnu", R.version$os)
+
 if(!'devtools' %in% installed.packages()[, "Package"]) {
     install.packages('devtools', repos = CRANMirror, 
         dependencies = c("Depends", "Imports", "LinkingTo"))
@@ -118,13 +120,27 @@ installPackage <- function(package, attempt = 0) {
         stop(sprintf('Problems installing package: %s', package[0]))
     }
     tryCatch({
-        withr::with_libpaths(RLibPath, install_version(package[1], package[2], quick = TRUE, 
-            local = TRUE, out = './dist/dump', 
-            dependencies = FALSE, repos = CRANMirror))
+        if ( isLinux ) {
+            downloadPackage(package)
+        } else {
+            withr::with_libpaths(RLibPath, install_version(package[1], package[2], quick = TRUE, 
+                local = TRUE, out = './dist/dump', 
+                dependencies = FALSE, repos = CRANMirror))
+        }
     }, error = function(e){
         print(conditionMessage(e))
         installPackage(package, attempt + 1)
      })
+}
+downloadPackage <- function(package) {
+    packageFileNameTmp <- remote::download_version(package[1], package[2],
+        repos = CRANMirror)
+    packageFileName <- file.path('.', 'r', 'library_src', 
+        paste0(package[1], '_', package[2], '.tar.gz'))
+    if (!file.rename(packageFileNameTmp, packageFileName)) {
+        stop(sprintf("Problems renaming package: '%s' from '%s' to '%s'.",
+            package[1], packageFileNameTmp, packageFileName))
+    }
 }
 for(package in packageVersionMap){
     if ( length(package) == 1L ) {
@@ -146,7 +162,7 @@ lapply(list.dirs(RLibPath, full.names = TRUE, recursive = FALSE),
 })
 # replace directories with periods in their names with symlinks 
 # as directories with periods must be frameworks for codesign to not nag
-if (Sys.info()['sysname'] == 'Darwin') {
+if (Sys.info()['sysname'] == 'Darwin' || grepl("^darwin", R.version$os)) {
     dirsWithPeriod <- list.dirs(file.path('.', 'r'))
     dirsWithPeriod <- dirsWithPeriod[grepl('.*\\..*', basename(dirsWithPeriod), perl = TRUE)]
     dirsWithPeriod <- dirsWithPeriod[dirsWithPeriod != '.']
