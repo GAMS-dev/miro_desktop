@@ -15,22 +15,6 @@
     "appId": "com.gams.miro",
     "productName": "GAMS MIRO",
     "afterSign": "build/scripts/notarize.js",
-    "extraFiles": [
-      "r/**"
-    ],
-    "extraResources": [
-      "miro/conf/*",
-      "miro/global.R",
-      "miro/app.R",
-      "miro/LICENSE",
-      "miro/modules/**",
-      "miro/R/**",
-      "miro/www/**",
-      "miro/resources/**",
-      "miro/tools/**",
-      "miro/UI/**",
-      "miro/start-shiny.R"
-    ],
     "files": [
       "**/*",
       "!r/**",
@@ -52,6 +36,19 @@
       "target": [
         "dmg"
       ]
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "./build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "installerSidebar": "./build/installerSidebar.bmp",
+      "license": "license.txt",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
     }
   },
   "repository": {
