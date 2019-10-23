@@ -31,7 +31,10 @@ const appDescPlaceholder = 'Short model description (optional)';
 const appDbPathPlaceholder = 'Custom database location (optional)';
 const appDbPathReset = 'Reset to default';
 const appLogoPlaceholder = 'Different app logo? Drop your MIRO app logo here or click to browse.';
-  
+const editHelper = `<div class="edit-info" style="display:none;">
+                        <p class="edit-info-text"><img class="edit-info-img img-fluid" \ 
+                        src="./arrow.png" width="45px" align="middle" alt="arrow">Click on app to edit</p>
+                    </div>`;  
 let appData
 let dataPath
 let newAppConfig
@@ -50,10 +53,13 @@ function toggleEditMode(){
       noAppsNotice.fadeIn(200);
     }
     btEdit.textContent = 'Edit';
-    $('.delete-app-button').hide();
+    $('.edit-info').fadeOut(200);
+    $('.delete-app-button').fadeOut(200);
     $('#addAppWrapper').fadeOut(200);
     $('.edit-bt-group').hide();
     $('.db-path-field').hide();
+    $('.btn-launch').fadeIn(200);
+    $('.launch-app-box').removeClass('app-box-hover');
     isInEditMode = false;
   } else {
     if ( !appData.length ) {
@@ -61,8 +67,11 @@ function toggleEditMode(){
     }
     btEdit.textContent = 'Done';
     newAppConfig  = null;
-    $('.delete-app-button').show();
+    $('.edit-info').fadeIn(200);
+    $('.delete-app-button').fadeIn(200);
     $('#addAppWrapper').fadeIn(200);
+    $('.btn-launch').fadeOut(200);
+    $('.launch-app-box').addClass('app-box-hover');
     isInEditMode = true;
   }
   $('#editIcon').toggleClass('fa-lock fa-lock-open');
@@ -80,6 +89,7 @@ function exitOverlayMode(){
     $('.launch-app-box').addClass('app-box-fixed-height');
     $overlay.hide();
     $overlay.data('current').css('z-index', 1);
+    $('.launch-app-box').addClass('app-box-hover');
   }
 }
 function expandAddAppForm(){
@@ -168,6 +178,7 @@ $body.on('click', '.app-box', function(e) {
     $('.edit-bt-group').slideDown(200);
     $this.css( 'z-index', 11 );
     $overlay.data('current', $this).fadeIn(300);
+    $('.launch-app-box').removeClass('app-box-hover');
 });
 appsWrapper.on('focus', '.app-title', (e) => {
   const $target = $(e.target);
@@ -446,7 +457,7 @@ ipcRenderer.on('apps-received', (e, apps, appDataPath, startup = false) => {
                data-apiver="${app.APIVersion}" data-mirover="${app.MIROVersion}">
                  <div id="appBox_${app.id}" class="app-box launch-app-box app-box-fixed-height" data-id="${app.id}">
                    <div id="appLoadingScreen_${app.id}" class="app-loading-screen" style="display:none">
-                    <div class="lds-ellipsis" style="position:relative;top:50%;left:50%">
+                    <div class="lds-ellipsis">
                       <div>
                       </div>
                       <div>
@@ -463,7 +474,7 @@ ipcRenderer.on('apps-received', (e, apps, appDataPath, startup = false) => {
 title="${app.title} logo" data-id="${app.id}" class="app-logo">
                         </div>
                      </div>
-                     <div style="height:150px;">
+                     <div style="height:125px;">
                          <h3 id="appTitle_${app.id}" class="app-title app-item-title" style="margin-top:15pt;">${app.title}</h3>
                          <p id="appDesc_${app.id}" class="app-desc app-desc-fixed app-item-desc">${app.description}</p>
                          <div class="custom-file db-path-field" style="display:none;">
@@ -506,7 +517,7 @@ title="${app.title} logo" data-id="${app.id}" class="app-logo">
                                 </div>`;
   loadingScreen.hide();
   if (appItems.length !== 0) {
-        appsWrapper.html(appItems + addAppWrapperHTMLFull);
+        appsWrapper.html(appItems + addAppWrapperHTMLFull + editHelper);
         noAppsNotice.hide();
     } else {
         if ( startup ) {
