@@ -2,6 +2,7 @@ html,
 body {
     height: 100%;
     background-color: #e2e3e8;
+    font-family: "montserratlight",sans-serif;
 }
 :not(input):not(textarea),
 :not(input):not(textarea)::after,
@@ -47,6 +48,9 @@ input, button, textarea, :focus {
     bottom: 0;
     background-color: rgba(0,0,0,0.5);
     z-index: 10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 #animationScreen {
   display:none;
@@ -239,7 +243,7 @@ input, button, textarea, :focus {
     font-size: 14px;
 }
 .app-box {
-    margin: 50px auto;
+    margin: 65px auto;
     padding: 45px 30px;
     background: #fff;
     position: relative;
@@ -250,6 +254,12 @@ input, button, textarea, :focus {
 }
 .app-box-fixed-height {
     height: 500px;
+}
+.app-box-hover:hover {
+    cursor: text;
+    background-color: #fffefc;
+    box-shadow: 0 2px 4px 0 #ff99005c, 0 2px 10px 0 #ff990040;
+    transition: box-shadow .15s ease-in-out, background-color .15s linear;
 }
 .manage-box {
     margin: 50px auto;
@@ -344,16 +354,23 @@ input, button, textarea, :focus {
 .sub-header {
   -webkit-user-select: none;
   -webkit-app-region: drag;
-  padding-top:10px;
   position: sticky;
   top:0;
   z-index:2000;
   text-align:center;
   background: #494d55;
   color: rgba(255, 255, 255, 0.85);
-  border-bottom: 7px solid #f90;
+  border-bottom: 4px solid #f90;
   margin-left: auto;
   margin-right: auto;
+}
+.header-text {
+  margin-bottom: 0;
+}
+.header-items {
+  align-items: center;
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 .btn {
     font-family: Arial;
@@ -489,6 +506,7 @@ input, button, textarea, :focus {
   right: -22.5px;
   color:red !important;
   cursor:pointer;
+  z-index: 1;
 }
 .delete-app-button:hover,
 .delete-app-button:focus {
@@ -507,7 +525,7 @@ input, button, textarea, :focus {
   color:#b4b6bd !important;
 }
 .add-app-box {
-    margin: 50px auto;
+    margin: 65px auto;
     padding: 45px 30px;
     position: relative;
     outline: #c7c9d0 dashed 2px;
@@ -517,14 +535,16 @@ input, button, textarea, :focus {
 .add-app-box:focus {
     background-color:#ced1da;
     cursor:pointer;
-    transition: background-color .15s linear;
+    box-shadow: 0 2px 4px 0 #ff99005c, 0 2px 10px 0 #ff990040;
+    transition: background-color .15s linear, box-shadow .15s linear;
 }
 .index-dragover {
   /* some parts from https://css-tricks.com/drag-and-drop-file-uploading/ : */
   outline-offset: -20px;
   outline-color: #b1b3b9;
   background-color: #ced1da;
-  transition: outline-offset .15s ease-in-out, background-color .15s linear;
+  box-shadow: 0 2px 4px 0 #ff99005c, 0 2px 10px 0 #ff990040;
+  transition: outline-offset .15s ease-in-out, box-shadow .15s ease-in-out, background-color .15s linear;
 }
 .btn-add-app-dragover {
   font-size: 120px;
@@ -562,18 +582,28 @@ input, button, textarea, :focus {
 }
 .btn-launch-wrapper {
     text-align: right;
+    height:60px;
 }
 .btn-launch {
     background-color: #f90;
     text-shadow: none;
     border: none;
     color: #494d55;
+    width: 100%;
+    height: 100%;
+    font-size: large;
+    position: absolute;
+    bottom: 0;
+    left: 0;
 }
 .btn-launch:hover,
 .btn-launch:active,
 .btn-launch:focus {
     background-color: #e18d0f !important;
     color: #494d55 !important;
+}
+.dropdown-menu.show {
+  right: 0px;
 }
 .bt-disabled {
   opacity: 0.8;
@@ -694,4 +724,17 @@ input, button, textarea, :focus {
 .settings-footer {
   margin-bottom: 50px;
   float: right;
+}
+.edit-info{
+  position:absolute;
+  top:-5px;
+  left:12%;
+}
+.edit-info-text {
+  font-family: Apple Chancery, cursive;
+  font-size: 20px;
+}
+.edit-info-img {
+  margin-top: 30px;
+  margin-right:5px;
 }

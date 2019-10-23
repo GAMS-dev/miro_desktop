@@ -63,6 +63,7 @@
     "nsis": {
       "oneClick": false,
       "perMachine": false,
+      "allowElevation": true,
       "allowToChangeInstallationDirectory": true,
       "installerSidebar": "./build/installerSidebar.bmp",
       "license": "../miro/LICENSE",
