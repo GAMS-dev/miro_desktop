@@ -1,6 +1,6 @@
 'use strict'
 
-const { remote, ipcRenderer } = require('electron')
+const { remote, ipcRenderer, shell } = require('electron')
 const path = require('path');
 const { pathToFileURL } = require('url');
 window.Bootstrap = require('bootstrap');
@@ -528,6 +528,9 @@ title="${app.title} logo" data-id="${app.id}" class="app-logo">
        noAppsNotice.show();
     }
 });
+$('#downloadR').click((e) => {
+   shell.openExternal('https://gams.com/miro/installation.html');
+});
 
 ipcRenderer.on('dbpath-received', (e, dbpathData) => {
   if ( !dbpathData.path ) {
@@ -619,4 +622,7 @@ ipcRenderer.on('hide-loading-screen', (e, appID, success = false) => {
       btEditWrapper.removeClass('bt-disabled');
     }
   }
+});
+ipcRenderer.on('invalid-r', (e) => {
+  $('#rNotFoundModal').modal('show');
 });

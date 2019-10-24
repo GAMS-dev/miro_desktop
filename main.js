@@ -43,6 +43,7 @@ if ( ! errMsg ) {
   (async _ => {
     const logPath = await configData.get('logpath');
     if ( !fs.existsSync(logPath)) {
+      console.log('aaa')
       fs.mkdirSync(logPath, {recursive: true});
     }
     log.transports.file.file = path.join(logPath, 
@@ -524,11 +525,7 @@ async function createMIROAppWindow(appData) {
   if ( !rpath ) {
     log.info('No R path set.');
     mainWindow.send('hide-loading-screen', appData.id);
-    showErrorMsg({
-      type: 'warning',
-      title: 'R not found',
-      message: 'No valid R installation could be found! Please make sure to install R and/or specify the path to your R installation in the settings dialog.'
-    });
+    mainWindow.send('invalid-r');
     return;
   }
 

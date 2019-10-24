@@ -11,6 +11,7 @@ const { promisify } = require('util');
 const readdir = promisify(fs.readdir);
 
 const minGams = '29.0';
+const minR = '3.6';
 const gamsDirNameRegex = /^(GAMS)?(\d+\.\d+)$/;
 
 const schema = {
@@ -157,24 +158,47 @@ class ConfigManager extends Store {
     if ( this.rpathDefault ) {
       return this.rpathDefault;
     }
-    if ( process.platform === 'win32' || process.platform == 'darwin' ) {
+    if ( process.platform === 'win32' ) {
       this.rpathDefault = path.join(this.appRootDir, 'r');
     } 
     try {
       if ( !this.rpathDefault || 
         !fs.existsSync(this.rpathDefault) ) {
-        let rpathTmp = await which('Rscript', {nothrow: true});
-        const { stdout } = await execa(rpathTmp, ['-e', 
-          'print(R.home())']);
-        rpathTmp = stdout.match(/^\[1\] "([^"]*)"$/);
-        if ( rpathTmp ) {
-          this.rpathDefault = rpathTmp[1];
+        if ( process.platform === 'darwin' ) {
+          const rPathRoot = path.join('/', 'Library', 'Frameworks',
+               'R.framework', 'Versions')
+          const rVersionsAvailable = fs.readdirSync(
+            rPathRoot).filter(el => {
+                try {
+                  return this.vComp(el, minR);
+                } catch (e) {
+                  return false
+                }            
+          });
+          if ( rVersionsAvailable ) {
+            this.rpathDefault = path.join(rPathRoot, 
+              rVersionsAvailable[0], 'Resources');
+          }
+        } else {
+          let rpathTmp = await which('Rscript', {nothrow: true});
+          console.log(rpathTmp);
+          let { stdout } = await execa(rpathTmp, ['-e', 
+            'print(R.home())\nprint(paste0(R.Version()$major, \
+  ".", R.Version()$minor))']);
+          stdout = stdout.split('\n');
+          rpathTmp = stdout[0].match(/^\[1\] "([^"]*)"$/);
+          const rVersion = stdout[1].match(/^\[1\] "([^"]*)"$/);
+          if ( rpathTmp && rVersion &&
+            this.vComp(rVersion[1], minR) ) {
+            this.rpathDefault = rpathTmp[1];
+          }
         }
       }
     } catch(e) { 
       console.log(e)
       this.rpathDefault = '';
     }
+    console.log(this.rpathDefault)
     return this.rpathDefault;
   }
 
@@ -190,17 +214,21 @@ class ConfigManager extends Store {
     };
 
     if ( process.platform === 'darwin' ) {
-      const latestGamsInstalled = fs.readdirSync('/Applications', { withFileTypes: true })
+      const latestGamsInstalled = fs.readdirSync('/Applications', 
+        { withFileTypes: true })
         .filter(el => el.isDirectory())
         .map(el => el.name.slice(4))
         .filter(el => gamsDirNameRegex.test(el))
         .reduce(vCompReducer);
 
-      if ( latestGamsInstalled && this.vComp(latestGamsInstalled, minGams) ) {
-        this.gamspathDefault = path.join('/Applications', `GAMS${latestGamsInstalled}`,
+      if ( latestGamsInstalled && 
+        this.vComp(latestGamsInstalled, minGams) ) {
+        this.gamspathDefault = path.join('/Applications', 
+          `GAMS${latestGamsInstalled}`,
           'GAMS Terminal.app', 'Contents', 'MacOS');
       } else if ( latestGamsInstalled ) {
-        console.log(`Latest installed GAMS version found: ${latestGamsInstalled}`);
+        console.log(`Latest installed GAMS version found: \
+${latestGamsInstalled}`);
       }
     } else {
       this.gamspathDefault = path.dirname(await which('gams', 

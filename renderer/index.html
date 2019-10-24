@@ -59,7 +59,24 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
         </div>
         <h3 id="noAppsDiv" class="no-apps">No apps</h3>
     </div>
-        
+    <div class="modal fade" id="rNotFoundModal" tabindex="-1" role="dialog" aria-labelledby="rNotFoundModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="rNotFoundModalLabel">R not found</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            In order to use MIRO, you have to have R installed. You can download R from <a href="#" id="downloadR">here</a>.
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
    <script type="text/javascript" src="./index.js"></script>
    <script type="text/javascript" src="../node_modules/@fortawesome/fontawesome-free/js/all.js"></script>
 </body>

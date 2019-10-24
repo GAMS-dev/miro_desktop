@@ -3,37 +3,45 @@ const fs    = require('fs');
 const execa = require('execa');
 var rimraf = require("rimraf");
 
-if ( fs.existsSync('./r') ) {
-    process.exit(0);
-} else {
+let rExists = false;
+if ( !fs.existsSync('./r') ) {
     fs.mkdirSync('./r');
+} else {
+    rExists = true;
 }
-(async () => {
-    try {
-        if ( process.platform === 'win32' ) {
-            const subproc = execa('./get-r-win.sh', {shell: true});
-            subproc.stderr.pipe(process.stderr);
-            subproc.stdout.pipe(process.stderr);
-            await subproc;
-        } else if ( process.platform === 'darwin' ) {
-            const subproc =  execa('./get-r-mac.sh', {shell: '/bin/bash'});
-            subproc.stderr.pipe(process.stderr);
-            subproc.stdout.pipe(process.stderr);
-            await subproc;
-        }
-    } catch (e) {
-        console.log(`Problems installing R. Error message: ${e.message}`);
-        rimraf.sync('./r');
+const tryInstallRPackages = async (attempt = 0) => {
+    if ( attempt === 3 ) {
         process.exit(1);
     }
     try {
-        const subproc =  execa('Rscript', [ './build/scripts/install-packages.R' ]);
+        let rPath = 'Rscript';
+        if ( process.platform === 'win32' ) {
+            rPath = './r/bin/Rscript';
+        }
+        const subproc =  execa(rPath, [ './build/scripts/install-packages.R' ],
+            { env: { 'R_HOME_DIR': '/Users/fproske/Documents/products/miro_launcher/r'}});
         subproc.stderr.pipe(process.stderr);
         subproc.stdout.pipe(process.stderr);
         await subproc;
     } catch (e) {
         console.log(`Problems installing R packages. Error message: ${e.message}`);
-        rimraf.sync('./r');
-        process.exit(1);
+        tryInstallRPackages(attempt + 1)
     }
+}
+(async () => {
+    if ( !rExists ) {
+        try {
+            if ( process.platform === 'win32' ) {
+                const subproc = execa('./get-r-win.sh', {shell: true});
+                subproc.stderr.pipe(process.stderr);
+                subproc.stdout.pipe(process.stderr);
+                await subproc;
+            }
+        } catch (e) {
+            console.log(`Problems installing R. Error message: ${e.message}`);
+            rimraf.sync('./r');
+            process.exit(1);
+        }
+    }
+    tryInstallRPackages()
 })();

@@ -1,5 +1,5 @@
 'use strict'
-const {app, Menu } = require('electron');
+const {app, Menu, shell } = require('electron');
 const isMac = process.platform === 'darwin';
 
 module.exports = function(activateEditCallback, 
@@ -89,7 +89,6 @@ module.exports = function(activateEditCallback,
         {
           label: 'Documentation',
           click: async () => {
-            const { shell } = require('electron')
             await shell.openExternal('https://gams.com/miro')
           }
         }
