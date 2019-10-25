@@ -364,8 +364,17 @@ input, button, textarea, :focus {
   margin-left: auto;
   margin-right: auto;
 }
+.header-text-wrapper {
+  display: inline-block;
+  text-align: center;
+  margin: auto;
+}
 .header-text {
   margin-bottom: 0;
+}
+.btn-edit-wrapper {
+  display: inline-block;
+  width: 70px;
 }
 .header-items {
   align-items: center;
@@ -481,6 +490,9 @@ input, button, textarea, :focus {
   white-space: nowrap;
   font-weight: 200;
   padding: .375rem .5rem;
+}
+.custom-file {
+  width: unset;
 }
 .custom-file-label::after {
   padding: .375rem .5rem;
@@ -704,7 +716,7 @@ input, button, textarea, :focus {
 }
 .settings-body {
   margin: 50px auto;
-  padding: 45px 30px 90px 30px;
+  padding: 45px 10px 90px 10px;
   background: #fff;
   position: relative;
   border: 1px solid #f0f0f0;
@@ -715,15 +727,39 @@ input, button, textarea, :focus {
   font-family: montserratregular,'Open Sans',sans-serif;
   font-size: 14px;
 }
+.setting-wrapper {
+  align-items: center;
+  display: flex;
+  padding: 15px 20px;
+  border-bottom: 1px solid #c5c5c5;
+  position: relative;
+}
+.first-setting {
+  border-top: 1px solid #c5c5c5;
+}
 .settings-label {
-  margin-bottom: 10px;
+  margin-bottom: 0px;
 }
 .settings-item {
   margin-bottom:25px;
+  width: 70%;
+  position: absolute;
+  right: 0;
+}
+.settings-checkbox {
+  text-align: right;
 }
 .settings-footer {
-  margin-bottom: 50px;
+  margin-top: 45px;
   float: right;
+}
+.btn-edit-icon {
+  width: 18px;
+  display: inline-block;
+  margin-right: 7px;
+}
+.btn-edit-text {
+  display: inline-block;
 }
 .edit-info{
   position:absolute;

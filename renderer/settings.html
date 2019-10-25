@@ -13,41 +13,48 @@
       <div class="container">
         <div class="row">
           <div class="col-md-11 col-sm-11 text-md-center">
-              <h1><p class="header-text">Settings</p></h1>
+              <h3 class="header-text"><p class="header-text">Settings</p></h3>
           </div>
         </div>
       </div>
     </header>
     <div class="container">
        <div class="settings-body">
+         <div class="setting-wrapper first-setting">
            <p class="settings-label">MIRO app path</p>
            <div class="custom-file db-path-field settings-item">
              <div id="btPathSelect_configpath" class="custom-file-input browseFiles app-db-path"></div>
              <label class="custom-file-label dbpath" for="btPathSelect_configpath">Select MIRO app path</label>
              <small class="form-text btn-reset" style="display:none" data-key="configpath">Reset to default</small>
            </div>
+         </div>
+         <div class="setting-wrapper">
            <p class="settings-label">GAMS path</p>
            <div class="custom-file db-path-field settings-item">
              <div id="btPathSelect_gamspath" class="custom-file-input browseFiles app-db-path"></div>
              <label class="custom-file-label dbpath" for="btPathSelect_gamspath">Select GAMS path</label>
              <small class="form-text btn-reset" style="display:none" data-key="gamspath">Reset to default</small>
            </div>
+         </div>
+         <div class="setting-wrapper">
            <p class="settings-label">Log path</p>
            <div class="custom-file db-path-field settings-item">
              <div id="btPathSelect_logpath" class="custom-file-input browseFiles app-db-path"></div>
              <label class="custom-file-label dbpath" for="btPathSelect_logpath">Select log file path</label>
              <small class="form-text btn-reset" style="display:none" data-key="logpath">Reset to default</small>
            </div>
-           <div id="rpathWrapper">
-             <p class="settings-label">R path</p>
-             <div class="custom-file db-path-field settings-item" >
-               <div id="btPathSelect_rpath" class="custom-file-input browseFiles app-db-path"></div>
-               <label class="custom-file-label dbpath" for="btPathSelect_rpath">Select R path</label>
-               <small class="form-text btn-reset" style="display:none" data-key="rpath">Reset to default</small>
-             </div>
+         </div>
+         <div id="rpathWrapper" class="setting-wrapper">
+           <p class="settings-label">R path</p>
+           <div class="custom-file db-path-field settings-item" >
+             <div id="btPathSelect_rpath" class="custom-file-input browseFiles app-db-path"></div>
+             <label class="custom-file-label dbpath" for="btPathSelect_rpath">Select R path</label>
+             <small class="form-text btn-reset" style="display:none" data-key="rpath">Reset to default</small>
            </div>
+         </div>
+         <div class="setting-wrapper">
            <p class="settings-label" style="margin:0">Launch MIRO apps in your browser?</p>
-           <div class="settings-item">
+           <div class="settings-item settings-checkbox">
                <label class="cb-label" for="launchExternal"></label>
                <div>
                 <label class="checkbox-material">
@@ -60,7 +67,7 @@
                 </label>
               </div>
            </div>
-           <hr class="footer-border">
+         </div>
          <div class="settings-footer">
              <input id="btCancel" class="btn btn-secondary cancel-btn" value="Cancel" type="reset">
              <button id="btSave" class="btn btn-secondary confirm-btn btn-save-changes" type="button">Save</button>
