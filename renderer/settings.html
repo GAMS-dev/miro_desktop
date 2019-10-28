@@ -53,7 +53,7 @@
            </div>
          </div>
          <div class="setting-wrapper">
-           <p class="settings-label" style="margin:0">Launch MIRO apps in your browser?</p>
+           <label class="settings-label" for="launchExternal" style="margin:0">Launch MIRO apps in your browser?</label>
            <div class="settings-item settings-checkbox">
                <label class="cb-label" for="launchExternal"></label>
                <div>
@@ -66,8 +66,17 @@
                   </div>
                 </label>
               </div>
+              <small class="form-text btn-reset-nonpath" style="display:none" data-key="launchExternal">Reset to default</small>
            </div>
          </div>
+         <div class="setting-wrapper">
+           <label class="settings-label" for="logLifetime">Days log files are stored</label>
+           <div class="settings-item">
+            <input id="logLifetime" class="miro-launcher-input" type="number" value="-1" min="-1">
+            <small class="form-text btn-reset-nonpath" style="display:none" data-key="logLifetime">Reset to default</small>
+          </div>
+        </div>
+           <hr class="footer-border">
          <div class="settings-footer">
              <input id="btCancel" class="btn btn-secondary cancel-btn" value="Cancel" type="reset">
              <button id="btSave" class="btn btn-secondary confirm-btn btn-save-changes" type="button">Save</button>

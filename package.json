@@ -45,11 +45,13 @@
       "mimeType": "application/zip"
     },
     "mac": {
-      "extraFiles": [{
-        "from": "r",
-        "to": "MacOS/r",
-        "filter": "**/*"
-      }],
+      "extraFiles": [
+        {
+          "from": "r",
+          "to": "MacOS/r",
+          "filter": "**/*"
+        }
+      ],
       "category": "public.app-category.productivity",
       "icon": "./build/icon.icns",
       "darkModeSupport": true,

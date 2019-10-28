@@ -494,6 +494,18 @@ input, button, textarea, :focus {
 .custom-file {
   width: unset;
 }
+.miro-launcher-input {
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  padding-left: 15px;
+  position: absolute;
+  right: 10px;
+  width: 40px;
+  height: calc(1.5em + 0.75rem + 2px);
+}
 .custom-file-label::after {
   padding: .375rem .5rem;
 }
@@ -748,6 +760,7 @@ input, button, textarea, :focus {
 }
 .settings-checkbox {
   text-align: right;
+  margin-bottom:15px;
 }
 .settings-footer {
   margin-top: 45px;
@@ -757,6 +770,9 @@ input, button, textarea, :focus {
   width: 18px;
   display: inline-block;
   margin-right: 7px;
+}
+.path-disabled {
+  cursor: not-allowed;
 }
 .btn-edit-text {
   display: inline-block;

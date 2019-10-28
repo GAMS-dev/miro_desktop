@@ -8,11 +8,14 @@ const $ = require('jquery');
 const currentWindow = remote.getCurrentWindow();
 
 const cbLaunchExternal = $('#launchExternal');
+const inputLogLifetime = $('#logLifetime');
 
 const newConfig = {};
-let pathDefaults;
+let defaultValues;
+let importantKeys;
 let requireRestart = false;
 let gamspathValidating = false;
+
 const pathConfig = [
     {
         id: 'configpath',
@@ -50,6 +53,20 @@ $('#btSave').on('click', (e) => {
     if ( gamspathValidating === true ) {
         return;
     }
+    let logLifeVal = inputLogLifetime.val();
+    if ( logLifeVal !== '' ) {
+        logLifeVal = parseInt(logLifeVal, 10);
+        if ( Number.isNaN(logLifeVal) ) {
+            remote.dialog.showMessageBoxSync(currentWindow,
+            {
+                type: 'warning',
+                title: 'Invalid log lifetime',
+                message: 'The value you entered for the number of days log file should be stored is invalid! Please enter only whole numbers!'
+            });
+            return;
+        }
+    }
+    newConfig.logLifeTime = logLifeVal;
     newConfig.launchExternal = cbLaunchExternal.is(":checked");
     ipcRenderer.send('save-path-config', newConfig, requireRestart); 
 });
@@ -60,7 +77,8 @@ $('#btCancel').on('click', (e) => {
 
 function updatePathConfig( pathSelectConfig, pathSelected ) {
     newConfig[pathSelectConfig.id] = pathSelected;
-    $(`#btPathSelect_${pathSelectConfig.id}`).siblings('label').text(pathSelected);
+    $(`#btPathSelect_${pathSelectConfig.id}`)
+       .siblings('label').text(pathSelected);
 
     if ( pathSelectConfig.requiresRestart === true) {
         requireRestart = true;
@@ -69,6 +87,9 @@ function updatePathConfig( pathSelectConfig, pathSelected ) {
 
 function genPathSelectHandler( pathSelectConfig ) {
     return (event) => { 
+        if ( importantKeys.find(el => el === pathSelectConfig.id ) ) {
+            return;
+        }
         const pathSelected = remote.dialog.showOpenDialogSync(currentWindow, {
              title: pathSelectConfig.title,
              message: pathSelectConfig.message,
@@ -93,32 +114,66 @@ pathConfig.forEach((el) => {
 pathConfig.forEach((el) => {
   $(`#btPathSelect_${el.id}`).siblings('.btn-reset').click(function() {
     const elKey = this.dataset.key;
+    console.log(elKey);
     newConfig[elKey] = '';
-    console.log(pathConfig.findIndex(el => el.id === elKey && el.restart === true ));
     if ( pathConfig.findIndex(el => el.id === elKey && el.restart === true ) === -1 ) {
         requireRestart = true;
     }
     const $this = $(this);
-    $this.siblings('label').text(pathDefaults[elKey]);
+    $this.siblings('label').text(defaultValues[elKey]);
     $this.hide();
   });
 });
+$('.btn-reset-nonpath').click(function(e) {
+    const elKey = this.dataset.key;
+    newConfig[elKey] = '';
+    if ( elKey === 'launchExternal' ) {
+        cbLaunchExternal.prop('checked', defaultValues[elKey]);
+    } else if ( elKey === 'logLifeTime' ) {
+        inputLogLifetime.val(defaultValues[elKey]);
+    }
+    $(this).hide();
+});
 
 ipcRenderer.on('settings-loaded', (e, data, defaults) => {
-    pathDefaults = defaults;
+    defaultValues = defaults;
+    importantKeys = data.important;
+
     for (let [key, value] of Object.entries(data)) {
-      if ( value == null || value === '' ) {
+      if ( key === 'important' ) {
         continue
       }
-      if ( key === 'launchExternal' ) {
-        newConfig.launchExternal = data.launchExternal;
-        cbLaunchExternal.prop('checked', value);
-      } else {
-        newConfig[key] = value;
-        $(`#btPathSelect_${key}`).siblings('label').text(value);
-        if ( value !== pathDefaults[key] ) {
-           $(`#btPathSelect_${key}`).siblings('.btn-reset').show();
+      let newValue = value;
+      let isImportant = false;
+      if ( importantKeys.find(el => el === key) ) {
+        isImportant = true;
+      }
+      if ( newValue == null || newValue === '' ) {
+        newValue = defaultValues[key];
+        if ( key === 'launchExternal' || key === 'logLifeTime' ) {
+            $(`[data-key="${key}"]`).show();
+        } else {
+            $(`#btPathSelect_${key}`).siblings('.btn-reset').show();
         }
+      } else {
+        newConfig[key] = newValue;
+      }
+      if ( key === 'launchExternal' ) {
+        cbLaunchExternal.prop('checked', newValue);
+        if ( isImportant ) {
+            cbLaunchExternal.attr('disabled', true);
+        }
+      } else if ( key === 'logLifeTime' ) {
+        inputLogLifetime.val(newValue);
+        if ( isImportant ) {
+            inputLogLifetime.attr('disabled', true);
+        }
+      } else {
+        const pathSelectEl = $(`#btPathSelect_${key}`);
+        if ( isImportant ) {
+            pathSelectEl.addClass('path-disabled');
+        }
+        pathSelectEl.siblings('label').text(newValue);
       }
     }
 });

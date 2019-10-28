@@ -9,6 +9,8 @@ const execa = require('execa');
 const { tmpdir } = require('os');
 const { promisify } = require('util');
 const readdir = promisify(fs.readdir);
+const stat = promisify(fs.stat);
+const unlink = promisify(fs.unlink);
 
 const minGams = '29.0';
 const minR = '3.6';
@@ -34,6 +36,24 @@ const schema = {
   launchExternal: {
     type: 'boolean',
     default: false
+  },
+  logLifeTime: {
+    type: 'integer',
+    default: -1
+  },
+  important: {
+    type: 'array',
+    items:{
+      type: 'string',
+      enum: [  
+        'configpath',
+        'gamspath',
+        'rpath',
+        'logpath',
+        'launchExternal',
+        'logLifeTime'
+     ]
+    }
   }
 };
 
@@ -52,13 +72,17 @@ class ConfigManager extends Store {
       try {
         const superPathConfigData = new Store({schema, 
           cwd: configPathTmp,
-          name: 'paths', 
-          encryptionKey: 'MIROobfuscatedPathsConfigFile'});
+          name: 'paths'});
 
         [ 'gamspath', 'rpath', 'logpath' ].forEach(el => {
           this[el] = superPathConfigData.get(el, '');
         });
-        this.launchExternal = superPathConfigData.get('launchExternal', false);
+        this.important = superPathConfigData.get(
+          'important', []);
+        this.launchExternal = superPathConfigData.get(
+          'launchExternal', false);
+        this.logLifeTime = superPathConfigData.get(
+          'logLifeTime', -1);
       } catch (e) { }
     }
 
@@ -67,19 +91,28 @@ class ConfigManager extends Store {
     this.configpathDefault = miroWorkspaceDir;
     this.logpathDefault = path.join(miroWorkspaceDir, "logs");
 
-    [ 'gamspath', 'rpath', 'logpath' ].forEach(el => {
+    [ 'gamspath', 'rpath', 'logpath', 'logLifeTime' ].forEach(el => {
+      if ( this.important.find(iel => iel === el) ) {
+        return;
+      }
       this[el] = super.get(el, this[el]);
     });
-    if ( this.launchExternal === false ) {
-      this.launchExternal = super.get('launchExternal', false);
-    }   
+    if ( this.launchExternal == null ) {
+      this.launchExternal = false;
+    }
+    if ( !this.important.find(iel => iel === 'launchExternal') ) {
+      this.launchExternal = super.get('launchExternal', 
+         this.launchExternal);
+    }
 
     return this
   }
 
   set (data) {
     for (const [key, value] of Object.entries(data)) {
-      this[key] = value;
+      if ( !this.important.find(el => el === value) ) {
+        this[key] = value;
+      }
       if ( value == null || value === '' ) {
         super.delete(key); 
       } else {
@@ -89,23 +122,16 @@ class ConfigManager extends Store {
     return this
   }
 
-  async get (key) {
+  async get (key, fallback = true) {
     let valTmp;
 
-    if ( key === 'configpath' ) {
-      valTmp = this.configpath;
-    } else if ( key === 'rpath' ) {
-      valTmp = this.rpath;
-    } else if ( key === 'gamspath' ) {
-      valTmp = this.gamspath;
-    } else if ( key === 'logpath' ) {
-      valTmp = this.logpath;
-    } else if ( key === 'launchExternal' ) {
-      valTmp = this.launchExternal;
-    }
-    // if options is not set, fetch defaults
-    if ( (valTmp == null || valTmp === '') ) {
-      valTmp = await this.getDefault(key);
+    valTmp = this[key];
+
+    if ( fallback ) {
+      // if options is not set, fetch defaults
+      if ( (valTmp == null || valTmp === '') ) {
+        valTmp = await this.getDefault(key);
+      }
     }
     
     return valTmp;
@@ -120,6 +146,8 @@ class ConfigManager extends Store {
       return this.logpathDefault;
     } else if ( key === 'configpath' ) {
       return this.configpathDefault;
+    } else if ( key === 'logLifeTime' ) {
+      return -1;
     } else {
       return false;
     }
@@ -131,7 +159,7 @@ class ConfigManager extends Store {
       if( defaults ) {
         return this.getDefault(key);
       }
-      return this.get(key);
+      return this.get(key, false);
     });
     let values;
     try {
@@ -141,6 +169,39 @@ class ConfigManager extends Store {
       return {};
     }
     return Object.fromEntries(keys.map((_, i) => [keys[i], values[i]]))
+  }
+
+  async removeOldLogs(){
+    if ( this.logLifeTime == null || 
+      this.logLifeTime === -1 ) {
+      return true;
+    }
+    const now = new Date().getTime();   
+    try {
+      const logPath = await this.get('logpath');
+      const logFiles = await readdir(logPath);
+      if ( !logFiles ) {
+        return true;
+      }
+      logFiles.forEach(async (logFile) => {
+        if ( logFile === 'launcher.log' ) {
+          return;
+        }
+        try{
+          const fp = path.join(logPath, logFile);
+          const { mtime } = await stat(fp);
+          if ( (now - mtime.getTime()) / 
+            (1000 * 3600 * 24) > this.logLifeTime ) {
+            unlink(fp);
+          } 
+        } catch(e) {
+          return;
+        }
+      });
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
   }
 
   getConfigPath () {

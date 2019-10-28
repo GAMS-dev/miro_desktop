@@ -8,6 +8,7 @@ const http = require('axios');
 const execa = require('execa');
 const log = require('electron-log');
 const menu = require('./components/menu.js');
+const minAPIVersion = 1;
 
 const DataStore = require('./DataStore');
 const ConfigManager = require('./ConfigManager');
@@ -292,6 +293,18 @@ MIRO version: ${newAppConf.MIROVersion}.`);
                 message: errMsgTemplate
             });
             return
+          }
+          if ( !newAppConf.APIVersion ||
+            newAppConf.APIVersion < minAPIVersion ) {
+            mainWindow.setProgressBar(-1);
+            showErrorMsg({
+                type: 'info',
+                title: 'MIRO app incompatible',
+                message: 'The MIRO app you want to add is not compatible \
+with the MIRO version you installed. Please ask the developer of the app \
+to update it and try again!'
+            });
+            return;
           }
           if ( !mainWindow ){
             return
@@ -766,7 +779,7 @@ ipcMain.on('validate-gams', async (e, path) => {
   }
 });
 
-ipcMain.on('save-path-config', (e, newConfigData, needRestart) => {
+ipcMain.on('save-path-config', async (e, newConfigData, needRestart) => {
   log.debug('Save path config request received.');
   try {
     configData.set(newConfigData);
@@ -782,7 +795,8 @@ ipcMain.on('save-path-config', (e, newConfigData, needRestart) => {
         app.exit();
       } else {
         settingsWindow.webContents.send('settings-loaded', 
-        configData.store);
+        await configData.getAll(),
+        await configData.getAll(true));
         dialog.showMessageBoxSync(settingsWindow, 
            {
              type: 'info',
@@ -855,6 +869,7 @@ app.on('ready', async () => {
     app.quit();
     return;
   }
+  configData.removeOldLogs();
   session.defaultSession.webRequest.onHeadersReceived((_, callback) => {
     callback({
       responseHeaders: `
