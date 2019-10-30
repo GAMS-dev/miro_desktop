@@ -1,6 +1,16 @@
 # install required packages for MIRO
 source('./r/scripts/globals.R')
-
+for ( libPath in c(RLibPath, RlibPathDevel) ) {
+    if (!dir.exists(libPath) && 
+        !dir.create(libPath, showWarnings = TRUE, recursive = TRUE)){
+        stop(sprintf('Could not create directory: %s', libPath))
+    }
+}
+if ( isLinux ) {
+    # workaround since electron builder does 
+    # not include empty directories in app image
+    writeLines('', file.path(RLibPath, 'EMPTY'))
+}
 if(!'devtools' %in% installed.packages(RlibPathDevel)[, "Package"]) {
     install.packages('devtools', repos = CRANMirrors[1], lib = RlibPathDevel,
         dependencies = c("Depends", "Imports", "LinkingTo"))
@@ -9,11 +19,9 @@ options(warn = 2)
 .libPaths( c( .libPaths(), RlibPathDevel) )
 library('devtools')
 
-libPathSrc <- file.path('.', 'r', 'library_src')
-
-if ( isLinux && !dir.exists(libPathSrc) && 
-    !dir.create(libPathSrc, showWarnings = TRUE, recursive = TRUE)) {
-    stop(sprintf('Could not create directory: %s', libPathSrc))
+if ( isLinux && !dir.exists(RlibPathSrc) && 
+    !dir.create(RlibPathSrc, showWarnings = TRUE, recursive = TRUE)) {
+    stop(sprintf('Could not create directory: %s', RlibPathSrc))
 }
 
 if (!dir.exists('./dist/dump') && 
@@ -47,7 +55,7 @@ installPackage <- function(package, attempt = 0) {
 downloadPackage <- function(package) {
     packageFileNameTmp <- remotes::download_version(package[1], package[2],
         repos = CRANMirrors[1])
-    packageFileName <- file.path(libPathSrc, 
+    packageFileName <- file.path(RlibPathSrc, 
         paste0(package[1], '_', package[2], '.tar.gz'))
     if (!file.rename(packageFileNameTmp, packageFileName)) {
         stop(sprintf("Problems renaming package: '%s' from '%s' to '%s'.",
@@ -73,7 +81,8 @@ if ( !'data.table' %in% installedPackages){
            'CFLAGS=-g -O3 -Wall -pedantic -std=gnu99 -mtune=native -pipe', 
            'CXXFLAGS=-g -O3 -Wall -pedantic -std=c++11 -mtune=native -pipe',
            'LDFLAGS=-L/usr/local/opt/gettext/lib -L$(LLVM_LOC)/lib -Wl,-rpath,$(LLVM_LOC)/lib',
-            'CPPFLAGS=-I/usr/local/opt/gettext/include -I$(LLVM_LOC)/include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include'), makevarsPath)
+            'CPPFLAGS=-I/usr/local/opt/gettext/include -I$(LLVM_LOC)/include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include'), 
+        makevarsPath)
     }
     tryCatch({
         installPackage(c('data.table', '1.12.2'))
@@ -88,16 +97,19 @@ if ( !'data.table' %in% installedPackages){
 
 for(package in packageVersionMap){
     if ( package[1] %in% installedPackages || isLinux && 
-        file.exists(file.path(libPathSrc, 
+        file.exists(file.path(RlibPathSrc, 
             paste0(package[1], '_', package[2], '.tar.gz'))) ) {
         print(sprintf("Skipping '%s' as it is already installed.", package[1]))
         next
     }
     if ( length(package) == 1L ) {
-        packagePath <- build(file.path('.', 'r-src', package), path = file.path('.', 'r-src', 'build/'), 
-            binary = FALSE, vignettes = FALSE, manual = FALSE, args = NULL, quiet = FALSE)
+        packagePath <- build(file.path('.', 'r-src', package), 
+            path = file.path('.', 'r-src', 'build/'), 
+            binary = FALSE, vignettes = FALSE, manual = FALSE, 
+            args = NULL, quiet = FALSE)
         if(isLinux){
-            file.rename(packagePath, file.path(libPathSrc, basename(packagePath)))
+            file.rename(packagePath, 
+                file.path(RlibPathSrc, basename(packagePath)))
         }else{
             install.packages(packagePath, lib = RLibPath, repos = NULL, 
                          type = "source", dependencies = FALSE)

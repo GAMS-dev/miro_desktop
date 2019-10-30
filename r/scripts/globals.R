@@ -4,12 +4,7 @@ CRANMirrors <- c('http://cran.us.r-project.org',
 
 RLibPath <- "./r/library"
 RlibPathDevel <- './build/lib_devel'
-for ( libPath in c(RLibPath, RlibPathDevel) ) {
-    if (!dir.exists(libPath) && 
-        !dir.create(libPath, showWarnings = TRUE, recursive = TRUE)){
-        stop(sprintf('Could not create directory: %s', libPath))
-    }
-}
+RlibPathSrc <- file.path('.', 'r', 'library_src')
 isMac <- Sys.info()['sysname'] == 'Darwin' || grepl("^darwin", R.version$os)
 
 packageVersionMap <- list(

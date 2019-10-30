@@ -902,7 +902,7 @@ app.on('ready', async () => {
   log.info('MIRO launcher started successfully.');
 
   if ( process.platform === 'linux' && 
-    fs.readdir(libPath, (err, items) => {
+    fs.readdir(path.join(libPath, '..'), (err, items) => {
       if (err) throw err;
       items.find(item => item === 'library_src')}) ) {
     try{

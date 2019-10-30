@@ -11,11 +11,14 @@ for(package in packageVersionMap){
         print(sprintf("Skipping '%s' as it is already installed.", package[1]))
         next
     }
-    install.packages(paste0(package[1], '_', package[2], '.tar.gz'), lib = RLibPath, repos = NULL, 
-                     type = "source", dependencies = FALSE)
+    install.packages(file.path(RlibPathSrc, 
+      paste0(package[1], '_', package[2], '.tar.gz')), 
+      lib = RLibPath, repos = NULL, 
+      type = "source", dependencies = FALSE)
 }
 # clean up unncecessary files
-unlink(file.path(RLibPath, '*.tar.gz'), force = TRUE, recursive=FALSE)
+unlink(file.path(RLibPath, 'EMPTY'), force = TRUE, recursive = FALSE)
+unlink(RlibPathSrc, force = TRUE, recursive=TRUE)
 dontDisplayMe <- lapply(list.dirs(RLibPath, full.names = TRUE, recursive = FALSE), 
     function(x) {
         unlink(file.path(x, c("help", "doc", "tests", "html",

@@ -37,9 +37,7 @@
       "!miro/**"
     ],
     "fileAssociations": {
-      "ext": [
-        "miroapp"
-      ],
+      "ext": "miroapp",
       "name": "MIRO App",
       "description": "MIRO Application",
       "mimeType": "application/zip"
