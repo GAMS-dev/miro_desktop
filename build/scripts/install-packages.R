@@ -9,6 +9,13 @@ options(warn = 2)
 .libPaths( c( .libPaths(), RlibPathDevel) )
 library('devtools')
 
+libPathSrc <- file.path('.', 'r', 'library_src')
+
+if ( isLinux && !dir.exists(libPathSrc) && 
+    !dir.create(libPathSrc, showWarnings = TRUE, recursive = TRUE)) {
+    stop(sprintf('Could not create directory: %s', libPathSrc))
+}
+
 if (!dir.exists('./dist/dump') && 
     !dir.create('./dist/dump', showWarnings = TRUE, recursive = TRUE)){
     stop('Could not create output directory: ./dist/dump')
@@ -40,7 +47,7 @@ installPackage <- function(package, attempt = 0) {
 downloadPackage <- function(package) {
     packageFileNameTmp <- remotes::download_version(package[1], package[2],
         repos = CRANMirrors[1])
-    packageFileName <- file.path('.', 'r', 'library_src', 
+    packageFileName <- file.path(libPathSrc, 
         paste0(package[1], '_', package[2], '.tar.gz'))
     if (!file.rename(packageFileNameTmp, packageFileName)) {
         stop(sprintf("Problems renaming package: '%s' from '%s' to '%s'.",

@@ -904,7 +904,7 @@ app.on('ready', async () => {
   if ( process.platform === 'linux' && 
     fs.readdir(libPath, (err, items) => {
       if (err) throw err;
-      items.find(item => item.endsWith('.tar.gz'))}) ) {
+      items.find(item => item === 'library_src')}) ) {
     try{
       rPackagesInstalled = installRPackages(
         await configData.get('rpath'), libPath, mainWindow);
