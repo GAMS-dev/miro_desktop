@@ -33,7 +33,8 @@ const appDbPathReset = 'Reset to default';
 const appLogoPlaceholder = 'Different app logo? Drop your MIRO app logo here or click to browse.';
 const editHelper = `<div class="edit-info" style="display:none;">
                         <p class="edit-info-text"><img class="edit-info-img img-fluid" \ 
-                        src="./arrow.png" width="45px" align="middle" alt="arrow">Click on app to edit</p>
+                        src="${pathToFileURL(path.join(remote.app.getAppPath(),
+                        'static', 'arrow.png'))}" width="45px" align="middle" alt="arrow">Click on app to edit</p>
                     </div>`;  
 let appData
 let dataPath
@@ -625,4 +626,16 @@ ipcRenderer.on('hide-loading-screen', (e, appID, success = false) => {
 });
 ipcRenderer.on('invalid-r', (e) => {
   $('#rNotFoundModal').modal('show');
+});
+ipcRenderer.on('install-r-packages', (e) => {
+  $('#installRPkgModal').modal({
+      backdrop: 'static',
+      keyboard: false
+  });
+  $('#installRPkgModal').modal('show');
+});
+ipcRenderer.on('install-r-packages-stdout', 
+  (e, data) => {
+  $('#updateRPkgStatusLog').append(
+    document.createTextNode(data));
 });

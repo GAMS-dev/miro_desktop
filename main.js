@@ -8,6 +8,7 @@ const http = require('axios');
 const execa = require('execa');
 const log = require('electron-log');
 const menu = require('./components/menu.js');
+const installRPackages = require('./components/install-r.js');
 const minAPIVersion = 1;
 
 const DataStore = require('./DataStore');
@@ -63,6 +64,7 @@ let shutdown = false
 let miroProcesses = [];
 const processIdMap = {};
 
+const rPackagesInstalled = true;
 const libPath = path.join(appRootDir, 'r', 'library');
 
 const miroResourcePath = DEVELOPMENT_MODE? path.join(app.getAppPath(), 'miro'):
@@ -541,6 +543,12 @@ async function createMIROAppWindow(appData) {
     mainWindow.send('invalid-r');
     return;
   }
+  if ( process.platform === 'linux' && !rPackagesInstalled ) {
+    log.info('MIRO app launch requested without packages being installed.');
+    mainWindow.send('hide-loading-screen', appData.id);
+    rPackagesInstalled = installRPackages(rpath, libPath, mainWindow);
+    return;
+  }
 
   const onErrorLater = async (appID) => {
     log.debug(`Error after launching MIRO app with ID: ${appData.id}.`);
@@ -874,6 +882,13 @@ app.on('ready', async () => {
     return;
   }
   configData.removeOldLogs();
+  if ( process.platform === 'linux' && 
+    fs.readdir(libPath, (err, items) => {
+      if (err) throw err;
+      items.find(item => item.endsWith('.tar.gz'))}) ) {
+    rPackagesInstalled = installRPackages(
+      await configData.get('rpath'), libPath, mainWindow);
+  }
   session.defaultSession.webRequest.onHeadersReceived((_, callback) => {
     callback({
       responseHeaders: `
