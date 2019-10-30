@@ -95,7 +95,7 @@ for(package in packageVersionMap){
         packagePath <- build(file.path('.', 'r-src', package), path = file.path('.', 'r-src', 'build/'), 
             binary = FALSE, vignettes = FALSE, manual = FALSE, args = NULL, quiet = FALSE)
         if(isLinux){
-            file.rename(packagePath, file.path(RLibPath, basename(packagePath)))
+            file.rename(packagePath, file.path(libPathSrc, basename(packagePath)))
         }else{
             install.packages(packagePath, lib = RLibPath, repos = NULL, 
                          type = "source", dependencies = FALSE)
