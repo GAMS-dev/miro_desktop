@@ -38,7 +38,7 @@ installPackage <- function(package, attempt = 0) {
      })
 }
 downloadPackage <- function(package) {
-    packageFileNameTmp <- remote::download_version(package[1], package[2],
+    packageFileNameTmp <- remotes::download_version(package[1], package[2],
         repos = CRANMirrors[1])
     packageFileName <- file.path('.', 'r', 'library_src', 
         paste0(package[1], '_', package[2], '.tar.gz'))
