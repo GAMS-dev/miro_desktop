@@ -50,7 +50,10 @@ if ( ! errMsg ) {
     }
     log.transports.file.file = path.join(logPath, 
       'launcher.log');
-    log.info(`Log path: ${logPath}.`)
+    log.info(`MIRO launcher is being started (execPath: ${appRootDir}, \
+pid: ${process.pid}, Log path: ${logPath}, \
+platform: ${process.platform}, arch: ${process.arch}, \
+version: ${process.getSystemVersion()})...`);
   })();
 }
 const appDataPath = errMsg? null :
