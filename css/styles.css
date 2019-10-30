@@ -472,6 +472,11 @@ input, button, textarea, :focus {
 .modal-custom {
   margin-top: 100px;
 }
+.log-file-container {
+  font-size: 8pt;
+  max-height: 50vh;
+  overflow: auto;
+}
 .step-wrapper {
     text-align: left;
     margin-top: 15px;

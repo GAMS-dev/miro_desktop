@@ -64,7 +64,7 @@ let shutdown = false
 let miroProcesses = [];
 const processIdMap = {};
 
-const rPackagesInstalled = true;
+let rPackagesInstalled = true;
 const libPath = path.join(appRootDir, 'r', 'library');
 
 const miroResourcePath = DEVELOPMENT_MODE? path.join(app.getAppPath(), 'miro'):
@@ -543,7 +543,7 @@ async function createMIROAppWindow(appData) {
     mainWindow.send('invalid-r');
     return;
   }
-  if ( process.platform === 'linux' && !rPackagesInstalled ) {
+  if ( process.platform === 'linux' && rPackagesInstalled !== true) {
     log.info('MIRO app launch requested without packages being installed.');
     mainWindow.send('hide-loading-screen', appData.id);
     rPackagesInstalled = installRPackages(rpath, libPath, mainWindow);
@@ -836,7 +836,6 @@ ipcMain.on('validate-app', (e, filePath) => {
 ipcMain.on('validate-logo', (e, filePath, id) => {
   validateAppLogo(filePath, id);
 });
-
 ipcMain.on('delete-app', (e, appId) => {
   log.debug(`Delete app (ID: ${appId}) request received`);
   const deleteAppConfirmedId = dialog.showMessageBoxSync(mainWindow, {
@@ -882,13 +881,6 @@ app.on('ready', async () => {
     return;
   }
   configData.removeOldLogs();
-  if ( process.platform === 'linux' && 
-    fs.readdir(libPath, (err, items) => {
-      if (err) throw err;
-      items.find(item => item.endsWith('.tar.gz'))}) ) {
-    rPackagesInstalled = installRPackages(
-      await configData.get('rpath'), libPath, mainWindow);
-  }
   session.defaultSession.webRequest.onHeadersReceived((_, callback) => {
     callback({
       responseHeaders: `
@@ -908,6 +900,18 @@ app.on('ready', async () => {
     createSettingsWindow));
   createMainWindow();
   log.info('MIRO launcher started successfully.');
+
+  if ( process.platform === 'linux' && 
+    fs.readdir(libPath, (err, items) => {
+      if (err) throw err;
+      items.find(item => item.endsWith('.tar.gz'))}) ) {
+    try{
+      rPackagesInstalled = installRPackages(
+        await configData.get('rpath'), libPath, mainWindow);
+    } catch(e) {
+      log.error(`Problems creating prompt to install R packages. Error message: ${e.message}.`)
+    }
+  }
 });
 
 app.on('window-all-closed', () => {

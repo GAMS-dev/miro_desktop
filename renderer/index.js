@@ -636,6 +636,15 @@ ipcRenderer.on('install-r-packages', (e) => {
 });
 ipcRenderer.on('install-r-packages-stdout', 
   (e, data) => {
-  $('#updateRPkgStatusLog').append(
-    document.createTextNode(data));
+  const logBox = $('#updateRPkgStatusLog');
+  logBox.append(document.createTextNode(data));
+  setTimeout(()=> logBox[0].scrollTop = logBox[0].scrollHeight, 
+    200);
+});
+ipcRenderer.on('install-r-packages-installed', (e) => {
+  setTimeout(()=> $('#installRPkgModal').modal('hide'), 
+    1000);
+});
+$('#cancelInstallRPkgBtn').click((e) => {
+  ipcRenderer.send('kill-r-pkg-install');
 });
