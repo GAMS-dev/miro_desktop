@@ -907,9 +907,9 @@ app.on('ready', async () => {
   if ( 
     fs.readdir(path.join(libPath, '..'), (err, items) => {
       if (err) throw err;
-      log.info(items);
       items.find(item => item === 'library_src')}) ) {
     try{
+      log.info(await configData.get('rpath'));
       rPackagesInstalled = installRPackages(
         await configData.get('rpath'), libPath, mainWindow);
     } catch(e) {
