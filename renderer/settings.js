@@ -8,13 +8,13 @@ const $ = require('jquery');
 const currentWindow = remote.getCurrentWindow();
 
 const cbLaunchExternal = $('#launchExternal');
-const inputLogLifetime = $('#logLifetime');
+const inputLogLifetime = $('#logLifeTime');
 
 const newConfig = {};
 let defaultValues;
 let importantKeys;
 let requireRestart = false;
-let gamspathValidating = false;
+let pathValidating = false;
 
 const pathConfig = [
     {
@@ -50,7 +50,7 @@ const pathConfig = [
 
 
 $('#btSave').on('click', (e) => {
-    if ( gamspathValidating === true ) {
+    if ( pathValidating === true ) {
         return;
     }
     let logLifeVal = inputLogLifetime.val();
@@ -100,8 +100,12 @@ function genPathSelectHandler( pathSelectConfig ) {
             return;
         }
         if ( pathSelectConfig.id === 'gamspath' ) {
-            gamspathValidating = true;
+            pathValidating = true;
             ipcRenderer.send('validate-gams', pathSelected[0]);
+            return;
+        } else if ( pathSelectConfig.id === 'rpath' ) {
+            pathValidating = true;
+            ipcRenderer.send('validate-r', pathSelected[0]);
             return;
         }
         updatePathConfig(pathSelectConfig, pathSelected[0]);
@@ -114,9 +118,9 @@ pathConfig.forEach((el) => {
 pathConfig.forEach((el) => {
   $(`#btPathSelect_${el.id}`).siblings('.btn-reset').click(function() {
     const elKey = this.dataset.key;
-    console.log(elKey);
     newConfig[elKey] = '';
-    if ( pathConfig.findIndex(el => el.id === elKey && el.restart === true ) === -1 ) {
+
+    if ( pathConfig.find(el2 => el2.id === elKey && el2.requiresRestart === true ) ) {
         requireRestart = true;
     }
     const $this = $(this);
@@ -138,7 +142,7 @@ $('.btn-reset-nonpath').click(function(e) {
 ipcRenderer.on('settings-loaded', (e, data, defaults) => {
     defaultValues = defaults;
     importantKeys = data.important;
-
+    requireRestart = false;
     for (let [key, value] of Object.entries(data)) {
       if ( key === 'important' ) {
         continue
@@ -150,13 +154,16 @@ ipcRenderer.on('settings-loaded', (e, data, defaults) => {
       }
       if ( newValue == null || newValue === '' ) {
         newValue = defaultValues[key];
-        if ( key === 'launchExternal' || key === 'logLifeTime' ) {
-            $(`[data-key="${key}"]`).show();
-        } else {
-            $(`#btPathSelect_${key}`).siblings('.btn-reset').show();
-        }
       } else {
-        newConfig[key] = newValue;
+        if ( !isImportant ) {
+            if ( (key === 'launchExternal' || key === 'logLifeTime') ) {
+                if ( newValue !== defaultValues[key] ) {
+                    $(`[data-key="${key}"]`).show();
+                }
+            } else {
+                $(`#btPathSelect_${key}`).siblings('.btn-reset').show();
+            }
+        }
       }
       if ( key === 'launchExternal' ) {
         cbLaunchExternal.prop('checked', newValue);
@@ -177,8 +184,9 @@ ipcRenderer.on('settings-loaded', (e, data, defaults) => {
       }
     }
 });
-
-ipcRenderer.on('gamspath-validated', (e, path) => {
-    gamspathValidating = false;
-    updatePathConfig(pathConfig.filter(el => el.id === 'gamspath'), path);
+[ 'gamspath', 'rpath' ].forEach(el => {
+    ipcRenderer.on(`${el}-validated`, (e, path) => {
+        pathValidating = false;
+        updatePathConfig(pathConfig.filter(el => el.id === el), path);
+    });
 });

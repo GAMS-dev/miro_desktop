@@ -34,19 +34,16 @@ const schema = {
     minLength: 2
   },
   launchExternal: {
-    type: 'boolean',
-    default: false
+    type: 'boolean'
   },
   logLifeTime: {
-    type: 'integer',
-    default: -1
+    type: 'integer'
   },
   important: {
     type: 'array',
     items:{
       type: 'string',
-      enum: [  
-        'configpath',
+      enum: [
         'gamspath',
         'rpath',
         'logpath',
@@ -67,22 +64,18 @@ class ConfigManager extends Store {
     try {
       configPathTmp = super.get('configpath', '');
     } catch (e) { }
-
+    this.important = [];
     if ( configPathTmp ) {
       try {
         const superPathConfigData = new Store({schema, 
           cwd: configPathTmp,
           name: 'paths'});
 
-        [ 'gamspath', 'rpath', 'logpath' ].forEach(el => {
+        [ 'gamspath', 'rpath', 'logpath', 'launchExternal', 'logLifeTime' ].forEach(el => {
           this[el] = superPathConfigData.get(el, '');
         });
         this.important = superPathConfigData.get(
           'important', []);
-        this.launchExternal = superPathConfigData.get(
-          'launchExternal', false);
-        this.logLifeTime = superPathConfigData.get(
-          'logLifeTime', -1);
       } catch (e) { }
     }
 
@@ -91,20 +84,12 @@ class ConfigManager extends Store {
     this.configpathDefault = miroWorkspaceDir;
     this.logpathDefault = path.join(miroWorkspaceDir, "logs");
 
-    [ 'gamspath', 'rpath', 'logpath', 'logLifeTime' ].forEach(el => {
+    [ 'gamspath', 'rpath', 'logpath', 'launchExternal', 'logLifeTime' ].forEach(el => {
       if ( this.important.find(iel => iel === el) ) {
         return;
       }
-      this[el] = super.get(el, this[el]);
+      this[el] = super.get(el, this[el] == null? '' : this[el]);
     });
-    if ( this.launchExternal == null ) {
-      this.launchExternal = false;
-    }
-    if ( !this.important.find(iel => iel === 'launchExternal') ) {
-      this.launchExternal = super.get('launchExternal', 
-         this.launchExternal);
-    }
-
     return this
   }
 
@@ -113,7 +98,10 @@ class ConfigManager extends Store {
       if ( !this.important.find(el => el === value) ) {
         this[key] = value;
       }
-      if ( value == null || value === '' ) {
+      if ( value == null || value === '' ||
+       (key === 'launchExternal' && value === false) ||
+       (key === 'logLifeTime' && value === -1)) {
+        this[key] = '';
         super.delete(key); 
       } else {
         super.set(key, value);
@@ -159,7 +147,7 @@ class ConfigManager extends Store {
       if( defaults ) {
         return this.getDefault(key);
       }
-      return this.get(key, false);
+      return this.get(key, '');
     });
     let values;
     try {
@@ -242,15 +230,8 @@ class ConfigManager extends Store {
           }
         } else {
           let rpathTmp = await which('Rscript', {nothrow: true});
-          console.log(rpathTmp);
-          let { stdout } = await execa(rpathTmp, ['-e', 
-            'print(R.home())\nprint(paste0(R.Version()$major, \
-  ".", R.Version()$minor))']);
-          stdout = stdout.split('\n');
-          rpathTmp = stdout[0].match(/^\[1\] "([^"]*)"$/);
-          const rVersion = stdout[1].match(/^\[1\] "([^"]*)"$/);
-          if ( rpathTmp && rVersion &&
-            this.vComp(rVersion[1], minR) ) {
+          rpathTmp = this.validateR(rpathTmp);
+          if ( rpathTmp !== false ) {
             this.rpathDefault = rpathTmp[1];
           }
         }
@@ -259,8 +240,52 @@ class ConfigManager extends Store {
       console.log(e)
       this.rpathDefault = '';
     }
-    console.log(this.rpathDefault)
     return this.rpathDefault;
+  }
+
+  async validateR(rpath) {
+    let rpathTmp = rpath;
+
+    if ( !path.basename(rpathTmp).toLowerCase().startsWith('rscript') ) {
+      if ( !fs.lstatSync(rpathTmp).isDirectory() ) {
+        return false;
+      }
+      // Directory was selected, so scan it
+      let contentRDir;
+      try {
+        contentRDir = await readdir(rpathTmp, { withFileTypes: true });
+      } catch (e) {
+        console.error(e);
+        return false;
+      }
+      if ( contentRDir.find(el => el.name === 'bin') ) {
+        rpathTmp = path.join(rpathTmp, 'bin');
+      } else if ( contentRDir.find(el => el.name === 'Resources') ) {
+        rpathTmp = path.join(rpathTmp, 'Resources', 'bin');
+      } else if ( !contentRDir.find(el => el.isFile() && 
+           (el.name === 'Rscript' || el.name === 'Rscript.exe')) ) {
+        return false;
+      }
+      if ( process.platform === 'win32' ) {
+        rpathTmp = path.join(rpathTmp, 'Rscript.exe');
+      } else {
+        rpathTmp = path.join(rpathTmp, 'Rscript');
+      }
+      if (!fs.existsSync(rpathTmp)) {
+        return false;
+      }
+    }
+    let { stdout } = await execa(rpathTmp, ['-e', 
+      'print(R.home())\nprint(paste0(R.Version()$major, \
+".", R.Version()$minor))']);
+    stdout = stdout.split('\n');
+    rpathTmp = stdout[0].match(/^\[1\] "([^"]*)"$/);
+    const rVersion = stdout[1].match(/^\[1\] "([^"]*)"$/);
+    if ( rpathTmp && rVersion &&
+      this.vComp(rVersion[1], minR) ) {
+      return rpathTmp;
+    }
+    return false;
   }
 
   async findGAMS() {
@@ -298,8 +323,11 @@ ${latestGamsInstalled}`);
     return this.gamspathDefault;
   }
 
-  getMinimumGAMSVersion() {
-    return minGams;
+  getMinimumVersion(type) {
+    if ( type.toLowerCase() === 'gams' ) {
+      return minGams;
+    }
+    return minR;
   }
 
   async validateGAMS(gamsDir) {
@@ -307,7 +335,6 @@ ${latestGamsInstalled}`);
     let gamsExecDir
     try {
       contentGamsDir = await readdir(gamsDir, { withFileTypes: true });
-      contentGamsDir.map(el => el.name);
     } catch (e) {
       console.error(e);
       return false
@@ -367,6 +394,13 @@ ${latestGamsInstalled}`);
       console.error(e);
       return false;
     }
+  }
+
+  async validate(id, pathToValidate){
+    if ( id === 'gams' ) {
+      return await this.validateGAMS(pathToValidate);
+    }
+    await this.validateR(pathToValidate);
   }
 
   vComp(v1, v2) {

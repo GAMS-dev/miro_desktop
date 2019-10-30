@@ -485,14 +485,12 @@ input, button, textarea, :focus {
   font-weight: unset;
 }
 .dbpath {
+  text-align: left;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   font-weight: 200;
   padding: .375rem .5rem;
-}
-.custom-file {
-  width: unset;
 }
 .miro-launcher-input {
   line-height: 1.5;
@@ -501,10 +499,11 @@ input, button, textarea, :focus {
   border: 1px solid #ced4da;
   border-radius: 0.25rem;
   padding-left: 15px;
-  position: absolute;
-  right: 10px;
   width: 40px;
   height: calc(1.5em + 0.75rem + 2px);
+}
+.miro-launcher-input:disabled {
+  cursor: not-allowed !important;
 }
 .custom-file-label::after {
   padding: .375rem .5rem;
@@ -739,10 +738,13 @@ input, button, textarea, :focus {
   font-family: montserratregular,'Open Sans',sans-serif;
   font-size: 14px;
 }
+.settings-reset {
+  position: absolute;
+}
 .setting-wrapper {
   align-items: center;
   display: flex;
-  padding: 15px 10px;
+  padding: 27px 10px;
   border-bottom: 1px solid #c5c5c5;
   position: relative;
 }
@@ -753,6 +755,7 @@ input, button, textarea, :focus {
   margin-bottom: 0px;
 }
 .settings-item {
+  text-align: right;
   margin-bottom:25px;
   width: 70%;
   position: absolute;

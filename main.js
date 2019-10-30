@@ -36,6 +36,7 @@ const appRootDir = DEVELOPMENT_MODE ?
 const configData = (() => { try { 
   return new ConfigManager(appRootDir, miroWorkspaceDir);
 } catch(e) { 
+  console.error(e);
   errMsg = `Couldn't create configuration file in workspace: ${miroWorkspaceDir}\
     Please make sure you have sufficient permissions and restart MIRO.`;
 }})();
@@ -44,7 +45,6 @@ if ( ! errMsg ) {
   (async _ => {
     const logPath = await configData.get('logpath');
     if ( !fs.existsSync(logPath)) {
-      console.log('aaa')
       fs.mkdirSync(logPath, {recursive: true});
     }
     log.transports.file.file = path.join(logPath, 
@@ -426,8 +426,8 @@ function createSettingsWindow() {
   }
   settingsWindow = new BrowserWindow({
     title: 'Settings',
-    width: 700,
-    height: 650,
+    width: 570,
+    height: 675,
     resizable: DEVELOPMENT_MODE,
     titleBarStyle: 'hidden',
     show: false,
@@ -448,7 +448,7 @@ function createSettingsWindow() {
     settingsWindow.show();
   })
   if ( DEVELOPMENT_MODE ) {
-    settingsWindow.webContents.openDevTools();
+     settingsWindow.webContents.openDevTools();
   }
   settingsWindow.on('page-title-updated', (e) => {
     e.preventDefault();
@@ -749,34 +749,38 @@ ipcMain.on('update-app', (e, app) => {
      return
   }
 });
-ipcMain.on('validate-gams', async (e, path) => {
-  log.debug(`Request to validate GAMS path at location: ${path} received.`);
-  try {
-    if ( await configData.validateGAMS(path) && settingsWindow ) {
-      log.debug('GAMS path is valid!');
-      settingsWindow.webContents.send('gamspath-validated', path);
-    } else {
-      log.debug('GAMS path is invalid!');
-      dialog.showMessageBoxSync(settingsWindow, 
-      {
-        type: 'error',
-        title: 'GAMS path invalid',
-        message: `The path you selected is not a valid GAMS path. \
- Note that in order to run MIRO at least GAMS version ${configData.getMinimumGAMSVersion()} is required.`
-      });
+[ 'gams', 'r' ].forEach((el) => {
+  ipcMain.on(`validate-${el}`, async (e, pathToValidate) => {
+    const idUpper = el.toUpperCase();
+    log.debug(`Request to validate ${idUpper} path at location: ${pathToValidate} received.`);
+    try {
+      if ( await configData.validate(el, pathToValidate) !== false && settingsWindow ) {
+        log.debug(`${idUpper} path is valid!`);
+        settingsWindow.webContents.send(`${el}path-validated`, pathToValidate);
+      } else {
+        log.debug(`${idUpper} path is invalid!`);
+        dialog.showMessageBoxSync(settingsWindow, 
+        {
+          type: 'error',
+          title: `${idUpper} path invalid`,
+          message: `The path you selected is not a valid ${idUpper} path. \
+Note that in order to run MIRO at least ${idUpper} version \
+${configData.getMinimumVersion(el)} is required.`
+        });
+      }
+    } catch (e) {
+      log.error(`Error while validating ${idUpper} version. Error message: ${e.message}`);
+      if ( settingsWindow ) {
+         dialog.showMessageBoxSync(settingsWindow, 
+        {
+          type: 'error',
+          title: 'Unexpected error',
+          message: `An unexpected error occurred while validating the ${idUpper} path you selected. \
+    Error message: ${e.message}.`
+        });
+       }
     }
-  } catch (e) {
-    log.error(`Error while validating GAMS version. Error message: ${e.message}`);
-    if ( settingsWindow ) {
-       dialog.showMessageBoxSync(settingsWindow, 
-      {
-        type: 'error',
-        title: 'Unexpected error',
-        message: `An unexpected error occurred while validating the GAMS path you selected. \
-  Error message: ${e.message}.`
-      });
-     }
-  }
+  });
 });
 
 ipcMain.on('save-path-config', async (e, newConfigData, needRestart) => {
