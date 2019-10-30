@@ -904,17 +904,20 @@ app.on('ready', async () => {
   createMainWindow();
   log.info('MIRO launcher started successfully.');
 
-  if ( 
+  if ( process.platform === 'linux' ) {
     fs.readdir(path.join(libPath, '..'), (err, items) => {
       if (err) throw err;
-      items.find(item => item === 'library_src')}) ) {
-    try{
-      log.info(await configData.get('rpath'));
-      rPackagesInstalled = installRPackages(
-        await configData.get('rpath'), libPath, mainWindow);
-    } catch(e) {
-      log.error(`Problems creating prompt to install R packages. Error message: ${e.message}.`)
-    }
+
+      if ( items.find(item => item === 'library_src') ) {
+        try{
+          rPackagesInstalled = installRPackages(
+            await configData.get('rpath'), libPath, mainWindow);
+        } catch(e) {
+          log.error(`Problems creating prompt to install R packages. \
+Error message: ${e.message}.`)
+        }
+      }
+    });
   }
 });
 
