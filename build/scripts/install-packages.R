@@ -87,7 +87,9 @@ if ( !'data.table' %in% installedPackages){
 }
 
 for(package in packageVersionMap){
-    if ( package[1] %in% installedPackages){
+    if ( package[1] %in% installedPackages || isLinux && 
+        file.exists(file.path(libPathSrc, 
+            paste0(package[1], '_', package[2], '.tar.gz'))) ) {
         print(sprintf("Skipping '%s' as it is already installed.", package[1]))
         next
     }
