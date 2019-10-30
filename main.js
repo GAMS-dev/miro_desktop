@@ -70,7 +70,7 @@ const libPath = path.join(appRootDir, 'r', 'library');
 const miroResourcePath = DEVELOPMENT_MODE? path.join(app.getAppPath(), 'miro'):
    path.join(process.resourcesPath, 'miro');
 
-log.info(`MIRO launcher is being started (pid: ${process.pid}, \
+log.info(`MIRO launcher is being started (rootDir: ${appRootDir}, pid: ${process.pid}, \
 platform: ${process.platform}, arch: ${process.arch}, \
 version: ${process.getSystemVersion()})...`);
 
@@ -901,7 +901,7 @@ app.on('ready', async () => {
   createMainWindow();
   log.info('MIRO launcher started successfully.');
 
-  if ( process.platform === 'linux' && 
+  if ( 
     fs.readdir(path.join(libPath, '..'), (err, items) => {
       if (err) throw err;
       items.find(item => item === 'library_src')}) ) {
