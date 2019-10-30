@@ -1,5 +1,11 @@
 source('./r/scripts/globals.R')
 
+if(R.version[["major"]] < 3 || 
+   R.version[["major"]] == 3 && gsub("\\..$", "", 
+                                     R.version[["minor"]]) < 6){
+  stop("The R version you are using is not supported. At least version 3.6 is required to run GAMS MIRO.", call. = FALSE)
+}
+
 for(package in packageVersionMap){
     if ( package[1] %in% installedPackages){
         print(sprintf("Skipping '%s' as it is already installed.", package[1]))
