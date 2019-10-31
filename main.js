@@ -911,7 +911,7 @@ app.on('ready', async () => {
   }
   let libPathFiles;
   try {
-    libPathFiles = await fs.readdir(path.join(libPath, '..'));
+    libPathFiles = await readdir(path.join(libPath, '..'));
   } catch (e) {
     log.error(`Problems reading libPath. Error message: ${e.message}.`);
     return;
