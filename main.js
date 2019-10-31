@@ -3,6 +3,8 @@ const { app, BrowserWindow, Menu, TouchBar, ipcMain, dialog, session, systemPref
 const { TouchBarLabel, TouchBarButton, TouchBarSpacer } = TouchBar;
 const path  = require('path');
 const fs    = require('fs');
+const { promisify } = require('util');
+const readdir = promisify(fs.readdir);
 const yauzl = require('yauzl');
 const http = require('axios');
 const execa = require('execa');
@@ -904,20 +906,24 @@ app.on('ready', async () => {
   createMainWindow();
   log.info('MIRO launcher started successfully.');
 
-  if ( process.platform === 'linux' ) {
-    fs.readdir(path.join(libPath, '..'), (err, items) => {
-      if (err) throw err;
-
-      if ( items.find(item => item === 'library_src') ) {
-        try{
-          rPackagesInstalled = installRPackages(
-            await configData.get('rpath'), libPath, mainWindow);
-        } catch(e) {
-          log.error(`Problems creating prompt to install R packages. \
+  if ( process.platform !== 'linux' ) {
+    return;
+  }
+  let libPathFiles;
+  try {
+    libPathFiles = await fs.readdir(path.join(libPath, '..'));
+  } catch (e) {
+    log.error(`Problems reading libPath. Error message: ${e.message}.`);
+    return;
+  }
+  if ( libPathFiles.find(item => item === 'library_src') ) {
+    try{
+      rPackagesInstalled = installRPackages(
+        await configData.get('rpath'), libPath, mainWindow);
+    } catch(e) {
+      log.error(`Problems creating prompt to install R packages. \
 Error message: ${e.message}.`)
-        }
-      }
-    });
+    }
   }
 });
 
