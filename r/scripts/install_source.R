@@ -13,7 +13,7 @@ for(package in packageVersionMap){
         print(sprintf("Skipping '%s' as it is already installed.", package[1]))
         next
     }
-    install.packages(file.path(RlibPathSrc, 
+    install.packages(file.path(scriptPath, '..', 'library_src'), 
       paste0(package[1], '_', package[2], '.tar.gz')), 
       lib = RLibPath, repos = NULL, 
       type = "source", dependencies = FALSE)
