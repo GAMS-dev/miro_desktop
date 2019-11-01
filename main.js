@@ -522,7 +522,7 @@ function createMainWindow () {
           return;
         }
         try {
-          await fs.promises.writeFile(path.join(libPath, 'INSTALLING.txt'), 
+          await fs.promises.writeFile(path.join(libPath, 'INSTALLING'), 
             '', 'utf8');
         } catch (e) {
           fs.rmdirSync(libPath)

@@ -26,7 +26,8 @@ async function installRPackages(rpath, apppath, libpath, mainWindow){
   const rproc = execa(path.join(rpath, 'bin', 'Rscript'), 
     [path.join(scriptsPath, 'install_source.R')],
     { env: {'LIB_PATH': libpath,
-            'SCRIPTS_PATH': scriptsPath}});
+            'SCRIPTS_PATH': scriptsPath},
+      all: true});
   mainWindow.send('install-r-packages');
 
   ipcMain.on('kill-r-pkg-install', (e) => {
@@ -35,10 +36,7 @@ async function installRPackages(rpath, apppath, libpath, mainWindow){
     } catch (e) { }
   });
 
-  for await (const data of rproc.stdout) {
-    mainWindow.send('install-r-packages-stdout', data);
-  };
-  for await (const data of rproc.stderr) {
+  for await (const data of rproc.all) {
     mainWindow.send('install-r-packages-stdout', data);
   };
   try {
