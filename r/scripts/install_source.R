@@ -1,6 +1,7 @@
 scriptPath = Sys.getenv('SCRIPTS_PATH')
 
 source(file.path(scriptPath, 'globals.R'))
+options(warn = 2)
 
 if(R.version[["major"]] < 3 || 
    R.version[["major"]] == 3 && gsub("\\..$", "", 
