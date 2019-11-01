@@ -670,8 +670,12 @@ to finish. Error message: ${e.message}`)
   }
 }
 
-function showErrorMsg (options) {
+function showErrorMsg (optionsTmp) {
   if ( mainWindow ){
+    let options = optionsTmp;
+    if ( !options.buttons ) {
+      options.buttons = ['OK'];
+    }
     dialog.showMessageBoxSync(mainWindow, options)
   }  
 }
