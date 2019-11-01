@@ -2,13 +2,19 @@
 const { dialog, ipcMain } = require('electron');
 const execa = require('execa');
 const path = require('path');
+const fs = require('fs');
 
 
 
-async function installRPackages(rpath, libpath, mainWindow){
+async function installRPackages(rpath, apppath, libpath, mainWindow){
   if ( !rpath ) {
-    mainWindow.send('invalid-r');
+    dialog.showMessageBoxSync({type: 'error',
+        title: 'R not found',
+        message: 'No R installation was found on your machine. Please install R or specify path manually in settings.'})
     return;
+  }
+  try {
+
   }
   const selection = dialog.showMessageBoxSync({
     type: 'question',
@@ -20,7 +26,8 @@ async function installRPackages(rpath, libpath, mainWindow){
     return false;
   }
   const rproc = execa(path.join(rpath, 'bin', 'Rscript'), 
-    [path.join(libpath, '..', 'scripts', 'install_source.R')]);
+    [path.join(apppath, 'r', 'scripts', 'install_source.R')],
+    { env: {'LIB_PATH': libpath}});
   mainWindow.send('install-r-packages');
 
   ipcMain.on('kill-r-pkg-install', (e) => {

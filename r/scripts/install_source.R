@@ -17,8 +17,7 @@ for(package in packageVersionMap){
       type = "source", dependencies = FALSE)
 }
 # clean up unncecessary files
-unlink(file.path(RLibPath, 'EMPTY'), force = TRUE, recursive = FALSE)
-unlink(RlibPathSrc, force = TRUE, recursive=TRUE)
+unlink(file.path(RLibPath, 'INSTALLING'), force = TRUE, recursive = FALSE)
 dontDisplayMe <- lapply(list.dirs(RLibPath, full.names = TRUE, recursive = FALSE), 
     function(x) {
         unlink(file.path(x, c("help", "doc", "tests", "html",

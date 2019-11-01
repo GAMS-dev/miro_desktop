@@ -2,7 +2,13 @@ CRANMirrors <- c('http://cran.us.r-project.org',
     'https://cran.cnr.berkeley.edu/',
     'https://stat.ethz.ch/CRAN/')
 
-RLibPath <- "./r/library"
+RLibPath <- Sys.getenv('LIB_PATH')
+
+if ( identical(RLibPath, '') ) {
+    stop("Library path not specified. Use environment variable LIB_PATH to specify where libraries should be installed.", 
+        call. = FALSE)
+}
+
 RlibPathDevel <- './build/lib_devel'
 RlibPathSrc <- file.path('.', 'r', 'library_src')
 isMac <- Sys.info()['sysname'] == 'Darwin' || grepl("^darwin", R.version$os)

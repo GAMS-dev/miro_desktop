@@ -3,8 +3,6 @@ const { app, BrowserWindow, Menu, TouchBar, ipcMain, dialog, session, systemPref
 const { TouchBarLabel, TouchBarButton, TouchBarSpacer } = TouchBar;
 const path  = require('path');
 const fs    = require('fs');
-const { promisify } = require('util');
-const readdir = promisify(fs.readdir);
 const yauzl = require('yauzl');
 const http = require('axios');
 const execa = require('execa');
@@ -12,6 +10,7 @@ const log = require('electron-log');
 const menu = require('./components/menu.js');
 const installRPackages = require('./components/install-r.js');
 const minAPIVersion = 1;
+const miroVersion = '1.0';
 
 const DataStore = require('./DataStore');
 const ConfigManager = require('./ConfigManager');
@@ -70,7 +69,7 @@ let miroProcesses = [];
 const processIdMap = {};
 
 let rPackagesInstalled = true;
-const libPath = path.join(appRootDir, 'r', 'library');
+let libPath = path.join(appRootDir, 'r', 'library');
 
 const miroResourcePath = DEVELOPMENT_MODE? path.join(app.getAppPath(), 'miro'):
    path.join(process.resourcesPath, 'miro');
@@ -551,7 +550,8 @@ async function createMIROAppWindow(appData) {
   if ( process.platform === 'linux' && rPackagesInstalled !== true) {
     log.info('MIRO app launch requested without packages being installed.');
     mainWindow.send('hide-loading-screen', appData.id);
-    rPackagesInstalled = installRPackages(rpath, libPath, mainWindow);
+    rPackagesInstalled = installRPackages(rpath, appRootDir, 
+      libPath, mainWindow);
     return;
   }
 
@@ -876,6 +876,14 @@ app.on('will-finish-launching', () => {
 });
 
 app.on('ready', async () => {
+  if ( process.platform === 'linux') {
+    try {
+      libPath = path.join(await configData.get('rpath'),
+        'miro-library', miroVersion);
+    } catch (e) {
+      errMsg = `Couldn't retrieve R path. Error message: ${e.message}.`;
+    }
+  }
   if ( errMsg ) {
     dialog.showMessageBoxSync({
       type: 'error',
@@ -909,17 +917,46 @@ app.on('ready', async () => {
   if ( process.platform !== 'linux' ) {
     return;
   }
-  let libPathFiles;
-  try {
-    libPathFiles = await readdir(path.join(libPath, '..'));
-  } catch (e) {
-    log.error(`Problems reading libPath. Error message: ${e.message}.`);
-    return;
+  let libPathFiles = [];
+  let libsInstalled = true;
+  if ( fs.existsSync(libPath) ) {
+    try {
+      libPathFiles = await fs.promises.readdir(libPath);
+      if ( libPathFiles.find(item => item === 'INSTALLING') ) {
+        libsInstalled = false;
+      }
+    } catch (e) {
+      log.error(`Problems reading libPath. Error message: ${e.message}.`);
+      return;
+    }
+  } else {
+    libsInstalled = false;
+    try {
+      await fs.promises.mkdir(libPath, { recursive: true });
+    } catch (e) {
+      showErrorMsg(mainWindow, {
+        type: 'error',
+        title: 'Insufficient permissions',
+        message: `You don't have permissions to install libraries inside: \
+${libPath}. Consider starting AppImage with sudo and --no-sandbox flag.`
+      });
+      return;
+    }
+    try {
+      await fs.promises.writeFile(file.path(libPath, 'INSTALLING'), 
+        '', 'utf8');
+    } catch (e) {
+      fs.rmdirSync(libPath)
+      log.error(`Could not write INSTALLING metadata file to: ${libPath}.\
+ Error message: ${e.message}.`);
+      return;
+    }
   }
-  if ( libPathFiles.find(item => item === 'library_src') ) {
+  if ( !libsInstalled ) {
     try{
       rPackagesInstalled = installRPackages(
-        await configData.get('rpath'), libPath, mainWindow);
+        await configData.get('rpath'), appRootDir, 
+        libPath, mainWindow);
     } catch(e) {
       log.error(`Problems creating prompt to install R packages. \
 Error message: ${e.message}.`)

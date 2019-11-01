@@ -19,7 +19,7 @@ const tryInstallRPackages = async (attempt = 0) => {
             rPath = './r/bin/Rscript';
         }
         const subproc =  execa(rPath, [ './build/scripts/install-packages.R' ],
-            { env: { 'R_HOME_DIR': '/Users/fproske/Documents/products/miro_launcher/r'}});
+            { env: { 'LIB_PATH': './r/library'}});
         subproc.stderr.pipe(process.stderr);
         subproc.stdout.pipe(process.stderr);
         await subproc;

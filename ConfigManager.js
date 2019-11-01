@@ -7,10 +7,6 @@ const path  = require('path');
 const which = require('which');
 const execa = require('execa');
 const { tmpdir } = require('os');
-const { promisify } = require('util');
-const readdir = promisify(fs.readdir);
-const stat = promisify(fs.stat);
-const unlink = promisify(fs.unlink);
 
 const minGams = '29.0';
 const minR = '3.6';
@@ -167,7 +163,7 @@ class ConfigManager extends Store {
     const now = new Date().getTime();   
     try {
       const logPath = await this.get('logpath');
-      const logFiles = await readdir(logPath);
+      const logFiles = await fs.promises.readdir(logPath);
       if ( !logFiles ) {
         return true;
       }
@@ -177,10 +173,10 @@ class ConfigManager extends Store {
         }
         try{
           const fp = path.join(logPath, logFile);
-          const { mtime } = await stat(fp);
+          const { mtime } = await fs.promises.stat(fp);
           if ( (now - mtime.getTime()) / 
             (1000 * 3600 * 24) > this.logLifeTime ) {
-            unlink(fp);
+            fs.promises.unlink(fp);
           } 
         } catch(e) {
           return;
@@ -230,7 +226,7 @@ class ConfigManager extends Store {
           }
         } else {
           let rpathTmp = await which('Rscript', {nothrow: true});
-          rpathTmp = this.validateR(rpathTmp);
+          rpathTmp = await this.validateR(rpathTmp);
           if ( rpathTmp !== false ) {
             this.rpathDefault = rpathTmp[1];
           }
@@ -253,7 +249,8 @@ class ConfigManager extends Store {
       // Directory was selected, so scan it
       let contentRDir;
       try {
-        contentRDir = await readdir(rpathTmp, { withFileTypes: true });
+        contentRDir = await fs.promises.readdir(rpathTmp, 
+          { withFileTypes: true });
       } catch (e) {
         console.error(e);
         return false;
@@ -334,7 +331,8 @@ ${latestGamsInstalled}`);
     let contentGamsDir
     let gamsExecDir
     try {
-      contentGamsDir = await readdir(gamsDir, { withFileTypes: true });
+      contentGamsDir = await fs.promises.readdir(gamsDir, 
+        { withFileTypes: true });
     } catch (e) {
       console.error(e);
       return false
