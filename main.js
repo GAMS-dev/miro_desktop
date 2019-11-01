@@ -805,6 +805,15 @@ ipcMain.on('update-app', (e, app) => {
      mainWindow.send('apps-received', updatedApps, appDataPath);
   } catch (e) {
     log.error(`Update app request failed. Error message: ${e.message}`);
+    if ( e.code === 'EACCES' ) {
+         dialog.showMessageBoxSync(mainWindow, {
+            type: 'error',
+            title: 'No write permissions',
+            message: `Model could not be updated as you don't have permissions\
+ to write to this location: '${configData.getConfigPath()}.'`
+          });
+     return
+     }
      dialog.showMessageBoxSync(mainWindow, {
         type: 'error',
         title: 'Unexpected error',
@@ -907,6 +916,15 @@ ipcMain.on('delete-app', (e, appId) => {
     log.debug(`App: ${appId} removed.`);
   } catch (e) {
     log.error(`Delete app (ID: ${appId}) request failed. Error message: ${e.message}`);
+    if ( e.code === 'EACCES' ) {
+         dialog.showMessageBoxSync(mainWindow, {
+            type: 'error',
+            title: 'No write permissions',
+            message: `Model could not be removed as you don't have permissions\
+ to write to this location: '${configData.getConfigPath()}.'`
+          });
+     return
+     }
   }
 });
 
