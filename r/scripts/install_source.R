@@ -11,8 +11,8 @@ if(R.version[["major"]] < 3 ||
 }
 listOfLibs = list.files(libSrcPath)
 
-packageVersionMap <- c(packageVersionMap, 
-  list(dataTableVersionMap))
+packageVersionMap <- c(list(dataTableVersionMap), 
+  packageVersionMap)
 for(package in packageVersionMap){
     if ( package[1] %in% installedPackages){
         print(sprintf("Skipping '%s' as it is already installed.", package[1]))
