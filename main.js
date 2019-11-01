@@ -491,7 +491,7 @@ function createMainWindow () {
   if ( DEVELOPMENT_MODE ) {
     mainWindow.webContents.openDevTools();
   }
-  mainWindow.webContents.on('did-finish-load', () => {
+  mainWindow.webContents.on('did-finish-load', async () => {
     mainWindow.webContents.send('apps-received', 
       appsData.apps, appDataPath, true);
     log.debug(`App data (${appsData.apps.length} app(s)) loaded into main window.`);
