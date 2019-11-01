@@ -1,4 +1,5 @@
 scriptPath = Sys.getenv('SCRIPTS_PATH')
+libSrcPath = file.path(scriptPath, '..', 'library_src')
 
 source(file.path(scriptPath, 'globals.R'))
 options(warn = 2)
@@ -8,14 +9,21 @@ if(R.version[["major"]] < 3 ||
                                      R.version[["minor"]]) < 6){
   stop("The R version you are using is not supported. At least version 3.6 is required to run GAMS MIRO.", call. = FALSE)
 }
+listOfLibs = list.files(libSrcPath)
 
 for(package in packageVersionMap){
     if ( package[1] %in% installedPackages){
         print(sprintf("Skipping '%s' as it is already installed.", package[1]))
         next
     }
-    install.packages(file.path(scriptPath, '..', 'library_src', 
-         paste0(package[1], '_', package[2], '.tar.gz')), 
+    
+    if ( length(package) == 2L ) {
+      packageFile = paste0(package[1], '_', packageVersion, '.tar.gz')
+    } else {
+      packageFile = listOfLibs[grepl(package[1], 
+        listOfLibs, fixed = TRUE)][1]
+    }
+    install.packages(file.path(libSrcPath, packageFile), 
       lib = RLibPath, repos = NULL, 
       type = "source", dependencies = FALSE)
 }
