@@ -495,6 +495,53 @@ function createMainWindow () {
     mainWindow.webContents.send('apps-received', 
       appsData.apps, appDataPath, true);
     log.debug(`App data (${appsData.apps.length} app(s)) loaded into main window.`);
+    if ( process.platform === 'linux' ) {
+      let libPathFiles = [];
+      let libsInstalled = true;
+      if ( fs.existsSync(libPath) ) {
+        try {
+          libPathFiles = await fs.promises.readdir(libPath);
+          if ( libPathFiles.find(item => item === 'INSTALLING') ) {
+            libsInstalled = false;
+          }
+        } catch (e) {
+          log.error(`Problems reading libPath. Error message: ${e.message}.`);
+          return;
+        }
+      } else {
+        libsInstalled = false;
+        try {
+          await fs.promises.mkdir(libPath, { recursive: true });
+        } catch (e) {
+          showErrorMsg({
+            type: 'error',
+            title: 'Insufficient permissions',
+            message: `You don't have permissions to install libraries inside: \
+    ${libPath}. Consider starting AppImage with sudo and --no-sandbox flag.`
+          });
+          return;
+        }
+        try {
+          await fs.promises.writeFile(path.join(libPath, 'INSTALLING.txt'), 
+            '', 'utf8');
+        } catch (e) {
+          fs.rmdirSync(libPath)
+          log.error(`Could not write INSTALLING metadata file to: ${libPath}.\
+     Error message: ${e.message}.`);
+          return;
+        }
+      }
+      if ( !libsInstalled ) {
+        try{
+          rPackagesInstalled = installRPackages(
+            await configData.get('rpath'), appRootDir, 
+            libPath, mainWindow);
+        } catch(e) {
+          log.error(`Problems creating prompt to install R packages. \
+    Error message: ${e.message}.`)
+        }
+      }
+    }
     if ( appLoaded ) {
       return;
     }
@@ -917,55 +964,6 @@ app.on('ready', async () => {
     createSettingsWindow));
   createMainWindow();
   log.info('MIRO launcher started successfully.');
-
-  if ( process.platform !== 'linux' ) {
-    return;
-  }
-  let libPathFiles = [];
-  let libsInstalled = true;
-  if ( fs.existsSync(libPath) ) {
-    try {
-      libPathFiles = await fs.promises.readdir(libPath);
-      if ( libPathFiles.find(item => item === 'INSTALLING') ) {
-        libsInstalled = false;
-      }
-    } catch (e) {
-      log.error(`Problems reading libPath. Error message: ${e.message}.`);
-      return;
-    }
-  } else {
-    libsInstalled = false;
-    try {
-      await fs.promises.mkdir(libPath, { recursive: true });
-    } catch (e) {
-      showErrorMsg({
-        type: 'error',
-        title: 'Insufficient permissions',
-        message: `You don't have permissions to install libraries inside: \
-${libPath}. Consider starting AppImage with sudo and --no-sandbox flag.`
-      });
-      return;
-    }
-    try {
-      await fs.promises.writeFile(file.path(libPath, 'INSTALLING'), 
-        '', 'utf8');
-    } catch (e) {
-      fs.rmdirSync(libPath)
-      log.error(`Could not write INSTALLING metadata file to: ${libPath}.\
- Error message: ${e.message}.`);
-      return;
-    }
-  }
-  if ( !libsInstalled ) {
-    try{
-      rPackagesInstalled = installRPackages(
-        await configData.get('rpath'), appRootDir, 
-        libPath, mainWindow);
-    } catch(e) {
-      log.error(`Problems creating prompt to install R packages. \
-Error message: ${e.message}.`)
-    }
-  }
 });
 
 app.on('window-all-closed', () => {
