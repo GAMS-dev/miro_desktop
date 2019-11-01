@@ -9,10 +9,10 @@ const execa = require('execa');
 const log = require('electron-log');
 const menu = require('./components/menu.js');
 const installRPackages = require('./components/install-r.js');
-const minAPIVersion = 1;
+const requiredAPIVersion = 1;
 const miroVersion = '1.0';
 
-const DataStore = require('./DataStore');
+const AppDataStore = require('./AppDataStore');
 const ConfigManager = require('./ConfigManager');
 const unzip     = require('./Unzip');
 const { randomPort, waitFor, isNull } = require('./helpers');
@@ -20,6 +20,7 @@ const { randomPort, waitFor, isNull } = require('./helpers');
 const isMac = process.platform === 'darwin';
 const DEVELOPMENT_MODE = !app.isPackaged;
 const miroWorkspaceDir = path.join(app.getPath('home'), '.miro');
+const miroDevelopMode = process.env.MIRO_DEV_MODE;
 (async () => {
   try{
     if ( !fs.existsSync(miroWorkspaceDir) ) {
@@ -60,7 +61,7 @@ version: ${process.getSystemVersion()})...`);
 const appDataPath = errMsg? null :
    path.join(configData.getConfigPath(), 'miro_apps');
 const appsData = errMsg? null : 
-   new DataStore(configData.getConfigPath());
+   new AppDataStore(configData.getConfigPath());
 
 const resourcesPath = DEVELOPMENT_MODE? app.getAppPath(): process.resourcesPath;
 
@@ -129,15 +130,15 @@ const tryStartWebserver = async (progressCallback, onErrorStartup,
       'R_LIBS_USER': libPath,
       'R_LIBS_SITE': libPath,
       'R_LIB_PATHS': libPath,
-      'NODEBUG': 'true',
+      'NODEBUG': !miroDevelopMode,
       'USETMPDIR': appData.useTmpDir,
       'DBPATH': appData.dbPath,
       'GAMS_SYS_DIR': await gamspath,
       'LOGPATH': await logpath,
       'LAUNCHINBROWSER': await launchExternal,
       'GMSMODE': appData.mode === 'hcube'? 'hcube': 'base',
-      'GMSMODELNAME': path.join(appDataPath, appData.id, 
-        `${appData.id}.gms`)},
+      'GMSMODELNAME': miroDevelopMode? appData.modelPath:
+       path.join(appDataPath, appData.id, `${appData.id}.gms`)},
        stdio: 'inherit' }).catch((e) => {
         shinyProcessAlreadyDead = true
         onError(e)
@@ -171,19 +172,6 @@ const tryStartWebserver = async (progressCallback, onErrorStartup,
   try {
     miroProcesses[internalPid].kill()
   } catch (e) {}
-}
-
-function launchApp ( appData ) {
-  if ( !appData.id ) {
-    log.error('Launch app request was submitted but no app ID transmitted.');
-    showErrorMsg({
-        type: 'error',
-        title: 'Unexpected error',
-        message: 'No MIRO app configuration was found. If this problem persists, please contact GAMS!'
-    });
-    return;
-  }
-
 }
 
 let newAppConf
@@ -301,7 +289,7 @@ MIRO version: ${newAppConf.MIROVersion}.`);
             return
           }
           if ( !newAppConf.APIVersion ||
-            newAppConf.APIVersion < minAPIVersion ) {
+            newAppConf.APIVersion !== requiredAPIVersion ) {
             mainWindow.setProgressBar(-1);
             showErrorMsg({
                 type: 'info',
@@ -594,6 +582,17 @@ async function createMIROAppWindow(appData) {
     mainWindow.send('invalid-r');
     return;
   }
+  if ( !appData.APIVersion ||
+    appData.APIVersion !== requiredAPIVersion ) {
+    showErrorMsg({
+        type: 'info',
+        title: 'MIRO app incompatible',
+        message: 'The MIRO app you want to add is not compatible \
+with the MIRO version you installed. Please ask the developer of the app \
+to update it and try again!'
+    });
+    return;
+  }
   if ( process.platform === 'linux' && rPackagesInstalled !== true) {
     log.info('MIRO app launch requested without packages being installed.');
     mainWindow.send('hide-loading-screen', appData.id);
@@ -621,7 +620,7 @@ async function createMIROAppWindow(appData) {
   }
 
   const onErrorStartup = async (appID, message) => {
-    log.debug(`Error during startup of MIRO app with ID: ${appData.id}.\
+    log.debug(`Error during startup of MIRO app with ID: ${appData.id}. \
 ${message? `Message: ${message}` : ''}`);
     if ( mainWindow ) {
       mainWindow.send('hide-loading-screen', appData.id);
@@ -978,9 +977,37 @@ app.on('ready', async () => {
   session.defaultSession.setPermissionRequestHandler((_1, _2, callback) => {
     callback(false)
   });
-  Menu.setApplicationMenu(menu(activateEditMode, 
-    createSettingsWindow));
-  createMainWindow();
+
+  if ( miroDevelopMode ) {
+    mainWindow = new BrowserWindow({ show: false, width: 0, height: 0});
+    mainWindow.hide();
+    const modelPath = process.env.MIRO_MODEL_PATH;
+    if ( !modelPath ) {
+      showErrorMsg({
+        type: 'error',
+        title: 'No model path',
+        message: 'You need to specify the path to the main gms file via\
+ the environment variable: MIRO_MODELPATH'
+      });
+      app.quit();
+      return;
+    }
+    createMIROAppWindow({
+      id: path.basename(modelPath, 'gms'),
+      modelPath: modelPath,
+      mode: process.env.MIRO_MODE,
+      dbPath: path.join(app.getPath('home'), '.miro'),
+      useTmpDir: process.env.MIRO_USE_TMP ? process.env.MIRO_USE_TMP: false,
+      APIVersion: requiredAPIVersion,
+      MIROVersion: miroVersion
+    });
+
+  } else {
+    Menu.setApplicationMenu(menu(activateEditMode, 
+      createSettingsWindow));
+    createMainWindow();
+  }
+
   log.info('MIRO launcher started successfully.');
 });
 

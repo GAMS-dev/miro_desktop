@@ -28,7 +28,7 @@ const addAppWrapperHTML = `<div id="addAppBox" class="add-app-box app-box-fixed-
 const appFilesPlaceholder = 'Drop your MIRO app here or click to browse.';
 const appNamePlaceholder = 'Define the app title';
 const appDescPlaceholder = 'Short model description (optional)';
-const appDbPathPlaceholder = path.join('~', '.miro');
+const appDbPathPlaceholder = path.join(remote.app.getPath('home'), '.miro');
 const appDbPathReset = 'Reset to default';
 const appLogoPlaceholder = 'Different app logo? Drop your MIRO app logo here or click to browse.';
 const editHelper = `<div class="edit-info" style="display:none;">
@@ -523,7 +523,7 @@ title="${app.title} logo" data-id="${app.id}" class="app-logo">
     } else {
         if ( startup ) {
           animationScreen.css('display', 'flex');
-          setTimeout(() => { animationScreen.hide(); }, 2900);
+          setTimeout(() => { animationScreen.fadeOut(200); }, 1800);
         }
         appsWrapper.html(addAppWrapperHTMLFull);
        noAppsNotice.show();

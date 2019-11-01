@@ -56,7 +56,7 @@ const schema = {
   }
 };
 
-class DataStore extends Store {
+class AppDataStore extends Store {
   constructor (configPath) {
     super({schema, cwd: configPath, 
       encryptionKey: 'MIROobfuscatedConfigFile'})
@@ -100,4 +100,4 @@ class DataStore extends Store {
   }
 }
 
-module.exports = DataStore
+module.exports = AppDataStore

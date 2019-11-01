@@ -139,25 +139,25 @@ input, button, textarea, :focus {
 .deconstructed > div:nth-child(1) {
   -webkit-mask-image: linear-gradient(black 25%, transparent 25%);
   mask-image: linear-gradient(black 25%, transparent 25%);
-  animation: deconstructed1 3s 1;
+  animation: deconstructed1 2s 1;
 }
 
 .deconstructed > div:nth-child(2) {
   -webkit-mask-image: linear-gradient(transparent 25%, black 25%, black 50%, transparent 50%);
   mask-image: linear-gradient(transparent 25%, black 25%, black 50%, transparent 50%);
-  animation: deconstructed2 3s 1;
+  animation: deconstructed2 2s 1;
 }
 
 .deconstructed > div:nth-child(3) {
    -webkit-mask-image: linear-gradient(transparent 50%, black 50%, black 75%, transparent 75%);
   mask-image: linear-gradient(transparent 50%, black 50%, black 75%, transparent 75%);
-  animation: deconstructed3 3s 1;
+  animation: deconstructed3 2s 1;
 }
 
 .deconstructed > div:nth-child(4) {
    -webkit-mask-image: linear-gradient(transparent 75%, black 75%);
   mask-image: linear-gradient(transparent 75%, black 75%);
-  animation: deconstructed4 3s 1;
+  animation: deconstructed4 2s 1;
 }
 
 @keyframes deconstructed1 {
@@ -168,7 +168,7 @@ input, button, textarea, :focus {
     transform: translateX(0%);
   }
   83% {
-    transform: translateX(-0.1%);
+    transform: translateX(-0.4%);
   }
   100% {
     transform: translateX(-120%);
@@ -183,7 +183,7 @@ input, button, textarea, :focus {
     transform: translateX(0.5%);
   }
   82% {
-    transform: translateX(-0.2%);
+    transform: translateX(-0.8%);
   }
   100% {
     transform: translateX(-125%);
@@ -220,6 +220,11 @@ input, button, textarea, :focus {
   }
 }
 .no-apps {
+    position: absolute;
+    top: 100px;
+    left: 0;
+    right: 0;
+    margin: auto;
     text-align:center;margin-top:50px;
 }
 .main-box {

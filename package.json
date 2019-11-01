@@ -23,6 +23,7 @@
       "miro/LICENSE",
       "miro/modules/**",
       "miro/R/**",
+      "miro/JS/**",
       "miro/www/**",
       "miro/resources/**",
       "miro/tools/**",
