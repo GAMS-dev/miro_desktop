@@ -934,7 +934,7 @@ app.on('ready', async () => {
     try {
       await fs.promises.mkdir(libPath, { recursive: true });
     } catch (e) {
-      showErrorMsg(mainWindow, {
+      showErrorMsg({
         type: 'error',
         title: 'Insufficient permissions',
         message: `You don't have permissions to install libraries inside: \
