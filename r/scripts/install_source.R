@@ -18,7 +18,7 @@ for(package in packageVersionMap){
     }
     
     if ( length(package) == 2L ) {
-      packageFile = paste0(package[1], '_', packageVersion, '.tar.gz')
+      packageFile = paste0(package[1], '_', package[2], '.tar.gz')
     } else {
       packageFile = listOfLibs[grepl(package[1], 
         listOfLibs, fixed = TRUE)][1]
