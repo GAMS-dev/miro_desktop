@@ -13,9 +13,6 @@ async function installRPackages(rpath, apppath, libpath, mainWindow){
         message: 'No R installation was found on your machine. Please install R or specify path manually in settings.'})
     return;
   }
-  try {
-
-  }
   const selection = dialog.showMessageBoxSync({
     type: 'question',
     title: 'Install R packages',
