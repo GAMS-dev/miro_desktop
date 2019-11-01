@@ -104,5 +104,6 @@ packageVersionMap <- list(
     c('dygraphs', '1.1.1.6'),
     c('future', '1.14.0'),
     'rhandsontable')
+dataTableVersionMap <- c('data.table', '1.12.2')
 installedPackages <- installed.packages(RLibPath)
 isLinux <- grepl("linux-gnu", R.version$os)

@@ -85,7 +85,7 @@ if ( !'data.table' %in% installedPackages){
         makevarsPath)
     }
     tryCatch({
-        installPackage(c('data.table', '1.12.2'))
+        installPackage(dataTableVersionMap)
     }, error = function(e){
         stop(sprintf('Problems installing data.table: %s', conditionMessage(e)))
     }, finally = {
