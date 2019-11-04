@@ -61,7 +61,6 @@ class AppDataStore extends Store {
     super({schema, cwd: configPath, 
       encryptionKey: 'MIROobfuscatedConfigFile'})
     this.apps = this.get('apps') || []
-    console.log(this.apps)
   }
 
   saveApps () {
