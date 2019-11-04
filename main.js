@@ -421,7 +421,7 @@ function createSettingsWindow() {
   settingsWindow = new BrowserWindow({
     title: 'Settings',
     width: 570,
-    height: 675,
+    height: 730,
     resizable: DEVELOPMENT_MODE,
     titleBarStyle: 'hidden',
     show: false,

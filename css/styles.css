@@ -4,6 +4,12 @@ body {
     background-color: #e2e3e8;
     font-family: "montserratlight",sans-serif;
 }
+@media (prefers-color-scheme: dark) {
+  body {
+      color: #eeeeee;
+      background-color: #292D33;
+  }
+}
 :not(input):not(textarea),
 :not(input):not(textarea)::after,
 :not(input):not(textarea)::before {
@@ -257,6 +263,12 @@ input, button, textarea, :focus {
     background-clip: padding-box;
     box-shadow: 0 2px 4px 0 rgba(0,0,0,0.25), 0 2px 10px 0 rgba(0,0,0,0.20);
 }
+@media (prefers-color-scheme: dark) {
+  .app-box {
+    background: #46484c;
+    border-color: #46484c;
+  }
+}
 .app-box-fixed-height {
     height: 500px;
 }
@@ -297,6 +309,12 @@ input, button, textarea, :focus {
   outline: #63594a dashed 1px;
   outline-offset: -10px;
 }
+@media (prefers-color-scheme: dark) {
+  .drag-drop-area {
+    background-color: #838891;
+    border: 1px solid #000;
+  }
+}
 .drag-drop-area-text {
   padding: 8px;
   margin:auto;
@@ -325,6 +343,11 @@ input, button, textarea, :focus {
   outline-offset: -20px;
   background-color: #d5dce2 !important;
   transition: outline-offset .15s ease-in-out, background-color .15s linear;
+}
+@media (prefers-color-scheme: dark) {
+  .drag-drop-area-dragover {
+    background-color: #a6aab3 !important;
+  }
 }
 .app-window {
   height:180px; 
@@ -368,6 +391,11 @@ input, button, textarea, :focus {
   border-bottom: 4px solid #f90;
   margin-left: auto;
   margin-right: auto;
+}
+@media (prefers-color-scheme: dark) {
+  .sub-header {
+    background-color: #272a2f !important;
+  }
 }
 .header-text-wrapper {
   display: inline-block;
@@ -432,6 +460,22 @@ input, button, textarea, :focus {
   border: 1px solid #000;
   background-color: #fff;
   outline-color:#494d55;
+}
+@media (prefers-color-scheme: dark) {
+  .editable {
+    border-color: #000;
+  }
+  .editable:hover {
+    border: 1px dashed #000;
+  }
+  .editable:hover {
+    border: 1px dashed #000;
+  }
+  .editable:focus {
+    border: 1px solid #000;
+    background-color: #292D33;
+    outline-color:#494d55;
+  }
 }
 .editable .fileInput{
     white-space: nowrap;
@@ -512,11 +556,23 @@ input, button, textarea, :focus {
   width: 40px;
   height: calc(1.5em + 0.75rem + 2px);
 }
+@media (prefers-color-scheme: dark) {
+  .miro-launcher-input {
+      background-color: #838891;
+      color: #e9ecef;
+  }
+}
 .miro-launcher-input:disabled {
   cursor: not-allowed !important;
 }
 .custom-file-label::after {
   padding: .375rem .5rem;
+}
+@media (prefers-color-scheme: dark) {
+  .custom-file-label {
+      background-color: #838891;
+      color: #e9ecef;
+  }
 }
 .browseFiles {
   cursor:pointer;
@@ -571,6 +627,15 @@ input, button, textarea, :focus {
     box-shadow: 0 2px 4px 0 #ff99005c, 0 2px 10px 0 #ff990040;
     transition: background-color .15s linear, box-shadow .15s linear;
 }
+@media (prefers-color-scheme: dark) {
+  .btn-add-app {
+    color:#848991 !important;
+  }
+  .add-app-box:hover,
+  .add-app-box:focus {
+    background-color:#54565d;
+  }
+}
 .index-dragover {
   /* some parts from https://css-tricks.com/drag-and-drop-file-uploading/ : */
   outline-offset: -20px;
@@ -578,6 +643,12 @@ input, button, textarea, :focus {
   background-color: #ced1da;
   box-shadow: 0 2px 4px 0 #ff99005c, 0 2px 10px 0 #ff990040;
   transition: outline-offset .15s ease-in-out, box-shadow .15s ease-in-out, background-color .15s linear;
+}
+@media (prefers-color-scheme: dark) {
+  .index-dragover {
+    outline-color: #b1b3b9;
+    background-color: #54565d;
+  }
 }
 .btn-add-app-dragover {
   font-size: 120px;
@@ -604,6 +675,17 @@ input, button, textarea, :focus {
     background-color:#d9dbe2;
     margin-top: 0;
     margin-bottom: 1rem;
+}
+@media (prefers-color-scheme: dark) {
+  .add-app-box-logo {
+      background-color: #393e46;
+  }
+  .add-app-box-title {
+      background-color: #393e46;
+  }
+  .add-app-box-desc {
+      background-color: #393e46;
+  }
 }
 .reset-db-path {
     color: #f90;
@@ -748,8 +830,12 @@ input, button, textarea, :focus {
   font-family: montserratregular,'Open Sans',sans-serif;
   font-size: 14px;
 }
+@media (prefers-color-scheme: dark) {
+  .settings-body {
+      background-color: #393e46;
+  }
+}
 .settings-reset {
-  position: absolute;
 }
 .setting-wrapper {
   align-items: center;
