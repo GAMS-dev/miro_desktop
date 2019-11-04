@@ -61,7 +61,9 @@ $('#btSave').on('click', (e) => {
             {
                 type: 'warning',
                 title: 'Invalid log lifetime',
-                message: 'The value you entered for the number of days log file should be stored is invalid! Please enter only whole numbers!'
+                message: 'The value you entered for the number of days \
+log file should be stored is invalid! Please enter only whole numbers!',
+                buttons: [ 'OK' ]
             });
             return;
         }
@@ -87,7 +89,8 @@ function updatePathConfig( pathSelectConfig, pathSelected ) {
 
 function genPathSelectHandler( pathSelectConfig ) {
     return (event) => { 
-        if ( importantKeys.find(el => el === pathSelectConfig.id ) ) {
+        if ( importantKeys && importantKeys.find(el => 
+            el === pathSelectConfig.id ) ) {
             return;
         }
         const pathSelected = remote.dialog.showOpenDialogSync(currentWindow, {
@@ -120,7 +123,8 @@ pathConfig.forEach((el) => {
     const elKey = this.dataset.key;
     newConfig[elKey] = '';
 
-    if ( pathConfig.find(el2 => el2.id === elKey && el2.requiresRestart === true ) ) {
+    if ( pathConfig.find(el2 => el2.id === elKey && 
+        el2.requiresRestart === true ) ) {
         requireRestart = true;
     }
     const $this = $(this);
@@ -141,7 +145,14 @@ $('.btn-reset-nonpath').click(function(e) {
 
 ipcRenderer.on('settings-loaded', (e, data, defaults) => {
     defaultValues = defaults;
-    importantKeys = data.important;
+
+    if ( !data.important ) {
+        importantKeys = [];
+    } else if ( Array.isArray(data.important) ) {
+        importantKeys = data.important;
+    } else {
+        importantKeys = [ data.important ];
+    }
     requireRestart = false;
     for (let [key, value] of Object.entries(data)) {
       if ( key === 'important' ) {

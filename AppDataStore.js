@@ -27,14 +27,14 @@ const schema = {
             type: 'string',
             minLength: 1
           },
-          APIVersion: {
+          apiversion: {
             type: 'integer',
             minimum: 1
           },
-          useTmpDir: {
+          usetmpdir: {
             type: 'boolean'
           },
-          MIROVersion: {
+          miroversion: {
             type: 'string',
             pattern: '^[0-9]+\.[0-9]+\.[0-9]+$'
           },
@@ -51,7 +51,7 @@ const schema = {
             }
           }
         },
-        required: [ 'id', 'title', 'modesAvailable', 'useTmpDir' ]
+        required: [ 'id', 'title', 'modesAvailable', 'usetmpdir' ]
       }
   }
 };
@@ -61,6 +61,7 @@ class AppDataStore extends Store {
     super({schema, cwd: configPath, 
       encryptionKey: 'MIROobfuscatedConfigFile'})
     this.apps = this.get('apps') || []
+    console.log(this.apps)
   }
 
   saveApps () {

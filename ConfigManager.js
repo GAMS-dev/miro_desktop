@@ -117,6 +117,12 @@ class ConfigManager extends Store {
         valTmp = await this.getDefault(key);
       }
     }
+
+    if ( [ 'gamspath', 'rpath' ].find(el => el === key) ) {
+      if ( valTmp && !fs.existsSync(valTmp) ) {
+        this[key] = valTmp = '';
+      }
+    }
     
     return valTmp;
   }
