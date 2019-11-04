@@ -131,7 +131,7 @@ const tryStartWebserver = async (progressCallback, onErrorStartup,
       'R_LIBS_SITE': libPath,
       'R_LIB_PATHS': libPath,
       'NODEBUG': !miroDevelopMode,
-      'USETMPDIR': appData.useTmpDir,
+      'USETMPDIR': appData.usetmpdir,
       'DBPATH': appData.dbPath,
       'GAMS_SYS_DIR': await gamspath,
       'LOGPATH': await logpath,
@@ -139,10 +139,12 @@ const tryStartWebserver = async (progressCallback, onErrorStartup,
       'GMSMODE': appData.mode === 'hcube'? 'hcube': 'base',
       'GMSMODELNAME': miroDevelopMode? appData.modelPath:
        path.join(appDataPath, appData.id, `${appData.id}.gms`)},
-       stdio: 'inherit' }).catch((e) => {
+       stdio: 'inherit'
+     }).catch((e) => {
         shinyProcessAlreadyDead = true
         onError(e)
       })
+  
   const url = `http://127.0.0.1:${shinyPort}`
   await waitFor(1000)
   for (let i = 0; i <= 25; i++) {
@@ -202,7 +204,7 @@ function validateMIROApp ( filePath ) {
         let skipCnt = 0;
         newAppConf = {
           modesAvailable: [],
-          useTmpDir: true
+          usetmpdir: true
         }
         if (err) throw err;
         zipfile.on('error', (err) => {
@@ -236,7 +238,7 @@ function validateMIROApp ( filePath ) {
               }
             } else if ( entry.fileName === '.no_tmp' ) {
               log.debug('no_tmp indicator in in new MIRO app found.');
-              newAppConf.useTmpDir = false;
+              newAppConf.usetmpdir = false;
               skipCnt++
             }
           }
@@ -255,11 +257,11 @@ function validateMIROApp ( filePath ) {
               if ( miroConfMatch && miroConfMatch[1].length ) {
                 newAppConf.path = filePath[0];
                 newAppConf.id = miroConfMatch[1];
-                newAppConf.APIVersion = parseInt(miroConfMatch[2], 10);
-                newAppConf.MIROVersion = miroConfMatch[3];
+                newAppConf.apiversion = parseInt(miroConfMatch[2], 10);
+                newAppConf.miroversion = miroConfMatch[3];
                 log.info(`New MIRO app successfully identified. Id: ${newAppConf.path}, \
-API version: ${newAppConf.APIVersion}, \
-MIRO version: ${newAppConf.MIROVersion}.`);
+API version: ${newAppConf.apiversion}, \
+MIRO version: ${newAppConf.miroversion}.`);
                 if ( miroConfMatch[4] ) {
                   log.debug('Hypercube configuration in new MIRO app found.');
                   newAppConf.modesAvailable.push('hcube');
@@ -288,8 +290,8 @@ MIRO version: ${newAppConf.MIROVersion}.`);
             });
             return
           }
-          if ( !newAppConf.APIVersion ||
-            newAppConf.APIVersion !== requiredAPIVersion ) {
+          if ( !newAppConf.apiversion ||
+            newAppConf.apiversion !== requiredAPIVersion ) {
             mainWindow.setProgressBar(-1);
             showErrorMsg({
                 type: 'info',
@@ -582,12 +584,16 @@ async function createMIROAppWindow(appData) {
     mainWindow.send('invalid-r');
     return;
   }
-  if ( !appData.APIVersion ||
-    appData.APIVersion !== requiredAPIVersion ) {
+  if ( !appData.apiversion ||
+    parseInt(appData.apiversion, 10) !== requiredAPIVersion ) {
+    log.info(`MIRO app: ${appData.id} has API version: ${appData.apiversion} \
+and is incompatible with MIRO version installed which requires API version: \
+${requiredAPIVersion}.`);
+    mainWindow.send('hide-loading-screen', appData.id);
     showErrorMsg({
         type: 'info',
         title: 'MIRO app incompatible',
-        message: 'The MIRO app you want to add is not compatible \
+        message: 'The MIRO app you want to launch is not compatible \
 with the MIRO version you installed. Please ask the developer of the app \
 to update it and try again!'
     });
@@ -766,26 +772,25 @@ ipcMain.on('add-app', (e, app) => {
   } catch (e) {
     log.error(`Add app request failed. Error message: ${e.message}`);
      if ( e.message === 'DuplicatedId' ) {
-        dialog.showMessageBoxSync(mainWindow, {
-          type: 'info',
+      showErrorMsg({
+        type: 'info',
           title: 'Model exists',
-          message: 'A model with the same name already exists. Please first delete this model before trying again.'
-        })
-        return
+          message: 'A model with the same name already exists. \
+Please first delete this model before trying again.'
+      });
+      return
      } else if ( e.code === 'EACCES' ) {
-         dialog.showMessageBoxSync(mainWindow, {
+      showErrorMsg({
             type: 'error',
             title: 'No write permissions',
             message: `Model could not be saved as you don't have permissions\
- to write to this location: '${configData.getConfigPath()}.'`
-          });
-     return
+ to write to this location: '${configData.getConfigPath()}.'`})
+      return
      }
-     dialog.showMessageBoxSync(mainWindow, {
+     showErrorMsg({
         type: 'error',
         title: 'Unexpected error',
-        message: `An unexpected error occurred. Error message: '${e.message}'`
-      })
+        message: `An unexpected error occurred. Error message: '${e.message}'`});
      return
   }
 });
@@ -805,19 +810,19 @@ ipcMain.on('update-app', (e, app) => {
   } catch (e) {
     log.error(`Update app request failed. Error message: ${e.message}`);
     if ( e.code === 'EACCES' ) {
-         dialog.showMessageBoxSync(mainWindow, {
-            type: 'error',
-            title: 'No write permissions',
-            message: `Model could not be updated as you don't have permissions\
- to write to this location: '${configData.getConfigPath()}.'`
-          });
-     return
-     }
-     dialog.showMessageBoxSync(mainWindow, {
+      showErrorMsg({
         type: 'error',
+        title: 'No write permissions',
+        message: `Model could not be updated as you don't have permissions\
+ to write to this location: '${configData.getConfigPath()}.'`
+      });
+      return
+     }
+     showErrorMsg({
+      type: 'error',
         title: 'Unexpected error',
         message: `An unexpected error occurred. Error message: '${e.message}'`
-      })
+      });
      return
   }
 });
@@ -837,7 +842,8 @@ ipcMain.on('update-app', (e, app) => {
           title: `${idUpper} path invalid`,
           message: `The path you selected is not a valid ${idUpper} path. \
 Note that in order to run MIRO at least ${idUpper} version \
-${configData.getMinimumVersion(el)} is required.`
+${configData.getMinimumVersion(el)} is required.`,
+          buttons: ['OK']
         });
       }
     } catch (e) {
@@ -848,7 +854,8 @@ ${configData.getMinimumVersion(el)} is required.`
           type: 'error',
           title: 'Unexpected error',
           message: `An unexpected error occurred while validating the ${idUpper} path you selected. \
-    Error message: ${e.message}.`
+    Error message: ${e.message}.`,
+          buttons: ['OK']
         });
        }
     }
@@ -865,7 +872,8 @@ ipcMain.on('save-path-config', async (e, newConfigData, needRestart) => {
         {
           type: 'info',
           title: 'Configuration updated',
-          message: 'Your configuration has been updated successfully. MIRO is restarted to apply your changes.'
+          message: 'Your configuration has been updated successfully. MIRO is restarted to apply your changes.',
+          buttons: ['OK']
         });
         app.relaunch();
         app.exit();
@@ -877,7 +885,8 @@ ipcMain.on('save-path-config', async (e, newConfigData, needRestart) => {
            {
              type: 'info',
              title: 'Configuration updated',
-             message: 'Your configuration has been updated successfully.'
+             message: 'Your configuration has been updated successfully.',
+             buttons: ['OK']
            });
       }
     }
@@ -889,7 +898,8 @@ ipcMain.on('save-path-config', async (e, newConfigData, needRestart) => {
         type: 'error',
         title: 'Unexpected error',
         message: `Configuration data could not be saved.\
- Do you miss write permissions in this location: ${configData.getConfigPath()}?`
+ Do you miss write permissions in this location: ${configData.getConfigPath()}?`,
+        buttons: ['OK']
       })
     } 
   }
@@ -916,7 +926,7 @@ ipcMain.on('delete-app', (e, appId) => {
   } catch (e) {
     log.error(`Delete app (ID: ${appId}) request failed. Error message: ${e.message}`);
     if ( e.code === 'EACCES' ) {
-         dialog.showMessageBoxSync(mainWindow, {
+      showErrorMsg({
             type: 'error',
             title: 'No write permissions',
             message: `Model could not be removed as you don't have permissions\
@@ -956,7 +966,8 @@ app.on('ready', async () => {
     dialog.showMessageBoxSync({
       type: 'error',
       title: 'Error initialising MIRO',
-      message: errMsg
+      message: errMsg,
+      buttons: [ 'OK' ]
     });
     app.quit();
     return;
@@ -997,9 +1008,9 @@ app.on('ready', async () => {
       modelPath: modelPath,
       mode: process.env.MIRO_MODE,
       dbPath: path.join(app.getPath('home'), '.miro'),
-      useTmpDir: process.env.MIRO_USE_TMP ? process.env.MIRO_USE_TMP: false,
-      APIVersion: requiredAPIVersion,
-      MIROVersion: miroVersion
+      usetmpdir: process.env.MIRO_USE_TMP ? process.env.MIRO_USE_TMP: false,
+      apiversion: requiredAPIVersion,
+      miroversion: miroVersion
     });
 
   } else {

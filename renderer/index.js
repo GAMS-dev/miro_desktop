@@ -3,6 +3,7 @@
 const { remote, ipcRenderer, shell } = require('electron')
 const path = require('path');
 const { pathToFileURL } = require('url');
+const fs = require('fs');
 window.Bootstrap = require('bootstrap');
 const $ = require('jquery');
 
@@ -230,7 +231,8 @@ appsWrapper.on('click', '.btn-save-changes', function(){
   newAppConfig.title = appTitle;
   const appDescription = $(`#appDesc_${appID}`).text().trim();
   if ( appDescription && appDescription !== appDescPlaceholder ) {
-    newAppConfig.description = appDescription
+    console.log(appDescription);
+    newAppConfig.description = appDescription;
   }
   ipcRenderer.send('update-app', newAppConfig);
 });
@@ -440,6 +442,7 @@ appsWrapper.on('click', '.launch-app', function(){
   $(`#appLoadingScreen_${appID}`).show();
   runningProcesses.push(appID);
   btEditWrapper.addClass('bt-disabled');
+  console.log(this.dataset)
   ipcRenderer.send('launch-app', this.dataset);
 });
 ipcRenderer.on('apps-received', (e, apps, appDataPath, startup = false) => {
@@ -454,8 +457,8 @@ ipcRenderer.on('apps-received', (e, apps, appDataPath, startup = false) => {
         logoPath = path.join(appDataPath, app.id, app.logoPath);
     }
     html += `<div class="col-lg-4 col-6 miro-app-item" data-id="${app.id}" 
-               data-usetmp="${app.useTmpDir}" data-mode="${app.modesAvailable[0]}" 
-               data-apiver="${app.APIVersion}" data-mirover="${app.MIROVersion}">
+               data-usetmp="${app.usetmpdir}" data-mode="${app.modesAvailable[0]}" 
+               data-apiver="${app.apiversion}" data-mirover="${app.miroversion}">
                  <div id="appBox_${app.id}" class="app-box launch-app-box app-box-fixed-height" data-id="${app.id}">
                    <div id="appLoadingScreen_${app.id}" class="app-loading-screen" style="display:none">
                     <div class="lds-ellipsis">
@@ -488,17 +491,17 @@ title="${app.title} logo" data-id="${app.id}" class="app-logo">
                            ${app.modesAvailable.length <= 1 ? 
                             `<button class="btn btn-outline-secondary btn-launch launch-app" 
                                type="button" data-id="${app.id}" 
-                               data-usetmp="${app.useTmpDir}" data-mode="${app.modesAvailable[0]}" 
-                               data-apiver="${app.APIVersion}" data-mirover="${app.MIROVersion}">Launch</button>` : 
+                               data-usetmpdir="${app.usetmpdir}" data-mode="${app.modesAvailable[0]}" 
+                               data-apiversion="${app.apiversion}" data-miroversion="${app.miroversion}">Launch</button>` : 
                             `<button class="btn btn-outline-secondary dropdown-toggle btn-launch" 
                                type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Launch</button>
                              <div class="dropdown-menu">
                                  <a class="dropdown-item launch-app" href="#" data-id="${app.id}" 
-                                   data-usetmp="${app.useTmpDir}" data-mode="base" 
-                                   data-apiver="${app.APIVersion}" data-mirover="${app.MIROVersion}">Base mode</a>
+                                   data-usetmpdir="${app.usetmpdir}" data-mode="base" 
+                                   data-apiversion="${app.apiversion}" data-miroversion="${app.miroversion}">Base mode</a>
                                  <a class="dropdown-item launch-app" href="#" data-id="${app.id}" 
-                                   data-usetmp="${app.useTmpDir}" data-mode="hcube" 
-                                   data-apiver="${app.APIVersion}" data-mirover="${app.MIROVersion}">Hypercube mode</a>
+                                   data-usetmpdir="${app.usetmpdir}" data-mode="hcube" 
+                                   data-apiversion="${app.apiversion}" data-miroversion="${app.miroversion}">Hypercube mode</a>
                              </div>`}
                            
                     </div>
