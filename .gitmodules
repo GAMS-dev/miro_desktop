@@ -37,3 +37,6 @@
 [submodule "r-src/odbc"]
 	path = r-src/odbc
 	url = https://github.com/GAMS-dev/odbc.git
+[submodule "r-src/gdxrrw"]
+	path = r-src/gdxrrw
+	url = https://github.com/GAMS-dev/gdxrrw-miro.git
