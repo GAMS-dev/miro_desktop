@@ -553,7 +553,7 @@ input, button, textarea, :focus {
   border: 1px solid #ced4da;
   border-radius: 0.25rem;
   padding-left: 15px;
-  width: 40px;
+  width: 60px;
   height: calc(1.5em + 0.75rem + 2px);
 }
 @media (prefers-color-scheme: dark) {
@@ -836,6 +836,8 @@ input, button, textarea, :focus {
   }
 }
 .settings-reset {
+  position:absolute;
+  right: 0;
 }
 .setting-wrapper {
   align-items: center;
