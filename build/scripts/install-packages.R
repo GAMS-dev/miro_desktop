@@ -123,7 +123,7 @@ unlink(file.path('.', 'r-src', 'build/'), recursive = TRUE, force = TRUE)
 dontDisplayMe <- lapply(list.dirs(RLibPath, full.names = TRUE, recursive = FALSE), 
     function(x) {
         unlink(file.path(x, c("help", "doc", "tests", "html",
-                              "include", "unitTests",
+                              "include", "unitTests", file.path("inst", "examples"),
                               file.path("libs", "*dSYM"))), force=TRUE, recursive=TRUE)
 })
 # replace directories with periods in their names with symlinks 
