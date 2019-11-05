@@ -278,6 +278,11 @@ input, button, textarea, :focus {
     box-shadow: 0 2px 4px 0 #ff99005c, 0 2px 10px 0 #ff990040;
     transition: box-shadow .15s ease-in-out, background-color .15s linear;
 }
+@media (prefers-color-scheme: dark) {
+  .app-box-hover:hover {
+    background: #54565d;
+  }
+}
 .manage-box {
     margin: 50px auto;
     padding: 45px 30px;
@@ -586,6 +591,11 @@ input, button, textarea, :focus {
   border-radius: 22.5px;
   width: 45px;
 }
+@media (prefers-color-scheme: dark) {
+  .app-corner-button {
+    background:#595a5f;
+  }
+}
 .running-app-icon {
   top: -22.5px;
   right: -22.5px;
@@ -603,6 +613,13 @@ input, button, textarea, :focus {
   text-decoration: none;
   cursor: pointer;
   background-color:lightgray;
+  transition: background-color .15s linear;
+}
+@media (prefers-color-scheme: dark) {
+  .delete-app-button:hover,
+  .delete-app-button:focus {
+    background-color:#757679;
+  }
 }
 .btn-add-app {
   position:absolute;
