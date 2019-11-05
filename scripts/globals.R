@@ -12,6 +12,7 @@ if ( identical(RLibPath, '') ) {
 RlibPathDevel <- './build/lib_devel'
 RlibPathSrc <- file.path('.', 'r', 'library_src')
 isMac <- Sys.info()['sysname'] == 'Darwin' || grepl("^darwin", R.version$os)
+isWindows <- .Platform$OS.type == 'windows'
 
 packageVersionMap <- list(
     c('backports', '1.1.5'),

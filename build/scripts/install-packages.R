@@ -126,6 +126,9 @@ dontDisplayMe <- lapply(list.dirs(RLibPath, full.names = TRUE, recursive = FALSE
                               "include", "unitTests", file.path("inst", "examples"),
                               file.path("libs", "*dSYM"))), force=TRUE, recursive=TRUE)
 })
+if ( isWindows ) {
+    unlink(file.path('r', c('doc', 'tests')), force = TRUE, recursive = TRUE)
+}
 # replace directories with periods in their names with symlinks 
 # as directories with periods must be frameworks for codesign to not nag
 if (isMac) {
