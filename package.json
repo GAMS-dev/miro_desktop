@@ -81,6 +81,7 @@
         "r/**",
         "scripts/**"
       ],
+      "artifactName": "GAMS-MIRO.${ext}",
       "target": "AppImage",
       "category": "Science"
     }
