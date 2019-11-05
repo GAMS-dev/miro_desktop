@@ -249,10 +249,25 @@ function validateMIROApp ( filePath ) {
           let errMsg
           const errMsgTemplate = 'The MIRO app you want to add is invalid. Please make sure to upload a valid MIRO app!'
           const miroConfFormat = /(.*)_(\d)_(\d+)_(\d+\.\d+\.\d+)(_hcube)?\.miroconf$/;
+          let skipCnt = 0;
           for ( const fileName of appFileNames ) {
+            if ( skipCnt > 1 ) {
+              break
+            }
             if ( fileName.endsWith('.miroconf') ) {
               const miroConfMatch = fileName.match(miroConfFormat);
               if ( miroConfMatch && miroConfMatch[1].length ) {
+                if ( miroConfMatch[5] ) {
+                  log.debug('Hypercube configuration in new MIRO app found.');
+                  newAppConf.modesAvailable.push('hcube');
+                } else {
+                  log.debug('Base mode configuration in new MIRO app found.');
+                  newAppConf.modesAvailable.push('base')
+                }
+                if ( newAppConf.id ) {
+                  skipCnt++
+                  continue
+                }
                 newAppConf.path = filePath[0];
                 newAppConf.id = miroConfMatch[1];
                 newAppConf.usetmpdir = miroConfMatch[2] === '1';
@@ -261,14 +276,7 @@ function validateMIROApp ( filePath ) {
                 log.info(`New MIRO app successfully identified. Id: ${newAppConf.path}, \
 API version: ${newAppConf.apiversion}, \
 MIRO version: ${newAppConf.miroversion}.`);
-                if ( miroConfMatch[4] ) {
-                  log.debug('Hypercube configuration in new MIRO app found.');
-                  newAppConf.modesAvailable.push('hcube');
-                } else {
-                  log.debug('Base mode configuration in new MIRO app found.');
-                  newAppConf.modesAvailable.push('base')
-                }
-                break
+                skipCnt++
               } else {
                 log.debug(`Invalid MIROconf file found in new MIRO app: ${fileName}.`);
                 errMsg = errMsgTemplate;
