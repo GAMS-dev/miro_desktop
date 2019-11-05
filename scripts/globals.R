@@ -37,6 +37,7 @@ packageVersionMap <- list(
     c('curl', '4.2'),
     c('V8', '2.3'),
     c('htmltools', '0.4.0'),
+    c('withr', '2.1.2'),
     c('leaflet.providers', '1.8.0'),
     'shiny',
     c('colorspace', '1.4-1'),

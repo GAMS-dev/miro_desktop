@@ -1,5 +1,5 @@
 scriptPath = Sys.getenv('SCRIPTS_PATH')
-libSrcPath = file.path(scriptPath, '..', 'library_src')
+libSrcPath = file.path(scriptPath, '..', 'r', 'library_src')
 
 source(file.path(scriptPath, 'globals.R'))
 options(warn = 2)

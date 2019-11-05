@@ -1,5 +1,5 @@
 # install required packages for MIRO
-source('./r/scripts/globals.R')
+source('./scripts/globals.R')
 for ( libPath in c(RLibPath, RlibPathDevel) ) {
     if (!dir.exists(libPath) && 
         !dir.create(libPath, showWarnings = TRUE, recursive = TRUE)){

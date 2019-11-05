@@ -22,7 +22,7 @@ async function installRPackages(rpath, apppath, libpath, mainWindow){
   if ( selection !== 1 ) {
     return false;
   }
-  const scriptsPath = path.join(apppath, 'r', 'scripts');
+  const scriptsPath = path.join(apppath, 'scripts');
   const rproc = execa(path.join(rpath, 'bin', 'Rscript'), 
     [path.join(scriptsPath, 'install_source.R')],
     { env: {'LIB_PATH': libpath,
