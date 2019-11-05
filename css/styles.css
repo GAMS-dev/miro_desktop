@@ -265,8 +265,8 @@ input, button, textarea, :focus {
 }
 @media (prefers-color-scheme: dark) {
   .app-box {
-    background: #46484c;
-    border-color: #46484c;
+    background: #393e46;
+    border-color: #393e46;
   }
 }
 .app-box-fixed-height {
@@ -901,7 +901,7 @@ input, button, textarea, :focus {
   left:12%;
 }
 .edit-info-text {
-  font-family: cursive;
+  font-family: Apple Chancery, cursive;
   font-size: 20px;
 }
 .edit-info-img {
