@@ -136,7 +136,7 @@ const tryStartWebserver = async (progressCallback, onErrorStartup,
       'GAMS_SYS_DIR': await gamspath,
       'LOGPATH': await logpath,
       'LAUNCHINBROWSER': await launchExternal,
-      'GMSMODE': appData.mode === 'hcube'? 'hcube': 'base',
+      'GMSMODE': appData.mode? appData.mode: 'base',
       'GMSMODELNAME': miroDevelopMode? appData.modelPath:
        path.join(appDataPath, appData.id, `${appData.id}.gms`)},
        stdio: 'inherit'
@@ -217,7 +217,7 @@ function validateMIROApp ( filePath ) {
           }
           mainWindow.setProgressBar(++fileCnt * incAmt);
           appFileNames.push(entry.fileName);
-          if ( skipCnt < 2 ) {
+          if ( skipCnt < 1 ) {
             if ( path.dirname(entry.fileName) === 'static' ) {
               const logoExt = entry.fileName.toLowerCase().match(/.*_logo\.(jpg|jpeg|png)$/);
               if ( logoExt ) {
@@ -236,10 +236,6 @@ function validateMIROApp ( filePath ) {
                 });
                 skipCnt++
               }
-            } else if ( entry.fileName === '.no_tmp' ) {
-              log.debug('no_tmp indicator in in new MIRO app found.');
-              newAppConf.usetmpdir = false;
-              skipCnt++
             }
           }
         });
@@ -250,15 +246,16 @@ function validateMIROApp ( filePath ) {
           }
           let errMsg
           const errMsgTemplate = 'The MIRO app you want to add is invalid. Please make sure to upload a valid MIRO app!'
-          const miroConfFormat = /(.*)_(\d+)_(\d+\.\d+\.\d+)(_hcube)?\.miroconf$/;
+          const miroConfFormat = /(.*)_(\d)_(\d+)_(\d+\.\d+\.\d+)(_hcube)?\.miroconf$/;
           for ( const fileName of appFileNames ) {
             if ( fileName.endsWith('.miroconf') ) {
               const miroConfMatch = fileName.match(miroConfFormat);
               if ( miroConfMatch && miroConfMatch[1].length ) {
                 newAppConf.path = filePath[0];
                 newAppConf.id = miroConfMatch[1];
-                newAppConf.apiversion = parseInt(miroConfMatch[2], 10);
-                newAppConf.miroversion = miroConfMatch[3];
+                newAppConf.usetmpdir = miroConfMatch[2] === '1';
+                newAppConf.apiversion = parseInt(miroConfMatch[3], 10);
+                newAppConf.miroversion = miroConfMatch[4];
                 log.info(`New MIRO app successfully identified. Id: ${newAppConf.path}, \
 API version: ${newAppConf.apiversion}, \
 MIRO version: ${newAppConf.miroversion}.`);

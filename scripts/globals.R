@@ -11,8 +11,10 @@ if ( identical(RLibPath, '') ) {
 
 RlibPathDevel <- './build/lib_devel'
 RlibPathSrc <- file.path('.', 'r', 'library_src')
+
 isMac <- Sys.info()['sysname'] == 'Darwin' || grepl("^darwin", R.version$os)
 isWindows <- .Platform$OS.type == 'windows'
+isLinux <- grepl("linux-gnu", R.version$os)
 
 packageVersionMap <- list(
     c('backports', '1.1.5'),
@@ -110,4 +112,3 @@ packageVersionMap <- list(
     'rhandsontable')
 dataTableVersionMap <- c('data.table', '1.12.2')
 installedPackages <- installed.packages(RLibPath)
-isLinux <- grepl("linux-gnu", R.version$os)
