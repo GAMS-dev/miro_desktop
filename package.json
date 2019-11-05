@@ -32,6 +32,7 @@
     ],
     "files": [
       "**/*",
+      "!scripts/**",
       "!r/**",
       "!r-src/**",
       "!electron-builder.env",
@@ -77,7 +78,8 @@
     },
     "linux": {
       "extraFiles": [
-        "r/**"
+        "r/**",
+        "scripts/**"
       ],
       "target": "AppImage",
       "category": "Science"
