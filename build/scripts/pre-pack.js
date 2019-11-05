@@ -16,10 +16,10 @@ const tryInstallRPackages = async (attempt = 0) => {
     try {
         let rPath = 'Rscript';
         if ( process.platform === 'win32' ) {
-            rPath = './r/bin/Rscript';
+            rPath = path.join('.', 'r', 'bin', 'Rscript');
         }
-        const subproc =  execa(rPath, [ './build/scripts/install-packages.R' ],
-            { env: { 'LIB_PATH': './r/library'}});
+        const subproc =  execa(rPath, [ path.join('.', 'build', 'scripts', 'install-packages.R') ],
+            { env: { 'LIB_PATH': path.join('.', 'r', 'library')}});
         subproc.stderr.pipe(process.stderr);
         subproc.stdout.pipe(process.stderr);
         await subproc;
@@ -32,14 +32,14 @@ const tryInstallRPackages = async (attempt = 0) => {
     if ( !rExists ) {
         try {
             if ( process.platform === 'win32' ) {
-                const subproc = execa('./get-r-win.sh', {shell: true});
+                const subproc = execa(path.join('.', 'get-r-win.sh'), {shell: true});
                 subproc.stderr.pipe(process.stderr);
                 subproc.stdout.pipe(process.stderr);
                 await subproc;
             }
         } catch (e) {
             console.log(`Problems installing R. Error message: ${e.message}`);
-            rimraf.sync('./r');
+            rimraf.sync(path.join('.', 'r'));
             process.exit(1);
         }
     }
