@@ -133,6 +133,8 @@ const tryStartWebserver = async (progressCallback, onErrorStartup,
       'NODEBUG': !miroDevelopMode,
       'USETMPDIR': appData.usetmpdir,
       'DBPATH': appData.dbPath,
+      'MIRO_BUILD': appData.buildApp === 'true',
+      'MIRO_BUILD_ARCHIVE':  appData.buildArchive === 'true',
       'GAMS_SYS_DIR': await gamspath,
       'LOGPATH': await logpath,
       'LAUNCHINBROWSER': await launchExternal,
@@ -943,7 +945,7 @@ app.on('will-finish-launching', () => {
     e.preventDefault();
     if ( appLoaded ) {
       activateEditMode();
-      validateMIROApp(filePath);
+      validateMIROApp(path);
       return;
     }
     fileToOpen = path;
@@ -1007,7 +1009,9 @@ app.on('ready', async () => {
       dbPath: path.join(app.getPath('home'), '.miro'),
       usetmpdir: process.env.MIRO_USE_TMP ? process.env.MIRO_USE_TMP: false,
       apiversion: requiredAPIVersion,
-      miroversion: miroVersion
+      miroversion: miroVersion,
+      buildApp: process.env.MIRO_BUILD,
+      buildArchive: process.env.MIRO_BUILD_ARCHIVE
     });
 
   } else {
