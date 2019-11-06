@@ -661,6 +661,12 @@ to finish. Error message: ${e.message}`)
     log.debug(`Process of MIRO app with ID: ${appID} and internal pid ${internalPid} ended.`);
     miroProcesses[processIdMap[appID]] = null;
     delete processIdMap[appID];
+    if ( miroDevelopMode ) {
+      // in development mode terminate when R process finished
+      mainWindow = null;
+      app.quit();
+      return;
+    }
     if ( mainWindow ) {
       mainWindow.send('app-closed', appID);
     }
