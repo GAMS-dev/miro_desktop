@@ -42,7 +42,7 @@
       "ext": "miroapp",
       "name": "MIRO App",
       "description": "MIRO Application",
-      "mimeType": "application/zip"
+      "mimeType": "application/miro"
     },
     "mac": {
       "extraFiles": [

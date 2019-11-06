@@ -113,9 +113,12 @@ const tryStartWebserver = async (progressCallback, onErrorStartup,
   let shinyRunning = false
 
   const onError = async (e) => {
-    log.error(`Process: ${internalPid} crashed during startup. Error message: ${e.message}.`);
+    log.error(`Process: ${internalPid} crashed during startup. Error message: ${e.all}.`);
     miroProcesses[internalPid] = null;
     delete processIdMap[appData.id];
+    if ( miroBuildMode ) {
+      app.exit(e.exitCode)
+    }
   }
 
   let shinyProcessAlreadyDead = false
@@ -142,7 +145,7 @@ const tryStartWebserver = async (progressCallback, onErrorStartup,
       'GMSMODE': appData.mode? appData.mode: 'base',
       'GMSMODELNAME': miroDevelopMode? appData.modelPath:
        path.join(appDataPath, appData.id, `${appData.id}.gms`)},
-       stdio: 'inherit'
+       all: true
      }).catch((e) => {
         shinyProcessAlreadyDead = true
         onError(e)
@@ -150,7 +153,7 @@ const tryStartWebserver = async (progressCallback, onErrorStartup,
         shinyProcessAlreadyDead = true
         noError = true
         if ( miroBuildMode ) {
-          app.quit()
+          app.exit(0)
         }
       })
   const url = `http://127.0.0.1:${shinyPort}`
@@ -672,7 +675,7 @@ to finish. Error message: ${e.message}`)
     delete processIdMap[appID];
     if ( miroDevelopMode ) {
       // in development mode terminate when R process finished
-      app.quit();
+      app.exit(0);
       return;
     }
     if ( mainWindow ) {
@@ -967,10 +970,10 @@ app.on('will-finish-launching', () => {
     e.preventDefault();
     if ( appLoaded ) {
       activateEditMode();
-      validateMIROApp(path);
+      validateMIROApp([ path ]);
       return;
     }
-    fileToOpen = [path];
+    fileToOpen = path;
   });
 });
 
@@ -1021,7 +1024,7 @@ app.on('ready', async () => {
         message: 'You need to specify the path to the main gms file via\
  the environment variable: MIRO_MODEL_PATH'
       });
-      app.quit();
+      app.exit(1);
       return;
     }
     createMIROAppWindow({
