@@ -970,7 +970,7 @@ app.on('will-finish-launching', () => {
       validateMIROApp(path);
       return;
     }
-    fileToOpen = path;
+    fileToOpen = [path];
   });
 });
 
