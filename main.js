@@ -87,8 +87,6 @@ const tryStartWebserver = async (progressCallback, onErrorStartup,
   onErrorLater, appData, rpath, onSuccess) => {
   let internalPid = processIdMap[appData.id];
 
-  log.debug(`Request to start web server with internal pid: ${internalPid} submitted.`);
-
   if ( internalPid ) {
     log.error('Process for this model already running. This should not happen. Reference not freed.');
     return;
@@ -97,6 +95,7 @@ const tryStartWebserver = async (progressCallback, onErrorStartup,
   if ( internalPid === -1 ) {
     internalPid = miroProcesses.length;
   }
+  log.debug(`Request to start web server with internal pid: ${internalPid} submitted.`);
   processIdMap[appData.id] = internalPid;
   if (miroProcesses[internalPid] != null) {
     await onErrorStartup(appData.id)
@@ -120,6 +119,7 @@ const tryStartWebserver = async (progressCallback, onErrorStartup,
   }
 
   let shinyProcessAlreadyDead = false
+  let noError = false
   miroProcesses[internalPid] = execa(path.join(rpath, 'bin', 'Rscript'),
     ['--vanilla', path.join(miroResourcePath, 'start-shiny.R')],
     { env: {
@@ -148,15 +148,18 @@ const tryStartWebserver = async (progressCallback, onErrorStartup,
         onError(e)
       }).then(async () => {
         shinyProcessAlreadyDead = true
+        noError = true
         if ( miroBuildMode ) {
           app.quit()
         }
       })
-  
   const url = `http://127.0.0.1:${shinyPort}`
   await waitFor(1000)
   for (let i = 0; i <= 25; i++) {
     if (shinyProcessAlreadyDead) {
+      if ( noError ) {
+          return;
+      }
       break
     }
     await waitFor(1000)
@@ -641,14 +644,14 @@ to update it and try again!'
   const onErrorStartup = async (appID, message) => {
     log.debug(`Error during startup of MIRO app with ID: ${appData.id}. \
 ${message? `Message: ${message}` : ''}`);
-    if ( mainWindow ) {
+    if ( mainWindow && !miroDevelopMode) {
       mainWindow.send('hide-loading-screen', appData.id);
-    }
-    showErrorMsg({
+      showErrorMsg({
         type: 'error',
         title: 'Unexpected error',
         message: message? message: 'The MIRO app could not be started. Please report to GAMS when this problem persists!'
-    });
+      });
+    }
     miroProcesses[processIdMap[appID]] = null;
     delete processIdMap[appID];
   }
@@ -669,7 +672,6 @@ to finish. Error message: ${e.message}`)
     delete processIdMap[appID];
     if ( miroDevelopMode ) {
       // in development mode terminate when R process finished
-      mainWindow = null;
       app.quit();
       return;
     }
