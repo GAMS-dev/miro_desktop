@@ -20,7 +20,8 @@ const { randomPort, waitFor, isNull } = require('./helpers');
 const isMac = process.platform === 'darwin';
 const DEVELOPMENT_MODE = !app.isPackaged;
 const miroWorkspaceDir = path.join(app.getPath('home'), '.miro');
-const miroDevelopMode = process.env.MIRO_DEV_MODE;
+const miroDevelopMode = process.env.MIRO_DEV_MODE === 'true';
+const miroBuildMode = process.env.MIRO_BUILD === 'true';
 (async () => {
   try{
     if ( !fs.existsSync(miroWorkspaceDir) ) {
@@ -133,7 +134,7 @@ const tryStartWebserver = async (progressCallback, onErrorStartup,
       'NODEBUG': !miroDevelopMode,
       'USETMPDIR': appData.usetmpdir,
       'DBPATH': appData.dbPath,
-      'MIRO_BUILD': appData.buildApp === 'true',
+      'MIRO_BUILD': miroBuildMode,
       'MIRO_BUILD_ARCHIVE':  appData.buildArchive === 'true',
       'GAMS_SYS_DIR': await gamspath,
       'LOGPATH': await logpath,
@@ -145,6 +146,11 @@ const tryStartWebserver = async (progressCallback, onErrorStartup,
      }).catch((e) => {
         shinyProcessAlreadyDead = true
         onError(e)
+      }).then(async () => {
+        shinyProcessAlreadyDead = true
+        if ( miroBuildMode ) {
+          app.quit()
+        }
       })
   
   const url = `http://127.0.0.1:${shinyPort}`
@@ -1024,7 +1030,6 @@ app.on('ready', async () => {
       usetmpdir: process.env.MIRO_USE_TMP ? process.env.MIRO_USE_TMP: false,
       apiversion: requiredAPIVersion,
       miroversion: miroVersion,
-      buildApp: process.env.MIRO_BUILD,
       buildArchive: process.env.MIRO_BUILD_ARCHIVE
     });
 
