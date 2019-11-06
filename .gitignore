@@ -4,4 +4,5 @@ dist/
 build/lib_devel
 .env
 r/library
+r/library_src
 *.log
