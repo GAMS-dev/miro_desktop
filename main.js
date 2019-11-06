@@ -1005,7 +1005,7 @@ app.on('ready', async () => {
         type: 'error',
         title: 'No model path',
         message: 'You need to specify the path to the main gms file via\
- the environment variable: MIRO_MODELPATH'
+ the environment variable: MIRO_MODEL_PATH'
       });
       app.quit();
       return;
