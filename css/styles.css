@@ -734,6 +734,16 @@ input, button, textarea, :focus {
     background-color: #e18d0f !important;
     color: #494d55 !important;
 }
+.btn-add-examples {
+  margin-top: 10px;
+  padding: 5px;
+}
+.btn-add-examples:hover,
+.btn-add-examples:active,
+.btn-add-examples:focus {
+    background-color: #e18d0f !important;
+    color: #494d55 !important;
+}
 .dropdown-menu.show {
   right: 0px;
 }

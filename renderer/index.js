@@ -535,6 +535,9 @@ title="${app.title} logo" data-id="${app.id}" class="app-logo">
 $('#downloadR').click((e) => {
    shell.openExternal('https://gams.com/miro/installation.html');
 });
+$('#btAddExamples').click((e) => {
+  ipcRenderer.send('add-example-apps');
+});
 
 ipcRenderer.on('dbpath-received', (e, dbpathData) => {
   if ( !dbpathData.path ) {
