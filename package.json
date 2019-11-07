@@ -13,7 +13,7 @@
   },
   "build": {
     "appId": "com.gams.miro",
-    "productName": "GAMS-MIRO",
+    "productName": "GAMS MIRO",
     "afterPack": "build/scripts/after-pack.js",
     "afterSign": "build/scripts/notarize.js",
     "extraResources": [
@@ -81,6 +81,7 @@
         "r/**",
         "scripts/**"
       ],
+      "artifactName": "GAMS-MIRO-${version}.${ext}",
       "target": "AppImage",
       "category": "Science"
     }
