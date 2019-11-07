@@ -641,7 +641,16 @@ to update it and try again!'
     }
     miroProcesses[processIdMap[appID]] = null;
     delete processIdMap[appID];
-    miroAppWindows[appID].destroy();
+    if ( miroAppWindows[appID] ) {
+      miroAppWindows[appID].destroy();
+      miroAppWindows[appID] = null;
+    }
+    
+    if ( miroDevelopMode ) {
+      // in development mode terminate when R process finished
+      app.exit(1);
+      return;
+    }
   }
 
   const onErrorStartup = async (appID, message) => {
@@ -654,6 +663,11 @@ ${message? `Message: ${message}` : ''}`);
         title: 'Unexpected error',
         message: message? message: 'The MIRO app could not be started. Please report to GAMS when this problem persists!'
       });
+    }
+    if ( miroDevelopMode ) {
+      // in development mode terminate when R process finished
+      app.exit(1);
+      return;
     }
     miroProcesses[processIdMap[appID]] = null;
     delete processIdMap[appID];

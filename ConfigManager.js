@@ -320,8 +320,10 @@ class ConfigManager extends Store {
 ${latestGamsInstalled}`);
       }
     } else {
-      this.gamspathDefault = path.dirname(await which('gams', 
-        {nothrow: true}));
+      try {
+        this.gamspathDefault = path.dirname(await which('gams',
+          {nothrow: true}));
+      } catch ( e ) { }
     }
     return this.gamspathDefault;
   }
