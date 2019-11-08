@@ -84,7 +84,7 @@ function exitOverlayMode(){
   }
   if ( $overlay.is(':visible') ) {
     $('.app-logo').empty().removeClass('drag-drop-area');
-    $('.app-item-title').removeClass('editable').attr('contenteditable', false);
+    $('.app-item-title').removeClass('editable').addClass('app-title-fixed').attr('contenteditable', false);
     $('.app-item-desc').removeClass('editable').addClass('app-desc-fixed').attr('contenteditable', false);
     $('.db-path-field').slideUp(200);
     $('.edit-bt-group').slideUp(200);
@@ -169,8 +169,9 @@ $body.on('click', '.app-box', function(e) {
       }
       $(`#appBox_${appID}`).removeClass('app-box-fixed-height');
       $(`#appLogo_${appID}`).html(`<div class='drag-drop-area-text'>${appLogoPlaceholder}</div>`).addClass('drag-drop-area');
-      $(`#appTitle_${appID}`).addClass('editable').attr('contenteditable', true);
+      $(`#appTitle_${appID}`).addClass('editable').removeClass('app-title-fixed').attr('contenteditable', true);
       const appDescField = $(`#appDesc_${appID}`);
+      const appTitleField = $(`#appTitle_${appID}`);
       appDescField.addClass('editable').removeClass('app-desc-fixed').attr('contenteditable', true);
       if ( !appDescField.text().trim() ) {
         appDescField.text(appDescPlaceholder);
@@ -479,7 +480,7 @@ title="${app.title} logo" data-id="${app.id}" class="app-logo">
                         </div>
                      </div>
                      <div style="height:125px;">
-                         <h3 id="appTitle_${app.id}" class="app-title app-item-title" style="margin-top:15pt;">${app.title}</h3>
+                         <h3 id="appTitle_${app.id}" class="app-title app-title-fixed app-item-title" style="margin-top:15pt;">${app.title}</h3>
                          <p id="appDesc_${app.id}" class="app-desc app-desc-fixed app-item-desc">${app.description}</p>
                          <div class="custom-file db-path-field" style="display:none;">
                            <div id="appDbPath_${app.id}" class="custom-file-input browseFiles app-db-path" data-id="${app.id}" aria-describedby="resetDbPath"></div>

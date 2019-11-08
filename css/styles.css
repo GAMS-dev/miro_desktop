@@ -374,10 +374,24 @@ input, button, textarea, :focus {
   background-size:cover;
   text-align:center;
 }
+.app-title {
+  max-height: 35px;
+}
+.app-desc {
+  max-height: 65px;
+}
+.app-desc.editable {
+  overflow: auto;
+}
 .app-title,
 .app-desc {
   overflow: hidden;
   text-align: left;
+}
+.app-title-fixed {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
 }
 .app-desc-fixed {
   display: -webkit-box;
