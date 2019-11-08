@@ -61,7 +61,9 @@ module.exports = function(addExampleAppsCallback,
       },
       {
         label: 'Add example apps',
-        click: addExampleAppsCallback()
+        click: async () => {
+            await addExampleAppsCallback();
+          }
       },
       { label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
       { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
