@@ -398,14 +398,14 @@ function addExampleApps(){
   try {
     exampleAppsData.forEach((exampleApp) => {
       if ( !appsData.isUniqueId(exampleApp.id) ) {
-        throw 'duplicated';
+        throw exampleApp.id;
       }
     });
   } catch (e) {
      return showErrorMsg({
       type: 'info',
         title: 'Model exists',
-        message: `A model with the name: ${exampleApp.id} already exists. \
+        message: `A model with the name: ${e.message} already exists. \
 Please first delete this model before trying again.`
     });
   }
