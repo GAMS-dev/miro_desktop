@@ -374,10 +374,24 @@ input, button, textarea, :focus {
   background-size:cover;
   text-align:center;
 }
+.app-title {
+  max-height: 35px;
+}
+.app-desc {
+  max-height: 65px;
+}
+.app-desc.editable {
+  overflow: auto;
+}
 .app-title,
 .app-desc {
   overflow: hidden;
   text-align: left;
+}
+.app-title-fixed {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
 }
 .app-desc-fixed {
   display: -webkit-box;
@@ -735,8 +749,24 @@ input, button, textarea, :focus {
     color: #494d55 !important;
 }
 .btn-add-examples {
-  margin-top: 10px;
+  margin-top: 30px;
   padding: 5px;
+  background-color: #f90;
+  text-shadow: none;
+  border: none;
+  color: #494d55;
+  width: 25%;
+  height: 75px;
+  font-size: large;
+  box-shadow: 0 2px 4px 0 rgba(0,0,0,0.25), 0 2px 10px 0 rgba(0,0,0,0.20);
+  line-height: 1.5;
+  border-radius: .25rem;
+}
+.btn-add-examples:hover {
+  background-color: #e18d0f;
+  color: #494d55;
+  transition: background-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
 }
 .btn-add-examples:hover,
 .btn-add-examples:active,
