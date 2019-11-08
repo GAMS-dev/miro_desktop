@@ -405,55 +405,53 @@ function addExampleApps(){
      return showErrorMsg({
       type: 'info',
         title: 'Model exists',
-        message: `A model with the name: ${e.message} already exists. \
+        message: `A model with the name: ${e} already exists. \
 Please first delete this model before trying again.`
     });
   }
-  try {
-    fs.copy(path.join(miroResourcePath, 'examples'), 
-      appDataPath, (err) => {
-         if (err) throw err;
-    });
-  } catch ( e ) {
-    log.error(`Unexpected error while copying example apps from: \
+  fs.copy(path.join(miroResourcePath, 'examples'), 
+    appDataPath, (e) => {
+       if (e) {
+        log.error(`Unexpected error while copying example apps from: \
 ${path.join(miroResourcePath, 'examples')} to: ${appDataPath}. Error mesage: ${e.message}`);
-    if ( e.code === 'EACCES' ) {
-     showErrorMsg({
-        type: 'error',
-        title: 'No write permissions',
-        message: `Model could not be added as you don't have permissions\
-to write to this location: '${appDataPath}.'`
-      });
-      return
-    }
-    return showErrorMsg({
-        type: 'error',
-        title: 'Unexpected error',
-        message: `An unexpected error occurred. Error message: '${e.message}'`});
-  }
-  try {
-    exampleAppsData.forEach((exampleApp) => {
-        appsData.addApp(exampleApp);
-    });
-    const updatedApps = appsData.getApps();
-    mainWindow.send('apps-received', updatedApps, appDataPath);
-  } catch (e) {
-    log.error(`Problems writing app data: \
-${path.join(miroResourcePath, 'examples')} to: ${appDataPath}. Error mesage: ${e.message}`);
-    if ( e.code === 'EACCES' ) {
-     showErrorMsg({
-        type: 'error',
-        title: 'No write permissions',
-        message: `Model could not be added as you don't have permissions\
-to write to this location: '${configData.getConfigPath()}.'`
-      });
-      return
-    }
-    return showErrorMsg({
-        type: 'error',
-        title: 'Unexpected error',
-        message: `An unexpected error occurred. Error message: '${e.message}'`});
-  }
+        if ( e.code === 'EACCES' ) {
+         showErrorMsg({
+            type: 'error',
+            title: 'No write permissions',
+            message: `Model could not be added as you don't have permissions\
+      to write to this location: '${appDataPath}.'`
+          });
+         return
+        }
+        return showErrorMsg({
+            type: 'error',
+            title: 'Unexpected error',
+            message: `An unexpected error occurred. Error message: '${e.message}'`});
+      };
+      try {
+        exampleAppsData.forEach((exampleApp) => {
+            appsData.addApp(exampleApp);
+        });
+        const updatedApps = appsData.getApps();
+        mainWindow.send('apps-received', updatedApps, appDataPath);
+      } catch (e) {
+        log.error(`Problems writing app data: \
+    ${path.join(miroResourcePath, 'examples')} to: ${appDataPath}. Error mesage: ${e.message}`);
+        if ( e.code === 'EACCES' ) {
+         showErrorMsg({
+            type: 'error',
+            title: 'No write permissions',
+            message: `Model could not be added as you don't have permissions\
+    to write to this location: '${configData.getConfigPath()}.'`
+          });
+          return
+        }
+        return showErrorMsg({
+            type: 'error',
+            title: 'Unexpected error',
+            message: `An unexpected error occurred. Error message: '${e.message}'`});
+      }
+  });
 }
 function activateEditMode( openNewAppForm = false ){
   log.debug(`Activating edit mode. Open 'new app' form: ${openNewAppForm}.`);

@@ -187,8 +187,15 @@ if (dir.exists(examplesPath)){
     unlink(examplesPath, force = TRUE, recursive = TRUE)
 }
 setwd('./miro')
-for ( modelName in c( 'pickstock' ) ) {
-    if(!dir.create(file.path(examplesPath, modelName), recursive = TRUE)){
+for ( modelName in c( 'pickstock', 'pickstock_hcube' ) ) {
+    if (endsWith(modelName, '_hcube')) {
+        modelName = substring(modelName, 1, nchar(modelName) - 6L)
+        Sys.setenv(GMSMODE='hcube')
+    } else {
+        Sys.setenv(GMSMODE='base')
+    }
+    if(!dir.exists(file.path(examplesPath, modelName)) &&
+        !dir.create(file.path(examplesPath, modelName), recursive = TRUE)){
         stop(sprintf("Could not create path: %s", examplesPath))
     }
     modelPath = file.path(getwd(), 'model', 
