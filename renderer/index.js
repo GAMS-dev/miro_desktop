@@ -496,7 +496,7 @@ title="${app.title} logo" data-id="${app.id}" class="app-logo">
                                data-apiversion="${app.apiversion}" data-miroversion="${app.miroversion}">Launch</button>` : 
                             `<button class="btn btn-outline-secondary dropdown-toggle btn-launch" 
                                type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Launch</button>
-                             <div class="dropdown-menu">
+                             <div class="dropdown-menu dropdown-custom">
                                  <a class="dropdown-item launch-app" href="#" data-id="${app.id}" 
                                    data-usetmpdir="${app.usetmpdir}" data-mode="base" 
                                    data-apiversion="${app.apiversion}" data-miroversion="${app.miroversion}">Base mode</a>
