@@ -110,6 +110,7 @@
     "electron-log": "^3.0.8",
     "electron-store": "^5.0.0",
     "execa": "^3.0.0",
+    "fs-extra": "^8.1.0",
     "jquery": "^3.4.1",
     "popper.js": "^1.15.0",
     "which": "^2.0.1",

@@ -51,7 +51,7 @@ const schema = {
             }
           }
         },
-        required: [ 'id', 'title', 'modesAvailable', 'usetmpdir' ]
+        required: [ 'id', 'title', 'modesAvailable', 'usetmpdir', 'apiversion', 'miroversion' ]
       }
   }
 };
@@ -75,7 +75,7 @@ class AppDataStore extends Store {
 
   getApps () {
     this.apps = this.get('apps') || []
-    return this
+    return this.apps
   }
 
   isUniqueId (id) {

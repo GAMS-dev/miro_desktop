@@ -2,7 +2,7 @@
 const { app, BrowserWindow, Menu, TouchBar, ipcMain, dialog, session, systemPreferences } = require('electron');
 const { TouchBarLabel, TouchBarButton, TouchBarSpacer } = TouchBar;
 const path  = require('path');
-const fs    = require('fs');
+const fs    = require('fs-extra');
 const yauzl = require('yauzl');
 const http = require('axios');
 const execa = require('execa');
@@ -10,7 +10,20 @@ const log = require('electron-log');
 const menu = require('./components/menu.js');
 const installRPackages = require('./components/install-r.js');
 const requiredAPIVersion = 1;
-const miroVersion = '1.0';
+const miroVersion = '0.9.0';
+const exampleAppsData = [
+  {
+    id: 'pickstock',
+    title: 'Stock Selection Optimization',
+    description: `Optimization model to pick a small subset of the stocks together with \
+some weights, such that this portfolio has a similar behavior to our \
+overall Dow Jones index.`,
+    logoPath: path.join('static', 'pickstock.png'),
+    miroversion: miroVersion,
+    apiversion: requiredAPIVersion,
+    usetmpdir: true,
+    modesAvailable: [ 'base' ]
+  }];
 
 const AppDataStore = require('./AppDataStore');
 const ConfigManager = require('./ConfigManager');
@@ -381,7 +394,67 @@ function validateAppLogo(filePath, id = null){
     mainWindow.webContents.send('validated-logopath-received', 
       {id: id, path: filteredPath[0]});
 }
-
+function addExampleApps(){
+  try {
+    exampleAppsData.forEach((exampleApp) => {
+      if ( !appsData.isUniqueId(exampleApp.id) ) {
+        throw 'duplicated';
+      }
+    });
+  } catch (e) {
+     return showErrorMsg({
+      type: 'info',
+        title: 'Model exists',
+        message: `A model with the name: ${exampleApp.id} already exists. \
+Please first delete this model before trying again.`
+    });
+  }
+  try {
+    fs.copy(path.join(miroResourcePath, 'examples'), 
+      appDataPath, (err) => {
+         if (err) throw err;
+    });
+  } catch ( e ) {
+    log.error(`Unexpected error while copying example apps from: \
+${path.join(miroResourcePath, 'examples')} to: ${appDataPath}. Error mesage: ${e.message}`);
+    if ( e.code === 'EACCES' ) {
+     showErrorMsg({
+        type: 'error',
+        title: 'No write permissions',
+        message: `Model could not be added as you don't have permissions\
+to write to this location: '${appDataPath}.'`
+      });
+      return
+    }
+    return showErrorMsg({
+        type: 'error',
+        title: 'Unexpected error',
+        message: `An unexpected error occurred. Error message: '${e.message}'`});
+  }
+  try {
+    exampleAppsData.forEach((exampleApp) => {
+        appsData.addApp(exampleApp);
+    });
+    const updatedApps = appsData.getApps();
+    mainWindow.send('apps-received', updatedApps, appDataPath);
+  } catch (e) {
+    log.error(`Problems writing app data: \
+${path.join(miroResourcePath, 'examples')} to: ${appDataPath}. Error mesage: ${e.message}`);
+    if ( e.code === 'EACCES' ) {
+     showErrorMsg({
+        type: 'error',
+        title: 'No write permissions',
+        message: `Model could not be added as you don't have permissions\
+to write to this location: '${configData.getConfigPath()}.'`
+      });
+      return
+    }
+    return showErrorMsg({
+        type: 'error',
+        title: 'Unexpected error',
+        message: `An unexpected error occurred. Error message: '${e.message}'`});
+  }
+}
 function activateEditMode( openNewAppForm = false ){
   log.debug(`Activating edit mode. Open 'new app' form: ${openNewAppForm}.`);
   if ( mainWindow ) {
@@ -832,6 +905,10 @@ Please first delete this model before trying again.'
      return
   }
 });
+ipcMain.on('add-example-apps', (e) => {
+  log.debug('Received request to add example apps.')
+  addExampleApps();
+});
 ipcMain.on('update-app', (e, app) => {
   log.debug('Update app request received.');
   try{
@@ -1053,8 +1130,8 @@ app.on('ready', async () => {
     });
 
   } else {
-    Menu.setApplicationMenu(menu(activateEditMode, 
-      createSettingsWindow));
+    Menu.setApplicationMenu(menu(addExampleApps,
+     activateEditMode, createSettingsWindow));
     createMainWindow();
   }
 

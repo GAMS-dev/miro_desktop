@@ -2,7 +2,8 @@
 const {app, Menu, shell } = require('electron');
 const isMac = process.platform === 'darwin';
 
-module.exports = function(activateEditCallback, 
+module.exports = function(addExampleAppsCallback,
+  activateEditCallback, 
   showSettingsCallback){
   return Menu.buildFromTemplate([
     // { role: 'appMenu' }
@@ -57,6 +58,10 @@ module.exports = function(activateEditCallback,
         click: async () => {
             await activateEditCallback();
         }
+      },
+      {
+        label: 'Add example apps',
+        click: addExampleAppsCallback()
       },
       { label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
       { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },

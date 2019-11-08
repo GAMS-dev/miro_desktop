@@ -11,13 +11,20 @@ if ( isLinux ) {
     # not include empty directories in app image
     writeLines('', file.path(RLibPath, 'EMPTY'))
 }
-if(!'devtools' %in% installed.packages(RlibPathDevel)[, "Package"]) {
-    install.packages('devtools', repos = CRANMirrors[1], lib = RlibPathDevel,
+requiredPackages <- c('remotes', 'devtools', 'jsonlite', 'V8', 
+    'jsonvalidate', 'zip', 'tibble', 'readr')
+newPackages <- requiredPackages[!requiredPackages %in% 
+  installed.packages(RlibPathDevel)[, "Package"]]
+
+for ( newPackage in newPackages ) {
+    install.packages(newPackage, repos = CRANMirrors[1], lib = RlibPathDevel,
         dependencies = c("Depends", "Imports", "LinkingTo"))
 }
+
 options(warn = 2)
 .libPaths( c( .libPaths(), RlibPathDevel) )
-library('devtools')
+
+dontDisplayMe <- lapply(requiredPackages, library, character.only = TRUE)
 
 if ( isLinux && !dir.exists(RlibPathSrc) && 
     !dir.create(RlibPathSrc, showWarnings = TRUE, recursive = TRUE)) {
@@ -162,5 +169,39 @@ if (isMac) {
     }, finally = {
         setwd(currWorkDir)
     })
+}
+# replace MIRO API version and MIRO version in main.js with the one set in miro/app.R
+local({
+    eval(parse(text = readLines('./miro/app.R',
+     n = 5L, warn = FALSE)))
+    mainJS = readLines('./main.js', warn = FALSE)
+    mainJS = gsub('const requiredAPIVersion = \\d+;', 
+        paste0('const requiredAPIVersion = ', APIVersion, ';'), mainJS)
+    mainJS = gsub("const miroVersion = '[^']+';",
+        paste0("const miroVersion = '", MIROVersion, "';"), mainJS)
+    writeLines(mainJS, './main.js')
+})
+# build MIRO example apps
+examplesPath = file.path(getwd(), 'miro', 'examples')
+if (dir.exists(examplesPath)){
+    unlink(examplesPath, force = TRUE, recursive = TRUE)
+}
+setwd('./miro')
+for ( modelName in c( 'pickstock' ) ) {
+    if(!dir.create(file.path(examplesPath, modelName), recursive = TRUE)){
+        stop(sprintf("Could not create path: %s", examplesPath))
+    }
+    modelPath = file.path(getwd(), 'model', 
+                   modelName)
+    miroAppPath = file.path(modelPath, paste0(modelName, '.miroapp'))
+    Sys.setenv(MIRO_BUILD='true')
+    Sys.setenv(GMSMODELNAME=file.path(modelPath, paste0(modelName, '.gms')))
+
+    if(system2(file.path(R.home(), 'bin', 'Rscript'), 
+        c('--vanilla', './app.R')) != 0L) {
+        stop(sprintf("Something went wrong while creating MIRO app for model: %s", 
+            modelName))
+    }
+    zip::unzip(miroAppPath, exdir = file.path(examplesPath, modelName))
 }
 
