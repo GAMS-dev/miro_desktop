@@ -22,7 +22,7 @@ overall Dow Jones index.`,
     miroversion: miroVersion,
     apiversion: requiredAPIVersion,
     usetmpdir: true,
-    modesAvailable: [ 'base' ]
+    modesAvailable: [ 'base', 'hcube' ]
   }];
 
 const AppDataStore = require('./AppDataStore');
@@ -114,7 +114,7 @@ const tryStartWebserver = async (progressCallback, onErrorStartup,
     await onErrorStartup(appData.id)
     return
   }
-
+  console.log(appData);
   let shinyPort = randomPort();
   log.debug(`Process: ${internalPid} is being started on port: ${shinyPort}.`);
   const gamspath = configData.get('gamspath');
