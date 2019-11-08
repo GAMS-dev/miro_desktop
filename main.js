@@ -129,8 +129,15 @@ const tryStartWebserver = async (progressCallback, onErrorStartup,
     log.error(`Process: ${internalPid} crashed during startup. Error message: ${e.all}.`);
     miroProcesses[internalPid] = null;
     delete processIdMap[appData.id];
-    if ( miroBuildMode ) {
+    if ( miroBuildMode || miroDevelopMode ) {
       app.exit(e.exitCode)
+    } else if ( mainWindow ) {
+      mainWindow.send('hide-loading-screen', appData.id);
+      showErrorMsg({
+        type: 'error',
+        title: 'Unexpected error',
+        message: 'The MIRO app could not be started. Please report to GAMS when this problem persists!'
+      });
     }
   }
 
@@ -155,6 +162,7 @@ const tryStartWebserver = async (progressCallback, onErrorStartup,
       'GAMS_SYS_DIR': await gamspath,
       'LOGPATH': await logpath,
       'LAUNCHINBROWSER': await launchExternal,
+      'MIRO_VERSION_STRING': appData.miroversion,
       'GMSMODE': appData.mode? appData.mode: 'base',
       'GMSMODELNAME': miroDevelopMode? appData.modelPath:
        path.join(appDataPath, appData.id, `${appData.id}.gms`)},
@@ -1023,7 +1031,7 @@ ipcMain.on('validate-app', (e, filePath) => {
 ipcMain.on('validate-logo', (e, filePath, id) => {
   validateAppLogo(filePath, id);
 });
-ipcMain.on('delete-app', (e, appId) => {
+ipcMain.on('delete-app', async (e, appId) => {
   log.debug(`Delete app (ID: ${appId}) request received`);
   const deleteAppConfirmedId = dialog.showMessageBoxSync(mainWindow, {
    buttons: [ 'Remove', 'Cancel' ],
@@ -1033,7 +1041,9 @@ ipcMain.on('delete-app', (e, appId) => {
     return
   }
   try {
+    const rmPromise = fs.remove(path.join(appDataPath, appId));
     const updatedApps = appsData.deleteApp(appId).apps;
+    await rmPromise;
     mainWindow.send('apps-received', updatedApps, appDataPath);
     log.debug(`App: ${appId} removed.`);
   } catch (e) {
