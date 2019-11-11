@@ -10,7 +10,7 @@ const log = require('electron-log');
 const menu = require('./components/menu.js');
 const installRPackages = require('./components/install-r.js');
 const requiredAPIVersion = 1;
-const miroVersion = '0.9.0';
+const miroVersion = '0.9.1';
 const exampleAppsData = [
   {
     id: 'pickstock',
