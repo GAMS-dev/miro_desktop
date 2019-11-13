@@ -625,6 +625,7 @@ report to GAMS when this problem persists!'
                 libsInstalled = false;
               } else {
                 libsInstalled = true;
+                libPath = libPathTmp;
               }
             } catch (e) {
               log.error(`Problems reading libPath. Error message: ${e.message}.`);
