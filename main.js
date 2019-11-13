@@ -644,7 +644,7 @@ report to GAMS when this problem persists!'
               type: 'info',
               title: 'Installation',
               message: `You don't have permissions to install libraries inside: \
-${libPath}. Would you like to install MIRO locally instead (${libPathTmp})? \
+${libPath}. \nWould you like to install MIRO locally instead (${libPathTmp})?\n \
 In case you want to install MIRO globally, consider starting AppImage with sudo and --no-sandbox flag: \
 sudo ./GAMS-MIRO-${miroVersion}.AppImage --no-sandbox`,
               buttons: ['Local installation', 'Quit']
