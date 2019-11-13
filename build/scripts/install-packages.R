@@ -187,7 +187,7 @@ if (dir.exists(examplesPath)){
     unlink(examplesPath, force = TRUE, recursive = TRUE)
 }
 setwd('./miro')
-for ( modelName in c( 'pickstock', 'pickstock_hcube' ) ) {
+for ( modelName in c( 'pickstock', 'pickstock_hcube', 'transport', 'transport_hcube' ) ) {
     if (endsWith(modelName, '_hcube')) {
         modelName = substring(modelName, 1, nchar(modelName) - 6L)
         Sys.setenv(GMSMODE='hcube')
