@@ -12,7 +12,7 @@ if ( isLinux ) {
     writeLines('', file.path(RLibPath, 'EMPTY'))
 }
 requiredPackages <- c('remotes', 'devtools', 'jsonlite', 'V8', 
-    'jsonvalidate', 'zip', 'tibble', 'readr')
+    'jsonvalidate', 'zip', 'tibble', 'readr', 'R6')
 newPackages <- requiredPackages[!requiredPackages %in% 
   installed.packages(RlibPathDevel)[, "Package"]]
 
