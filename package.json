@@ -26,6 +26,7 @@
       "miro/JS/**",
       "miro/www/**",
       "miro/resources/**",
+      "miro/examples/**",
       "miro/tools/**",
       "miro/UI/**",
       "miro/start-shiny.R"

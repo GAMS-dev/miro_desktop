@@ -23,6 +23,16 @@ overall Dow Jones index.`,
     apiversion: requiredAPIVersion,
     usetmpdir: true,
     modesAvailable: [ 'base', 'hcube' ]
+  },
+  {
+    id: 'transport',
+    title: 'Transportation problem',
+    description: `This problem finds a least cost shipping schedule that meets
+requirements at markets and supplies at factories.`,
+    miroversion: miroVersion,
+    apiversion: requiredAPIVersion,
+    usetmpdir: true,
+    modesAvailable: [ 'base', 'hcube' ]
   }];
 
 const AppDataStore = require('./AppDataStore');
@@ -594,6 +604,12 @@ function createMainWindow () {
           }
         } catch (e) {
           log.error(`Problems reading libPath. Error message: ${e.message}.`);
+          showErrorMsg({
+            type: 'error',
+            title: 'Unexpected error',
+            message: 'The MIRO installation could not be started. Please check the log files and \
+report to GAMS when this problem persists!'
+          });
           return;
         }
       } else {
@@ -601,22 +617,68 @@ function createMainWindow () {
         try {
           await fs.promises.mkdir(libPath, { recursive: true });
         } catch (e) {
-          showErrorMsg({
-            type: 'error',
-            title: 'Insufficient permissions',
-            message: `You don't have permissions to install libraries inside: \
-    ${libPath}. Consider starting AppImage with sudo and --no-sandbox flag.`
-          });
-          return;
+          const libPathTmp = path.join(app.getPath('appData'), 'miro-library', miroVersion);
+          if ( fs.existsSync(libPathTmp) ) {
+            try {
+              libPathFiles = await fs.promises.readdir(libPathTmp);
+              if ( libPathFiles.find(item => item === 'INSTALLING') ) {
+                libsInstalled = false;
+              } else {
+                libsInstalled = true;
+                libPath = libPathTmp;
+              }
+            } catch (e) {
+              log.error(`Problems reading libPath. Error message: ${e.message}.`);
+              showErrorMsg({
+                type: 'error',
+                title: 'Unexpected error',
+                message: 'The MIRO installation could not be started. Please check the log files and \
+report to GAMS when this problem persists!'
+              });
+              return;
+            }
+          } else {
+            libsInstalled = false;
+          }
+          if ( !libsInstalled ) {
+            const installType = dialog.showMessageBoxSync(mainWindow, {
+              type: 'info',
+              title: 'Installation',
+              message: `You don't have permissions to install libraries inside: \
+${libPath}. \nWould you like to install MIRO locally instead (${libPathTmp})?\n \
+In case you want to install MIRO globally, consider starting AppImage with sudo and --no-sandbox flag: \
+sudo ./GAMS-MIRO-${miroVersion}.AppImage --no-sandbox`,
+              buttons: ['Local installation', 'Quit']
+            });
+            if ( installType === 1 ) {
+              app.exit(0);
+              return;
+            }
+            try {
+              await fs.promises.mkdir(libPathTmp, { recursive: true });
+            } catch (e) {
+              log.error(`Problems creating libPath: ${libPathTmp}. Error message: ${e.message}.`);
+              showErrorMsg({
+                type: 'error',
+                title: 'Unexpected error',
+                message: 'The MIRO installation could not be started. Please check the log files and \
+report to GAMS when this problem persists!'
+              });
+              return;
+            }
+            libPath = libPathTmp;
+          }
         }
-        try {
-          await fs.promises.writeFile(path.join(libPath, 'INSTALLING'), 
-            '', 'utf8');
-        } catch (e) {
-          fs.rmdirSync(libPath)
-          log.error(`Could not write INSTALLING metadata file to: ${libPath}.\
-     Error message: ${e.message}.`);
-          return;
+        if ( !libsInstalled ) {
+          try {
+            await fs.promises.writeFile(path.join(libPath, 'INSTALLING'),
+              '', 'utf8');
+          } catch (e) {
+            fs.rmdirSync(libPath)
+            log.error(`Could not write INSTALLING metadata file to: ${libPath}.\
+       Error message: ${e.message}.`);
+            return;
+          }
         }
       }
       if ( !libsInstalled ) {
@@ -634,7 +696,7 @@ function createMainWindow () {
       return;
     }
     appLoaded = true;
-    if (process.platform == 'win32' && 
+    if ( process.platform == 'win32' &&
       process.argv.length >= 2 && !DEVELOPMENT_MODE ) {
       log.debug(`MIRO launcher opened by double clicking MIRO app at path: ${process.argv[1]}.`);
       activateEditMode();
