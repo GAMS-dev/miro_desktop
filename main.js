@@ -10,7 +10,7 @@ const log = require('electron-log');
 const menu = require('./components/menu.js');
 const installRPackages = require('./components/install-r.js');
 const requiredAPIVersion = 1;
-const miroVersion = '0.9.1';
+const miroVersion = '0.9.3';
 const exampleAppsData = [
   {
     id: 'pickstock',
@@ -124,13 +124,15 @@ const tryStartWebserver = async (progressCallback, onErrorStartup,
     await onErrorStartup(appData.id)
     return
   }
-  console.log(appData);
   let shinyPort = randomPort();
   log.debug(`Process: ${internalPid} is being started on port: ${shinyPort}.`);
   const gamspath = configData.get('gamspath');
   const logpath = configData.get('logpath');
-  const launchExternal = configData.get('launchExternal');
-
+  const generalConfig = {
+    launchExternal: configData.get('launchExternal'),
+    language: configData.get('language'),
+    logLevel: configData.get('logLevel')
+  }
   await progressCallback({internalPid: internalPid, code: 'start'})
 
   let shinyRunning = false
@@ -171,7 +173,9 @@ const tryStartWebserver = async (progressCallback, onErrorStartup,
       'MIRO_BUILD_ARCHIVE':  appData.buildArchive === 'true',
       'GAMS_SYS_DIR': await gamspath,
       'LOGPATH': await logpath,
-      'LAUNCHINBROWSER': await launchExternal,
+      'LAUNCHINBROWSER': await generalConfig.launchExternal,
+      'MIRO_LANG': await generalConfig.language,
+      'MIRO_LOG_LEVEL': await generalConfig.logLevel,
       'MIRO_VERSION_STRING': appData.miroversion,
       'GMSMODE': appData.mode? appData.mode: 'base',
       'GMSMODELNAME': miroDevelopMode? appData.modelPath:
@@ -187,7 +191,7 @@ const tryStartWebserver = async (progressCallback, onErrorStartup,
           app.exit(0)
         }
       })
-  const url = `http://127.0.0.1:${shinyPort}`
+  const url = `http://127.0.0.1:${shinyPort}`;
   await waitFor(1000)
   for (let i = 0; i <= 25; i++) {
     if (shinyProcessAlreadyDead) {
@@ -1045,8 +1049,8 @@ ${configData.getMinimumVersion(el)} is required.`,
   });
 });
 
-ipcMain.on('save-path-config', async (e, newConfigData, needRestart) => {
-  log.debug('Save path config request received.');
+ipcMain.on('save-general-config', async (e, newConfigData, needRestart) => {
+  log.debug('Save general config request received.');
   try {
     configData.set(newConfigData);
     if ( settingsWindow ){

@@ -35,6 +35,15 @@ const schema = {
   logLifeTime: {
     type: 'integer'
   },
+  language: {
+    type: 'string',
+    enum: ['en', 'de', 'cn']
+  },
+  logLevel: {
+    type: 'string',
+    enum: ['TRACE', 'DEBUG', 'INFO', 
+    'WARN', 'ERROR', 'FATAL']
+  },
   important: {
     type: 'array',
     items:{
@@ -44,7 +53,9 @@ const schema = {
         'rpath',
         'logpath',
         'launchExternal',
-        'logLifeTime'
+        'logLifeTime',
+        'language',
+        'logLevel'
      ]
     }
   }
@@ -67,7 +78,8 @@ class ConfigManager extends Store {
           cwd: configPathTmp,
           name: 'paths'});
 
-        [ 'gamspath', 'rpath', 'logpath', 'launchExternal', 'logLifeTime' ].forEach(el => {
+        [ 'gamspath', 'rpath', 'logpath', 'launchExternal', 'logLifeTime',
+          'language', 'logLevel' ].forEach(el => {
           this[el] = superPathConfigData.get(el, '');
         });
         this.important = superPathConfigData.get(
@@ -80,7 +92,8 @@ class ConfigManager extends Store {
     this.configpathDefault = miroWorkspaceDir;
     this.logpathDefault = path.join(miroWorkspaceDir, "logs");
 
-    [ 'gamspath', 'rpath', 'logpath', 'launchExternal', 'logLifeTime' ].forEach(el => {
+    [ 'gamspath', 'rpath', 'logpath', 'launchExternal', 'logLifeTime',
+    'language', 'logLevel' ].forEach(el => {
       if ( this.important.find(iel => iel === el) ) {
         return;
       }
@@ -96,7 +109,9 @@ class ConfigManager extends Store {
       }
       if ( value == null || value === '' ||
        (key === 'launchExternal' && value === false) ||
-       (key === 'logLifeTime' && value === -1)) {
+       (key === 'logLifeTime' && value === -1) ||
+       (key === 'language' && value === 'en') ||
+       (key === 'logLevel' && value === 'TRACE') ) {
         this[key] = '';
         super.delete(key); 
       } else {
@@ -138,7 +153,11 @@ class ConfigManager extends Store {
       return this.configpathDefault;
     } else if ( key === 'logLifeTime' ) {
       return -1;
-    } else {
+    } else if ( key === 'language' ) {
+      return 'en';
+    } else if ( key === 'logLevel' ) {
+      return 'TRACE';
+    } else if ( key === 'logLifeTime' ) {
       return false;
     }
   }

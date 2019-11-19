@@ -9,12 +9,22 @@ const currentWindow = remote.getCurrentWindow();
 
 const cbLaunchExternal = $('#launchExternal');
 const inputLogLifetime = $('#logLifeTime');
+const inputLanguage    = $('#language');
+const inputLogLevel    = $('#logLevel');
 
 const newConfig = {};
 let defaultValues;
 let importantKeys;
 let requireRestart = false;
 let pathValidating = false;
+
+const optionAliasMap = {
+    language: {
+        English: 'en',
+        Deutsch: 'de',
+        中文: 'cn'
+    }
+}
 
 const pathConfig = [
     {
@@ -70,7 +80,9 @@ log file should be stored is invalid! Please enter only whole numbers!',
     }
     newConfig.logLifeTime = logLifeVal;
     newConfig.launchExternal = cbLaunchExternal.is(":checked");
-    ipcRenderer.send('save-path-config', newConfig, requireRestart); 
+    newConfig.language    = optionAliasMap.language[inputLanguage.val()];
+    newConfig.logLevel    = inputLogLevel.val();
+    ipcRenderer.send('save-general-config', newConfig, requireRestart); 
 });
 
 $('#btCancel').on('click', (e) => {
@@ -139,6 +151,11 @@ $('.btn-reset-nonpath').click(function(e) {
         cbLaunchExternal.prop('checked', defaultValues[elKey]);
     } else if ( elKey === 'logLifeTime' ) {
         inputLogLifetime.val(defaultValues[elKey]);
+    } else if ( elKey === 'language' ) {
+        inputLanguage.val(Object.keys(optionAliasMap.language)
+            .find(key => optionAliasMap.language[key] === defaultValues[elKey]));
+    } else if ( elKey === 'logLevel' ) {
+        inputLogLevel.val(defaultValues[elKey]);
     }
     $(this).hide();
 });
@@ -167,7 +184,8 @@ ipcRenderer.on('settings-loaded', (e, data, defaults) => {
         newValue = defaultValues[key];
       } else {
         if ( !isImportant ) {
-            if ( (key === 'launchExternal' || key === 'logLifeTime') ) {
+            if ( ['launchExternal', 'logLifeTime', 
+                  'language', 'logLevel'].find(el => el === key ) ) {
                 if ( newValue !== defaultValues[key] ) {
                     $(`[data-key="${key}"]`).show();
                 }
@@ -181,10 +199,11 @@ ipcRenderer.on('settings-loaded', (e, data, defaults) => {
         if ( isImportant ) {
             cbLaunchExternal.attr('disabled', true);
         }
-      } else if ( key === 'logLifeTime' ) {
-        inputLogLifetime.val(newValue);
+      } else if ( ['logLifeTime', 'logLevel', 'language' ].find(el => el === key) ) {
+        $(`#${key}`).val(key === 'language'? Object.keys(optionAliasMap.language)
+            .find(key => optionAliasMap.language[key] === newValue): newValue);
         if ( isImportant ) {
-            inputLogLifetime.attr('disabled', true);
+            $(`#${key}`).attr('disabled', true);
         }
       } else {
         const pathSelectEl = $(`#btPathSelect_${key}`);
