@@ -111,4 +111,4 @@ packageVersionMap <- list(
     c('future', '1.14.0'),
     'rhandsontable')
 dataTableVersionMap <- c('data.table', '1.12.2')
-installedPackages <- installed.packages(RLibPath)
+installedPackages <- installed.packages(RLibPath)[, "Package"]

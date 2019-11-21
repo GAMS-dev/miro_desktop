@@ -10,7 +10,7 @@ const log = require('electron-log');
 const menu = require('./components/menu.js');
 const installRPackages = require('./components/install-r.js');
 const requiredAPIVersion = 1;
-const miroVersion = '0.9.3';
+const miroVersion = '0.9.4';
 const exampleAppsData = [
   {
     id: 'pickstock',
@@ -1018,9 +1018,10 @@ ipcMain.on('update-app', (e, app) => {
     const idUpper = el.toUpperCase();
     log.debug(`Request to validate ${idUpper} path at location: ${pathToValidate} received.`);
     try {
-      if ( await configData.validate(el, pathToValidate) !== false && settingsWindow ) {
+      const validatedPath = await configData.validate(el, pathToValidate);
+      if ( validatedPath !== false && validatedPath != null && settingsWindow ) {
         log.debug(`${idUpper} path is valid!`);
-        settingsWindow.webContents.send(`${el}path-validated`, pathToValidate);
+        settingsWindow.webContents.send(`${el}path-validated`, validatedPath);
       } else {
         log.debug(`${idUpper} path is invalid!`);
         dialog.showMessageBoxSync(settingsWindow, 

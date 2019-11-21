@@ -217,6 +217,6 @@ ipcRenderer.on('settings-loaded', (e, data, defaults) => {
 [ 'gamspath', 'rpath' ].forEach(el => {
     ipcRenderer.on(`${el}-validated`, (e, path) => {
         pathValidating = false;
-        updatePathConfig(pathConfig.filter(el => el.id === el), path);
+        updatePathConfig(pathConfig.filter(el2 => el2.id === el)[0], path);
     });
 });

@@ -236,7 +236,7 @@ class ConfigManager extends Store {
         !fs.existsSync(this.rpathDefault) ) {
         if ( process.platform === 'darwin' ) {
           const rPathRoot = path.join('/', 'Library', 'Frameworks',
-               'R.framework', 'Versions')
+               'R.framework', 'Versions');
           const rVersionsAvailable = fs.readdirSync(
             rPathRoot).filter(el => {
                 try {
@@ -245,7 +245,7 @@ class ConfigManager extends Store {
                   return false
                 }            
           });
-          if ( rVersionsAvailable ) {
+          if ( rVersionsAvailable.length ) {
             this.rpathDefault = path.join(rPathRoot, 
               rVersionsAvailable[0], 'Resources');
           }
@@ -301,7 +301,7 @@ class ConfigManager extends Store {
       'print(R.home())\nprint(paste0(R.Version()$major, \
 ".", R.Version()$minor))']);
     stdout = stdout.split('\n');
-    rpathTmp = stdout[0].match(/^\[1\] "([^"]*)"$/);
+    rpathTmp = stdout[0].match(/^\[1\] "([^"]*)"$/)[1];
     const rVersion = stdout[1].match(/^\[1\] "([^"]*)"$/);
     if ( rpathTmp && rVersion &&
       this.vComp(rVersion[1], minR) ) {
@@ -394,7 +394,6 @@ ${latestGamsInstalled}`);
         contentGamsDir.find(el => el.name === 'GAMS Terminal.app') ) {
         gamsExecDir = path.join(gamsDir, 'GAMS Terminal.app',
             'Contents', 'MacOS', 'gams');
-        console.log(gamsExecDir);
       } else {
         return false;
       }
@@ -411,7 +410,7 @@ ${latestGamsInstalled}`);
         .match(/^GAMS Release: (\d+\.\d+\.\d+)/);
       if ( selectedGamsVer && 
         this.vComp(selectedGamsVer[1], minGams) ) {
-        return true;
+        return gamsExecDir;
       } else {
         return false;
       }
@@ -425,7 +424,7 @@ ${latestGamsInstalled}`);
     if ( id === 'gams' ) {
       return await this.validateGAMS(pathToValidate);
     }
-    await this.validateR(pathToValidate);
+    return await this.validateR(pathToValidate);
   }
 
   vComp(v1, v2) {
