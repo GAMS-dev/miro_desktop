@@ -10,7 +10,8 @@ const log = require('electron-log');
 const menu = require('./components/menu.js');
 const installRPackages = require('./components/install-r.js');
 const requiredAPIVersion = 1;
-const miroVersion = '0.9.5';
+const miroVersion = '0.9.6';
+const libVersion = '1.0';
 const exampleAppsData = [
   {
     id: 'pickstock',
@@ -817,6 +818,109 @@ function showErrorMsg (optionsTmp) {
     dialog.showMessageBoxSync(mainWindow, options)
   }  
 }
+async function searchLibPath () {
+  if ( process.platform === 'linux' ) {
+    let libPathFiles = [];
+    let libsInstalled = true;
+    if ( fs.existsSync(libPath) ) {
+      try {
+        libPathFiles = await fs.promises.readdir(libPath);
+        if ( libPathFiles.find(item => item === 'INSTALLING') ) {
+          libsInstalled = false;
+        }
+      } catch (e) {
+        log.error(`Problems reading libPath. Error message: ${e.message}.`);
+        showErrorMsg({
+          type: 'error',
+          title: 'Unexpected error',
+          message: 'The MIRO installation could not be started. Please check the log files and \
+report to GAMS when this problem persists!'
+        });
+        return;
+      }
+    } else {
+      libsInstalled = false;
+      try {
+        await fs.promises.mkdir(libPath, { recursive: true });
+      } catch (e) {
+        const libPathTmp = path.join(app.getPath('appData'), 'miro-library', libVersion);
+        if ( fs.existsSync(libPathTmp) ) {
+          try {
+            libPathFiles = await fs.promises.readdir(libPathTmp);
+            if ( libPathFiles.find(item => item === 'INSTALLING') ) {
+              libsInstalled = false;
+            } else {
+              libsInstalled = true;
+              libPath = libPathTmp;
+              log.debug(`Libpath set to: ${libPath}`);
+            }
+          } catch (e) {
+            log.error(`Problems reading libPath. Error message: ${e.message}.`);
+            showErrorMsg({
+              type: 'error',
+              title: 'Unexpected error',
+              message: 'The MIRO installation could not be started. Please check the log files and \
+report to GAMS when this problem persists!'
+            });
+            return;
+          }
+        } else {
+          libsInstalled = false;
+        }
+        if ( !libsInstalled ) {
+          const installType = dialog.showMessageBoxSync(mainWindow, {
+            type: 'info',
+            title: 'Installation',
+            message: `You don't have permissions to install libraries inside: \
+${libPath}. \nWould you like to install MIRO locally instead (${libPathTmp})?\n \
+In case you want to install MIRO globally, consider starting AppImage with sudo and --no-sandbox flag: \
+sudo ./GAMS-MIRO-${miroVersion}.AppImage --no-sandbox`,
+            buttons: ['Local installation', 'Quit']
+          });
+          if ( installType === 1 ) {
+            app.exit(0);
+            return;
+          }
+          try {
+            await fs.promises.mkdir(libPathTmp, { recursive: true });
+          } catch (e) {
+            log.error(`Problems creating libPath: ${libPathTmp}. Error message: ${e.message}.`);
+            showErrorMsg({
+              type: 'error',
+              title: 'Unexpected error',
+              message: 'The MIRO installation could not be started. Please check the log files and \
+report to GAMS when this problem persists!'
+            });
+            return;
+          }
+          libPath = libPathTmp;
+          log.debug(`Libpath set to: ${libPath}`);
+        }
+      }
+      if ( !libsInstalled ) {
+        try {
+          await fs.promises.writeFile(path.join(libPath, 'INSTALLING'),
+            '', 'utf8');
+        } catch (e) {
+          fs.rmdirSync(libPath)
+          log.error(`Could not write INSTALLING metadata file to: ${libPath}.\
+     Error message: ${e.message}.`);
+          return;
+        }
+      }
+    }
+    if ( !libsInstalled ) {
+      try{
+        rPackagesInstalled = installRPackages(
+          await configData.get('rpath'), appRootDir, 
+          libPath, mainWindow);
+      } catch(e) {
+        log.error(`Problems creating prompt to install R packages. \
+  Error message: ${e.message}.`)
+      }
+    }
+  }
+}
 ipcMain.on('show-error-msg', (e, options) => {
   log.debug(`New error message received. Title: ${options.title}, message: ${options.message}.`);
   showErrorMsg(options)
@@ -1047,6 +1151,15 @@ app.on('will-finish-launching', () => {
 });
 
 app.on('ready', async () => {
+  if ( process.platform === 'linux') {
+    try {
+      libPath = path.join(await configData.get('rpath'),
+        'miro-library', libVersion);
+    } catch (e) {
+      errMsg = `Couldn't retrieve R path. Error message: ${e.message}.`;
+    }
+  }
+
   if ( errMsg ) {
     dialog.showMessageBoxSync({
       type: 'error',
@@ -1074,110 +1187,11 @@ app.on('ready', async () => {
     callback(false)
   });
 
-  if ( process.platform === 'linux' ) {
-    let libPathFiles = [];
-    let libsInstalled = true;
-    if ( fs.existsSync(libPath) ) {
-      try {
-        libPathFiles = await fs.promises.readdir(libPath);
-        if ( libPathFiles.find(item => item === 'INSTALLING') ) {
-          libsInstalled = false;
-        }
-      } catch (e) {
-        log.error(`Problems reading libPath. Error message: ${e.message}.`);
-        showErrorMsg({
-          type: 'error',
-          title: 'Unexpected error',
-          message: 'The MIRO installation could not be started. Please check the log files and \
-report to GAMS when this problem persists!'
-        });
-        return;
-      }
-    } else {
-      libsInstalled = false;
-      try {
-        await fs.promises.mkdir(libPath, { recursive: true });
-      } catch (e) {
-        const libPathTmp = path.join(app.getPath('appData'), 'miro-library', miroVersion);
-        if ( fs.existsSync(libPathTmp) ) {
-          try {
-            libPathFiles = await fs.promises.readdir(libPathTmp);
-            if ( libPathFiles.find(item => item === 'INSTALLING') ) {
-              libsInstalled = false;
-            } else {
-              libsInstalled = true;
-              libPath = libPathTmp;
-            }
-          } catch (e) {
-            log.error(`Problems reading libPath. Error message: ${e.message}.`);
-            showErrorMsg({
-              type: 'error',
-              title: 'Unexpected error',
-              message: 'The MIRO installation could not be started. Please check the log files and \
-report to GAMS when this problem persists!'
-            });
-            return;
-          }
-        } else {
-          libsInstalled = false;
-        }
-        if ( !libsInstalled ) {
-          const installType = dialog.showMessageBoxSync(mainWindow, {
-            type: 'info',
-            title: 'Installation',
-            message: `You don't have permissions to install libraries inside: \
-${libPath}. \nWould you like to install MIRO locally instead (${libPathTmp})?\n \
-In case you want to install MIRO globally, consider starting AppImage with sudo and --no-sandbox flag: \
-sudo ./GAMS-MIRO-${miroVersion}.AppImage --no-sandbox`,
-            buttons: ['Local installation', 'Quit']
-          });
-          if ( installType === 1 ) {
-            app.exit(0);
-            return;
-          }
-          try {
-            await fs.promises.mkdir(libPathTmp, { recursive: true });
-          } catch (e) {
-            log.error(`Problems creating libPath: ${libPathTmp}. Error message: ${e.message}.`);
-            showErrorMsg({
-              type: 'error',
-              title: 'Unexpected error',
-              message: 'The MIRO installation could not be started. Please check the log files and \
-report to GAMS when this problem persists!'
-            });
-            return;
-          }
-          libPath = libPathTmp;
-        }
-      }
-      if ( !libsInstalled ) {
-        try {
-          await fs.promises.writeFile(path.join(libPath, 'INSTALLING'),
-            '', 'utf8');
-        } catch (e) {
-          fs.rmdirSync(libPath)
-          log.error(`Could not write INSTALLING metadata file to: ${libPath}.\
-     Error message: ${e.message}.`);
-          return;
-        }
-      }
-    }
-    if ( !libsInstalled ) {
-      try{
-        rPackagesInstalled = installRPackages(
-          await configData.get('rpath'), appRootDir, 
-          libPath, mainWindow);
-      } catch(e) {
-        log.error(`Problems creating prompt to install R packages. \
-  Error message: ${e.message}.`)
-      }
-    }
-  }
-
   if ( miroDevelopMode ) {
     mainWindow = new BrowserWindow({ show: false, width: 0, height: 0});
     mainWindow.hide();
     const modelPath = process.env.MIRO_MODEL_PATH;
+    searchLibPath();
     if ( !modelPath ) {
       showErrorMsg({
         type: 'error',
@@ -1203,6 +1217,7 @@ report to GAMS when this problem persists!'
     Menu.setApplicationMenu(menu(addExampleApps,
      activateEditMode, createSettingsWindow));
     createMainWindow();
+    searchLibPath();
   }
 
   log.info('MIRO launcher started successfully.');
