@@ -253,7 +253,7 @@ class ConfigManager extends Store {
           let rpathTmp = await which('Rscript', {nothrow: true});
           rpathTmp = await this.validateR(rpathTmp);
           if ( rpathTmp !== false ) {
-            this.rpathDefault = rpathTmp[1];
+            this.rpathDefault = rpathTmp;
           }
         }
       }
