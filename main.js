@@ -1191,7 +1191,7 @@ app.on('ready', async () => {
     mainWindow = new BrowserWindow({ show: false, width: 0, height: 0});
     mainWindow.hide();
     const modelPath = process.env.MIRO_MODEL_PATH;
-    await searchLibPath(devMode = true);
+    await searchLibPath(true);
     if ( !modelPath ) {
       showErrorMsg({
         type: 'error',
