@@ -818,7 +818,7 @@ function showErrorMsg (optionsTmp) {
     dialog.showMessageBoxSync(mainWindow, options)
   }  
 }
-async function searchLibPath () {
+async function searchLibPath (devMode = false) {
   if ( process.platform === 'linux' ) {
     let libPathFiles = [];
     let libsInstalled = true;
@@ -913,7 +913,7 @@ report to GAMS when this problem persists!'
       try{
         rPackagesInstalled = await installRPackages(
           await configData.get('rpath'), appRootDir, 
-          libPath, mainWindow);
+          libPath, mainWindow, devMode);
       } catch(e) {
         log.error(`Problems creating prompt to install R packages. \
   Error message: ${e.message}.`)
@@ -1191,7 +1191,7 @@ app.on('ready', async () => {
     mainWindow = new BrowserWindow({ show: false, width: 0, height: 0});
     mainWindow.hide();
     const modelPath = process.env.MIRO_MODEL_PATH;
-    await searchLibPath();
+    await searchLibPath(devMode = true);
     if ( !modelPath ) {
       showErrorMsg({
         type: 'error',
