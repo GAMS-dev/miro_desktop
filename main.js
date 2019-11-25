@@ -1192,6 +1192,15 @@ app.on('ready', async () => {
     mainWindow.hide();
     const modelPath = process.env.MIRO_MODEL_PATH;
     await searchLibPath(true);
+    if ( !rPackagesInstalled ){
+      showErrorMsg({
+        type: 'error',
+        title: 'Failed to install R packages',
+        message: 'The R packages required to run MIRO could not be installed. Check log file for more information.'
+      });
+      app.exit(1);
+      return;
+    }
     if ( !modelPath ) {
       showErrorMsg({
         type: 'error',

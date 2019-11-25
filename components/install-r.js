@@ -12,7 +12,7 @@ async function installRPackages(rpath, apppath, libpath, mainWindow, devMode = f
         title: 'R not found',
         message: 'No R installation was found on your machine. Please install R or specify the location of your existing R installation in the settings.',
         buttons: ['OK']})
-    return;
+    return false;
   }
   const selection = dialog.showMessageBoxSync(mainWindow, {
     type: 'question',
@@ -42,7 +42,9 @@ async function installRPackages(rpath, apppath, libpath, mainWindow, devMode = f
     rproc.stderr.pipe(process.stderr);
     try {
       await rproc;
-    } catch (e) { }
+    } catch (e) { 
+      return false;
+    }
   } else {
     for await (const data of rproc.all) {
       mainWindow.send('install-r-packages-stdout', data);
@@ -50,7 +52,9 @@ async function installRPackages(rpath, apppath, libpath, mainWindow, devMode = f
     try {
       await rproc;
       mainWindow.send('install-r-packages-installed');
-    } catch (e) { }
+    } catch (e) {
+      return false;
+    }
   }
   return true;
 }
