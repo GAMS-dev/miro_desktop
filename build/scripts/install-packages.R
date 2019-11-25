@@ -190,13 +190,7 @@ examplesPath = file.path(getwd(), 'miro', 'examples')
 if (dir.exists(examplesPath)){
     unlink(examplesPath, force = TRUE, recursive = TRUE)
 }
-for ( modelName in c( 'pickstock', 'pickstock_hcube', 'transport', 'transport_hcube' ) ) {
-    if (endsWith(modelName, '_hcube')) {
-        modelName = substring(modelName, 1, nchar(modelName) - 6L)
-        Sys.setenv(GMSMODE='hcube')
-    } else {
-        Sys.setenv(GMSMODE='base')
-    }
+for ( modelName in c( 'pickstock', 'transport' ) ) {
     if(!dir.exists(file.path(examplesPath, modelName)) &&
         !dir.create(file.path(examplesPath, modelName), recursive = TRUE)){
         stop(sprintf("Could not create path: %s", examplesPath))
@@ -206,13 +200,15 @@ for ( modelName in c( 'pickstock', 'pickstock_hcube', 'transport', 'transport_hc
     miroAppPath = file.path(modelPath, paste0(modelName, '.miroapp'))
     Sys.setenv(R_LIBS=file.path(getwd(), RlibPathDevel))
     Sys.setenv(MIRO_BUILD='true')
-    Sys.setenv(GMSMODELNAME=file.path(modelPath, paste0(modelName, '.gms')))
+    Sys.setenv(MIRO_MODE='full')
+    Sys.setenv(MIRO_MODEL_PATH=file.path(modelPath, paste0(modelName, '.gms')))
 
-    if(run(file.path(R.home(), 'bin', 'Rscript'), 
+    buildProc = run(file.path(R.home(), 'bin', 'Rscript'), 
         c('--vanilla', './app.R'), error_on_status = FALSE,
-    wd = file.path(getwd(), 'miro'))$status != 0L) {
-        stop(sprintf("Something went wrong while creating MIRO app for model: %s", 
-            modelName))
+        wd = file.path(getwd(), 'miro'))
+    if(buildProc$status != 0L) {
+        stop(sprintf("Something went wrong while creating MIRO app for model: %s.\n\nStdout: %s\n\nStderr: %s", 
+            modelName, buildProc$stdout, buildProc$stderr))
     }
     zip::unzip(miroAppPath, exdir = file.path(examplesPath, modelName))
 }

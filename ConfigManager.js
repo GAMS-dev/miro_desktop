@@ -182,7 +182,8 @@ class ConfigManager extends Store {
 
   async removeOldLogs(){
     if ( this.logLifeTime == null || 
-      this.logLifeTime === -1 ) {
+      this.logLifeTime === '' ||
+      this.logLifeTime < 0 ) {
       return true;
     }
     const now = new Date().getTime();   
