@@ -18,9 +18,9 @@ async function installRPackages(rpath, apppath, libpath, mainWindow, devMode = f
     type: 'question',
     title: 'Install R packages',
     message: 'Would you like to install the required R packages now?\n\nNote that before doing so, you have to install the system libraries V8 and libcurl.\nOn Debian / Ubuntu you need libcurl4-gnutls-dev and either libv8-dev or libnode-dev, on Fedora use libcurl-devel and v8-devel.',
-    buttons: ['No', 'Yes']
+    buttons: ['Yes', 'No']
   });
-  if ( selection !== 1 ) {
+  if ( selection !== 0 ) {
     return false;
   }
   const scriptsPath = path.join(apppath, 'scripts');

@@ -875,7 +875,7 @@ report to GAMS when this problem persists!'
 ${libPath}. \nWould you like to install MIRO locally instead (${libPathTmp})?\n \
 In case you want to install MIRO globally, consider starting AppImage with sudo and --no-sandbox flag: \
 sudo ./GAMS-MIRO-${miroVersion}.AppImage --no-sandbox`,
-            buttons: ['Local installation', 'Quit']
+            buttons: ['Yes, local installation', 'No, quit']
           });
           if ( installType === 1 ) {
             app.exit(0);
