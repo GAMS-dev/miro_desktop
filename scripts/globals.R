@@ -9,7 +9,7 @@ if ( identical(RLibPath, '') ) {
         call. = FALSE)
 }
 
-RlibPathDevel <- './build/lib_devel'
+RlibPathDevel <- if(identical(Sys.getenv("BUILD_NUMBER"), "")) './build/lib_devel'
 RlibPathSrc <- file.path('.', 'r', 'library_src')
 
 isMac <- Sys.info()['sysname'] == 'Darwin' || grepl("^darwin", R.version$os)
