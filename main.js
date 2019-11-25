@@ -670,7 +670,7 @@ to update it and try again!'
   if ( process.platform === 'linux' && rPackagesInstalled !== true) {
     log.info('MIRO app launch requested without packages being installed.');
     mainWindow.send('hide-loading-screen', appData.id);
-    rPackagesInstalled = installRPackages(rpath, appRootDir, 
+    rPackagesInstalled = await installRPackages(rpath, appRootDir, 
       libPath, mainWindow);
     return;
   }
@@ -911,7 +911,7 @@ report to GAMS when this problem persists!'
     }
     if ( !libsInstalled ) {
       try{
-        rPackagesInstalled = installRPackages(
+        rPackagesInstalled = await installRPackages(
           await configData.get('rpath'), appRootDir, 
           libPath, mainWindow);
       } catch(e) {
@@ -1191,7 +1191,7 @@ app.on('ready', async () => {
     mainWindow = new BrowserWindow({ show: false, width: 0, height: 0});
     mainWindow.hide();
     const modelPath = process.env.MIRO_MODEL_PATH;
-    searchLibPath();
+    await searchLibPath();
     if ( !modelPath ) {
       showErrorMsg({
         type: 'error',
