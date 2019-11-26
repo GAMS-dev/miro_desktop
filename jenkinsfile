@@ -33,8 +33,10 @@ pipeline {
                 stage ('macos') {
                     agent { label 'macos' }
                     steps {
-                        withCredentials([usernamePassword(credentialsId: '4568bda5-894f-4fa1-b9c5-a8d42f6e61ac', passwordVariable: 'APPLEIDPASS', usernameVariable: 'APPLEID')]) {
+                        withCredentials([usernamePassword(credentialsId: '4568bda5-894f-4fa1-b9c5-a8d42f6e61ac', passwordVariable: 'APPLEIDPASS', usernameVariable: 'APPLEID'),
+                            string(credentialsId: '2e590f95-5e30-4101-93be-31a1b7402da4', variable: 'MACOS_KEYCHAIN_PASSWD')]) {
                             sh '''
+                               security unlock-keychain -p ${MACOS_KEYCHAIN_PASSWD}
                                yarn install --non-interactive
                                yarn dist
                             '''

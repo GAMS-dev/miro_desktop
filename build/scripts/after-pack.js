@@ -53,7 +53,7 @@ exports.default = async function(context) {
             flags: ['--options', 'runtime', '--entitlements', entitlementsFile, '--deep']
         }];
 
-        for ( objectToSign in objectsToSign ) {
+        for ( const objectToSign of objectsToSign ) {
             const signProc = execa('codesign', ['--sign', codesignIdentity, '--force', 
                '--timestamp'].concat(objectToSign.flags, objectToSign.file));
             signProc.stderr.pipe(process.stderr);
