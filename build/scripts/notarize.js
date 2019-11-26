@@ -3,7 +3,7 @@ const execa = require('execa');
 const path = require('path');
 
 exports.default = async function notarizing(context) {
-  if ( electronPlatformName !== 'darwin' || !process.env.CODESIGN_IDENTITY ) {
+  if ( process.platform !== 'darwin' || !process.env.CODESIGN_IDENTITY ) {
     return;
   }
   const appFile = path.join(context.appOutDir, `${context.packager.appInfo.productFilename}.app`);
