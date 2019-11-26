@@ -1,7 +1,7 @@
 const path  = require('path');
-const fs    = require('fs');
+const fs    = require('fs-extra');
 const execa = require('execa');
-var rimraf = require("rimraf");
+var rimraf = require('rimraf');
 
 let rExists = false;
 if ( !fs.existsSync(path.join('.', 'r')) ) {
@@ -30,20 +30,42 @@ const tryInstallRPackages = async (attempt = 0) => {
     }
 }
 (async () => {
-    if ( !rExists ) {
+    if ( process.platform === 'win32' && !rExists ) {
         try {
-            if ( process.platform === 'win32' ) {
-                console.log('Installing R...');
-                const subproc = execa(path.join('.', 'get-r-win.sh'), {shell: true});
-                subproc.stderr.pipe(process.stderr);
-                subproc.stdout.pipe(process.stderr);
-                await subproc;
-            }
+            console.log('Installing R...');
+            const file = fs.createWriteStream(path.join('r', 'latest_r.exe'));
+            const request = http.get(url, function(response) {
+                response.pipe(file);
+
+                file.on('finish', function() {
+                    file.close(async () => {
+                        const subproc = execa('innoextract', ['-e', 'latest_r.exe'], 
+                            {cwd: path.join('.', 'r')});
+                        subproc.stderr.pipe(process.stderr);
+                        subproc.stdout.pipe(process.stderr);
+                        await subproc;
+                        try {
+                            await fs.move(path.join('.', 'r', 'app'), path.join('.', 'r'))
+                            rimraf.sync(path.join('.', 'r', 'app'));
+                            fs.unlinkSync(path.join('.', 'r', 'latest_r.exe'))
+                        } catch (e) {
+                            console.log(`Problems installing R. Error message: ${e.message}`);
+                            rimraf.sync(path.join('.', 'r'));
+                            process.exit(1);
+                        }
+                    });
+                });
+            }).on('error', function(e) {
+                console.log(`Problems installing R. Error message: ${e.message}`);
+                rimraf.sync(path.join('.', 'r'));
+                process.exit(1);
+            });
         } catch (e) {
             console.log(`Problems installing R. Error message: ${e.message}`);
             rimraf.sync(path.join('.', 'r'));
             process.exit(1);
         }
+    } else {
+        tryInstallRPackages()
     }
-    tryInstallRPackages()
 })();
