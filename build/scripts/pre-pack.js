@@ -1,7 +1,8 @@
 const path  = require('path');
 const fs    = require('fs-extra');
 const execa = require('execa');
-var rimraf = require('rimraf');
+const rimraf = require('rimraf');
+const http = require('http');
 
 let rExists = false;
 if ( !fs.existsSync(path.join('.', 'r')) ) {
