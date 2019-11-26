@@ -4,9 +4,9 @@ const execa = require('execa');
 var rimraf = require("rimraf");
 
 let rExists = false;
-if ( !fs.existsSync('./r') ) {
-    fs.mkdirSync('./r');
-} else {
+if ( !fs.existsSync(path.join('.', 'r')) ) {
+    fs.mkdirSync(path.join('.', 'r'));
+} else if ( fs.existsSync(path.join('.', 'r', 'bin')) ){
     rExists = true;
 }
 const tryInstallRPackages = async (attempt = 0) => {
