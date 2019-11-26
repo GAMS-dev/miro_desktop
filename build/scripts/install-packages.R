@@ -10,7 +10,7 @@ if ( isLinux ) {
     # workaround since electron builder does 
     # not include empty directories in app image
     writeLines('', file.path(RLibPath, 'EMPTY'))
-} else if ( .Platform$OS.type == 'windows' ) {
+} else if ( isWindows ) {
     # make sure Rtools compilers are used on Windows
     Sys.setenv(PATH = paste("C:/Rtools/bin", Sys.getenv("PATH"), sep=";"))
     Sys.setenv(BINPREF = "C:/Rtools/mingw_$(WIN)/bin/")
