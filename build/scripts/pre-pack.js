@@ -1,7 +1,6 @@
 const path  = require('path');
 const fs    = require('fs-extra');
 const execa = require('execa');
-const rimraf = require('rimraf');
 const https = require('https');
 
 let rExists = false;
@@ -47,23 +46,29 @@ const tryInstallRPackages = async (attempt = 0) => {
                         await subproc;
                         try {
                             await fs.move(path.join('.', 'r', 'app'), path.join('.', 'r'))
-                            rimraf.sync(path.join('.', 'r', 'app'));
+                            await fs.remove(path.join('.', 'r' 'app'));
                             fs.unlinkSync(path.join('.', 'r', 'latest_r.exe'))
                         } catch (e) {
                             console.log(`Problems installing R. Error message: ${e.message}`);
-                            rimraf.sync(path.join('.', 'r'));
+                            fs.remove(path.join('.', 'r')).catch(err => {
+                              console.error(err)
+                            });
                             process.exit(1);
                         }
                     });
                 });
-            }).on('error', function(e) {
+            }).on('error', async (e) => {
                 console.log(`Problems installing R. Error message: ${e.message}`);
-                rimraf.sync(path.join('.', 'r'));
+                fs.remove(path.join('.', 'r')).catch(err => {
+                  console.error(err)
+                });
                 process.exit(1);
             });
         } catch (e) {
             console.log(`Problems installing R. Error message: ${e.message}`);
-            rimraf.sync(path.join('.', 'r'));
+            fs.remove(path.join('.', 'r')).catch(err => {
+              console.error(err)
+            });
             process.exit(1);
         }
     } else {
