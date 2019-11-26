@@ -19,6 +19,8 @@ pipeline {
                         withCredentials([certificate(aliasVariable: '', credentialsId: '302df092-b329-47b9-8f7a-605da075126d', keystoreVariable: 'CSC_LINK', passwordVariable: 'CSC_KEY_PASSWORD')]) {
                                 bat '''
                                    yarn install --non-interactive
+                                '''
+                                bat '''
                                    yarn dist
                                 '''
                             }
