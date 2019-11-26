@@ -12,6 +12,7 @@ exports.default = async function(context) {
             console.log('Skipping codesign as CODESIGN_IDENTITY was not specified!');
             return;
         }
+        
         const entitlementsFile = path.join(context.packager.info['_buildResourcesDir'], 
             'entitlements.mac.plist');
         const appFile = path.join(context.appOutDir, `${appName}.app`);

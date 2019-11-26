@@ -1,0 +1,62 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            parallel {
+                stage ('linux') {
+                    agent { label 'docker' }
+                    steps {
+                        sh '''
+                           yarn install --non-interactive
+                           yarn dist
+                        '''
+                    }
+                }
+                stage ('windowsX64') {
+                    agent { label 'windowsX64' }
+                    steps {
+                        withCredentials([certificate(aliasVariable: '', credentialsId: '302df092-b329-47b9-8f7a-605da075126d', keystoreVariable: 'CSC_LINK', passwordVariable: 'CSC_KEY_PASSWORD')]) {
+                                bat '''
+                                   yarn install --non-interactive
+                                   yarn dist
+                                '''
+                            }
+                    }
+                }
+                stage ('macos') {
+                    agent { label 'macos' }
+                    steps {
+                        withCredentials([usernamePassword(credentialsId: '4568bda5-894f-4fa1-b9c5-a8d42f6e61ac', passwordVariable: 'APPLEIDPASS', usernameVariable: 'APPLEID')]) {
+                            sh '''
+                               yarn install --non-interactive
+                               yarn dist
+                            '''
+                        }
+                    }
+                }
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Testing..'
+            }
+        }
+        stage('Deploy') {
+            parallel {
+                stage ('linux') {
+                    agent { label 'docker' }
+                    archiveArtifacts artifacts: 'dist/*.AppImage', fingerprint: true
+                }
+                stage ('windowsX64') {
+                    agent { label 'windowsX64' }
+                    archiveArtifacts artifacts: 'dist/*.exe', fingerprint: true
+                }
+                stage ('macos') {
+                    agent { label 'macos' }
+                    archiveArtifacts artifacts: 'dist/*.dmg', fingerprint: true
+                }
+            }
+        }
+    }
+}
