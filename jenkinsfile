@@ -46,15 +46,21 @@ pipeline {
             parallel {
                 stage ('linux') {
                     agent { label 'docker' }
-                    archiveArtifacts artifacts: 'dist/*.AppImage', fingerprint: true
+                    steps {
+                        archiveArtifacts artifacts: 'dist/*.AppImage', fingerprint: true
+                    }
                 }
                 stage ('windowsX64') {
                     agent { label 'windowsX64' }
-                    archiveArtifacts artifacts: 'dist/*.exe', fingerprint: true
+                    steps {
+                        archiveArtifacts artifacts: 'dist/*.exe', fingerprint: true
+                    }
                 }
                 stage ('macos') {
                     agent { label 'macos' }
-                    archiveArtifacts artifacts: 'dist/*.dmg', fingerprint: true
+                    steps {
+                        archiveArtifacts artifacts: 'dist/*.dmg', fingerprint: true
+                    }
                 }
             }
         }
