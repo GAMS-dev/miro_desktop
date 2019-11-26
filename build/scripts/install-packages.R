@@ -190,6 +190,11 @@ examplesPath = file.path(getwd(), 'miro', 'examples')
 if (dir.exists(examplesPath)){
     unlink(examplesPath, force = TRUE, recursive = TRUE)
 }
+if(length(RlibPathDevel)){
+    Sys.setenv(R_LIBS=file.path(getwd(), RlibPathDevel))
+}
+Sys.setenv(MIRO_BUILD='true')
+Sys.setenv(MIRO_MODE='full')
 for ( modelName in c( 'pickstock', 'transport' ) ) {
     if(!dir.exists(file.path(examplesPath, modelName)) &&
         !dir.create(file.path(examplesPath, modelName), recursive = TRUE)){
@@ -198,9 +203,7 @@ for ( modelName in c( 'pickstock', 'transport' ) ) {
     modelPath = file.path(getwd(), 'miro', 'model', 
                    modelName)
     miroAppPath = file.path(modelPath, paste0(modelName, '.miroapp'))
-    Sys.setenv(R_LIBS=file.path(getwd(), RlibPathDevel))
-    Sys.setenv(MIRO_BUILD='true')
-    Sys.setenv(MIRO_MODE='full')
+
     Sys.setenv(MIRO_MODEL_PATH=file.path(modelPath, paste0(modelName, '.gms')))
 
     buildProc = run(file.path(R.home(), 'bin', 'Rscript'), 
