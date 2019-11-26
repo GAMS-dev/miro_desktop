@@ -60,8 +60,9 @@ installPackage <- function(package, attempt = 0) {
                 dependencies = FALSE)
         } else {
             withr::with_libpaths(RLibPath, install_version(package[1], package[2], quick = TRUE, 
-                local = TRUE, out = './dist/dump', 
-                dependencies = FALSE, repos = CRANMirrors[attempt + 1]))
+                local = TRUE, out = './dist/dump',
+                dependencies = FALSE, repos = CRANMirrors[attempt + 1],
+                INSTALL_opts = '--no-multiarch'))
         }
     }, error = function(e){
         print(conditionMessage(e))
@@ -78,7 +79,6 @@ downloadPackage <- function(package) {
             package[1], packageFileNameTmp, packageFileName))
     }
 }
-options(devtools.install.args = "--no-multiarch")
 # data.table needs some special attention on OSX due to lacking openmp support in clang
 # see https://github.com/Rdatatable/data.table/wiki/Installation#openmp-enabled-compiler-for-mac
 if ( !'data.table' %in% installedPackages){
