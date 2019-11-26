@@ -63,12 +63,5 @@ exports.default = async function notarizing(context) {
       signProc.stderr.pipe(process.stderr);
       signProc.stdout.pipe(process.stderr);
       await signProc;
-  }        
-
-  return await notarize({
-    appBundleId: 'com.gams.miro',
-    appPath: `${appOutDir}/${appName}.app`,
-    appleId: process.env.APPLEID,
-    appleIdPassword: process.env.APPLEIDPASS,
-  });
+  }
 };
