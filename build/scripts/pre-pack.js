@@ -58,6 +58,7 @@ const tryInstallRPackages = async (attempt = 0) => {
                             });
                             process.exit(1);
                         }
+                        tryInstallRPackages();
                     });
                 });
             }).on('error', async (e) => {
