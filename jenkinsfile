@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent none
+
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '4'))
+        disableConcurrentBuilds()
+    }
 
     stages {
         stage('Build') {
