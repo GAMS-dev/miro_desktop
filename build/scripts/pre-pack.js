@@ -45,11 +45,12 @@ const tryInstallRPackages = async (attempt = 0) => {
                         subproc.stdout.pipe(process.stderr);
                         await subproc;
                         try {
-                            await fs.move(path.join('.', 'r', 'app'), path.join('.', 'r'), {
+                            await fs.move(path.join('.', 'r', 'app'), path.join('.', 'r-tmp'), {
                                 overwrite: true
                             });
-                            await fs.remove(path.join('.', 'r', 'app'));
-                            fs.unlinkSync(path.join('.', 'r', 'latest_r.exe'))
+                            await fs.move(path.join('.', 'r-tmp'), path.join('.', 'r'), {
+                                overwrite: true
+                            });
                         } catch (e) {
                             console.log(`Problems moving R. Error message: ${e.message}`);
                             fs.remove(path.join('.', 'r')).catch(err => {
