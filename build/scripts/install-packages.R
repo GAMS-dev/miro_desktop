@@ -10,6 +10,10 @@ if ( isLinux ) {
     # workaround since electron builder does 
     # not include empty directories in app image
     writeLines('', file.path(RLibPath, 'EMPTY'))
+} else if ( .Platform$OS.type == 'windows' ) {
+    # make sure Rtools compilers are used on Windows
+    Sys.setenv(PATH = paste("C:/Rtools/bin", Sys.getenv("PATH"), sep=";"))
+    Sys.setenv(BINPREF = "C:/Rtools/mingw_$(WIN)/bin/")
 }
 requiredPackages <- c('remotes', 'devtools', 'jsonlite', 'V8', 
     'jsonvalidate', 'zip', 'tibble', 'readr', 'R6', 'processx')
@@ -42,6 +46,7 @@ if (dir.exists(file.path('.', 'r-src', 'build')) &&
 if (!dir.create(file.path('.', 'r-src', 'build'))){
     stop('Could not create build directory: ./r-src/build')
 }
+
 installPackage <- function(package, attempt = 0) {
     if ( attempt == 3L ) {
         stop(sprintf('Problems installing package: %s', package[0]))
