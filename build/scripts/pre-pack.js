@@ -6,7 +6,8 @@ var rimraf = require("rimraf");
 let rExists = false;
 if ( !fs.existsSync(path.join('.', 'r')) ) {
     fs.mkdirSync(path.join('.', 'r'));
-} else if ( fs.existsSync(path.join('.', 'r', 'bin')) ){
+} else {
+    console.log('R already exists. Skipping installation.');
     rExists = true;
 }
 const tryInstallRPackages = async (attempt = 0) => {
