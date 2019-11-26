@@ -31,50 +31,7 @@ const tryInstallRPackages = async (attempt = 0) => {
 }
 (async () => {
     if ( process.platform === 'win32' && !rExists ) {
-        try {
-            console.log('Installing R...');
-            const file = fs.createWriteStream(path.join('r', 'latest_r.exe'));
-            const request = https.get('https://cloud.r-project.org/bin/windows/base/R-3.6.1-win.exe', function(response) {
-                response.pipe(file);
 
-                file.on('finish', function() {
-                    file.close(async () => {
-                        const subproc = execa('innoextract', ['-e', 'latest_r.exe'], 
-                            {cwd: path.join('.', 'r')});
-                        subproc.stderr.pipe(process.stderr);
-                        subproc.stdout.pipe(process.stderr);
-                        await subproc;
-                        try {
-                            await fs.move(path.join('.', 'r', 'app'), path.join('.', 'r-tmp'), {
-                                overwrite: true
-                            });
-                            await fs.move(path.join('.', 'r-tmp'), path.join('.', 'r'), {
-                                overwrite: true
-                            });
-                        } catch (e) {
-                            console.log(`Problems moving R. Error message: ${e.message}`);
-                            fs.remove(path.join('.', 'r')).catch(err => {
-                              console.error(err)
-                            });
-                            process.exit(1);
-                        }
-                        tryInstallRPackages();
-                    });
-                });
-            }).on('error', async (e) => {
-                console.log(`Problems installing R. Error message: ${e.message}`);
-                fs.remove(path.join('.', 'r')).catch(err => {
-                  console.error(err)
-                });
-                process.exit(1);
-            });
-        } catch (e) {
-            console.log(`Problems installing R. Error message: ${e.message}`);
-            fs.remove(path.join('.', 'r')).catch(err => {
-              console.error(err)
-            });
-            process.exit(1);
-        }
     } else {
         tryInstallRPackages()
     }
