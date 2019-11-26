@@ -2,7 +2,7 @@ const path  = require('path');
 const fs    = require('fs-extra');
 const execa = require('execa');
 const rimraf = require('rimraf');
-const http = require('http');
+const https = require('https');
 
 let rExists = false;
 if ( !fs.existsSync(path.join('.', 'r')) ) {
@@ -35,7 +35,7 @@ const tryInstallRPackages = async (attempt = 0) => {
         try {
             console.log('Installing R...');
             const file = fs.createWriteStream(path.join('r', 'latest_r.exe'));
-            const request = http.get('https://cloud.r-project.org/bin/windows/base/R-3.6.1-win.exe', function(response) {
+            const request = https.get('https://cloud.r-project.org/bin/windows/base/R-3.6.1-win.exe', function(response) {
                 response.pipe(file);
 
                 file.on('finish', function() {
