@@ -5,8 +5,8 @@
 XCRUN_RESULT="$(mktemp)"
 xcrun altool --notarize-app \
     --primary-bundle-id "com.gams.miro" \
-    --username $APPLE_ID_USER \
-    --password "@env:APPLE_ID_PASS" \
+    --username $APPLEID \
+    --password "@env:APPLEIDPASS" \
     --file $1 \
     --output-format xml > $XCRUN_RESULT
 
@@ -36,8 +36,8 @@ while true; do
     sleep 60
     echo "Checking notarization status..."
     xcrun altool --notarization-info $REQUEST_UUID \
-                 --username $APPLE_ID_USER \
-                 --password "@env:APPLE_ID_PASS" \
+                 --username $APPLEID \
+                 --password "@env:APPLEIDPASS" \
                  --output-format xml > $XCRUN_RESULT
     NOTARIZATION_STATUS=$(/usr/libexec/PlistBuddy -c "Print :notarization-info:Status" $XCRUN_RESULT)
     if [ $? -eq 0 ]; then
