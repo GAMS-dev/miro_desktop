@@ -28,7 +28,7 @@ pipeline {
                                 '''
                                 bat '''
                                    copy %WIN_CERT_FILE% cert.p12
-                                   set CSC_LINK="%WORKSPACE%\\cert.p12"
+                                   set CSC_LINK=cert.p12
                                    echo %CSC_LINK%
                                    yarn dist
                                 '''
