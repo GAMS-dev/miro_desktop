@@ -7,7 +7,7 @@ xcrun altool --notarize-app \
     --primary-bundle-id "com.gams.miro" \
     --username $APPLEID \
     --password "@env:APPLEIDPASS" \
-    --file $1 \
+    --file "$1" \
     --output-format xml > $XCRUN_RESULT
 
 # Check result - PlistBuddy does not work when the same DMG has been uploaded twice.
@@ -66,7 +66,7 @@ if [ "$NOTARIZATION_STATUS" == "success" ]; then
         exit 1
     fi
     echo "Notarization successful; stapling ticket to app bundle"
-    xcrun stapler staple $1
+    xcrun stapler staple "$1"
 else
     echo "Notarization failed."
     exit 1
