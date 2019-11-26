@@ -49,6 +49,10 @@ exports.default = async function(context) {
             flags: ['--options', 'runtime', '--entitlements', entitlementsFile]
         },
         {
+            file: path.join(appFile, 'Contents', 'MacOS', 'GAMS MIRO'),
+            flags: ['--options', 'runtime', '--entitlements', entitlementsFile]
+        },
+        {
             file: appFile,
             flags: ['--options', 'runtime', '--entitlements', entitlementsFile, '--deep']
         }];

@@ -61,18 +61,27 @@ pipeline {
             parallel {
                 stage ('linux') {
                     agent { label 'docker' }
+                    options {
+                        skipDefaultCheckout()
+                    }
                     steps {
                         archiveArtifacts artifacts: 'dist/*.AppImage', fingerprint: true
                     }
                 }
                 stage ('windowsX64') {
                     agent { label 'windowsX64' }
+                    options {
+                        skipDefaultCheckout()
+                    }
                     steps {
                         archiveArtifacts artifacts: 'dist/*.exe', fingerprint: true
                     }
                 }
                 stage ('macos') {
                     agent { label 'macos' }
+                    options {
+                        skipDefaultCheckout()
+                    }
                     steps {
                         archiveArtifacts artifacts: 'dist/*.dmg', fingerprint: true
                     }
