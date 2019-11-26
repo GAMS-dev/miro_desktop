@@ -22,7 +22,8 @@ newPackages <- requiredPackages[!requiredPackages %in%
 
 for ( newPackage in newPackages ) {
     install.packages(newPackage, repos = CRANMirrors[1], lib = RlibPathDevel,
-        dependencies = c("Depends", "Imports", "LinkingTo"))
+        dependencies = c("Depends", "Imports", "LinkingTo"),
+        INSTALL_opts = "--no-multiarch")
 }
 
 options(warn = 2)
@@ -57,7 +58,7 @@ installPackage <- function(package, attempt = 0) {
         } else if ( isMac && identical(package[1], "V8") ) {
             # use binary from CRAN to avoid having absolute path to v8 dylib compiled into binary
             install.packages(package[1], RLibPath, repos = CRANMirrors[attempt + 1],
-                dependencies = FALSE)
+                dependencies = FALSE, INSTALL_opts = '--no-multiarch')
         } else {
             withr::with_libpaths(RLibPath, install_version(package[1], package[2], quick = TRUE, 
                 local = TRUE, out = './dist/dump',
@@ -129,7 +130,7 @@ for(package in packageVersionMap){
                 file.path(RlibPathSrc, basename(packagePath)))
         }else{
             install.packages(packagePath, lib = RLibPath, repos = NULL, 
-                         type = "source", dependencies = FALSE)
+                         type = "source", dependencies = FALSE, INSTALL_opts = "--no-multiarch")
         }
     } else {
         installPackage(package)
