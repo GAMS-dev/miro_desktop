@@ -78,6 +78,7 @@ downloadPackage <- function(package) {
             package[1], packageFileNameTmp, packageFileName))
     }
 }
+options(devtools.install.args = "--no-multiarch")
 # data.table needs some special attention on OSX due to lacking openmp support in clang
 # see https://github.com/Rdatatable/data.table/wiki/Installation#openmp-enabled-compiler-for-mac
 if ( !'data.table' %in% installedPackages){
