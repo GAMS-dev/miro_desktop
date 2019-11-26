@@ -33,6 +33,7 @@ const tryInstallRPackages = async (attempt = 0) => {
     if ( !rExists ) {
         try {
             if ( process.platform === 'win32' ) {
+                console.log('Installing R...');
                 const subproc = execa(path.join('.', 'get-r-win.sh'), {shell: true});
                 subproc.stderr.pipe(process.stderr);
                 subproc.stdout.pipe(process.stderr);
