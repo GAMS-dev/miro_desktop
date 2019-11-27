@@ -3,6 +3,7 @@
 # License: GNU AGPL v.3.0
 
 XCRUN_RESULT="$(mktemp)"
+echo $1
 xcrun altool --notarize-app \
     --primary-bundle-id "com.gams.miro" \
     --username $APPLEID \
