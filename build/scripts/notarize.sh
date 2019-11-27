@@ -31,7 +31,7 @@ fi
 
 # Wait for notarization to complete
 echo "Waiting for notarization to complete. This will take several minutes."
-sleep 180
+sleep 120
 while true; do 
     sleep 60
     echo "Checking notarization status..."
