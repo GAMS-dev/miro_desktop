@@ -13,7 +13,16 @@ isMac <- Sys.info()['sysname'] == 'Darwin' || grepl("^darwin", R.version$os)
 isWindows <- .Platform$OS.type == 'windows'
 isLinux <- grepl("linux-gnu", R.version$os)
 
-RlibPathDevel <- if(isWindows || identical(Sys.getenv("BUILD_NUMBER"), "")) './build/lib_devel'
+# on Jenkins use default library
+RlibPathDevel <- NULL
+if(identical(Sys.getenv("BUILD_NUMBER"), "")){
+    RlibPathDevel <-  './build/lib_devel'
+} else if(isWindows) {
+    # on Windows, we use the R version we ship, so we need to set library path explicitly, or
+    # it will install development libraries inside ./r/library
+    RlibPathDevel <- paste0('~/R/win-library/', R.version[['major']], ".",
+        strsplit(R.version[['minor']], '.', fixed = TRUE)[[1]][1])
+}
 RlibPathSrc <- file.path('.', 'r', 'library_src')
 
 packageVersionMap <- list(

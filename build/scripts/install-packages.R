@@ -191,6 +191,10 @@ local({
     mainJS = gsub("const miroVersion = '[^']+';",
         paste0("const miroVersion = '", MIROVersion, "';"), mainJS)
     writeLines(mainJS, './main.js')
+    packageJSON = readLines('./package.json', warn = FALSE)
+    packageJSON = gsub('"version": "[^"]+",',
+        paste0('"version": "', MIROVersion, '",'), packageJSON)
+    writeLines(packageJSON, './package.json')
 })
 # build MIRO example apps
 examplesPath = file.path(getwd(), 'miro', 'examples')
