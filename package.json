@@ -1,6 +1,6 @@
 {
   "name": "com.gams.miro",
-  "version": "0.9.9",
+  "version": "0.9.10",
   "description": "GAMS MIRO is an interactive web application for GAMS models. It is designed for people working with GAMS looking for an easy and automated way to deploy their models. Extensive visualization options support you to make decisions based on optimization.",
   "homepage": "https://gams.com/miro",
   "main": "main.js",
@@ -100,8 +100,7 @@
   "license": "MIT",
   "devDependencies": {
     "electron": "^6.0.11",
-    "electron-builder": "^21.2.0",
-    "electron-notarize": "^0.1.1"
+    "electron-builder": "^21.2.0"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.11.2",
