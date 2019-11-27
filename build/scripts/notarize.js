@@ -6,8 +6,7 @@ exports.default = async function notarizing(context) {
   if ( process.platform !== 'darwin' || !process.env.CODESIGN_IDENTITY ) {
     return;
   }
-  const appFile = `"${path.join(context.appOutDir, 
-    `${context.packager.appInfo.productFilename}.app`)}"`;
+  const appFile = `"${context.artifactPaths.filter(el => el.endsWith('.dmg'))[0]}"`;
   try{
     const notarizeProc = execa(path.join('.', 'build', 'scripts', 'notarize.sh'), 
       [appFile], {shell: true});

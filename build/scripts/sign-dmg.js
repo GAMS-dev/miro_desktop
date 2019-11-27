@@ -7,7 +7,7 @@ exports.default = async function signing(context) {
   if ( electronPlatformName !== 'darwin' ) {
     return;
   }
-
+return;
   const appName = context.packager.appInfo.productFilename;
 
   const codesignIdentity = process.env.CODESIGN_IDENTITY;

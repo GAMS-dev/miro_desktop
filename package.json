@@ -15,7 +15,7 @@
     "appId": "com.gams.miro",
     "productName": "GAMS MIRO",
     "afterPack": "build/scripts/sign-dmg.js",
-    "afterSign": "build/scripts/notarize.js",
+    "afterAllArtifactBuild": "build/scripts/notarize.js",
     "extraResources": [
       "miro/conf/*",
       "miro/global.R",
