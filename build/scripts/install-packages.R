@@ -145,7 +145,7 @@ dontDisplayMe <- lapply(list.dirs(RLibPath, full.names = TRUE, recursive = FALSE
                               file.path("libs", "*dSYM"))), force=TRUE, recursive=TRUE)
 })
 if ( isWindows ) {
-    unlink(file.path('r', c('doc', 'tests')), force = TRUE, recursive = TRUE)
+    unlink(file.path('r', c('doc', 'tests', file.path('bin', 'i386'))), force = TRUE, recursive = TRUE)
 }
 # replace directories with periods in their names with symlinks 
 # as directories with periods must be frameworks for codesign to not nag
@@ -181,7 +181,7 @@ if (isMac) {
         setwd(currWorkDir)
     })
 }
-# replace MIRO API version and MIRO version in main.js with the one set in miro/app.R
+# replace MIRO API version and MIRO version in main.js and package.json with the one set in miro/app.R
 local({
     eval(parse(text = readLines('./miro/app.R',
      n = 5L, warn = FALSE)))
