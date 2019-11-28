@@ -10,7 +10,7 @@ const log = require('electron-log');
 const menu = require('./components/menu.js');
 const installRPackages = require('./components/install-r.js');
 const requiredAPIVersion = 1;
-const miroVersion = '0.9.10';
+const miroVersion = '0.9.11';
 const libVersion = '1.0';
 const exampleAppsData = [
   {
@@ -192,7 +192,7 @@ const tryStartWebserver = async (progressCallback, onErrorStartup,
       'R_LIBS_SITE': libPath,
       'R_LIB_PATHS': libPath,
       'NODEBUG': !miroDevelopMode,
-      'USETMPDIR': appData.usetmpdir,
+      'MIRO_USE_TMP': appData.usetmpdir,
       'DBPATH': appData.dbPath,
       'MIRO_BUILD': miroBuildMode,
       'MIRO_BUILD_ARCHIVE':  appData.buildArchive === 'true',
