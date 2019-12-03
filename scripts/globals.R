@@ -74,7 +74,7 @@ packageVersionMap <- list(
     c('ellipsis', '0.3.0'),
     'crosstalk',
     'DT',
-    'gdxrrw',
+    'gdxrrwMIRO',
     'leaflet',
     c('vctrs', '0.2.0'),
     c('pillar', '1.4.2'),
