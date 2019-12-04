@@ -10,7 +10,7 @@ const log = require('electron-log');
 const menu = require('./components/menu.js');
 const installRPackages = require('./components/install-r.js');
 const requiredAPIVersion = 1;
-const miroVersion = '0.9.15';
+const miroVersion = '0.9.17';
 const libVersion = '1.0';
 const exampleAppsData = [
   {
@@ -205,7 +205,8 @@ const tryStartWebserver = async (progressCallback, onErrorStartup,
       'MIRO_MODE': appData.mode? appData.mode: 'base',
       'MIRO_MODEL_PATH': miroDevelopMode? appData.modelPath:
        path.join(appDataPath, appData.id, `${appData.id}.gms`)},
-       all: true
+       stdout: miroDevelopMode? 'inherit': 'pipe',
+       stderr: miroDevelopMode? 'inherit': 'pipe'
      }).catch((e) => {
         shinyProcessAlreadyDead = true
         onError(e)
