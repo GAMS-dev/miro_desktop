@@ -19,7 +19,7 @@ const exampleAppsData = [
     description: `Optimization model to pick a small subset of the stocks together with \
 some weights, such that this portfolio has a similar behavior to our \
 overall Dow Jones index.`,
-    logoPath: path.join('static', 'pickstock.png'),
+    logoPath: path.join('static_pickstock', 'pickstock.png'),
     miroversion: miroVersion,
     apiversion: requiredAPIVersion,
     usetmpdir: true,
@@ -293,7 +293,7 @@ function validateMIROApp ( filePath ) {
           mainWindow.setProgressBar(++fileCnt * incAmt);
           appFileNames.push(entry.fileName);
           if ( skipCnt < 1 ) {
-            if ( path.dirname(entry.fileName) === 'static' ) {
+            if ( path.dirname(entry.fileName).startsWith('static_') ) {
               const logoExt = entry.fileName.toLowerCase().match(/.*_logo\.(jpg|jpeg|png)$/);
               if ( logoExt ) {
                 newAppConf.logoPath = entry.fileName;
@@ -974,7 +974,7 @@ ipcMain.on('add-app', (e, app) => {
      unzip(appConf.path, appDir, () => {
        delete appConf.path;
        if ( appConf.logoNeedsMove ) {
-        const newLogoPath = path.join('static', 
+        const newLogoPath = path.join(`static_${appConf.id}`, 
           appConf.id + '_logo' + path.extname(appConf.logoPath));
          fs.copyFileSync(appConf.logoPath, path.join(appDir, newLogoPath));
          appConf.logoPath = newLogoPath;
@@ -1017,7 +1017,7 @@ ipcMain.on('update-app', (e, app) => {
   try{
      let appConf = app;
      if ( appConf.logoNeedsMove ) {
-      const newLogoPath = path.join('static', 
+      const newLogoPath = path.join(`static_${appConf.id}`, 
         appConf.id + '_logo' + path.extname(appConf.logoPath));
        fs.copyFileSync(appConf.logoPath, path.join(appDataPath, appConf.id, newLogoPath));
        appConf.logoPath = newLogoPath;
