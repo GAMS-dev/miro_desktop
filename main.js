@@ -10,7 +10,7 @@ const log = require('electron-log');
 const menu = require('./components/menu.js');
 const installRPackages = require('./components/install-r.js');
 const requiredAPIVersion = 1;
-const miroVersion = '0.9.17';
+const miroVersion = '0.9.20';
 const libVersion = '1.0';
 const exampleAppsData = [
   {
@@ -561,7 +561,7 @@ function createSettingsWindow() {
   settingsWindow = new BrowserWindow({
     title: 'Settings',
     width: 570,
-    height: 730,
+    height: 570,
     resizable: DEVELOPMENT_MODE,
     titleBarStyle: 'hidden',
     show: false,
@@ -1210,7 +1210,10 @@ app.on('ready', async () => {
   session.defaultSession.setPermissionRequestHandler((_1, _2, callback) => {
     callback(false)
   });
-
+   
+   Menu.setApplicationMenu(menu(addExampleApps,
+     activateEditMode, createSettingsWindow));
+   
   if ( miroDevelopMode ) {
     mainWindow = new BrowserWindow({ show: false, width: 0, height: 0});
     mainWindow.hide();
@@ -1245,10 +1248,7 @@ app.on('ready', async () => {
       miroversion: miroVersion,
       buildArchive: process.env.MIRO_BUILD_ARCHIVE
     });
-
   } else {
-    Menu.setApplicationMenu(menu(addExampleApps,
-     activateEditMode, createSettingsWindow));
     createMainWindow();
     searchLibPath();
   }

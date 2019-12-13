@@ -4,6 +4,7 @@ body {
     font-family: "montserratlight",sans-serif;
 }
 @media (prefers-color-scheme: dark) {
+  html,
   body {
       color: #eeeeee;
       background-color: #292D33;
@@ -286,6 +287,10 @@ a:hover {
 @media (prefers-color-scheme: dark) {
   .app-box-hover:hover {
     background: #54565d;
+  }
+  .nav-tabs .nav-link.active {
+    color: #eeeeee;
+    background: #393e46;
   }
 }
 .manage-box {
@@ -588,6 +593,9 @@ a:hover {
 }
 .miro-launcher-input:disabled {
   cursor: not-allowed !important;
+}
+.db-path-field {
+  margin-bottom: 20px;
 }
 .custom-file-label::after {
   padding: .375rem .5rem;

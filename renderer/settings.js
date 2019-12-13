@@ -162,7 +162,6 @@ $('.btn-reset-nonpath').click(function(e) {
 
 ipcRenderer.on('settings-loaded', (e, data, defaults) => {
     defaultValues = defaults;
-
     if ( !data.important ) {
         importantKeys = [];
     } else if ( Array.isArray(data.important) ) {

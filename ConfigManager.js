@@ -8,7 +8,7 @@ const which = require('which');
 const execa = require('execa');
 const { tmpdir } = require('os');
 
-const minGams = '29.0';
+const minGams = '30.0';
 const minR = '3.6';
 const gamsDirNameRegex = /^(GAMS)?(\d+\.\d+)$/;
 
@@ -33,7 +33,8 @@ const schema = {
     type: 'boolean'
   },
   logLifeTime: {
-    type: 'integer'
+    type: 'integer',
+    minimum: -1
   },
   language: {
     type: 'string',
@@ -66,8 +67,8 @@ class ConfigManager extends Store {
     let configPathTmp = miroWorkspaceDir;
     super({schema, 
       cwd: configPathTmp,
-      name: 'paths', 
-      encryptionKey: 'MIROobfuscatedPathsConfigFile'});
+      name: 'settings', 
+      encryptionKey: 'MIROobfuscatedConfigFile'});
     try {
       configPathTmp = super.get('configpath', '');
     } catch (e) { }
@@ -76,8 +77,7 @@ class ConfigManager extends Store {
       try {
         const superPathConfigData = new Store({schema, 
           cwd: configPathTmp,
-          name: 'paths'});
-
+          name: 'settings'});
         [ 'gamspath', 'rpath', 'logpath', 'launchExternal', 'logLifeTime',
           'language', 'logLevel' ].forEach(el => {
           this[el] = superPathConfigData.get(el, '');
@@ -126,16 +126,16 @@ class ConfigManager extends Store {
 
     valTmp = this[key];
 
+    if ( [ 'gamspath', 'rpath' ].find(el => el === key) ) {
+      if ( valTmp && !fs.existsSync(valTmp) ) {
+        this[key] = valTmp = '';
+      }
+    }
+
     if ( fallback ) {
       // if options is not set, fetch defaults
       if ( (valTmp == null || valTmp === '') ) {
         valTmp = await this.getDefault(key);
-      }
-    }
-
-    if ( [ 'gamspath', 'rpath' ].find(el => el === key) ) {
-      if ( valTmp && !fs.existsSync(valTmp) ) {
-        this[key] = valTmp = '';
       }
     }
     
@@ -345,6 +345,23 @@ ${latestGamsInstalled}`);
           {nothrow: true}));
       } catch ( e ) { }
     }
+
+    if ( !this.gamspathDefault  && process.platform === 'win32' ) {
+      const latestGamsInstalled = fs.readdirSync('C:\\GAMS\\win64', 
+            { withFileTypes: true })
+            .filter(el => el.isDirectory() && gamsDirNameRegex.test(el))
+            .reduce(vCompReducer);
+
+      if ( latestGamsInstalled && 
+        this.vComp(latestGamsInstalled, minGams) ) {
+        this.gamspathDefault = path.join('C:\\GAMS\\win64', 
+          latestGamsInstalled);
+      } else if ( latestGamsInstalled ) {
+        console.log(`Latest installed GAMS version found: \
+  ${latestGamsInstalled}`);
+      }
+    }
+    
     return this.gamspathDefault;
   }
 
@@ -366,7 +383,7 @@ ${latestGamsInstalled}`);
       return false
     }
     if ( contentGamsDir.find(el => el.isFile() && 
-      (el === 'gams' || el === 'gams.exe')) ) {
+      (el.name === 'gams' || el.name === 'gams.exe')) ) {
       if ( process.platform === 'win32' ) {
         gamsExecDir = path.join(gamsDir, 'gams.exe');
       } else {

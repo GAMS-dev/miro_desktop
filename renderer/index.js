@@ -48,8 +48,29 @@ let runningProcesses = [];
 const $overlay = $('#overlayScreen');
 const $body = $('body');
 
+function resetAppConfig(appID) {
+  if ( !appID ) {
+    return;
+  }
+  const oldAppData = appData.find(app => app.id === appID);
+  const appDbPath = oldAppData.dbPath? oldAppData.dbPath: appDbPathPlaceholder;
+  let logoPath = path.join(remote.app.getAppPath(), 'static', 'default_logo.png');
+  if ( oldAppData.logoPath ) {
+      logoPath = path.join(dataPath, appID, oldAppData.logoPath);
+  }
+  newAppConfig = null;
+  $(`#appLogo_${appID}`).css('background-image', `url('${pathToFileURL(logoPath)}')`);
+  $(`#appTitle_${appID}`).text(oldAppData.title);
+  $(`#appDesc_${appID}`).text(oldAppData.description);
+  $(`#appDbPathLabel_${appID}`).text(appDbPath);
+  if ( appDbPath === appDbPathPlaceholder ) {
+    $(`#appDbPathLabel_${appID}`).siblings('.reset-db-path').hide();
+  }
+}
+
 function toggleEditMode(){
   if ( isInEditMode ) {
+    resetAppConfig($('.cancel-btn:visible').data('id'));
     exitOverlayMode();
     if ( !appData.length ) {
       noAppsNotice.fadeIn(200);
@@ -72,7 +93,7 @@ function toggleEditMode(){
     $('.edit-info').fadeIn(200);
     $('.delete-app-button').fadeIn(200);
     $('#addAppWrapper').fadeIn(200);
-    $('.btn-launch').fadeOut(200);
+    $('.btn-launch-wrapper').fadeOut(200);
     $('.launch-app-box').addClass('app-box-hover');
     isInEditMode = true;
   }
@@ -158,7 +179,7 @@ $body.on('click', '.app-box', function(e) {
     const $this = $(this);
     const appID = this.dataset.id;
     if ( appID ) {
-      newAppConfig = appData.find(app => app.id === appID);
+      newAppConfig = $.extend(true, { }, appData.find(app => app.id === appID));
       if ( !newAppConfig ) {
         ipcRenderer.send('show-error-msg', {
             type: 'error',
@@ -177,8 +198,8 @@ $body.on('click', '.app-box', function(e) {
         appDescField.text(appDescPlaceholder);
       }
     }
-    $('.db-path-field').slideDown(200);
-    $('.edit-bt-group').slideDown(200);
+    $(`#appBox_${appID} .db-path-field`).slideDown(200);
+    $(`#appBox_${appID} .edit-bt-group`).slideDown(200);
     $this.css( 'z-index', 11 );
     $overlay.data('current', $this).fadeIn(300);
     $('.launch-app-box').removeClass('app-box-hover');
@@ -232,7 +253,6 @@ appsWrapper.on('click', '.btn-save-changes', function(){
   newAppConfig.title = appTitle;
   const appDescription = $(`#appDesc_${appID}`).text().trim();
   if ( appDescription && appDescription !== appDescPlaceholder ) {
-    console.log(appDescription);
     newAppConfig.description = appDescription;
   }
   ipcRenderer.send('update-app', newAppConfig);
@@ -240,10 +260,11 @@ appsWrapper.on('click', '.btn-save-changes', function(){
 appsWrapper.on('click', '.reset-db-path', function(){
   const appID = this.dataset.id;
   if ( appID ) {
-    $(`#appDbPathLabel_${app.id}`).text(appDbPathPlaceholder);
+    $(`#appDbPathLabel_${appID}`).text(appDbPathPlaceholder);
   } else {
     $('#newAppDbPathLabel').text(appDbPathPlaceholder);
   }
+  $(this).hide();
   if ( newAppConfig ) {
     delete newAppConfig.dbPath;
   }
@@ -289,17 +310,7 @@ appsWrapper.on('click', '#btAddApp', () => {
 });
 appsWrapper.on('click', '.cancel-btn', function(){
   const appID = this.dataset.id;
-  if ( appID ) {
-    const oldAppData = appData.find(app => app.id === appID);
-    let logoPath = path.join(remote.app.getAppPath(), 'static', 'default_logo.png');
-    if ( oldAppData.logoPath ) {
-        logoPath = path.join(dataPath, appID, oldAppData.logoPath);
-    }
-    $(`#appLogo_${appID}`).css('background-image', `url('${pathToFileURL(logoPath)}')`);
-    $(`#appTitle_${appID}`).text(oldAppData.title);
-    $(`#appDesc_${appID}`).text(oldAppData.description);
-    $(`#appDbPathLabel_${appID}`).text(oldAppData.dbPath? oldAppData.dbPath: appDbPathPlaceholder);
-  }
+  resetAppConfig(appID);
   exitOverlayMode();
 });
 appsWrapper.on('click', '#addAppBox', function(){
@@ -479,9 +490,11 @@ ipcRenderer.on('apps-received', (e, apps, appDataPath, startup = false) => {
 title="${app.title} logo" data-id="${app.id}" class="app-logo">
                         </div>
                      </div>
-                     <div style="height:125px;">
-                         <h3 id="appTitle_${app.id}" class="app-title app-title-fixed app-item-title" style="margin-top:15pt;">${app.title}</h3>
-                         <p id="appDesc_${app.id}" class="app-desc app-desc-fixed app-item-desc">${app.description}</p>
+                     <div>
+                         <div style="height:125px">
+                           <h3 id="appTitle_${app.id}" class="app-title app-title-fixed app-item-title" style="margin-top:15pt;">${app.title}</h3>
+                           <p id="appDesc_${app.id}" class="app-desc app-desc-fixed app-item-desc">${app.description}</p>
+                         </div>
                          <div class="custom-file db-path-field" style="display:none;">
                            <div id="appDbPath_${app.id}" class="custom-file-input browseFiles app-db-path" data-id="${app.id}" aria-describedby="resetDbPath"></div>
                            <label id="appDbPathLabel_${app.id}" class="custom-file-label dbpath" for="appDbPath_${app.id}">${app.dbPath? app.dbPath: appDbPathPlaceholder}</label>
