@@ -1019,7 +1019,11 @@ ipcMain.on('update-app', (e, app) => {
      if ( appConf.logoNeedsMove ) {
       const newLogoPath = path.join(`static_${appConf.id}`, 
         appConf.id + '_logo' + path.extname(appConf.logoPath));
-       fs.copyFileSync(appConf.logoPath, path.join(appDataPath, appConf.id, newLogoPath));
+      const newLogoPathFull = path.join(appDataPath, appConf.id, newLogoPath);
+      if ( !fs.existsSync(path.dirname(newLogoPathFull)) ) {
+        fs.mkdirSync(path.dirname(newLogoPathFull));
+      }
+       fs.copyFileSync(appConf.logoPath, newLogoPathFull);
        appConf.logoPath = newLogoPath;
        delete appConf.logoNeedsMove;
      }

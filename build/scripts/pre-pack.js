@@ -34,7 +34,7 @@ const tryInstallRPackages = async (attempt = 0) => {
         try {
             console.log('Installing R...');
             const file = fs.createWriteStream(path.join('r', 'latest_r.exe'));
-            const request = https.get('https://cloud.r-project.org/bin/windows/base/R-3.6.1-win.exe', function(response) {
+            const request = https.get('https://cloud.r-project.org/bin/windows/base/R-3.6.2-win.exe', function(response) {
                 response.pipe(file);
 
                 file.on('finish', function() {
