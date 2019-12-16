@@ -10,6 +10,10 @@ if ( isLinux ) {
     # workaround since electron builder does 
     # not include empty directories in app image
     writeLines('', file.path(RLibPath, 'EMPTY'))
+} else if ( isWindows ) {
+    # make sure Rtools compilers are used on Windows
+    Sys.setenv(PATH = paste("C:/Rtools/bin", Sys.getenv("PATH"), sep=";"))
+    Sys.setenv(BINPREF = "C:/Rtools/mingw_$(WIN)/bin/")
 }
 requiredPackages <- c('remotes', 'devtools', 'jsonlite', 'V8', 
     'jsonvalidate', 'zip', 'tibble', 'readr', 'R6', 'processx')
@@ -18,7 +22,8 @@ newPackages <- requiredPackages[!requiredPackages %in%
 
 for ( newPackage in newPackages ) {
     install.packages(newPackage, repos = CRANMirrors[1], lib = RlibPathDevel,
-        dependencies = c("Depends", "Imports", "LinkingTo"))
+        dependencies = c("Depends", "Imports", "LinkingTo"),
+        INSTALL_opts = "--no-multiarch")
 }
 
 options(warn = 2)
@@ -42,6 +47,7 @@ if (dir.exists(file.path('.', 'r-src', 'build')) &&
 if (!dir.create(file.path('.', 'r-src', 'build'))){
     stop('Could not create build directory: ./r-src/build')
 }
+
 installPackage <- function(package, attempt = 0) {
     if ( attempt == 3L ) {
         stop(sprintf('Problems installing package: %s', package[0]))
@@ -49,10 +55,15 @@ installPackage <- function(package, attempt = 0) {
     tryCatch({
         if ( isLinux ) {
             downloadPackage(package)
+        } else if ( isMac && identical(package[1], "V8") ) {
+            # use binary from CRAN to avoid having absolute path to v8 dylib compiled into binary
+            install.packages(package[1], RLibPath, repos = CRANMirrors[attempt + 1],
+                dependencies = FALSE, INSTALL_opts = '--no-multiarch')
         } else {
             withr::with_libpaths(RLibPath, install_version(package[1], package[2], quick = TRUE, 
-                local = TRUE, out = './dist/dump', 
-                dependencies = FALSE, repos = CRANMirrors[attempt + 1]))
+                local = TRUE, out = './dist/dump',
+                dependencies = FALSE, repos = CRANMirrors[attempt + 1],
+                INSTALL_opts = '--no-multiarch'))
         }
     }, error = function(e){
         print(conditionMessage(e))
@@ -119,7 +130,7 @@ for(package in packageVersionMap){
                 file.path(RlibPathSrc, basename(packagePath)))
         }else{
             install.packages(packagePath, lib = RLibPath, repos = NULL, 
-                         type = "source", dependencies = FALSE)
+                         type = "source", dependencies = FALSE, INSTALL_opts = "--no-multiarch")
         }
     } else {
         installPackage(package)
@@ -134,7 +145,7 @@ dontDisplayMe <- lapply(list.dirs(RLibPath, full.names = TRUE, recursive = FALSE
                               file.path("libs", "*dSYM"))), force=TRUE, recursive=TRUE)
 })
 if ( isWindows ) {
-    unlink(file.path('r', c('doc', 'tests')), force = TRUE, recursive = TRUE)
+    unlink(file.path('r', c('doc', 'tests', file.path('bin', 'i386'))), force = TRUE, recursive = TRUE)
 }
 # replace directories with periods in their names with symlinks 
 # as directories with periods must be frameworks for codesign to not nag
@@ -170,7 +181,7 @@ if (isMac) {
         setwd(currWorkDir)
     })
 }
-# replace MIRO API version and MIRO version in main.js with the one set in miro/app.R
+# replace MIRO API version and MIRO version in main.js and package.json with the one set in miro/app.R
 local({
     eval(parse(text = readLines('./miro/app.R',
      n = 5L, warn = FALSE)))
@@ -180,19 +191,22 @@ local({
     mainJS = gsub("const miroVersion = '[^']+';",
         paste0("const miroVersion = '", MIROVersion, "';"), mainJS)
     writeLines(mainJS, './main.js')
+    packageJSON = readLines('./package.json', warn = FALSE)
+    packageJSON = gsub('"version": "[^"]+",',
+        paste0('"version": "', MIROVersion, '",'), packageJSON)
+    writeLines(packageJSON, './package.json')
 })
 # build MIRO example apps
 examplesPath = file.path(getwd(), 'miro', 'examples')
 if (dir.exists(examplesPath)){
     unlink(examplesPath, force = TRUE, recursive = TRUE)
 }
-for ( modelName in c( 'pickstock', 'pickstock_hcube', 'transport', 'transport_hcube' ) ) {
-    if (endsWith(modelName, '_hcube')) {
-        modelName = substring(modelName, 1, nchar(modelName) - 6L)
-        Sys.setenv(GMSMODE='hcube')
-    } else {
-        Sys.setenv(GMSMODE='base')
-    }
+if(length(RlibPathDevel)){
+    Sys.setenv(R_LIBS=file.path(getwd(), RlibPathDevel))
+}
+Sys.setenv(MIRO_BUILD='true')
+Sys.setenv(MIRO_MODE='full')
+for ( modelName in c( 'pickstock', 'transport' ) ) {
     if(!dir.exists(file.path(examplesPath, modelName)) &&
         !dir.create(file.path(examplesPath, modelName), recursive = TRUE)){
         stop(sprintf("Could not create path: %s", examplesPath))
@@ -200,15 +214,15 @@ for ( modelName in c( 'pickstock', 'pickstock_hcube', 'transport', 'transport_hc
     modelPath = file.path(getwd(), 'miro', 'model', 
                    modelName)
     miroAppPath = file.path(modelPath, paste0(modelName, '.miroapp'))
-    Sys.setenv(R_LIBS=file.path(getwd(), RlibPathDevel))
-    Sys.setenv(MIRO_BUILD='true')
-    Sys.setenv(GMSMODELNAME=file.path(modelPath, paste0(modelName, '.gms')))
 
-    if(run(file.path(R.home(), 'bin', 'Rscript'), 
+    Sys.setenv(MIRO_MODEL_PATH=file.path(modelPath, paste0(modelName, '.gms')))
+
+    buildProc = run(file.path(R.home(), 'bin', 'Rscript'), 
         c('--vanilla', './app.R'), error_on_status = FALSE,
-    wd = file.path(getwd(), 'miro'))$status != 0L) {
-        stop(sprintf("Something went wrong while creating MIRO app for model: %s", 
-            modelName))
+        wd = file.path(getwd(), 'miro'))
+    if(buildProc$status != 0L) {
+        stop(sprintf("Something went wrong while creating MIRO app for model: %s.\n\nStdout: %s\n\nStderr: %s", 
+            modelName, buildProc$stdout, buildProc$stderr))
     }
     zip::unzip(miroAppPath, exdir = file.path(examplesPath, modelName))
 }

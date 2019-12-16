@@ -10,7 +10,8 @@ const log = require('electron-log');
 const menu = require('./components/menu.js');
 const installRPackages = require('./components/install-r.js');
 const requiredAPIVersion = 1;
-const miroVersion = '0.9.1';
+const miroVersion = '0.9.20';
+const libVersion = '1.0';
 const exampleAppsData = [
   {
     id: 'pickstock',
@@ -18,7 +19,7 @@ const exampleAppsData = [
     description: `Optimization model to pick a small subset of the stocks together with \
 some weights, such that this portfolio has a similar behavior to our \
 overall Dow Jones index.`,
-    logoPath: path.join('static', 'pickstock.png'),
+    logoPath: path.join('static_pickstock', 'pickstock.png'),
     miroversion: miroVersion,
     apiversion: requiredAPIVersion,
     usetmpdir: true,
@@ -43,8 +44,8 @@ const { randomPort, waitFor, isNull } = require('./helpers');
 const isMac = process.platform === 'darwin';
 const DEVELOPMENT_MODE = !app.isPackaged;
 const miroWorkspaceDir = path.join(app.getPath('home'), '.miro');
-const miroDevelopMode = process.env.MIRO_DEV_MODE === 'true';
 const miroBuildMode = process.env.MIRO_BUILD === 'true';
+const miroDevelopMode = process.env.MIRO_DEV_MODE === 'true' || miroBuildMode;
 (async () => {
   try{
     if ( !fs.existsSync(miroWorkspaceDir) ) {
@@ -106,6 +107,29 @@ version: ${process.getSystemVersion()})...`);
 // enable overlay scrollbar
 app.commandLine.appendSwitch('--enable-features', 'OverlayScrollbar')
 
+/*
+MIT License
+
+Copyright (c) 2018 Dirk Schumacher, Noam Ross, Rich FitzJohn
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 const tryStartWebserver = async (progressCallback, onErrorStartup,
   onErrorLater, appData, rpath, onSuccess) => {
   let internalPid = processIdMap[appData.id];
@@ -124,13 +148,15 @@ const tryStartWebserver = async (progressCallback, onErrorStartup,
     await onErrorStartup(appData.id)
     return
   }
-  console.log(appData);
   let shinyPort = randomPort();
   log.debug(`Process: ${internalPid} is being started on port: ${shinyPort}.`);
   const gamspath = configData.get('gamspath');
   const logpath = configData.get('logpath');
-  const launchExternal = configData.get('launchExternal');
-
+  const generalConfig = {
+    launchExternal: configData.get('launchExternal'),
+    language: configData.get('language'),
+    logLevel: configData.get('logLevel')
+  }
   await progressCallback({internalPid: internalPid, code: 'start'})
 
   let shinyRunning = false
@@ -140,6 +166,7 @@ const tryStartWebserver = async (progressCallback, onErrorStartup,
     miroProcesses[internalPid] = null;
     delete processIdMap[appData.id];
     if ( miroBuildMode || miroDevelopMode ) {
+      log.debug(`Exiting with error code: ${e.exitCode}.`)
       app.exit(e.exitCode)
     } else if ( mainWindow ) {
       mainWindow.send('hide-loading-screen', appData.id);
@@ -165,18 +192,21 @@ const tryStartWebserver = async (progressCallback, onErrorStartup,
       'R_LIBS_SITE': libPath,
       'R_LIB_PATHS': libPath,
       'NODEBUG': !miroDevelopMode,
-      'USETMPDIR': appData.usetmpdir,
+      'MIRO_USE_TMP': appData.usetmpdir,
       'DBPATH': appData.dbPath,
       'MIRO_BUILD': miroBuildMode,
       'MIRO_BUILD_ARCHIVE':  appData.buildArchive === 'true',
       'GAMS_SYS_DIR': await gamspath,
       'LOGPATH': await logpath,
-      'LAUNCHINBROWSER': await launchExternal,
+      'LAUNCHINBROWSER': await generalConfig.launchExternal,
+      'MIRO_LANG': await generalConfig.language,
+      'MIRO_LOG_LEVEL': await generalConfig.logLevel,
       'MIRO_VERSION_STRING': appData.miroversion,
-      'GMSMODE': appData.mode? appData.mode: 'base',
-      'GMSMODELNAME': miroDevelopMode? appData.modelPath:
+      'MIRO_MODE': appData.mode? appData.mode: 'base',
+      'MIRO_MODEL_PATH': miroDevelopMode? appData.modelPath:
        path.join(appDataPath, appData.id, `${appData.id}.gms`)},
-       all: true
+       stdout: miroDevelopMode? 'inherit': 'pipe',
+       stderr: miroDevelopMode? 'inherit': 'pipe'
      }).catch((e) => {
         shinyProcessAlreadyDead = true
         onError(e)
@@ -187,7 +217,7 @@ const tryStartWebserver = async (progressCallback, onErrorStartup,
           app.exit(0)
         }
       })
-  const url = `http://127.0.0.1:${shinyPort}`
+  const url = `http://127.0.0.1:${shinyPort}`;
   await waitFor(1000)
   for (let i = 0; i <= 25; i++) {
     if (shinyProcessAlreadyDead) {
@@ -263,7 +293,7 @@ function validateMIROApp ( filePath ) {
           mainWindow.setProgressBar(++fileCnt * incAmt);
           appFileNames.push(entry.fileName);
           if ( skipCnt < 1 ) {
-            if ( path.dirname(entry.fileName) === 'static' ) {
+            if ( path.dirname(entry.fileName).startsWith('static_') ) {
               const logoExt = entry.fileName.toLowerCase().match(/.*_logo\.(jpg|jpeg|png)$/);
               if ( logoExt ) {
                 newAppConf.logoPath = entry.fileName;
@@ -531,7 +561,7 @@ function createSettingsWindow() {
   settingsWindow = new BrowserWindow({
     title: 'Settings',
     width: 570,
-    height: 730,
+    height: 570,
     resizable: DEVELOPMENT_MODE,
     titleBarStyle: 'hidden',
     show: false,
@@ -593,105 +623,7 @@ function createMainWindow () {
     mainWindow.webContents.send('apps-received', 
       appsData.apps, appDataPath, true);
     log.debug(`App data (${appsData.apps.length} app(s)) loaded into main window.`);
-    if ( process.platform === 'linux' ) {
-      let libPathFiles = [];
-      let libsInstalled = true;
-      if ( fs.existsSync(libPath) ) {
-        try {
-          libPathFiles = await fs.promises.readdir(libPath);
-          if ( libPathFiles.find(item => item === 'INSTALLING') ) {
-            libsInstalled = false;
-          }
-        } catch (e) {
-          log.error(`Problems reading libPath. Error message: ${e.message}.`);
-          showErrorMsg({
-            type: 'error',
-            title: 'Unexpected error',
-            message: 'The MIRO installation could not be started. Please check the log files and \
-report to GAMS when this problem persists!'
-          });
-          return;
-        }
-      } else {
-        libsInstalled = false;
-        try {
-          await fs.promises.mkdir(libPath, { recursive: true });
-        } catch (e) {
-          const libPathTmp = path.join(app.getPath('appData'), 'miro-library', miroVersion);
-          if ( fs.existsSync(libPathTmp) ) {
-            try {
-              libPathFiles = await fs.promises.readdir(libPathTmp);
-              if ( libPathFiles.find(item => item === 'INSTALLING') ) {
-                libsInstalled = false;
-              } else {
-                libsInstalled = true;
-                libPath = libPathTmp;
-              }
-            } catch (e) {
-              log.error(`Problems reading libPath. Error message: ${e.message}.`);
-              showErrorMsg({
-                type: 'error',
-                title: 'Unexpected error',
-                message: 'The MIRO installation could not be started. Please check the log files and \
-report to GAMS when this problem persists!'
-              });
-              return;
-            }
-          } else {
-            libsInstalled = false;
-          }
-          if ( !libsInstalled ) {
-            const installType = dialog.showMessageBoxSync(mainWindow, {
-              type: 'info',
-              title: 'Installation',
-              message: `You don't have permissions to install libraries inside: \
-${libPath}. \nWould you like to install MIRO locally instead (${libPathTmp})?\n \
-In case you want to install MIRO globally, consider starting AppImage with sudo and --no-sandbox flag: \
-sudo ./GAMS-MIRO-${miroVersion}.AppImage --no-sandbox`,
-              buttons: ['Local installation', 'Quit']
-            });
-            if ( installType === 1 ) {
-              app.exit(0);
-              return;
-            }
-            try {
-              await fs.promises.mkdir(libPathTmp, { recursive: true });
-            } catch (e) {
-              log.error(`Problems creating libPath: ${libPathTmp}. Error message: ${e.message}.`);
-              showErrorMsg({
-                type: 'error',
-                title: 'Unexpected error',
-                message: 'The MIRO installation could not be started. Please check the log files and \
-report to GAMS when this problem persists!'
-              });
-              return;
-            }
-            libPath = libPathTmp;
-          }
-        }
-        if ( !libsInstalled ) {
-          try {
-            await fs.promises.writeFile(path.join(libPath, 'INSTALLING'),
-              '', 'utf8');
-          } catch (e) {
-            fs.rmdirSync(libPath)
-            log.error(`Could not write INSTALLING metadata file to: ${libPath}.\
-       Error message: ${e.message}.`);
-            return;
-          }
-        }
-      }
-      if ( !libsInstalled ) {
-        try{
-          rPackagesInstalled = installRPackages(
-            await configData.get('rpath'), appRootDir, 
-            libPath, mainWindow);
-        } catch(e) {
-          log.error(`Problems creating prompt to install R packages. \
-    Error message: ${e.message}.`)
-        }
-      }
-    }
+
     if ( appLoaded ) {
       return;
     }
@@ -762,7 +694,7 @@ to update it and try again!'
   if ( process.platform === 'linux' && rPackagesInstalled !== true) {
     log.info('MIRO app launch requested without packages being installed.');
     mainWindow.send('hide-loading-screen', appData.id);
-    rPackagesInstalled = installRPackages(rpath, appRootDir, 
+    rPackagesInstalled = await installRPackages(rpath, appRootDir, 
       libPath, mainWindow);
     return;
   }
@@ -910,6 +842,109 @@ function showErrorMsg (optionsTmp) {
     dialog.showMessageBoxSync(mainWindow, options)
   }  
 }
+async function searchLibPath (devMode = false) {
+  if ( process.platform === 'linux' ) {
+    let libPathFiles = [];
+    let libsInstalled = true;
+    if ( fs.existsSync(libPath) ) {
+      try {
+        libPathFiles = await fs.promises.readdir(libPath);
+        if ( libPathFiles.find(item => item === 'INSTALLING') ) {
+          libsInstalled = false;
+        }
+      } catch (e) {
+        log.error(`Problems reading libPath. Error message: ${e.message}.`);
+        showErrorMsg({
+          type: 'error',
+          title: 'Unexpected error',
+          message: 'The MIRO installation could not be started. Please check the log files and \
+report to GAMS when this problem persists!'
+        });
+        return;
+      }
+    } else {
+      libsInstalled = false;
+      try {
+        await fs.promises.mkdir(libPath, { recursive: true });
+      } catch (e) {
+        const libPathTmp = path.join(app.getPath('appData'), 'miro-library', libVersion);
+        if ( fs.existsSync(libPathTmp) ) {
+          try {
+            libPathFiles = await fs.promises.readdir(libPathTmp);
+            if ( libPathFiles.find(item => item === 'INSTALLING') ) {
+              libsInstalled = false;
+            } else {
+              libsInstalled = true;
+              libPath = libPathTmp;
+              log.debug(`Libpath set to: ${libPath}`);
+            }
+          } catch (e) {
+            log.error(`Problems reading libPath. Error message: ${e.message}.`);
+            showErrorMsg({
+              type: 'error',
+              title: 'Unexpected error',
+              message: 'The MIRO installation could not be started. Please check the log files and \
+report to GAMS when this problem persists!'
+            });
+            return;
+          }
+        } else {
+          libsInstalled = false;
+        }
+        if ( !libsInstalled ) {
+          const installType = dialog.showMessageBoxSync(mainWindow, {
+            type: 'info',
+            title: 'Installation',
+            message: `You don't have permissions to install libraries inside: \
+${libPath}. \nWould you like to install MIRO locally instead (${libPathTmp})?\n \
+In case you want to install MIRO globally, consider starting AppImage with sudo and --no-sandbox flag: \
+sudo ./GAMS-MIRO-${miroVersion}.AppImage --no-sandbox`,
+            buttons: ['Yes, local installation', 'No, quit']
+          });
+          if ( installType === 1 ) {
+            app.exit(0);
+            return;
+          }
+          try {
+            await fs.promises.mkdir(libPathTmp, { recursive: true });
+          } catch (e) {
+            log.error(`Problems creating libPath: ${libPathTmp}. Error message: ${e.message}.`);
+            showErrorMsg({
+              type: 'error',
+              title: 'Unexpected error',
+              message: 'The MIRO installation could not be started. Please check the log files and \
+report to GAMS when this problem persists!'
+            });
+            return;
+          }
+          libPath = libPathTmp;
+          log.debug(`Libpath set to: ${libPath}`);
+        }
+      }
+      if ( !libsInstalled ) {
+        try {
+          await fs.promises.writeFile(path.join(libPath, 'INSTALLING'),
+            '', 'utf8');
+        } catch (e) {
+          fs.rmdirSync(libPath)
+          log.error(`Could not write INSTALLING metadata file to: ${libPath}.\
+     Error message: ${e.message}.`);
+          return;
+        }
+      }
+    }
+    if ( !libsInstalled ) {
+      try{
+        rPackagesInstalled = await installRPackages(
+          await configData.get('rpath'), appRootDir, 
+          libPath, mainWindow, devMode);
+      } catch(e) {
+        log.error(`Problems creating prompt to install R packages. \
+  Error message: ${e.message}.`)
+      }
+    }
+  }
+}
 ipcMain.on('show-error-msg', (e, options) => {
   log.debug(`New error message received. Title: ${options.title}, message: ${options.message}.`);
   showErrorMsg(options)
@@ -939,7 +974,7 @@ ipcMain.on('add-app', (e, app) => {
      unzip(appConf.path, appDir, () => {
        delete appConf.path;
        if ( appConf.logoNeedsMove ) {
-        const newLogoPath = path.join('static', 
+        const newLogoPath = path.join(`static_${appConf.id}`, 
           appConf.id + '_logo' + path.extname(appConf.logoPath));
          fs.copyFileSync(appConf.logoPath, path.join(appDir, newLogoPath));
          appConf.logoPath = newLogoPath;
@@ -982,9 +1017,13 @@ ipcMain.on('update-app', (e, app) => {
   try{
      let appConf = app;
      if ( appConf.logoNeedsMove ) {
-      const newLogoPath = path.join('static', 
+      const newLogoPath = path.join(`static_${appConf.id}`, 
         appConf.id + '_logo' + path.extname(appConf.logoPath));
-       fs.copyFileSync(appConf.logoPath, path.join(appDataPath, appConf.id, newLogoPath));
+      const newLogoPathFull = path.join(appDataPath, appConf.id, newLogoPath);
+      if ( !fs.existsSync(path.dirname(newLogoPathFull)) ) {
+        fs.mkdirSync(path.dirname(newLogoPathFull));
+      }
+       fs.copyFileSync(appConf.logoPath, newLogoPathFull);
        appConf.logoPath = newLogoPath;
        delete appConf.logoNeedsMove;
      }
@@ -1014,9 +1053,10 @@ ipcMain.on('update-app', (e, app) => {
     const idUpper = el.toUpperCase();
     log.debug(`Request to validate ${idUpper} path at location: ${pathToValidate} received.`);
     try {
-      if ( await configData.validate(el, pathToValidate) !== false && settingsWindow ) {
+      const validatedPath = await configData.validate(el, pathToValidate);
+      if ( validatedPath !== false && validatedPath != null && settingsWindow ) {
         log.debug(`${idUpper} path is valid!`);
-        settingsWindow.webContents.send(`${el}path-validated`, pathToValidate);
+        settingsWindow.webContents.send(`${el}path-validated`, validatedPath);
       } else {
         log.debug(`${idUpper} path is invalid!`);
         dialog.showMessageBoxSync(settingsWindow, 
@@ -1045,8 +1085,8 @@ ${configData.getMinimumVersion(el)} is required.`,
   });
 });
 
-ipcMain.on('save-path-config', async (e, newConfigData, needRestart) => {
-  log.debug('Save path config request received.');
+ipcMain.on('save-general-config', async (e, newConfigData, needRestart) => {
+  log.debug('Save general config request received.');
   try {
     configData.set(newConfigData);
     if ( settingsWindow ){
@@ -1142,11 +1182,12 @@ app.on('ready', async () => {
   if ( process.platform === 'linux') {
     try {
       libPath = path.join(await configData.get('rpath'),
-        'miro-library', miroVersion);
+        'miro-library', libVersion);
     } catch (e) {
       errMsg = `Couldn't retrieve R path. Error message: ${e.message}.`;
     }
   }
+
   if ( errMsg ) {
     dialog.showMessageBoxSync({
       type: 'error',
@@ -1173,11 +1214,24 @@ app.on('ready', async () => {
   session.defaultSession.setPermissionRequestHandler((_1, _2, callback) => {
     callback(false)
   });
-
+   
+   Menu.setApplicationMenu(menu(addExampleApps,
+     activateEditMode, createSettingsWindow));
+   
   if ( miroDevelopMode ) {
     mainWindow = new BrowserWindow({ show: false, width: 0, height: 0});
     mainWindow.hide();
     const modelPath = process.env.MIRO_MODEL_PATH;
+    await searchLibPath(true);
+    if ( !rPackagesInstalled ){
+      showErrorMsg({
+        type: 'error',
+        title: 'Failed to install R packages',
+        message: 'The R packages required to run MIRO could not be installed. Check log file for more information.'
+      });
+      app.exit(1);
+      return;
+    }
     if ( !modelPath ) {
       showErrorMsg({
         type: 'error',
@@ -1198,11 +1252,9 @@ app.on('ready', async () => {
       miroversion: miroVersion,
       buildArchive: process.env.MIRO_BUILD_ARCHIVE
     });
-
   } else {
-    Menu.setApplicationMenu(menu(addExampleApps,
-     activateEditMode, createSettingsWindow));
     createMainWindow();
+    searchLibPath();
   }
 
   log.info('MIRO launcher started successfully.');

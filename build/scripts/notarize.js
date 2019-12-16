@@ -1,22 +1,21 @@
 require('dotenv').config();
-const { notarize } = require('electron-notarize');
+const execa = require('execa');
+const path = require('path');
 
 exports.default = async function notarizing(context) {
-  const { electronPlatformName, appOutDir } = context;  
-  if (electronPlatformName !== 'darwin' || process.env.NO_NOTARIZATION === 'true' ) {
+  if ( process.platform !== 'darwin' || !process.env.CODESIGN_IDENTITY ) {
     return;
   }
-
-  if ( !process.env.CODESIGN_IDENTITY ) {
-      return;
+  const appFile = `"${context.artifactPaths.filter(el => el.endsWith('.dmg'))[0]}"`;
+  try{
+    const notarizeProc = execa(path.join('.', 'build', 'scripts', 'notarize.sh'), 
+      [appFile], {shell: true});
+    notarizeProc.stderr.pipe(process.stderr);
+    notarizeProc.stdout.pipe(process.stderr);
+    await notarizeProc;
+  } catch (e) {
+      console.log(`Problems notarizing app. Error message: ${e.message}`);
+      throw e;
   }
-
-  const appName = context.packager.appInfo.productFilename;
-
-  return await notarize({
-    appBundleId: 'com.gams.miro',
-    appPath: `${appOutDir}/${appName}.app`,
-    appleId: process.env.APPLEID,
-    appleIdPassword: process.env.APPLEIDPASS,
-  });
+  return;
 };

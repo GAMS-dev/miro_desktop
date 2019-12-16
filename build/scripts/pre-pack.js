@@ -1,12 +1,13 @@
 const path  = require('path');
-const fs    = require('fs');
+const fs    = require('fs-extra');
 const execa = require('execa');
-var rimraf = require("rimraf");
+const https = require('https');
 
 let rExists = false;
-if ( !fs.existsSync('./r') ) {
-    fs.mkdirSync('./r');
+if ( !fs.existsSync(path.join('.', 'r')) ) {
+    fs.mkdirSync(path.join('.', 'r'));
 } else {
+    console.log('R already exists. Skipping installation.');
     rExists = true;
 }
 const tryInstallRPackages = async (attempt = 0) => {
@@ -29,19 +30,52 @@ const tryInstallRPackages = async (attempt = 0) => {
     }
 }
 (async () => {
-    if ( !rExists ) {
+    if ( process.platform === 'win32' && !rExists ) {
         try {
-            if ( process.platform === 'win32' ) {
-                const subproc = execa(path.join('.', 'get-r-win.sh'), {shell: true});
-                subproc.stderr.pipe(process.stderr);
-                subproc.stdout.pipe(process.stderr);
-                await subproc;
-            }
+            console.log('Installing R...');
+            const file = fs.createWriteStream(path.join('r', 'latest_r.exe'));
+            const request = https.get('https://cloud.r-project.org/bin/windows/base/R-3.6.2-win.exe', function(response) {
+                response.pipe(file);
+
+                file.on('finish', function() {
+                    file.close(async () => {
+                        const subproc = execa('innoextract', ['-e', 'latest_r.exe'], 
+                            {cwd: path.join('.', 'r')});
+                        subproc.stderr.pipe(process.stderr);
+                        subproc.stdout.pipe(process.stderr);
+                        await subproc;
+                        try {
+                            await fs.move(path.join('.', 'r', 'app'), path.join('.', 'r-tmp'), {
+                                overwrite: true
+                            });
+                            await fs.move(path.join('.', 'r-tmp'), path.join('.', 'r'), {
+                                overwrite: true
+                            });
+                        } catch (e) {
+                            console.log(`Problems moving R. Error message: ${e.message}`);
+                            fs.remove(path.join('.', 'r')).catch(err => {
+                              console.error(err)
+                            });
+                            process.exit(1);
+                        }
+                        tryInstallRPackages();
+                    });
+                });
+            }).on('error', async (e) => {
+                console.log(`Problems installing R. Error message: ${e.message}`);
+                fs.remove(path.join('.', 'r')).catch(err => {
+                  console.error(err)
+                });
+                process.exit(1);
+            });
         } catch (e) {
             console.log(`Problems installing R. Error message: ${e.message}`);
-            rimraf.sync(path.join('.', 'r'));
+            fs.remove(path.join('.', 'r')).catch(err => {
+              console.error(err)
+            });
             process.exit(1);
         }
+    } else {
+        tryInstallRPackages()
     }
-    tryInstallRPackages()
 })();

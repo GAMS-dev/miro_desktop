@@ -1,10 +1,10 @@
 html, 
 body {
-    height: 100%;
     background-color: #e2e3e8;
     font-family: "montserratlight",sans-serif;
 }
 @media (prefers-color-scheme: dark) {
+  html,
   body {
       color: #eeeeee;
       background-color: #292D33;
@@ -18,6 +18,12 @@ body {
 }
 input, button, textarea, :focus {
     outline: none; // You should add some other style for :focus to help UX/a11y
+}
+a {
+    color: #f90;
+}
+a:hover {
+    color: #e18d0f;
 }
 #btEditWrapper {
   cursor: pointer;
@@ -64,6 +70,30 @@ input, button, textarea, :focus {
   justify-content:center;
   min-height:100vh;
   background-color:rgba(0,0,0,0.9);
+}
+#animLogo1{
+  position: absolute;
+  top: 40%;
+  left: calc(50% - 200px);
+  animation: spin 1s ease;
+  height: 100px;
+}
+#animLogo2{
+  position: absolute;
+  top: 40%;
+  left: calc(50% - 80px);
+  animation: 1s ease 0s normal forwards 1 fadein;
+  height: 100px;
+}
+@keyframes fadein{
+    0% { opacity:0; }
+    66% { opacity:0; }
+    100% { opacity:1; }
+}
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
 }
 /* loading spinner (https://loading.io/css/)*/
 .lds-ellipsis {
@@ -119,110 +149,6 @@ input, button, textarea, :focus {
   }
   100% {
     transform: translate(19px, 0);
-  }
-}
-.deconstructed {
-  position: relative;
-  margin: auto;
-  height: 1em;
-  color: transparent;
-  font-family: 'Cambay', sans-serif;
-  font-size: 7vw;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.03em;
-}
-.deconstructed > div {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  color: #F90;
-  pointer-events: none;
-}
-
-.deconstructed > div:nth-child(1) {
-  -webkit-mask-image: linear-gradient(black 25%, transparent 25%);
-  mask-image: linear-gradient(black 25%, transparent 25%);
-  animation: deconstructed1 2s 1;
-}
-
-.deconstructed > div:nth-child(2) {
-  -webkit-mask-image: linear-gradient(transparent 25%, black 25%, black 50%, transparent 50%);
-  mask-image: linear-gradient(transparent 25%, black 25%, black 50%, transparent 50%);
-  animation: deconstructed2 2s 1;
-}
-
-.deconstructed > div:nth-child(3) {
-   -webkit-mask-image: linear-gradient(transparent 50%, black 50%, black 75%, transparent 75%);
-  mask-image: linear-gradient(transparent 50%, black 50%, black 75%, transparent 75%);
-  animation: deconstructed3 2s 1;
-}
-
-.deconstructed > div:nth-child(4) {
-   -webkit-mask-image: linear-gradient(transparent 75%, black 75%);
-  mask-image: linear-gradient(transparent 75%, black 75%);
-  animation: deconstructed4 2s 1;
-}
-
-@keyframes deconstructed1 {
-  0% {
-    transform: translateX(100%);
-  }
-  26% {
-    transform: translateX(0%);
-  }
-  83% {
-    transform: translateX(-0.4%);
-  }
-  100% {
-    transform: translateX(-120%);
-  }
-}
-
-@keyframes deconstructed2 {
-  0% {
-    transform: translateX(100%);
-  }
-  24% {
-    transform: translateX(0.5%);
-  }
-  82% {
-    transform: translateX(-0.8%);
-  }
-  100% {
-    transform: translateX(-125%);
-  }
-}
-
-@keyframes deconstructed3 {
-  0% {
-    transform: translateX(100%);
-  }
-  22% {
-    transform: translateX(0%);
-  }
-  81% {
-    transform: translateX(0%);
-  }
-  100% {
-    transform: translateX(-130%);
-  }
-}
-
-@keyframes deconstructed4 {
-  0% {
-    transform: translateX(100%);
-  }
-  20% {
-    transform: translateX(0%);
-  }
-  80% {
-    transform: translateX(0%);
-  }
-  100% {
-    transform: translateX(-135%);
   }
 }
 .no-apps {
@@ -281,6 +207,10 @@ input, button, textarea, :focus {
 @media (prefers-color-scheme: dark) {
   .app-box-hover:hover {
     background: #54565d;
+  }
+  .nav-tabs .nav-link.active {
+    color: #eeeeee;
+    background: #393e46;
   }
 }
 .manage-box {
@@ -583,6 +513,9 @@ input, button, textarea, :focus {
 }
 .miro-launcher-input:disabled {
   cursor: not-allowed !important;
+}
+.db-path-field {
+  margin-bottom: 20px;
 }
 .custom-file-label::after {
   padding: .375rem .5rem;

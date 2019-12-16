@@ -9,12 +9,21 @@ if ( identical(RLibPath, '') ) {
         call. = FALSE)
 }
 
-RlibPathDevel <- './build/lib_devel'
-RlibPathSrc <- file.path('.', 'r', 'library_src')
-
 isMac <- Sys.info()['sysname'] == 'Darwin' || grepl("^darwin", R.version$os)
 isWindows <- .Platform$OS.type == 'windows'
 isLinux <- grepl("linux-gnu", R.version$os)
+
+# on Jenkins use default library
+RlibPathDevel <- NULL
+if(identical(Sys.getenv("BUILD_NUMBER"), "")){
+    RlibPathDevel <-  './build/lib_devel'
+} else if(isWindows) {
+    # on Windows, we use the R version we ship, so we need to set library path explicitly, or
+    # it will install development libraries inside ./r/library
+    RlibPathDevel <- paste0('~/R/win-library/', R.version[['major']], ".",
+        strsplit(R.version[['minor']], '.', fixed = TRUE)[[1]][1])
+}
+RlibPathSrc <- file.path('.', 'r', 'library_src')
 
 packageVersionMap <- list(
     c('backports', '1.1.5'),
@@ -65,7 +74,7 @@ packageVersionMap <- list(
     c('ellipsis', '0.3.0'),
     'crosstalk',
     'DT',
-    'gdxrrw',
+    'gdxrrwMIRO',
     'leaflet',
     c('vctrs', '0.2.0'),
     c('pillar', '1.4.2'),
@@ -111,4 +120,4 @@ packageVersionMap <- list(
     c('future', '1.14.0'),
     'rhandsontable')
 dataTableVersionMap <- c('data.table', '1.12.2')
-installedPackages <- installed.packages(RLibPath)
+installedPackages <- installed.packages(RLibPath)[, "Package"]

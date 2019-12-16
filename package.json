@@ -1,6 +1,6 @@
 {
   "name": "com.gams.miro",
-  "version": "0.0.1",
+  "version": "0.9.20",
   "description": "GAMS MIRO is an interactive web application for GAMS models. It is designed for people working with GAMS looking for an easy and automated way to deploy their models. Extensive visualization options support you to make decisions based on optimization.",
   "homepage": "https://gams.com/miro",
   "main": "main.js",
@@ -14,8 +14,8 @@
   "build": {
     "appId": "com.gams.miro",
     "productName": "GAMS MIRO",
-    "afterPack": "build/scripts/after-pack.js",
-    "afterSign": "build/scripts/notarize.js",
+    "afterPack": "build/scripts/sign-dmg.js",
+    "afterAllArtifactBuild": "build/scripts/notarize.js",
     "extraResources": [
       "miro/conf/*",
       "miro/global.R",
@@ -73,7 +73,6 @@
       "allowElevation": true,
       "allowToChangeInstallationDirectory": true,
       "installerSidebar": "./build/installerSidebar.bmp",
-      "license": "../miro/LICENSE",
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true
     },
@@ -97,12 +96,10 @@
     "Launcher"
   ],
   "author": "GAMS Development Corp.",
-  "license": "MIT",
+  "license": "GPL-3.0-only",
   "devDependencies": {
     "electron": "^6.0.11",
-    "electron-builder": "^21.2.0",
-    "electron-notarize": "^0.1.1",
-    "rimraf": "^3.0.0"
+    "electron-builder": "^21.2.0"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.11.2",

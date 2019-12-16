@@ -8,7 +8,7 @@ const which = require('which');
 const execa = require('execa');
 const { tmpdir } = require('os');
 
-const minGams = '29.0';
+const minGams = '30.0';
 const minR = '3.6';
 const gamsDirNameRegex = /^(GAMS)?(\d+\.\d+)$/;
 
@@ -33,7 +33,17 @@ const schema = {
     type: 'boolean'
   },
   logLifeTime: {
-    type: 'integer'
+    type: 'integer',
+    minimum: -1
+  },
+  language: {
+    type: 'string',
+    enum: ['en', 'de', 'cn']
+  },
+  logLevel: {
+    type: 'string',
+    enum: ['TRACE', 'DEBUG', 'INFO', 
+    'WARN', 'ERROR', 'FATAL']
   },
   important: {
     type: 'array',
@@ -44,7 +54,9 @@ const schema = {
         'rpath',
         'logpath',
         'launchExternal',
-        'logLifeTime'
+        'logLifeTime',
+        'language',
+        'logLevel'
      ]
     }
   }
@@ -55,8 +67,8 @@ class ConfigManager extends Store {
     let configPathTmp = miroWorkspaceDir;
     super({schema, 
       cwd: configPathTmp,
-      name: 'paths', 
-      encryptionKey: 'MIROobfuscatedPathsConfigFile'});
+      name: 'settings', 
+      encryptionKey: 'MIROobfuscatedConfigFile'});
     try {
       configPathTmp = super.get('configpath', '');
     } catch (e) { }
@@ -65,9 +77,9 @@ class ConfigManager extends Store {
       try {
         const superPathConfigData = new Store({schema, 
           cwd: configPathTmp,
-          name: 'paths'});
-
-        [ 'gamspath', 'rpath', 'logpath', 'launchExternal', 'logLifeTime' ].forEach(el => {
+          name: 'settings'});
+        [ 'gamspath', 'rpath', 'logpath', 'launchExternal', 'logLifeTime',
+          'language', 'logLevel' ].forEach(el => {
           this[el] = superPathConfigData.get(el, '');
         });
         this.important = superPathConfigData.get(
@@ -80,7 +92,8 @@ class ConfigManager extends Store {
     this.configpathDefault = miroWorkspaceDir;
     this.logpathDefault = path.join(miroWorkspaceDir, "logs");
 
-    [ 'gamspath', 'rpath', 'logpath', 'launchExternal', 'logLifeTime' ].forEach(el => {
+    [ 'gamspath', 'rpath', 'logpath', 'launchExternal', 'logLifeTime',
+    'language', 'logLevel' ].forEach(el => {
       if ( this.important.find(iel => iel === el) ) {
         return;
       }
@@ -96,7 +109,9 @@ class ConfigManager extends Store {
       }
       if ( value == null || value === '' ||
        (key === 'launchExternal' && value === false) ||
-       (key === 'logLifeTime' && value === -1)) {
+       (key === 'logLifeTime' && value === -1) ||
+       (key === 'language' && value === 'en') ||
+       (key === 'logLevel' && value === 'TRACE') ) {
         this[key] = '';
         super.delete(key); 
       } else {
@@ -111,16 +126,16 @@ class ConfigManager extends Store {
 
     valTmp = this[key];
 
+    if ( [ 'gamspath', 'rpath' ].find(el => el === key) ) {
+      if ( valTmp && !fs.existsSync(valTmp) ) {
+        this[key] = valTmp = '';
+      }
+    }
+
     if ( fallback ) {
       // if options is not set, fetch defaults
       if ( (valTmp == null || valTmp === '') ) {
         valTmp = await this.getDefault(key);
-      }
-    }
-
-    if ( [ 'gamspath', 'rpath' ].find(el => el === key) ) {
-      if ( valTmp && !fs.existsSync(valTmp) ) {
-        this[key] = valTmp = '';
       }
     }
     
@@ -138,7 +153,11 @@ class ConfigManager extends Store {
       return this.configpathDefault;
     } else if ( key === 'logLifeTime' ) {
       return -1;
-    } else {
+    } else if ( key === 'language' ) {
+      return 'en';
+    } else if ( key === 'logLevel' ) {
+      return 'TRACE';
+    } else if ( key === 'logLifeTime' ) {
       return false;
     }
   }
@@ -163,7 +182,8 @@ class ConfigManager extends Store {
 
   async removeOldLogs(){
     if ( this.logLifeTime == null || 
-      this.logLifeTime === -1 ) {
+      this.logLifeTime === '' ||
+      this.logLifeTime < 0 ) {
       return true;
     }
     const now = new Date().getTime();   
@@ -217,7 +237,7 @@ class ConfigManager extends Store {
         !fs.existsSync(this.rpathDefault) ) {
         if ( process.platform === 'darwin' ) {
           const rPathRoot = path.join('/', 'Library', 'Frameworks',
-               'R.framework', 'Versions')
+               'R.framework', 'Versions');
           const rVersionsAvailable = fs.readdirSync(
             rPathRoot).filter(el => {
                 try {
@@ -226,7 +246,7 @@ class ConfigManager extends Store {
                   return false
                 }            
           });
-          if ( rVersionsAvailable ) {
+          if ( rVersionsAvailable.length ) {
             this.rpathDefault = path.join(rPathRoot, 
               rVersionsAvailable[0], 'Resources');
           }
@@ -234,7 +254,7 @@ class ConfigManager extends Store {
           let rpathTmp = await which('Rscript', {nothrow: true});
           rpathTmp = await this.validateR(rpathTmp);
           if ( rpathTmp !== false ) {
-            this.rpathDefault = rpathTmp[1];
+            this.rpathDefault = rpathTmp;
           }
         }
       }
@@ -282,7 +302,7 @@ class ConfigManager extends Store {
       'print(R.home())\nprint(paste0(R.Version()$major, \
 ".", R.Version()$minor))']);
     stdout = stdout.split('\n');
-    rpathTmp = stdout[0].match(/^\[1\] "([^"]*)"$/);
+    rpathTmp = stdout[0].match(/^\[1\] "([^"]*)"$/)[1];
     const rVersion = stdout[1].match(/^\[1\] "([^"]*)"$/);
     if ( rpathTmp && rVersion &&
       this.vComp(rVersion[1], minR) ) {
@@ -325,6 +345,23 @@ ${latestGamsInstalled}`);
           {nothrow: true}));
       } catch ( e ) { }
     }
+
+    if ( !this.gamspathDefault  && process.platform === 'win32' ) {
+      const latestGamsInstalled = fs.readdirSync('C:\\GAMS\\win64', 
+            { withFileTypes: true })
+            .filter(el => el.isDirectory() && gamsDirNameRegex.test(el))
+            .reduce(vCompReducer);
+
+      if ( latestGamsInstalled && 
+        this.vComp(latestGamsInstalled, minGams) ) {
+        this.gamspathDefault = path.join('C:\\GAMS\\win64', 
+          latestGamsInstalled);
+      } else if ( latestGamsInstalled ) {
+        console.log(`Latest installed GAMS version found: \
+  ${latestGamsInstalled}`);
+      }
+    }
+    
     return this.gamspathDefault;
   }
 
@@ -346,7 +383,7 @@ ${latestGamsInstalled}`);
       return false
     }
     if ( contentGamsDir.find(el => el.isFile() && 
-      (el === 'gams' || el === 'gams.exe')) ) {
+      (el.name === 'gams' || el.name === 'gams.exe')) ) {
       if ( process.platform === 'win32' ) {
         gamsExecDir = path.join(gamsDir, 'gams.exe');
       } else {
@@ -375,7 +412,6 @@ ${latestGamsInstalled}`);
         contentGamsDir.find(el => el.name === 'GAMS Terminal.app') ) {
         gamsExecDir = path.join(gamsDir, 'GAMS Terminal.app',
             'Contents', 'MacOS', 'gams');
-        console.log(gamsExecDir);
       } else {
         return false;
       }
@@ -392,7 +428,7 @@ ${latestGamsInstalled}`);
         .match(/^GAMS Release: (\d+\.\d+\.\d+)/);
       if ( selectedGamsVer && 
         this.vComp(selectedGamsVer[1], minGams) ) {
-        return true;
+        return gamsExecDir;
       } else {
         return false;
       }
@@ -406,7 +442,7 @@ ${latestGamsInstalled}`);
     if ( id === 'gams' ) {
       return await this.validateGAMS(pathToValidate);
     }
-    await this.validateR(pathToValidate);
+    return await this.validateR(pathToValidate);
   }
 
   vComp(v1, v2) {

@@ -12,13 +12,10 @@
 	url = https://github.com/GAMS-dev/plotly.git
 [submodule "r-src/crosstalk"]
 	path = r-src/crosstalk
-	url = https://github.com/GAMS-dev/crosstalk
+	url = https://github.com/GAMS-dev/crosstalk.git
 [submodule "r-src/DT"]
 	path = r-src/DT
 	url = https://github.com/GAMS-dev/DT.git
-[submodule "r-src/htmltools"]
-	path = r-src/htmltools
-	url = https://github.com/GAMS-dev/htmltools.git
 [submodule "r-src/httr"]
 	path = r-src/httr
 	url = https://github.com/GAMS-dev/httr.git
@@ -37,6 +34,6 @@
 [submodule "r-src/odbc"]
 	path = r-src/odbc
 	url = https://github.com/GAMS-dev/odbc.git
-[submodule "r-src/gdxrrw"]
-	path = r-src/gdxrrw
+[submodule "r-src/gdxrrwMIRO"]
+	path = r-src/gdxrrwMIRO
 	url = https://github.com/GAMS-dev/gdxrrw-miro.git
