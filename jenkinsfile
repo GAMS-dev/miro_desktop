@@ -25,11 +25,7 @@ pipeline {
                             passwordVariable: 'CSC_KEY_PASSWORD')]) {
                                 bat '''
                                    yarn install --non-interactive
-                                '''
-                                bat '''
                                    call "C:\\Program Files (x86)\\IntelSWTools\\compilers_and_libraries_2018.6.287\\windows\\bin\\ipsxe-comp-vars.bat" intel64 vs2017
-                                '''
-                                bat '''
                                    copy %WIN_CERT_FILE% cert.p12
                                    set CSC_LINK=cert.p12
                                    echo %CSC_LINK%
