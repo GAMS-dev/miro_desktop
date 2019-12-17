@@ -49,7 +49,7 @@ module.exports = function(addExampleAppsCallback,
         label: '➕ Add MIRO app',
         accelerator: 'CmdOrCtrl+O',
         click: async () => {
-            await activateEditCallback(true);
+            await activateEditCallback(true, true);
           }
       },
       {

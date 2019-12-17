@@ -619,11 +619,14 @@ ipcRenderer.on('app-validated', (e, appConf) => {
     $('#newAppFiles').css('display', 'none');
     $('#newAppLogo').css('display', 'block');
 });
-ipcRenderer.on('activate-edit-mode', (e, openNewAppForm) => {
+ipcRenderer.on('activate-edit-mode', (e, openNewAppForm, scrollToBottom = false) => {
   if ( openNewAppForm ) {
     expandAddAppForm();
   }else if ( !isInEditMode ) {
     toggleEditMode();
+  }
+  if ( scrollToBottom ) {
+    $('html, body').scrollTop($(document).height());
   }
 });
 ipcRenderer.on('app-closed', (e, appID) => {

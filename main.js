@@ -501,10 +501,10 @@ ${path.join(miroResourcePath, 'examples')} to: ${appDataPath}. Error mesage: ${e
       }
   });
 }
-function activateEditMode( openNewAppForm = false ){
+function activateEditMode( openNewAppForm = false, scrollToBottom = false ){
   log.debug(`Activating edit mode. Open 'new app' form: ${openNewAppForm}.`);
   if ( mainWindow ) {
-    mainWindow.send('activate-edit-mode', openNewAppForm);
+    mainWindow.send('activate-edit-mode', openNewAppForm, scrollToBottom);
   }
 }
 
@@ -513,7 +513,7 @@ const btAddApp = new TouchBarButton({
   backgroundColor: '#F39619',
   click: () => {
     log.debug(`Add new MIRO app button clicked on TouchBar.`);
-    activateEditMode(true);
+    activateEditMode(true, true);
   }
 })
 const btManageApps = new TouchBarButton({
@@ -534,7 +534,7 @@ const dockMenu = Menu.buildFromTemplate([
     label: '➕ Add MIRO app',
     click: () => {
           log.debug(`Add new MIRO app button clicked in dock menu.`);
-          activateEditMode(true);
+          activateEditMode(true, true);
         }
   },
   {
@@ -559,9 +559,9 @@ function createSettingsWindow() {
     return;
   }
   settingsWindow = new BrowserWindow({
-    title: 'Settings',
+    title: 'Preferences',
     width: 570,
-    height: 570,
+    height: 610,
     resizable: DEVELOPMENT_MODE,
     titleBarStyle: 'hidden',
     show: false,
@@ -593,6 +593,41 @@ function createSettingsWindow() {
     settingsWindow = null
   })
 }
+function quitLauncher () {
+  if (process.platform !== 'darwin') {
+    shutdown = true
+    miroProcesses.forEach(function(miroProcess) {
+      if ( !miroProcess ) {
+        return;
+      }
+      try {
+        miroProcess.kill('SIGTERM', {
+           forceKillAfterTimeout: 2000
+       });
+       } catch (e) {}
+     });
+    app.quit()
+  }
+}
+const gotTheLock = app.requestSingleInstanceLock();
+
+if (!gotTheLock) {
+  app.quit()
+} else {
+  app.on('second-instance', (event, argv, cwd) => {
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore();
+      mainWindow.focus();
+      if ( process.platform == 'win32' &&
+        argv.length >= 2 && !DEVELOPMENT_MODE ) {
+        log.debug(`MIRO launcher opened by double clicking MIRO app at path: ${argv[argv.length - 1]}.`);
+        activateEditMode(false, true);
+        validateMIROApp([argv[argv.length - 1]]);
+      } 
+    }
+  });
+}
+
 function createMainWindow () {
   log.debug('Creating main window..');
   if ( mainWindow ) {
@@ -631,10 +666,10 @@ function createMainWindow () {
     if ( process.platform == 'win32' &&
       process.argv.length >= 2 && !DEVELOPMENT_MODE ) {
       log.debug(`MIRO launcher opened by double clicking MIRO app at path: ${process.argv[1]}.`);
-      activateEditMode();
+      activateEditMode(false, true);
       validateMIROApp([process.argv[1]]);
-    }else if( fileToOpen ) {
-      activateEditMode();
+    } else if( fileToOpen ) {
+      activateEditMode(false, true);
       log.debug(`MIRO launcher opened by double clicking MIRO app at path: ${fileToOpen}.`);
       validateMIROApp([fileToOpen]);
     }
@@ -649,6 +684,7 @@ function createMainWindow () {
   mainWindow.on('closed', () => {
     log.debug('Main window closed.');
     mainWindow = null
+    quitLauncher();
   })
 }
 
@@ -1170,7 +1206,7 @@ app.on('will-finish-launching', () => {
   app.on('open-file', (e, path) => {
     e.preventDefault();
     if ( appLoaded ) {
-      activateEditMode();
+      activateEditMode(false, true);
       validateMIROApp([ path ]);
       return;
     }
@@ -1262,20 +1298,7 @@ app.on('ready', async () => {
 
 app.on('window-all-closed', () => {
   log.debug('All windows closed.');
-  if (process.platform !== 'darwin') {
-    shutdown = true
-    miroProcesses.forEach(function(miroProcess) {
-      if ( !miroProcess ) {
-        return;
-      }
-      try {
-        miroProcess.kill('SIGTERM', {
-           forceKillAfterTimeout: 2000
-       });
-       } catch (e) {}
-     });
-    app.quit()
-  }
+  quitLauncher();
 });
 
 app.on('activate', () => {
