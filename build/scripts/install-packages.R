@@ -15,7 +15,7 @@ if ( isLinux ) {
     Sys.setenv(PATH = paste("C:/Rtools/bin", Sys.getenv("PATH"), sep=";"))
     Sys.setenv(BINPREF = "C:/Rtools/mingw_$(WIN)/bin/")
 }
-requiredPackages <- c('remotes', 'devtools', 'jsonlite', 'V8', 
+requiredPackages <- c('devtools', 'remotes', 'jsonlite', 'V8', 
     'jsonvalidate', 'zip', 'tibble', 'readr', 'R6', 'processx')
 newPackages <- requiredPackages[!requiredPackages %in% 
   installed.packages(RlibPathDevel)[, "Package"]]
@@ -27,7 +27,7 @@ for ( newPackage in newPackages ) {
 }
 
 options(warn = 2)
-.libPaths( c( .libPaths(), RlibPathDevel) )
+.libPaths( c( RlibPathDevel, .libPaths()) )
 
 dontDisplayMe <- lapply(requiredPackages, library, character.only = TRUE)
 
