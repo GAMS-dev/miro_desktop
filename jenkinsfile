@@ -79,7 +79,6 @@ pipeline {
                            yarn test
                         '''
                         junit allowEmptyResults: true, testResults: 'miro/test-out.xml'
-                        }
                     }
                 }
             }
