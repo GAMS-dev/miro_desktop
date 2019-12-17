@@ -492,8 +492,8 @@ title="${app.title} logo" data-id="${app.id}" class="app-logo">
                      </div>
                      <div>
                          <div style="height:125px">
-                           <h3 id="appTitle_${app.id}" class="app-title app-title-fixed app-item-title" style="margin-top:15pt;">${app.title}</h3>
-                           <p id="appDesc_${app.id}" class="app-desc app-desc-fixed app-item-desc">${app.description}</p>
+                           <h3 title="${app.title}" id="appTitle_${app.id}" class="app-title app-title-fixed app-item-title" style="margin-top:15pt;">${app.title}</h3>
+                           <p title="${app.description}" id="appDesc_${app.id}" class="app-desc app-desc-fixed app-item-desc">${app.description}</p>
                          </div>
                          <div class="custom-file db-path-field" style="display:none;">
                            <div id="appDbPath_${app.id}" class="custom-file-input browseFiles app-db-path" data-id="${app.id}" aria-describedby="resetDbPath"></div>
