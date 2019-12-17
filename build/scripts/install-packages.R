@@ -60,8 +60,7 @@ installPackage <- function(package, attempt = 0) {
             install.packages(package[1], RLibPath, repos = CRANMirrors[attempt + 1],
                 dependencies = FALSE, INSTALL_opts = '--no-multiarch')
         } else {
-            withr::with_libpaths(RLibPath, install_version(package[1], package[2], quick = TRUE, 
-                local = TRUE, out = './dist/dump',
+            withr::with_libpaths(RLibPath, install_version(package[1], package[2], out = './dist/dump',
                 dependencies = FALSE, repos = CRANMirrors[attempt + 1],
                 INSTALL_opts = '--no-multiarch'))
         }
