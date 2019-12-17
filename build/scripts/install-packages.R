@@ -16,7 +16,8 @@ if ( isLinux ) {
     Sys.setenv(BINPREF = "C:/Rtools/mingw_$(WIN)/bin/")
 }
 requiredPackages <- c('devtools', 'remotes', 'jsonlite', 'V8', 
-    'jsonvalidate', 'zip', 'tibble', 'readr', 'R6', 'processx')
+    'jsonvalidate', 'zip', 'tibble', 'readr', 'R6', 'processx', 
+    'testthat', 'shinytest')
 newPackages <- requiredPackages[!requiredPackages %in% 
   installed.packages(RlibPathDevel)[, "Package"]]
 
