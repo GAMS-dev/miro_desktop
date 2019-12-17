@@ -53,8 +53,35 @@ pipeline {
             }
         }
         stage('Test') {
-            steps {
-                echo 'Testing..'
+            parallel {
+                stage ('linux') {
+                    agent { label 'docker' }
+                    steps {
+                        sh '''
+                           yarn test
+                        '''
+                        junit allowEmptyResults: true, testResults: 'miro/test-out.xml'
+                    }
+                }
+                stage ('windowsX64') {
+                    agent { label 'windowsX64' }
+                    steps {
+                        bat '''
+                           yarn test
+                        '''
+                        junit allowEmptyResults: true, testResults: 'miro/test-out.xml'
+                    }
+                }
+                stage ('macos') {
+                    agent { label 'macos' }
+                    steps {
+                        sh '''
+                           yarn test
+                        '''
+                        junit allowEmptyResults: true, testResults: 'miro/test-out.xml'
+                        }
+                    }
+                }
             }
         }
         stage('Deploy') {

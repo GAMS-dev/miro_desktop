@@ -10,7 +10,7 @@ const log = require('electron-log');
 const menu = require('./components/menu.js');
 const installRPackages = require('./components/install-r.js');
 const requiredAPIVersion = 1;
-const miroVersion = '0.9.20';
+const miroVersion = '0.9.21';
 const libVersion = '1.0';
 const exampleAppsData = [
   {
@@ -162,7 +162,7 @@ const tryStartWebserver = async (progressCallback, onErrorStartup,
   let shinyRunning = false
 
   const onError = async (e) => {
-    log.error(`Process: ${internalPid} crashed during startup. Error message: ${e.all}.`);
+    log.error(`Process: ${internalPid} crashed during startup. Stdout: ${e.stdout}.\nStderr: ${e.stderr}`);
     miroProcesses[internalPid] = null;
     delete processIdMap[appData.id];
     if ( miroBuildMode || miroDevelopMode ) {
@@ -219,7 +219,7 @@ const tryStartWebserver = async (progressCallback, onErrorStartup,
       })
   const url = `http://127.0.0.1:${shinyPort}`;
   await waitFor(1000)
-  for (let i = 0; i <= 25; i++) {
+  for (let i = 0; i <= 50; i++) {
     if (shinyProcessAlreadyDead) {
       if ( noError ) {
           return;
@@ -1182,7 +1182,7 @@ ipcMain.on('delete-app', async (e, appId) => {
     const rmPromise = fs.remove(path.join(appDataPath, appId));
     const updatedApps = appsData.deleteApp(appId).apps;
     await rmPromise;
-    mainWindow.send('apps-received', updatedApps, appDataPath);
+    mainWindow.send('apps-received', updatedApps, appDataPath, false, false);
     log.debug(`App: ${appId} removed.`);
   } catch (e) {
     log.error(`Delete app (ID: ${appId}) request failed. Error message: ${e.message}`);

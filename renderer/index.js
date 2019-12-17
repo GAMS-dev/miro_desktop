@@ -457,7 +457,7 @@ appsWrapper.on('click', '.launch-app', function(){
   console.log(this.dataset)
   ipcRenderer.send('launch-app', this.dataset);
 });
-ipcRenderer.on('apps-received', (e, apps, appDataPath, startup = false) => {
+ipcRenderer.on('apps-received', (e, apps, appDataPath, startup = false, deactivateEditMode = true) => {
   if ( isInEditMode ) {
     toggleEditMode();
   }
@@ -545,6 +545,9 @@ title="${app.title} logo" data-id="${app.id}" class="app-logo">
         appsWrapper.html(addAppWrapperHTMLFull);
        noAppsNotice.show();
     }
+   if ( deactivateEditMode === false ) {
+    toggleEditMode();
+   }
 });
 $('#downloadR').click((e) => {
    shell.openExternal('https://gams.com/miro/installation.html');
