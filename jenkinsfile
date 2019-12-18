@@ -54,18 +54,6 @@ pipeline {
         }
         stage('Test') {
             parallel {
-                stage ('linux') {
-                    agent { label 'docker' }
-                    options {
-                        skipDefaultCheckout()
-                    }
-                    steps {
-                        sh '''
-                           yarn test
-                        '''
-                        junit allowEmptyResults: true, testResults: 'miro/test-out.xml'
-                    }
-                }
                 stage ('windowsX64') {
                     agent { label 'windowsX64' }
                     options {
@@ -94,6 +82,15 @@ pipeline {
         }
         stage('Deploy') {
             parallel {
+                stage ('linux') {
+                    agent { label 'docker' }
+                    options {
+                        skipDefaultCheckout()
+                    }
+                    steps {
+                        archiveArtifacts artifacts: 'dist/*.AppImage', fingerprint: true
+                    }
+                }
                 stage ('windowsX64') {
                     agent { label 'windowsX64' }
                     options {
