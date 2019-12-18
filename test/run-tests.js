@@ -8,7 +8,7 @@ const execa = require('execa');
         if ( process.platform === 'win32' ) {
             rPath = path.join(__dirname, '..', 'r', 'bin', 'Rscript');
         }
-        console.error(__dirname)
+        console.error(fs.existsSync(path.join(__dirname, '..', 'r', 'library', 'gdxrrwMIRO')))
         const subproc =  execa(rPath, [ path.join(__dirname, '..', 'miro', 'run_tests.R') ],
             { env: { 'LIB_PATH': path.join(__dirname, '..', 'r', 'library')},
             cwd: path.join(__dirname, '..', 'miro')});
