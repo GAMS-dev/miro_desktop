@@ -21,6 +21,8 @@ To extract the R binaries from the Inno installer file, you need [innoextract](h
 
 Note: If you want to build on a CI server, it is recommended to install R (>=3.6.1) as well. This saves time as the R development libraries will not need to be reinstalled with every build. 
 
+To build the gdxrrwMIRO package, you need either an intel compiler (https://software.intel.com/en-us/compilers) or Visual Studio Express (https://visualstudio.microsoft.com/vs/express/). For the Visual Studio Express 2019 Community Edition, the component 'Desktop development with C++' has to be installed via Visual Studio installer. Also make sure that the gdxlib path in src/Makevars matches your folder structure, e.g. "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat". Also control the path in the call in src/build-win.bat, e.g. "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat".
+
 ### Linux
 * R (>=3.6.1)
 
