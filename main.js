@@ -10,7 +10,7 @@ const log = require('electron-log');
 const menu = require('./components/menu.js');
 const installRPackages = require('./components/install-r.js');
 const requiredAPIVersion = 1;
-const miroVersion = '0.9.21';
+const miroVersion = '0.9.23';
 const libVersion = '1.0';
 const exampleAppsData = [
   {
@@ -619,11 +619,15 @@ if (!gotTheLock) {
       if (mainWindow.isMinimized()) mainWindow.restore();
       mainWindow.focus();
       if ( process.platform == 'win32' &&
-        argv.length >= 2 && !DEVELOPMENT_MODE ) {
-        log.debug(`MIRO launcher opened by double clicking MIRO app at path: ${argv[argv.length - 1]}.`);
+        argv.length >= 2 && !DEVELOPMENT_MODE && !miroDevelopMode ) {
+        const newMiroAppPath = argv[argv.length - 1];
+        if ( newMiroAppPath.startsWith('--') ) {
+          return;
+        }
+        log.debug(`MIRO launcher opened by double clicking MIRO app at path: ${newMiroAppPath}.`);
         activateEditMode(false, true);
-        validateMIROApp([argv[argv.length - 1]]);
-      } 
+        validateMIROApp([newMiroAppPath]);
+      }
     }
   });
 }
@@ -659,7 +663,7 @@ function createMainWindow () {
       appsData.apps, appDataPath, true);
     log.debug(`App data (${appsData.apps.length} app(s)) loaded into main window.`);
 
-    if ( appLoaded ) {
+    if ( appLoaded || miroDevelopMode ) {
       return;
     }
     appLoaded = true;
