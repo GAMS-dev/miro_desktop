@@ -6,7 +6,7 @@ const execa = require('execa');
     try {
         let rPath = 'Rscript';
         if ( process.platform === 'win32' ) {
-            rPath = path.join('.', 'r', 'bin', 'Rscript');
+            rPath = path.join(__dirname, '..', 'r', 'bin', 'Rscript');
         }
         console.error(__dirname)
         const subproc =  execa(rPath, [ path.join(__dirname, '..', 'miro', 'run_tests.R') ],
