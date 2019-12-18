@@ -94,15 +94,6 @@ pipeline {
         }
         stage('Deploy') {
             parallel {
-                stage ('linux') {
-                    agent { label 'docker' }
-                    options {
-                        skipDefaultCheckout()
-                    }
-                    steps {
-                        archiveArtifacts artifacts: 'dist/*.AppImage', fingerprint: true
-                    }
-                }
                 stage ('windowsX64') {
                     agent { label 'windowsX64' }
                     options {
