@@ -46,6 +46,9 @@ const DEVELOPMENT_MODE = !app.isPackaged;
 const miroWorkspaceDir = path.join(app.getPath('home'), '.miro');
 const miroBuildMode = process.env.MIRO_BUILD === 'true';
 const miroDevelopMode = process.env.MIRO_DEV_MODE === 'true' || miroBuildMode;
+if ( !DEVELOPMENT_MODE ) {
+  log.transports.console.level = false;
+}
 (async () => {
   try{
     if ( !fs.existsSync(miroWorkspaceDir) ) {
@@ -593,19 +596,23 @@ function createSettingsWindow() {
     settingsWindow = null
   })
 }
+function terminateProcesses () {
+  shutdown = true
+  miroProcesses.forEach(function(miroProcess) {
+    if ( !miroProcess ) {
+      return;
+    }
+    log.debug('Terminating process...')
+    try {
+      miroProcess.kill('SIGTERM', {
+         forceKillAfterTimeout: 2000
+     });
+     } catch (e) {log.debug(e)}
+   });
+}
 function quitLauncher () {
   if (process.platform !== 'darwin') {
-    shutdown = true
-    miroProcesses.forEach(function(miroProcess) {
-      if ( !miroProcess ) {
-        return;
-      }
-      try {
-        miroProcess.kill('SIGTERM', {
-           forceKillAfterTimeout: 2000
-       });
-       } catch (e) {}
-     });
+    terminateProcesses();
     app.quit()
   }
 }
@@ -815,7 +822,7 @@ to finish. Error message: ${e.message}`)
         log.debug(`MIRO app with ID: ${appData.id} being opened in external browser.`);
         if ( mainWindow ) {
           mainWindow.send('hide-loading-screen', appData.id, true);
-          onProcessFinished(appData.id)
+          onProcessFinished(appData.id);
         }
         return;
       }
@@ -1304,7 +1311,10 @@ app.on('window-all-closed', () => {
   log.debug('All windows closed.');
   quitLauncher();
 });
-
+app.on('quit', (e, exitCode) => {
+  log.debug('Terminating potentially open R processes.');
+  terminateProcesses();
+});
 app.on('activate', () => {
   log.debug('Main window activated.');
   if (mainWindow === null) {
