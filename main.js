@@ -210,7 +210,7 @@ const tryStartWebserver = async (progressCallback, onErrorStartup,
        path.join(appDataPath, appData.id, `${appData.id}.gms`)},
        stdout: miroDevelopMode? 'inherit': 'pipe',
        stderr: miroDevelopMode? 'inherit': 'pipe'
-     })
+     });
   miroProcesses[internalPid].catch((e) => {
     shinyProcessAlreadyDead = true
     onError(e)
