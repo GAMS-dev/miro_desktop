@@ -10,7 +10,7 @@ const log = require('electron-log');
 const menu = require('./components/menu.js');
 const installRPackages = require('./components/install-r.js');
 const requiredAPIVersion = 1;
-const miroVersion = '0.9.21';
+const miroVersion = '0.9.23';
 const libVersion = '1.0';
 const exampleAppsData = [
   {
@@ -46,6 +46,9 @@ const DEVELOPMENT_MODE = !app.isPackaged;
 const miroWorkspaceDir = path.join(app.getPath('home'), '.miro');
 const miroBuildMode = process.env.MIRO_BUILD === 'true';
 const miroDevelopMode = process.env.MIRO_DEV_MODE === 'true' || miroBuildMode;
+if ( !DEVELOPMENT_MODE ) {
+  log.transports.console.level = false;
+}
 (async () => {
   try{
     if ( !fs.existsSync(miroWorkspaceDir) ) {
@@ -207,16 +210,17 @@ const tryStartWebserver = async (progressCallback, onErrorStartup,
        path.join(appDataPath, appData.id, `${appData.id}.gms`)},
        stdout: miroDevelopMode? 'inherit': 'pipe',
        stderr: miroDevelopMode? 'inherit': 'pipe'
-     }).catch((e) => {
-        shinyProcessAlreadyDead = true
-        onError(e)
-      }).then(async () => {
-        shinyProcessAlreadyDead = true
-        noError = true
-        if ( miroBuildMode ) {
-          app.exit(0)
-        }
-      })
+     })
+  miroProcesses[internalPid].catch((e) => {
+    shinyProcessAlreadyDead = true
+    onError(e)
+  }).then(async () => {
+    shinyProcessAlreadyDead = true
+    noError = true
+    if ( miroBuildMode ) {
+      app.exit(0)
+    }
+  });
   const url = `http://127.0.0.1:${shinyPort}`;
   await waitFor(1000)
   for (let i = 0; i <= 50; i++) {
@@ -593,19 +597,23 @@ function createSettingsWindow() {
     settingsWindow = null
   })
 }
+function terminateProcesses () {
+  shutdown = true
+  miroProcesses.forEach(function(miroProcess) {
+    if ( !miroProcess ) {
+      return;
+    }
+    log.debug('Terminating process...')
+    try {
+      miroProcess.kill('SIGTERM', {
+         forceKillAfterTimeout: 2000
+     });
+     } catch (e) {log.debug(e)}
+   });
+}
 function quitLauncher () {
   if (process.platform !== 'darwin') {
-    shutdown = true
-    miroProcesses.forEach(function(miroProcess) {
-      if ( !miroProcess ) {
-        return;
-      }
-      try {
-        miroProcess.kill('SIGTERM', {
-           forceKillAfterTimeout: 2000
-       });
-       } catch (e) {}
-     });
+    terminateProcesses();
     app.quit()
   }
 }
@@ -619,11 +627,15 @@ if (!gotTheLock) {
       if (mainWindow.isMinimized()) mainWindow.restore();
       mainWindow.focus();
       if ( process.platform == 'win32' &&
-        argv.length >= 2 && !DEVELOPMENT_MODE ) {
-        log.debug(`MIRO launcher opened by double clicking MIRO app at path: ${argv[argv.length - 1]}.`);
+        argv.length >= 2 && !DEVELOPMENT_MODE && !miroDevelopMode ) {
+        const newMiroAppPath = argv[argv.length - 1];
+        if ( newMiroAppPath.startsWith('--') ) {
+          return;
+        }
+        log.debug(`MIRO launcher opened by double clicking MIRO app at path: ${newMiroAppPath}.`);
         activateEditMode(false, true);
-        validateMIROApp([argv[argv.length - 1]]);
-      } 
+        validateMIROApp([newMiroAppPath]);
+      }
     }
   });
 }
@@ -659,7 +671,7 @@ function createMainWindow () {
       appsData.apps, appDataPath, true);
     log.debug(`App data (${appsData.apps.length} app(s)) loaded into main window.`);
 
-    if ( appLoaded ) {
+    if ( appLoaded || miroDevelopMode ) {
       return;
     }
     appLoaded = true;
@@ -811,7 +823,7 @@ to finish. Error message: ${e.message}`)
         log.debug(`MIRO app with ID: ${appData.id} being opened in external browser.`);
         if ( mainWindow ) {
           mainWindow.send('hide-loading-screen', appData.id, true);
-          onProcessFinished(appData.id)
+          onProcessFinished(appData.id);
         }
         return;
       }
@@ -1300,7 +1312,10 @@ app.on('window-all-closed', () => {
   log.debug('All windows closed.');
   quitLauncher();
 });
-
+app.on('quit', (e, exitCode) => {
+  log.debug('Terminating potentially open R processes.');
+  terminateProcesses();
+});
 app.on('activate', () => {
   log.debug('Main window activated.');
   if (mainWindow === null) {
