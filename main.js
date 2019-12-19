@@ -644,7 +644,7 @@ if (!gotTheLock) {
   });
 }
 
-function createMainWindow () {
+function createMainWindow (showRunningApps = false) {
   log.debug('Creating main window..');
   if ( mainWindow ) {
     log.debug('Main window already open.');
@@ -671,10 +671,13 @@ function createMainWindow () {
     mainWindow.webContents.openDevTools();
   }
   mainWindow.webContents.on('did-finish-load', async () => {
+    let appsActive = [];
+    if ( showRunningApps ) {
+      appsActive = Object.keys(processIdMap);
+    }
     mainWindow.webContents.send('apps-received', 
-      appsData.apps, appDataPath, true);
+      appsData.apps, appDataPath, true, true, appsActive);
     log.debug(`App data (${appsData.apps.length} app(s)) loaded into main window.`);
-
     if ( appLoaded || miroDevelopMode ) {
       return;
     }
@@ -1329,6 +1332,6 @@ app.on('will-quit', async (e) => {
 app.on('activate', () => {
   log.debug('Main window activated.');
   if (mainWindow === null) {
-    createMainWindow()
+    createMainWindow(true)
   }
 });
