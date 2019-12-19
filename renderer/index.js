@@ -81,7 +81,7 @@ function toggleEditMode(){
     $('#addAppWrapper').fadeOut(200);
     $('.edit-bt-group').hide();
     $('.db-path-field').hide();
-    $('.btn-launch').fadeIn(200);
+    $('.btn-launch-wrapper').fadeIn(200);
     $('.launch-app-box').removeClass('app-box-hover');
     isInEditMode = false;
   } else {
