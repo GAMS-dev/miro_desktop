@@ -210,16 +210,17 @@ const tryStartWebserver = async (progressCallback, onErrorStartup,
        path.join(appDataPath, appData.id, `${appData.id}.gms`)},
        stdout: miroDevelopMode? 'inherit': 'pipe',
        stderr: miroDevelopMode? 'inherit': 'pipe'
-     }).catch((e) => {
-        shinyProcessAlreadyDead = true
-        onError(e)
-      }).then(async () => {
-        shinyProcessAlreadyDead = true
-        noError = true
-        if ( miroBuildMode ) {
-          app.exit(0)
-        }
-      })
+     })
+  miroProcesses[internalPid].catch((e) => {
+    shinyProcessAlreadyDead = true
+    onError(e)
+  }).then(async () => {
+    shinyProcessAlreadyDead = true
+    noError = true
+    if ( miroBuildMode ) {
+      app.exit(0)
+    }
+  });
   const url = `http://127.0.0.1:${shinyPort}`;
   await waitFor(1000)
   for (let i = 0; i <= 50; i++) {
