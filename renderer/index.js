@@ -457,7 +457,7 @@ appsWrapper.on('click', '.launch-app', function(){
   console.log(this.dataset)
   ipcRenderer.send('launch-app', this.dataset);
 });
-ipcRenderer.on('apps-received', (e, apps, appDataPath, startup = false, deactivateEditMode = true) => {
+ipcRenderer.on('apps-received', (e, apps, appDataPath, startup = false, deactivateEditMode = true, appsActive = []) => {
   if ( isInEditMode ) {
     toggleEditMode();
   }
@@ -524,7 +524,7 @@ title="${app.title} logo" data-id="${app.id}" class="app-logo">
                      <input data-id="${app.id}" class="btn btn-secondary cancel-btn" id="btCancelChanges" value="Cancel" type="reset">
                      <button class="btn btn-secondary confirm-btn btn-save-changes" data-id="${app.id}" type="button">Save</button>
                  </div>
-                 <div id="iconActive_${app.id}" class="running-app-icon app-corner-button" style="display:none;"><i class="fas fa-cog fa-spin"></i></div>
+                 <div id="iconActive_${app.id}" class="running-app-icon app-corner-button" style="${appsActive.includes(app.id)? '': 'display:none;'}"><i class="fas fa-cog fa-spin"></i></div>
                  <a class="delete-app-button app-corner-button" data-id="${app.id}" style="display:none;"><i class="fas fa-times"></i></a>
                </div>
              </div>`

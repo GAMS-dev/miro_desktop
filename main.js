@@ -6,6 +6,7 @@ const fs    = require('fs-extra');
 const yauzl = require('yauzl');
 const http = require('axios');
 const execa = require('execa');
+const kill = require('tree-kill');
 const log = require('electron-log');
 const menu = require('./components/menu.js');
 const installRPackages = require('./components/install-r.js');
@@ -209,7 +210,8 @@ const tryStartWebserver = async (progressCallback, onErrorStartup,
       'MIRO_MODEL_PATH': miroDevelopMode? appData.modelPath:
        path.join(appDataPath, appData.id, `${appData.id}.gms`)},
        stdout: miroDevelopMode? 'inherit': 'pipe',
-       stderr: miroDevelopMode? 'inherit': 'pipe'
+       stderr: miroDevelopMode? 'inherit': 'pipe',
+       cleanup: false
      });
   miroProcesses[internalPid].catch((e) => {
     shinyProcessAlreadyDead = true
@@ -599,21 +601,23 @@ function createSettingsWindow() {
 }
 function terminateProcesses () {
   shutdown = true
-  miroProcesses.forEach(function(miroProcess) {
-    if ( !miroProcess ) {
+  for (let i = 0; i < miroProcesses.length; i++) {
+     if ( !miroProcesses[i] ) {
       return;
     }
-    log.debug('Terminating process...')
-    try {
-      miroProcess.kill('SIGTERM', {
-         forceKillAfterTimeout: 2000
+    const pid = miroProcesses[i].pid;
+    kill(pid, function(e){
+        if (e) {
+            log.debug(`Problems killing R process with pid: ${pid}. Error message: ${e.message}`);
+        } else {
+            log.debug(`R process with pid: ${pid} killed.`);
+        }
      });
-     } catch (e) {log.debug(e)}
-   });
+     miroProcesses[i] = null;
+  }
 }
 function quitLauncher () {
   if (process.platform !== 'darwin') {
-    terminateProcesses();
     app.quit()
   }
 }
@@ -640,7 +644,7 @@ if (!gotTheLock) {
   });
 }
 
-function createMainWindow () {
+function createMainWindow (showRunningApps = false) {
   log.debug('Creating main window..');
   if ( mainWindow ) {
     log.debug('Main window already open.');
@@ -667,10 +671,13 @@ function createMainWindow () {
     mainWindow.webContents.openDevTools();
   }
   mainWindow.webContents.on('did-finish-load', async () => {
+    let appsActive = [];
+    if ( showRunningApps ) {
+      appsActive = Object.keys(processIdMap);
+    }
     mainWindow.webContents.send('apps-received', 
-      appsData.apps, appDataPath, true);
+      appsData.apps, appDataPath, true, true, appsActive);
     log.debug(`App data (${appsData.apps.length} app(s)) loaded into main window.`);
-
     if ( appLoaded || miroDevelopMode ) {
       return;
     }
@@ -855,11 +862,14 @@ to finish. Error message: ${e.message}`)
         }
         const internalPid = processIdMap[appID];
         if ( Number.isInteger(internalPid) ) {
-          try {
-            miroProcesses[internalPid].kill('SIGTERM', {
-              forceKillAfterTimeout: 2000
-            });
-          } catch (e) {}
+            const pid = miroProcesses[internalPid].pid;
+            kill(pid, function(e){
+                if (e) {
+                    log.debug(`Problems killing R process with pid: ${pid}. Error message: ${e.message}`);
+                } else {
+                    log.debug(`R process with pid: ${pid} killed.`);
+                }
+             });
           miroProcesses[internalPid] = null;
         }
         delete processIdMap[appID];
@@ -1312,13 +1322,16 @@ app.on('window-all-closed', () => {
   log.debug('All windows closed.');
   quitLauncher();
 });
-app.on('quit', (e, exitCode) => {
+app.on('will-quit', async (e) => {
+  e.preventDefault();
   log.debug('Terminating potentially open R processes.');
   terminateProcesses();
+  await waitFor(500);
+  app.exit(0);
 });
 app.on('activate', () => {
   log.debug('Main window activated.');
   if (mainWindow === null) {
-    createMainWindow()
+    createMainWindow(true)
   }
 });

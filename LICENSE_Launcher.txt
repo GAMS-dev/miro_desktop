@@ -298,6 +298,7 @@ is a list of these components:
 "through2@0.2.3","MIT","https://github.com/rvagg/through2","https://github.com/rvagg/through2/raw/master/LICENSE","com.gams.miro"
 "to-readable-stream@1.0.0","MIT","https://github.com/sindresorhus/to-readable-stream","https://github.com/sindresorhus/to-readable-stream/raw/master/license","com.gams.miro"
 "tough-cookie@2.4.3","BSD-3-Clause","https://github.com/salesforce/tough-cookie","https://github.com/salesforce/tough-cookie/raw/master/LICENSE","com.gams.miro"
+"tree-kill@1.2.2","MIT","https://github.com/pkrumins/node-tree-kill","https://github.com/pkrumins/node-tree-kill/raw/master/LICENSE","com.gams.miro"
 "trim-newlines@1.0.0","MIT","https://github.com/sindresorhus/trim-newlines","https://github.com/sindresorhus/trim-newlines/raw/master/license","com.gams.miro"
 "truncate-utf8-bytes@1.0.2","WTFPL","https://github.com/parshap/truncate-utf8-bytes","https://github.com/parshap/truncate-utf8-bytes","com.gams.miro"
 "tunnel-agent@0.6.0","Apache-2.0","https://github.com/mikeal/tunnel-agent","https://github.com/mikeal/tunnel-agent/raw/master/LICENSE","com.gams.miro"
