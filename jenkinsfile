@@ -61,8 +61,6 @@ pipeline {
                     }
                     steps {
                         bat '''
-                           cd miro\\tests && for /R %%f in (.\\*.json) do TYPE %%f | MORE /P > %%f
-                           cd ..\\..
                            yarn test
                         '''
                         junit allowEmptyResults: true, testResults: 'miro/test-out.xml'
