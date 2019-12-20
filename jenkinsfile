@@ -7,7 +7,51 @@ pipeline {
     }
 
     stages {
-        
+        stage('Build') {
+            parallel {
+                stage ('linux') {
+                    agent { label 'docker' }
+                    steps {
+                        sh '''
+                           yarn install --non-interactive
+                           yarn dist
+                        '''
+                    }
+                }
+                stage ('windowsX64') {
+                    agent { label 'windowsX64' }
+                    steps {
+                        withCredentials([certificate(aliasVariable: '', credentialsId: '302df092-b329-47b9-8f7a-605da075126d', keystoreVariable: 'WIN_CERT_FILE', 
+                            passwordVariable: 'CSC_KEY_PASSWORD')]) {
+                                bat '''
+                                   yarn install --non-interactive
+                                '''
+                                bat '''
+                                   copy %WIN_CERT_FILE% cert.p12
+                                   set CSC_LINK=cert.p12
+                                   echo %CSC_LINK%
+                                   yarn dist
+                                '''
+                            }
+                    }
+                }
+                stage ('macos') {
+                    agent { label 'macos' }
+                    steps {
+                        sh '''
+                           yarn install --non-interactive
+                        '''
+                        withCredentials([usernamePassword(credentialsId: '4568bda5-894f-4fa1-b9c5-a8d42f6e61ac', passwordVariable: 'APPLEIDPASS', usernameVariable: 'APPLEID'),
+                            string(credentialsId: '2e590f95-5e30-4101-93be-31a1b7402da4', variable: 'MACOS_KEYCHAIN_PASSWD')]) {
+                            sh '''
+                               security unlock-keychain -p ${MACOS_KEYCHAIN_PASSWD}
+                               yarn dist
+                            '''
+                        }
+                    }
+                }
+            }
+        }
         stage('Test') {
             parallel {
                 stage ('windowsX64') {
