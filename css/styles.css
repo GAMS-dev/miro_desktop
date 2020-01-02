@@ -893,3 +893,8 @@ a:hover {
   margin-top: 30px;
   margin-right:5px;
 }
+.help-footer {
+  color:inherit;
+  padding-right: 5px;
+}
+
