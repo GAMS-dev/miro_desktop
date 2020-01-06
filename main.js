@@ -6,12 +6,13 @@ const fs    = require('fs-extra');
 const yauzl = require('yauzl');
 const http = require('axios');
 const execa = require('execa');
-const kill = require('tree-kill');
+const util = require('util');
+const kill = util.promisify(require('tree-kill'));
 const log = require('electron-log');
 const menu = require('./components/menu.js');
 const installRPackages = require('./components/install-r.js');
 const requiredAPIVersion = 1;
-const miroVersion = '0.9.26';
+const miroVersion = '0.9.28';
 const libVersion = '1.0';
 const exampleAppsData = [
   {
@@ -599,21 +600,20 @@ function createSettingsWindow() {
     settingsWindow = null
   })
 }
-function terminateProcesses () {
+async function terminateProcesses () {
   shutdown = true
   for (let i = 0; i < miroProcesses.length; i++) {
      if ( !miroProcesses[i] ) {
       return;
     }
     const pid = miroProcesses[i].pid;
-    kill(pid, function(e){
-        if (e) {
-            log.debug(`Problems killing R process with pid: ${pid}. Error message: ${e.message}`);
-        } else {
-            log.debug(`R process with pid: ${pid} killed.`);
-        }
-     });
-     miroProcesses[i] = null;
+    try{
+      kill(pid)
+      log.debug(`R process with pid: ${pid} killed.`);
+    } catch ( e ) {
+      log.debug(`Problems killing R process with pid: ${pid}. Error message: ${e.message}`);
+    }
+    miroProcesses[i] = null;
   }
 }
 function quitLauncher () {
@@ -627,6 +627,7 @@ if (!gotTheLock) {
   app.quit()
 } else {
   app.on('second-instance', (event, argv, cwd) => {
+    log.debug('Second MIRO instance launched.');
     if (mainWindow) {
       if (mainWindow.isMinimized()) mainWindow.restore();
       mainWindow.focus();
@@ -856,21 +857,20 @@ to finish. Error message: ${e.message}`)
         miroAppWindows[appID].destroy();
       });
 
-      miroAppWindows[appID].on('closed', () => {
+      miroAppWindows[appID].on('closed', async () => {
         if ( mainWindow ) {
           mainWindow.send('app-closed', appID);
         }
         const internalPid = processIdMap[appID];
         if ( Number.isInteger(internalPid) ) {
             const pid = miroProcesses[internalPid].pid;
-            kill(pid, function(e){
-                if (e) {
-                    log.debug(`Problems killing R process with pid: ${pid}. Error message: ${e.message}`);
-                } else {
-                    log.debug(`R process with pid: ${pid} killed.`);
-                }
-             });
-          miroProcesses[internalPid] = null;
+            try{
+              kill(pid)
+              log.debug(`R process with pid: ${pid} killed.`);
+            } catch ( e ) {
+              log.debug(`Problems killing R process with pid: ${pid}. Error message: ${e.message}`);
+            }
+            miroProcesses[internalPid] = null;
         }
         delete processIdMap[appID];
         miroAppWindows[appID] = null;
@@ -1277,6 +1277,9 @@ app.on('ready', async () => {
      activateEditMode, createSettingsWindow));
    
   if ( miroDevelopMode ) {
+    if(!gotTheLock){
+      return;
+    }
     mainWindow = new BrowserWindow({ show: false, width: 0, height: 0});
     mainWindow.hide();
     const modelPath = process.env.MIRO_MODEL_PATH;
@@ -1325,8 +1328,7 @@ app.on('window-all-closed', () => {
 app.on('will-quit', async (e) => {
   e.preventDefault();
   log.debug('Terminating potentially open R processes.');
-  terminateProcesses();
-  await waitFor(500);
+  await terminateProcesses();
   app.exit(0);
 });
 app.on('activate', () => {
