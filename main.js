@@ -167,6 +167,9 @@ const tryStartWebserver = async (progressCallback, onErrorStartup,
   let shinyRunning = false
 
   const onError = async (e) => {
+    if ( miroProcesses[internalPid] === null ) {
+      return;
+    }
     log.error(`Process: ${internalPid} crashed during startup. Stdout: ${e.stdout}.\nStderr: ${e.stderr}`);
     miroProcesses[internalPid] = null;
     delete processIdMap[appData.id];
@@ -864,13 +867,13 @@ to finish. Error message: ${e.message}`)
         const internalPid = processIdMap[appID];
         if ( Number.isInteger(internalPid) ) {
             const pid = miroProcesses[internalPid].pid;
+            miroProcesses[internalPid] = null;
             try{
-              kill(pid)
+              await kill(pid)
               log.debug(`R process with pid: ${pid} killed.`);
             } catch ( e ) {
               log.debug(`Problems killing R process with pid: ${pid}. Error message: ${e.message}`);
             }
-            miroProcesses[internalPid] = null;
         }
         delete processIdMap[appID];
         miroAppWindows[appID] = null;
