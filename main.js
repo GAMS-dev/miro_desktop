@@ -12,7 +12,7 @@ const log = require('electron-log');
 const menu = require('./components/menu.js');
 const installRPackages = require('./components/install-r.js');
 const requiredAPIVersion = 1;
-const miroVersion = '0.9.31';
+const miroVersion = '0.9.32';
 const libVersion = '1.0';
 const exampleAppsData = [
   {
@@ -810,15 +810,19 @@ ${message? `Message: ${message}` : ''}`);
     if ( !Number.isInteger(internalPid) || !miroProcesses[internalPid] ) {
       return;
     }
-    try {
-      await miroProcesses[internalPid];
-    } catch (e) {
-      log.error(`Problems while waiting for process of MIRO app with ID: ${appID}\
-to finish. Error message: ${e.message}`)
+    if( miroProcesses[internalPid] ) {
+      try {
+        await miroProcesses[internalPid];
+      } catch (e) {
+        if ( e.signal !== 'SIGTERM' ) {
+          log.error(`Problems while waiting for process of MIRO app with ID: ${appID}\
+  to finish. Error message: ${e.message}`)
+        }
+      }
+      log.debug(`Process of MIRO app with ID: ${appID} and internal pid ${internalPid} ended.`);
+      miroProcesses[processIdMap[appID]] = null;
+      delete processIdMap[appID];
     }
-    log.debug(`Process of MIRO app with ID: ${appID} and internal pid ${internalPid} ended.`);
-    miroProcesses[processIdMap[appID]] = null;
-    delete processIdMap[appID];
     if ( miroDevelopMode ) {
       // in development mode terminate when R process finished
       app.exit(0);
