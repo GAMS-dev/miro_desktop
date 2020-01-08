@@ -831,6 +831,10 @@ ${message? `Message: ${message}` : ''}`);
     if ( mainWindow ) {
       mainWindow.send('app-closed', appID);
     }
+    if ( miroAppWindows[appID] ) {
+      miroAppWindows[appID].destroy();
+      miroAppWindows[appID] = null;
+    }
   }
   try {
     await tryStartWebserver(progressCallback, onErrorStartup, onErrorLater, appData, rpath, (url) => {
