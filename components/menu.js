@@ -4,7 +4,8 @@ const isMac = process.platform === 'darwin';
 
 module.exports = function(addExampleAppsCallback,
   activateEditCallback, 
-  showSettingsCallback){
+  showSettingsCallback,
+  openCheckUpdateWindow){
   const lang = global.lang.menu;
   return Menu.buildFromTemplate([
     // { role: 'appMenu' }
@@ -104,6 +105,13 @@ module.exports = function(addExampleAppsCallback,
           label: lang['doc'],
           click: async () => {
             await shell.openExternal('https://gams.com/miro')
+          }
+        },
+        { type: 'separator' },
+        {
+          label: lang['update'],
+          click: () => {
+            openCheckUpdateWindow()
           }
         }
       ]

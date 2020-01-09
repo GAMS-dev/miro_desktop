@@ -8,6 +8,37 @@ const schema = {
    "type":"object",
    "additionalProperties":false,
    "properties":{
+     "update":{
+       "type":"object",
+       "additionalProperties":false,
+       "properties":{
+           "title": {
+               "type":"string",
+               "minLength":1
+           },
+           "updateAvailable": {
+               "type":"string",
+               "minLength":1
+           },
+           "downloadUpdate": {
+               "type":"string",
+               "minLength":1
+           },
+           "here": {
+               "type":"string",
+               "minLength":1
+           },
+           "upToDate": {
+               "type":"string",
+               "minLength":1
+           },
+           "error": {
+               "type":"string",
+               "minLength":1
+           }
+         },
+         "required": ["title", "updateAvailable", "downloadUpdate", "here", "upToDate", "error"]
+     },
      "main":{
        "type":"object",
        "additionalProperties":false,
@@ -268,17 +299,29 @@ const schema = {
            "doc": {
                "type":"string",
                "minLength":1
+           },
+           "update": {
+               "type":"string",
+               "minLength":1
            }
          },
          "required": ["pref", "file", "edit", "addApp", "editApp", "addExampleApps", "undo",
          "redo", "cut", "copy", "paste", "selectAll", "view", "window", "minimize", "zoom", "front", "close", 
-         "quit", "fullscreen", "help", "doc"]
+         "quit", "fullscreen", "help", "doc", "update"]
       }
    },
-   "required": ["main", "menu"]
+   "required": ["update", "main", "menu"]
 }
 
 const en = {
+    "update": {
+      "title": "Check for Update",
+      "updateAvailable": "A new version of GAMS MIRO is available:",
+      "downloadUpdate": "You can download this version",
+      "here": "here",
+      "upToDate": "You are using the latest version of GAMS MIRO.",
+      "error": "An unexpected error has occurred. Please try again later."
+    },
     "main": {
         "title": "MIRO Library",
         "noApps": "No apps",
@@ -342,10 +385,19 @@ const en = {
         "quit": "Quit",
         "fullscreen": "Toggle Full Screen",
         "help": "Help",
-        "doc": "Documentation"
+        "doc": "Documentation",
+        "update": "Check for Update"
    }
 }
 const de = {
+    "update": {
+      "title": "Auf Update prüfen",
+      "updateAvailable": "Eine neue Version von GAMS MIRO ist verfügbar:",
+      "downloadUpdate": "Die neuste Version von GAMS MIRO finden Sie",
+      "here": "hier",
+      "upToDate": "Sie benutzen die neueste Version von GAMS MIRO.",
+      "error": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es später noch einmal."
+    },
     "main": {
         "title": "MIRO Bibliothek",
         "noApps": "Keine Apps",
@@ -409,7 +461,8 @@ const de = {
         "close": "Fenster schließen",
         "quit": "Beenden",
         "help": "Hilfe",
-        "doc": "Dokumentation"
+        "doc": "Dokumentation",
+        "update": "Auf Update prüfen"
    }
 }
 
@@ -422,7 +475,7 @@ class LangParser {
             this.lang = en;
         }
         if ( !ajv.validate(schema, this.lang) ) {
-            console.log(ajv.errors)
+            console.log(ajv.errors);
             throw new Error(ajv.errors);
         }
       
