@@ -1162,15 +1162,16 @@ ipcMain.on('save-general-config', async (e, newConfigData, needRestart) => {
     configData.set(newConfigData);
     if ( settingsWindow ){
       if ( needRestart === true ) {
-        dialog.showMessageBoxSync(settingsWindow, 
+        if ( dialog.showMessageBoxSync(settingsWindow, 
         {
           type: 'info',
           title: 'Configuration updated',
-          message: 'Your configuration has been updated successfully. MIRO is restarted to apply your changes.',
-          buttons: ['OK']
-        });
-        app.relaunch();
-        app.exit();
+          message: 'Your configuration was successfully updated. MIRO must be restarted for your changes to take effect. Do you want to restart MIRO now?',
+          buttons: ['Cancel', 'OK']
+        }) === 1 ) {
+          app.relaunch();
+          app.exit();
+        };
       } else {
         settingsWindow.webContents.send('settings-loaded', 
         await configData.getAll(),

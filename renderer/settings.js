@@ -12,6 +12,8 @@ const inputLogLifetime = $('#logLifeTime');
 const inputLanguage    = $('#language');
 const inputLogLevel    = $('#logLevel');
 
+const lang = remote.getGlobal('lang').settings;
+let oldConfig = {};
 const newConfig = {};
 let defaultValues;
 let importantKeys;
@@ -80,7 +82,15 @@ log file should be stored is invalid! Please enter only whole numbers!',
     }
     newConfig.logLifeTime = logLifeVal;
     newConfig.launchExternal = cbLaunchExternal.is(":checked");
+
     newConfig.language    = optionAliasMap.language[inputLanguage.val()];
+    let oldLanguage = defaultValues.language;
+    if ( oldConfig.language ) {
+        oldLanguage = oldConfig.language;
+    }
+    if ( oldLanguage !== newConfig.language ) {
+        requireRestart = true;
+    }
     newConfig.logLevel    = inputLogLevel.val();
     ipcRenderer.send('save-general-config', newConfig, requireRestart); 
 });
@@ -161,6 +171,7 @@ $('.btn-reset-nonpath').click(function(e) {
 });
 
 ipcRenderer.on('settings-loaded', (e, data, defaults) => {
+    oldConfig = data;
     defaultValues = defaults;
     if ( !data.important ) {
         importantKeys = [];
