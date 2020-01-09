@@ -16,7 +16,7 @@ const schema = {
                "type":"string",
                "minLength":1
            },
-           "noAppsDiv": {
+           "noApps": {
                "type":"string",
                "minLength":1
            },
@@ -149,7 +149,7 @@ const schema = {
                "minLength":1
            },
        },
-       "required": ["title", "noAppsDiv", "btEdit", "btEditDone", "btAddExamples", "appFilesPlaceholder", "appNamePlaceholder", 
+       "required": ["title", "noApps", "btEdit", "btEditDone", "btAddExamples", "appFilesPlaceholder", "appNamePlaceholder", 
        "appDescPlaceholder", "appLogoPlaceholder", "appDbPathReset", "editAppInfoText", "btLaunch", "btLaunchBase", "btLaunchHcube",
        "btCancel", "btSave", "btAddApp", "errNoAppTitleHdr", "errNoAppTitleMsg" ,"errInvalidDbPathHdr",
        "errInvalidDbPathMsg", "dialogSelectAppLogoHdr", "dialogSelectAppLogoMsg", "dialogSelectAppLogoBtn",
@@ -281,7 +281,7 @@ const schema = {
 const en = {
     "main": {
         "title": "MIRO Library",
-        "noAppsDiv": "No apps",
+        "noApps": "No apps",
         "btEdit": "Edit", 
         "btEditDone": "Done",
         "btAddExamples": "Add example apps",
@@ -348,7 +348,7 @@ const en = {
 const de = {
     "main": {
         "title": "MIRO Bibliothek",
-        "noAppsDiv": "Keine Apps",
+        "noApps": "Keine Apps",
         "btEdit": "Bearbeiten", 
         "btEditDone": "Fertig",
         "btAddExamples": "Beispiel-Apps hinzufügen",

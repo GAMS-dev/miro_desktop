@@ -49,7 +49,7 @@ let runningProcesses = [];
 const $overlay = $('#overlayScreen');
 const $body = $('body');
 
-['title', 'btEdit', 'noAppsDiv', 'btAddExamples'].forEach(id => {
+['title', 'btEdit', 'noApps', 'btAddExamples'].forEach(id => {
   const el = document.getElementById(id);
   if ( el ) {
     el.innerText = lang[id];
