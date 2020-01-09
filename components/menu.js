@@ -5,36 +5,37 @@ const isMac = process.platform === 'darwin';
 module.exports = function(addExampleAppsCallback,
   activateEditCallback, 
   showSettingsCallback){
+  const lang = global.lang.menu;
   return Menu.buildFromTemplate([
     // { role: 'appMenu' }
     ...(isMac ? [{
       label: app.getName(),
       submenu: [
-        { role: 'about' },
+        { label: lang['about'], role: 'about' },
         { type: 'separator' },
         { 
-          label: 'Preferences',
+          label: lang['pref'],
           accelerator: 'Cmd+,',
           click: async () => {
             await showSettingsCallback();
           }
         },
-        { role: 'services' },
+        { label: lang['services'], role: 'services' },
         { type: 'separator' },
-        { role: 'hide' },
-        { role: 'hideothers' },
-        { role: 'unhide' },
+        { label: lang['hide'], role: 'hide' },
+        { label: lang['hideothers'], role: 'hideothers' },
+        { label: lang['unhide'], role: 'unhide' },
         { type: 'separator' },
-        { role: 'quit' }
+        { label: lang['quit'], role: 'quit' }
       ]
     }] : []),
     // { role: 'fileMenu' }
     {
-      label: 'File',
+      label: lang['file'],
       submenu: [
-        isMac ? { role: 'close' } : { role: 'quit' },
+        isMac ? { label: lang['close'], role: 'close' } : { label: lang['quit'], role: 'quit' },
         ...(isMac ? [] : [{ 
-          label: 'Preferences',
+          label: lang['pref'],
           accelerator: 'F7',
           click: async () => {
             await showSettingsCallback();
@@ -43,65 +44,64 @@ module.exports = function(addExampleAppsCallback,
       ]
     },
     {
-      label: 'Edit',
+      label: lang['edit'],
       submenu: [
       {
-        label: '➕ Add MIRO app',
+        label: lang['addApp'],
         accelerator: 'CmdOrCtrl+O',
         click: async () => {
             await activateEditCallback(true, true);
           }
       },
       {
-        label: '⚙️ Edit apps',
+        label: lang['editApp'],
         accelerator: 'CmdOrCtrl+E',
         click: async () => {
             await activateEditCallback();
         }
       },
       {
-        label: 'Add example apps',
+        label: lang['addExampleApps'],
         click: async () => {
             await addExampleAppsCallback();
           }
       },
-      { label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
-      { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
-      { type: "separator" },
-      { label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
-      { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
-      { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
-      { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
+      { label: lang['undo'], accelerator: 'CmdOrCtrl+Z', selector: 'undo:' },
+      { label: lang['redo'], accelerator: 'Shift+CmdOrCtrl+Z', selector: 'redo:' },
+      { type: 'separator' },
+      { label: lang['cut'], accelerator: 'CmdOrCtrl+X', selector: 'cut:' },
+      { label: lang['copy'], accelerator: 'CmdOrCtrl+C', selector: 'copy:' },
+      { label: lang['paste'], accelerator: 'CmdOrCtrl+V', selector: 'paste:' },
+      { label: lang['selectAll'], accelerator: 'CmdOrCtrl+A', selector: 'selectAll:' }
     ]},
     // { role: 'viewMenu' }
     {
-      label: 'View',
+      label: lang['view'],
       accelerator: isMac ? 'Ctrl+Cmd+F' : 'F11',
       submenu: [
-        { role: 'togglefullscreen' }
+        { label: lang['fullscreen'], role: 'togglefullscreen' }
       ]
     },
     // { role: 'windowMenu' }
     {
-      label: 'Window',
+      label: lang['window'],
       submenu: [
-        { role: 'minimize' },
-        { role: 'zoom' },
+        { label: lang['minimize'], role: 'minimize' },
+        { label: lang['zoom'], role: 'zoom' },
         ...(isMac ? [
           { type: 'separator' },
-          { role: 'front' },
-          { type: 'separator' },
-          { role: 'window' }
+          { label: lang['front'], role: 'front' }
         ] : [
-          { role: 'close' }
+          { label: lang['close'], role: 'close' }
         ])
       ]
     },
     {
       role: 'help',
+      label: lang['help'],
       submenu: [
         {
-          label: 'Documentation',
+          label: lang['doc'],
           click: async () => {
             await shell.openExternal('https://gams.com/miro')
           }

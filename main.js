@@ -38,6 +38,7 @@ requirements at markets and supplies at factories.`,
     modesAvailable: [ 'base', 'hcube' ]
   }];
 
+const LangParser = require('./components/LangParser.js');
 const AppDataStore = require('./AppDataStore');
 const ConfigManager = require('./ConfigManager');
 const unzip     = require('./Unzip');
@@ -92,7 +93,8 @@ const appDataPath = errMsg? null :
    path.join(configData.getConfigPath(), 'miro_apps');
 const appsData = errMsg? null : 
    new AppDataStore(configData.getConfigPath());
-
+const langParser = new LangParser(configData.getSync('language'));
+global.lang = langParser.get();
 const resourcesPath = DEVELOPMENT_MODE? app.getAppPath(): process.resourcesPath;
 
 let shutdown = false
@@ -656,7 +658,7 @@ function createMainWindow (showRunningApps = false) {
     return;
   }
   mainWindow = new BrowserWindow({
-    title: 'GAMS MIRO',
+    title: global.lang.main.title,
     width: 900,
     height: 750,
     minWidth: 800,

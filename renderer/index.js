@@ -7,6 +7,7 @@ const fs = require('fs');
 window.Bootstrap = require('bootstrap');
 const $ = require('jquery');
 
+let lang = remote.getGlobal('lang').main;
 const btRemoveConfirm = document.getElementById('btRemoveModel');
 const appsWrapper = $('#appsWrapper');
 const noAppsNotice = $('#noAppsDiv');
@@ -26,16 +27,16 @@ const addAppWrapperHTML = `<div id="addAppBox" class="add-app-box app-box-fixed-
                              </div>
                             <a class="btn-add-app" id="addApp"><i class="fas fa-plus-circle"></i></a>
                           </div>`;
-const appFilesPlaceholder = 'Drop your MIRO app here or click to browse.';
-const appNamePlaceholder = 'Define the app title';
-const appDescPlaceholder = 'Short model description (optional)';
+const appFilesPlaceholder = lang['appFilesPlaceholder'];
+const appNamePlaceholder = lang['appNamePlaceholder'];
+const appDescPlaceholder = lang['appDescPlaceholder'];
 const appDbPathPlaceholder = path.join(remote.app.getPath('home'), '.miro');
-const appDbPathReset = 'Reset to default';
-const appLogoPlaceholder = 'Different app logo? Drop your MIRO app logo here or click to browse.';
+const appDbPathReset = lang['appDbPathReset'];
+const appLogoPlaceholder = lang['appLogoPlaceholder'];
 const editHelper = `<div class="edit-info" style="display:none;">
                         <p class="edit-info-text"><img class="edit-info-img img-fluid" \ 
                         src="${pathToFileURL(path.join(remote.app.getAppPath(),
-                        'static', 'arrow.png'))}" width="45px" align="middle" alt="arrow">Click on app to edit</p>
+                        'static', 'arrow.png'))}" width="45px" align="middle" alt="arrow">${lang['editAppInfoText']}</p>
                     </div>`;  
 let appData
 let dataPath
@@ -47,6 +48,13 @@ let runningProcesses = [];
   
 const $overlay = $('#overlayScreen');
 const $body = $('body');
+
+['title', 'btEdit', 'noAppsDiv', 'btAddExamples'].forEach(id => {
+  const el = document.getElementById(id);
+  if ( el ) {
+    el.innerText = lang[id];
+  }
+});
 
 function resetAppConfig(appID) {
   if ( !appID ) {
@@ -75,7 +83,7 @@ function toggleEditMode(){
     if ( !appData.length ) {
       noAppsNotice.fadeIn(200);
     }
-    btEdit.textContent = 'Edit';
+    btEdit.textContent = lang['btEdit'];
     $('.edit-info').fadeOut(200);
     $('.delete-app-button').fadeOut(200);
     $('#addAppWrapper').fadeOut(200);
@@ -88,7 +96,7 @@ function toggleEditMode(){
     if ( !appData.length ) {
       noAppsNotice.hide();
     }
-    btEdit.textContent = 'Done';
+    btEdit.textContent = lang['btEditDone'];
     newAppConfig  = null;
     $('.edit-info').fadeIn(200);
     $('.delete-app-button').fadeIn(200);
@@ -155,16 +163,16 @@ function expandAddAppForm(){
                         </div>
                         <div class="input-group mb-3" style="visibility:hidden;">
                           <div class="input-group-prepend">
-                            <button class="btn btn-outline-secondary dropdown-toggle btn-launch" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Launch</button>
+                            <button class="btn btn-outline-secondary dropdown-toggle btn-launch" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">${lang['btLaunch']}</button>
                             <div class="dropdown-menu">
-                              <a class="dropdown-item" href="#">Base mode</a>
-                              <a class="dropdown-item" href="#">Hypercube mode</a>
+                              <a class="dropdown-item" href="#">${lang['btLaunchBase']}</a>
+                              <a class="dropdown-item" href="#">${lang['btLaunchHcube']}</a>
                             </div>
                           </div>
                         </div>
                         <div style = "text-align:right;">
-                            <input class="btn btn-secondary cancel-btn" id="btAddAppReset" value="Cancel" type="reset">
-                            <button class="btn btn-secondary confirm-btn" id="btAddApp" type="button">Add app</button>
+                            <input class="btn btn-secondary cancel-btn" id="btAddAppReset" value="${lang['btCancel']}" type="reset">
+                            <button class="btn btn-secondary confirm-btn" id="btAddApp" type="button">${lang['btAddApp']}</button>
                         </div>`);
 }
 
@@ -183,8 +191,8 @@ $body.on('click', '.app-box', function(e) {
       if ( !newAppConfig ) {
         ipcRenderer.send('show-error-msg', {
             type: 'error',
-            title: 'Unexpected error',
-            message: 'No MIRO app configuration was found. If this problem persists, please contact GAMS!'
+            title: lang['dialogErrHdr'],
+            message: lang['dialogErrMsg']
         });
         return;
       }
@@ -236,8 +244,8 @@ appsWrapper.on('click', '.btn-save-changes', function(){
   if ( !newAppConfig ) {
     ipcRenderer.send('show-error-msg', {
         type: 'error',
-        title: 'Unexpected error',
-        message: 'No MIRO app configuration was found. If this problem persists, please contact GAMS!'
+        title: lang['dialogErrHdr'],
+        message: lang['dialogErrMsg']
     });
     return
   }
@@ -245,8 +253,8 @@ appsWrapper.on('click', '.btn-save-changes', function(){
   if ( !appTitle || appTitle === appNamePlaceholder ) {
     ipcRenderer.send('show-error-msg', {
         type: 'info',
-        title: 'No title',
-        message: 'Please enter a title for your MIRO app!'
+        title: lang['errNoAppTitleHdr'],
+        message: lang['errNoAppTitleMsg']
     });
     return
   }
@@ -276,16 +284,16 @@ appsWrapper.on('click', '#btAddApp', () => {
     if ( !newAppConfig ) {
         return ipcRenderer.send('show-error-msg', {
             type: 'error',
-            title: 'Unexpected error',
-            message: 'No MIRO app configuration was found. If this problem persists, please contact GAMS!'
+            title: lang['dialogErrHdr'],
+            message: lang['dialogErrMsg']
         });
     }
     const titleTmp = $('#newAppName').text().trim();
     if ( titleTmp === appNamePlaceholder || titleTmp.length < 1 ) {
         return ipcRenderer.send('show-error-msg', {
             type: 'info',
-            title: 'No title',
-            message: 'Please enter a title for your MIRO app!'
+            title: lang['errNoAppTitleHdr'],
+            message: lang['errNoAppTitleMsg']
         });
     }
     const appDbPathTmp = $('#newAppDbPathLabel').text().trim();
@@ -295,8 +303,8 @@ appsWrapper.on('click', '#btAddApp', () => {
         } else {
             return ipcRenderer.send('show-error-msg', {
                 type: 'info',
-                title: 'Invalid database path',
-                message: 'The database path you selected does not exist.'
+                title: lang['errInvalidDbPathHdr'],
+                message: lang['errInvalidDbPathMsg']
             });
         }
     }
@@ -334,12 +342,12 @@ appsWrapper.on('click', '.app-logo', function(){
     return
   }
   ipcRenderer.send('browse-app', {
-      title: 'Select MIRO app logo',
-      message: 'Please select a logo for your MIRO app (jpg/jpeg/png supported)',
-      buttonLabel: 'Choose',
+      title: lang['dialogSelectAppLogoHdr'],
+      message: lang['dialogSelectAppLogoMsg'],
+      buttonLabel: lang['dialogSelectAppLogoBtn'],
       properties: [ 'openFile' ],
       filters: [
-          { name: 'Images', extensions: ['jpg', 'png', 'jpeg'] }
+          { name: lang['dialogSelectAppLogoFilter'], extensions: ['jpg', 'png', 'jpeg'] }
       ]
   }, 'validateLogo', this.dataset.id);
 });
@@ -415,12 +423,12 @@ appsWrapper.on('drop', '#newAppFiles', function(e){
 });
 appsWrapper.on('click', '#newAppFiles', () => {
   ipcRenderer.send('browse-app', {
-      title: 'Select MIRO app',
-      message: 'Please select the MIRO app you want to add',
-      buttonLabel: 'Add app',
+      title: lang['dialogNewAppFilesHdr'],
+      message: lang['dialogNewAppFilesMsg'],
+      buttonLabel: lang['dialogNewAppFilesBtn'],
       properties: [ 'openFile' ],
       filters: [
-          { name: 'MIRO apps', extensions: ['miroapp'] }
+          { name: lang['dialogNewAppFilesFilter'], extensions: ['miroapp'] }
       ]
   }, 'validateApp');
 });
@@ -432,9 +440,9 @@ btEditWrapper.on('click', function(e){
 });
 appsWrapper.on('click', '.app-db-path', function(){
   ipcRenderer.send('browse-app', {
-      title: 'Select database path',
-      message: 'Please select a directory in which the database should be located.',
-      buttonLabel: 'Select',
+      title: lang['dialogSelectDbPathHdr'],
+      message: lang['dialogSelectDbPathMsg'],
+      buttonLabel: lang['dialogSelectDbPathBtn'],
       properties: [ 'openDirectory', 'createDirectory' ]
   }, 'dbpath-received', this.dataset.id);
 });
@@ -446,8 +454,8 @@ appsWrapper.on('click', '.launch-app', function(){
   if ( !appID ) {
     ipcRenderer.send('show-error-msg', {
         type: 'error',
-        title: 'Unexpected error',
-        message: 'No MIRO app configuration was found. If this problem persists, please contact GAMS!'
+        title: lang['dialogErrHdr'],
+        message: lang['dialogErrMsg']
     });
     return;
   }
@@ -506,23 +514,23 @@ title="${app.title} logo" data-id="${app.id}" class="app-logo">
                             `<button class="btn btn-outline-secondary btn-launch launch-app" 
                                type="button" data-id="${app.id}" 
                                data-usetmpdir="${app.usetmpdir}" data-mode="${app.modesAvailable[0]}" 
-                               data-apiversion="${app.apiversion}" data-miroversion="${app.miroversion}">Launch</button>` : 
+                               data-apiversion="${app.apiversion}" data-miroversion="${app.miroversion}">${lang['btLaunch']}</button>` : 
                             `<button class="btn btn-outline-secondary dropdown-toggle btn-launch" 
-                               type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Launch</button>
+                               type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">${lang['btLaunch']}</button>
                              <div class="dropdown-menu dropdown-custom">
                                  <a class="dropdown-item launch-app" href="#" data-id="${app.id}" 
                                    data-usetmpdir="${app.usetmpdir}" data-mode="base" 
-                                   data-apiversion="${app.apiversion}" data-miroversion="${app.miroversion}">Base mode</a>
+                                   data-apiversion="${app.apiversion}" data-miroversion="${app.miroversion}">${lang['btLaunchBase']}</a>
                                  <a class="dropdown-item launch-app" href="#" data-id="${app.id}" 
                                    data-usetmpdir="${app.usetmpdir}" data-mode="hcube" 
-                                   data-apiversion="${app.apiversion}" data-miroversion="${app.miroversion}">Hypercube mode</a>
+                                   data-apiversion="${app.apiversion}" data-miroversion="${app.miroversion}">${lang['btLaunchHcube']}</a>
                              </div>`}
                            
                     </div>
                  </div>
                  <div style="text-align:right;display:none;" class="edit-bt-group">
-                     <input data-id="${app.id}" class="btn btn-secondary cancel-btn" id="btCancelChanges" value="Cancel" type="reset">
-                     <button class="btn btn-secondary confirm-btn btn-save-changes" data-id="${app.id}" type="button">Save</button>
+                     <input data-id="${app.id}" class="btn btn-secondary cancel-btn" id="btCancelChanges" value="${lang['btCancel']}" type="reset">
+                     <button class="btn btn-secondary confirm-btn btn-save-changes" data-id="${app.id}" type="button">${lang['btSave']}</button>
                  </div>
                  <div id="iconActive_${app.id}" class="running-app-icon app-corner-button" style="${appsActive.includes(app.id)? '': 'display:none;'}"><i class="fas fa-cog fa-spin"></i></div>
                  <a class="delete-app-button app-corner-button" data-id="${app.id}" style="display:none;"><i class="fas fa-times"></i></a>
@@ -563,8 +571,8 @@ ipcRenderer.on('dbpath-received', (e, dbpathData) => {
   if ( !newAppConfig ) {
     ipcRenderer.send('show-error-msg', {
         type: 'error',
-        title: 'Unexpected error',
-        message: 'No MIRO app configuration was found. If this problem persists, please contact GAMS!'
+        title: lang['dialogErrHdr'],
+        message: lang['dialogErrMsg']
     });
     return;
   }
