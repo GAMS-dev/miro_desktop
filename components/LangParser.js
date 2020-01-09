@@ -35,9 +35,14 @@ const schema = {
            "error": {
                "type":"string",
                "minLength":1
+           },
+           "btClose": {
+               "type":"string",
+               "minLength":1
            }
          },
-         "required": ["title", "updateAvailable", "downloadUpdate", "here", "upToDate", "error"]
+         "required": ["title", "updateAvailable", "downloadUpdate", "here", "upToDate", "error",
+         "btClose"]
      },
      "main":{
        "type":"object",
@@ -320,7 +325,8 @@ const en = {
       "downloadUpdate": "You can download this version",
       "here": "here",
       "upToDate": "You are using the latest version of GAMS MIRO.",
-      "error": "An unexpected error has occurred. Please try again later."
+      "error": "An unexpected error has occurred. Please try again later.",
+      "btClose": "Ok"
     },
     "main": {
         "title": "MIRO Library",
@@ -396,7 +402,8 @@ const de = {
       "downloadUpdate": "Die neuste Version von GAMS MIRO finden Sie",
       "here": "hier",
       "upToDate": "Sie benutzen die neueste Version von GAMS MIRO.",
-      "error": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es später noch einmal."
+      "error": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es später noch einmal.",
+      "btClose": "Ok"
     },
     "main": {
         "title": "MIRO Bibliothek",

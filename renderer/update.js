@@ -3,9 +3,14 @@ const { app, remote, shell } = require('electron');
 const https = require('https');
 const $ = require('jquery');
 const lang = remote.getGlobal('lang').update;
-const installedVersion = '0.6.1'.split('.');
+const installedVersion = remote.getGlobal('miroVersion').split('.');
 
 $('#title').text(lang['title']);
+$('#btClose').text(lang['btClose']);
+
+$('#btClose').on('click', () => {
+    remote.getCurrentWindow().close();
+});
 
 function updateStatus(status, text = true){
     $('#updateSpinner').hide();
