@@ -19,12 +19,7 @@ const lang = remote.getGlobal('lang').settings;
     el.innerText = lang[id];
   }
 });
-['btCancel'].forEach(id => {
-  const el = document.getElementById(id);
-  if ( el ) {
-    el.value = lang[id];
-  }
-});
+document.getElementById('btCancel').value = lang['btCancel'];
 ['pathMiroappSelect', 'pathGamsSelect', 'pathLogSelect', 'pathRSelect'].forEach(id => {
   const el = document.getElementById(id);
   if ( el ) {
