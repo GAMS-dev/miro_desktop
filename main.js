@@ -95,6 +95,7 @@ const appsData = errMsg? null :
    new AppDataStore(configData.getConfigPath());
 const langParser = new LangParser(configData.getSync('language'));
 global.lang = langParser.get();
+global.miroVersion = miroVersion;
 const resourcesPath = DEVELOPMENT_MODE? app.getAppPath(): process.resourcesPath;
 
 let shutdown = false
@@ -560,6 +561,7 @@ const dockMenu = Menu.buildFromTemplate([
 
 let mainWindow
 let settingsWindow
+let checkForUpdateWindow
 let fileToOpen
 let appLoaded = false;
 
@@ -603,6 +605,39 @@ function createSettingsWindow() {
   settingsWindow.on('closed', () => {
     log.debug('Settings window closed.');
     settingsWindow = null
+  })
+}
+function openCheckUpdateWindow() {
+  log.debug('Creating Check for Update window..');
+  if ( checkForUpdateWindow ) {
+    log.debug('Check for Update window already open.');
+    checkForUpdateWindow.show();
+    return;
+  }
+  checkForUpdateWindow = new BrowserWindow({
+    title: lang['update'].title,
+    width: 400,
+    height: 200,
+    resizable: false,
+    titleBarStyle: 'hidden',
+    show: false,
+    webPreferences: {
+      nodeIntegration: true
+    }
+  });
+  checkForUpdateWindow.loadFile(path.join(__dirname, 
+    'renderer', 'update.html'));
+  checkForUpdateWindow.once('ready-to-show', async () => {
+    log.debug('Check for Update window ready to show.');
+    checkForUpdateWindow.show();
+  });
+  checkForUpdateWindow.on('page-title-updated', (e) => {
+    e.preventDefault();
+  });
+
+  checkForUpdateWindow.on('closed', () => {
+    log.debug('Check for Update window closed.');
+    checkForUpdateWindow = null
   })
 }
 async function terminateProcesses () {
@@ -1288,7 +1323,7 @@ app.on('ready', async () => {
   });
    
    Menu.setApplicationMenu(menu(addExampleApps,
-     activateEditMode, createSettingsWindow));
+     activateEditMode, createSettingsWindow, openCheckUpdateWindow));
    
   if ( miroDevelopMode ) {
     if(!gotTheLock){
