@@ -398,7 +398,7 @@ ${latestGamsInstalled}`);
           });
       if ( gamsDirName ) {
         if ( process.platform === 'win32' ) {
-          gamsExecDir = path.join(gamsDir, gamsDirName, 'sysdir');
+          gamsExecDir = path.join(gamsDir, gamsDirName, 'sysdir', 'gams.exe');
         } else if ( process.platform === 'darwin' ) {
           gamsExecDir = path.join(gamsDir, gamsDirName, 'GAMS Terminal.app',
             'Contents', 'MacOS', 'gams');
@@ -407,7 +407,7 @@ ${latestGamsInstalled}`);
         }
       } else if ( process.platform === 'win32' && 
         contentGamsDir.find(el => el.name === 'sysdir') ) {
-        gamsExecDir = path.join(gamsDir, 'sysdir');
+        gamsExecDir = path.join(gamsDir, 'sysdir', 'gams.exe');
       } else if ( process.platform === 'darwin' && 
         contentGamsDir.find(el => el.name === 'GAMS Terminal.app') ) {
         gamsExecDir = path.join(gamsDir, 'GAMS Terminal.app',
@@ -428,7 +428,7 @@ ${latestGamsInstalled}`);
         .match(/^GAMS Release: (\d+\.\d+\.\d+)/);
       if ( selectedGamsVer && 
         this.vComp(selectedGamsVer[1], minGams) ) {
-        return gamsExecDir;
+        return path.dirname(gamsExecDir);
       } else {
         return false;
       }
