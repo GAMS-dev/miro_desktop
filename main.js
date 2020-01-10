@@ -573,7 +573,7 @@ function createSettingsWindow() {
     return;
   }
   settingsWindow = new BrowserWindow({
-    title: 'Preferences',
+    title: lang.settings.title,
     width: 570,
     height: 620,
     resizable: DEVELOPMENT_MODE,

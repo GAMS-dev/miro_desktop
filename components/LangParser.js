@@ -311,11 +311,201 @@ const schema = {
            }
          },
          "required": ["pref", "file", "edit", "addApp", "editApp", "addExampleApps", "undo",
-         "redo", "cut", "copy", "paste", "selectAll", "view", "window", "minimize", "zoom", "front", "close", 
-         "quit", "fullscreen", "help", "doc", "update"]
+         "redo", "cut", "copy", "paste", "selectAll", "view", "window", "minimize", "zoom", "front", "close", "quit", "fullscreen", "help", "doc", "update"]
+      },
+      "settings":{
+        "type":"object",
+        "additionalProperties":false,
+        "properties":{
+           "title": {
+               "type":"string",
+               "minLength":1
+           },
+           "general-tab": {
+               "type":"string",
+               "minLength":1
+           }, 
+           "paths-tab": {
+               "type":"string",
+               "minLength":1
+           }, 
+           "launchBrowser": {
+               "type":"string",
+               "minLength":1
+           }, 
+           "browserReset": {
+               "type":"string",
+               "minLength":1
+           }, 
+           "generalLanguage": {
+               "type":"string",
+               "minLength":1
+           }, 
+           "languageReset": {
+               "type":"string",
+               "minLength":1
+           }, 
+           "generalLogging": {
+               "type":"string",
+               "minLength":1
+           }, 
+           "loggingReset": {
+               "type":"string",
+               "minLength":1
+           }, 
+           "generalLoglife": {
+               "type":"string",
+               "minLength":1
+           }, 
+           "loglifeReset": {
+               "type":"string",
+               "minLength":1
+           }, 
+           "pathMiroapp": {
+               "type":"string",
+               "minLength":1
+           }, 
+           "pathMiroappSelect": {
+               "type":"string",
+               "minLength":1
+           }, 
+           "resetPathMiroapp": {
+               "type":"string",
+               "minLength":1
+           }, 
+           "pathGams": {
+               "type":"string",
+               "minLength":1
+           }, 
+           "pathGamsSelect": {
+               "type":"string",
+               "minLength":1
+           }, 
+           "pathGamsReset": {
+               "type":"string",
+               "minLength":1
+           }, 
+           "pathLog": {
+               "type":"string",
+               "minLength":1
+           }, 
+           "pathLogSelect": {
+               "type":"string",
+               "minLength":1
+           }, 
+           "pathLogReset": {
+               "type":"string",
+               "minLength":1
+           }, 
+           "pathR": {
+               "type":"string",
+               "minLength":1
+           }, 
+           "pathRSelect": {
+               "type":"string",
+               "minLength":1
+           }, 
+           "pathRReset": {
+               "type":"string",
+               "minLength":1
+           }, 
+           "needHelp": {
+               "type":"string",
+               "minLength":1
+           }, 
+           "btSave": {
+               "type":"string",
+               "minLength":1
+           }, 
+           "btCancel": {
+               "type":"string",
+               "minLength":1
+           }, 
+           "dialogConfigPathHdr": {
+               "type":"string",
+               "minLength":1
+           }, 
+           "dialogConfigPathMsg": {
+               "type":"string",
+               "minLength":1
+           }, 
+           "dialogConfigPathBtn": {
+               "type":"string",
+               "minLength":1
+           }, 
+           "dialogConfigPathLabel": {
+               "type":"string",
+               "minLength":1
+           }, 
+           "dialogGamsPathHdr": {
+               "type":"string",
+               "minLength":1
+           }, 
+           "dialogGamsPathMsg": {
+               "type":"string",
+               "minLength":1
+           }, 
+           "dialogGamsPathLabel": {
+               "type":"string",
+               "minLength":1
+           }, 
+           "dialogGamsPathBtn": {
+               "type":"string",
+               "minLength":1
+           }, 
+           "dialogRPathHdr": {
+               "type":"string",
+               "minLength":1
+           }, 
+           "dialogRPathMsg": {
+               "type":"string",
+               "minLength":1
+           }, 
+           "dialogRPathLabel": {
+               "type":"string",
+               "minLength":1
+           }, 
+           "dialogRPathBtn": {
+               "type":"string",
+               "minLength":1
+           }, 
+           "dialogLogPathHdr": {
+               "type":"string",
+               "minLength":1
+           }, 
+           "dialogLogPathMsg": {
+               "type":"string",
+               "minLength":1
+           }, 
+           "dialogLogPathLabel": {
+               "type":"string",
+               "minLength":1
+           }, 
+           "dialogLogPathBtn": {
+               "type":"string",
+               "minLength":1
+           }, 
+           "dialogLogLifeErrHdr": {
+               "type":"string",
+               "minLength":1
+           }, 
+           "dialogLogLifeErrMsg": {
+               "type":"string",
+               "minLength":1
+           }, 
+           "dialogLogLifeErrBtn": {
+               "type":"string",
+               "minLength":1
+           }, 
+           "browseFiles": {
+               "type":"string",
+               "minLength":1
+           }
+         },
+         "required": ["title"]
       }
    },
-   "required": ["update", "main", "menu"]
+   "required": ["update", "main", "menu", "settings"]
 }
 
 const en = {
@@ -345,6 +535,7 @@ const en = {
         "btLaunchHcube": "Hypercube mode",
         "btCancel": "Cancel",
         "btSave": "Save",
+        "btCancel": "Cancel",
         "btAddApp": "Add app",
         "errNoAppTitleHdr": "No title",
         "errNoAppTitleMsg": "Please enter a title for your MIRO app!",
@@ -393,6 +584,54 @@ const en = {
         "help": "Help",
         "doc": "Documentation",
         "update": "Check for Update"
+   },
+   "settings": {
+        "title": "Preferences",
+        "general-tab": "General", 
+        "paths-tab": "Paths", 
+        "launchBrowser": "Launch MIRO apps in your browser?", 
+        "browserReset": "Reset to default", 
+        "generalLanguage": "Language", 
+        "languageReset": "Reset to default", 
+        "generalLogging": "Logging Level", 
+        "loggingReset": "Reset to default", 
+        "generalLoglife": "Number of days log files are stored", 
+        "loglifeReset": "Reset to default", 
+        "pathMiroapp": "MIRO app path", 
+        "pathMiroappSelect": "Select MIRO app path", 
+        "resetPathMiroapp": "Reset to default", 
+        "pathGams": "GAMS path", 
+        "pathGamsSelect": "Select GAMS path", 
+        "pathGamsReset": "Reset to default", 
+        "pathLog": "Log path", 
+        "pathLogSelect": "Select log file path", 
+        "pathLogReset": "Reset to default", 
+        "pathR": "R path", 
+        "pathRSelect": "Select R path", 
+        "pathRReset": "Reset to default", 
+        "needHelp": "Need help?", 
+        "btSave": "Apply",
+        "dialogConfigPathHdr": "Select MIRO app path",
+        "dialogConfigPathMsg": "Please select your MIRO app directory.",
+        "dialogConfigPathBtn": "Select",
+        "dialogConfigPathLabel": "Select MIRO app path",
+        "dialogGamsPathHdr": "Please select the path where you installed GAMS.",
+        "dialogGamsPathMsg": "Please select the path where you installed GAMS.",
+        "dialogGamsPathLabel": "Select GAMS path",
+        "dialogGamsPathBtn": "Select",
+        "dialogRPathHdr": "Please select the path where you installed R",
+        "dialogRPathMsg": "Please select the path where you installed R.",
+        "dialogRPathLabel": "Select R path",
+        "dialogRPathBtn": "Select",
+        "dialogLogPathHdr": "Please select the path where logs shall be stored",
+        "dialogLogPathMsg": "Please select the path where logs shall be stored.",
+        "dialogLogPathLabel": "Select log file path",
+        "dialogLogPathBtn": "Select",
+        "dialogLogLifeErrHdr": "Invalid log lifetime",
+        "dialogLogLifeErrMsg": "The value you entered for the number of days \
+log file should be stored is invalid! Please enter only whole numbers!",
+        "dialogLogLifeErrBtn": "OK",
+        "browseFiles": "Browse"
    }
 }
 const de = {
@@ -470,6 +709,54 @@ const de = {
         "help": "Hilfe",
         "doc": "Dokumentation",
         "update": "Auf Update prüfen"
+   },
+   "settings": {
+        "title": "Einstellungen",
+        "general-tab": "Allgemein", 
+        "paths-tab": "Verzeichnisse", 
+        "launchBrowser": "MIRO-Apps in Ihrem Browser starten?", 
+        "browserReset": "Auf Standard zurücksetzen", 
+        "generalLanguage": "Sprache", 
+        "languageReset": "Auf Standard zurücksetzen", 
+        "generalLogging": "Log Level", 
+        "loggingReset": "Auf Standard zurücksetzen", 
+        "generalLoglife": "Speicherdauer von Logdateien (in Tagen)", 
+        "loglifeReset": "Auf Standard zurücksetzen", 
+        "pathMiroapp": "MIRO Apps", 
+        "pathMiroappSelect": "MIRO Applikationsverzeichnis auswählen", 
+        "resetPathMiroapp": "Auf Standard zurücksetzen", 
+        "pathGams": "GAMS", 
+        "pathGamsSelect": "GAMS Verzeichnis auswählen", 
+        "pathGamsReset": "Auf Standard zurücksetzen", 
+        "pathLog": "Log Dateien", 
+        "pathLogSelect": "Verzeichnis der Logdateien auswählen", 
+        "pathLogReset": "Auf Standard zurücksetzen", 
+        "pathR": "R", 
+        "pathRSelect": "R Verzeichnis auswählen", 
+        "pathRReset": "Auf Standard zurücksetzen", 
+        "needHelp": "Hilfe?", 
+        "btSave": "Anwenden",
+        "btCancel": "Abbrechen",
+        "dialogConfigPathHdr": "MIRO Applikationsverzeichnis auswählen",
+        "dialogConfigPathMsg": "Bitte wählen Sie Ihr MIRO-Applikationsverzeichnis aus.",
+        "dialogConfigPathBtn": "Auswählen",
+        "dialogConfigPathLabel": "MIRO Applikationsverzeichnis auswählen",
+        "dialogGamsPathHdr": "Bitte wählen Sie das Verzeichnis aus, in dem Sie GAMS installiert haben",
+        "dialogGamsPathMsg": "Bitte wählen Sie das Verzeichnis aus, in dem Sie GAMS installiert haben.",
+        "dialogGamsPathLabel": "GAMS Verzeichnis auswählen",
+        "dialogGamsPathBtn": "Auswählen",
+        "dialogRPathHdr": "Bitte wählen Sie das Verzeichnis aus, in dem Sie R installiert haben",
+        "dialogRPathMsg": "Bitte wählen Sie das Verzeichnis aus, in dem Sie R installiert haben.",
+        "dialogRPathLabel": "R Verzeichnis auswählen",
+        "dialogRPathBtn": "Auswählen",
+        "dialogLogPathHdr": "Bitte wählen Sie das Verzeichnis aus, in dem die Logdateien gespeichert werden sollen",
+        "dialogLogPathMsg": "Bitte wählen Sie das Verzeichnis aus, in dem die Logdateien gespeichert werden sollen.",
+        "dialogLogPathLabel": "Verzeichnis der Logdateien auswählen",
+        "dialogLogPathBtn": "Auswählen",
+        "dialogLogLifeErrHdr": "Ungültige Log-Lebensdauer",
+        "dialogLogLifeErrMsg": "Der von Ihnen eingegebene Wert für die Anzahl der Tage, die die Logdateien gespeichert werden soll, ist ungültig! Bitte nur ganze Zahlen eingeben!",
+        "dialogLogLifeErrBtn": "OK",
+        "browseFiles": "Durchsuchen"
    }
 }
 

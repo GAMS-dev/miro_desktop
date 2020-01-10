@@ -13,6 +13,25 @@ const inputLanguage    = $('#language');
 const inputLogLevel    = $('#logLevel');
 
 const lang = remote.getGlobal('lang').settings;
+['title', 'general-tab', 'paths-tab', 'launchBrowser', 'browserReset', 'generalLanguage', 'languageReset', 'generalLogging', 'loggingReset', 'generalLoglife', 'loglifeReset', 'pathMiroapp', 'pathMiroappSelect', 'resetPathMiroapp', 'pathGams', 'pathGamsSelect', 'pathGamsReset', 'pathLog', 'pathLogSelect', 'pathLogReset', 'pathR', 'pathRSelect', 'pathRReset', 'needHelp', 'btSave'].forEach(id => {
+  const el = document.getElementById(id);
+  if ( el ) {
+    el.innerText = lang[id];
+  }
+});
+['btCancel'].forEach(id => {
+  const el = document.getElementById(id);
+  if ( el ) {
+    el.value = lang[id];
+  }
+});
+['pathMiroappSelect', 'pathGamsSelect', 'pathLogSelect', 'pathRSelect'].forEach(id => {
+  const el = document.getElementById(id);
+  if ( el ) {
+    $(el).addClass('browseLang').attr('content-after', lang['browseFiles']);
+  }
+});
+
 let oldConfig = {};
 const newConfig = {};
 let defaultValues;
@@ -31,32 +50,32 @@ const optionAliasMap = {
 const pathConfig = [
     {
         id: 'configpath',
-        title: 'Select MIRO app path',
-        message: 'Please select your MIRO app directory.',
-        buttonLabel: 'Select',
-        label: 'Select MIRO app path',
+        title: lang['dialogConfigPathHdr'],
+        message: lang['dialogConfigPathMsg'],
+        buttonLabel: lang['dialogConfigPathBtn'],
+        label: lang['dialogConfigPathLabel'],
         requiresRestart: true
     },
     {
         id: 'gamspath',
-        title: 'Please select the path where you installed GAMS.',
-        message: 'Please select the path where you installed GAMS.',
-        label: 'Select GAMS path',
-        buttonLabel: 'Select',
+        title: lang['dialogGamsPathHdr'],
+        message: lang['dialogGamsPathMsg'],
+        label: lang['dialogGamsPathLabel'],
+        buttonLabel: lang['dialogGamsPathBtn'],
     },
     {
         id: 'rpath',
-        title: 'Select R path',
-        message: 'Please select the path where you installed R.',
-        label: 'Select R path',
-        buttonLabel: 'Select'
+        title: lang['dialogRPathHdr'],
+        message: lang['dialogRPathMsg'],
+        label: lang['dialogRPathLabel'],
+        buttonLabel: lang['dialogRPathBtn']
     },
     {
         id: 'logpath',
-        title: 'Select log path',
-        message: 'Please select the path where logs shall be stored.',
-        label: 'Select log file path',
-        buttonLabel: 'Select'
+        title: lang['dialogLogPathHdr'],
+        message: lang['dialogLogPathMsg'],
+        label: lang['dialogLogPathLabel'],
+        buttonLabel: lang['dialogLogPathBtn']
     }
 ];
 
@@ -72,10 +91,9 @@ $('#btSave').on('click', (e) => {
             remote.dialog.showMessageBoxSync(currentWindow,
             {
                 type: 'warning',
-                title: 'Invalid log lifetime',
-                message: 'The value you entered for the number of days \
-log file should be stored is invalid! Please enter only whole numbers!',
-                buttons: [ 'OK' ]
+                title: lang['dialogLogLifeErrHdr'],
+                message: lang['dialogLogLifeErrMsg'],
+                buttons: [ lang['dialogLogLifeErrBtn'] ]
             });
             return;
         }
