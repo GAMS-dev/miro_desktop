@@ -879,7 +879,7 @@ const en = {
         "pathRReset": "Reset to default", 
         "needHelp": "Need help?", 
         "btSave": "Apply",
-        "btCancel": "Abbrechen",
+        "btCancel": "Cancel",
         "dialogConfigPathHdr": "Select MIRO app path",
         "dialogConfigPathMsg": "Please select your MIRO app directory.",
         "dialogConfigPathBtn": "Select",
