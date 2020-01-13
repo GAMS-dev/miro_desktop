@@ -1,6 +1,6 @@
 'use strict'
 
-const { ipcRenderer, remote } = require('electron');
+const { ipcRenderer, remote, shell } = require('electron');
 const path = require('path');
 window.Bootstrap = require('bootstrap');
 const $ = require('jquery');
@@ -31,7 +31,9 @@ const lang = remote.getGlobal('lang').settings;
     $(el).addClass('browseLang').attr('content-after', lang['browseFiles']);
   }
 });
-
+$('#helpLink').on('click', () => {
+    shell.openExternal('https://gams.com/miro/deployment.html#sbs-customize-app');
+}); 
 let oldConfig = {};
 const newConfig = {};
 let defaultValues;

@@ -183,8 +183,8 @@ const tryStartWebserver = async (progressCallback, onErrorStartup,
       mainWindow.send('hide-loading-screen', appData.id);
       showErrorMsg({
         type: 'error',
-        title: 'Unexpected error',
-        message: 'The MIRO app could not be started. Please report to GAMS when this problem persists!'
+        title: lang['main'].ErrorUnexpectedHdr,
+        message: lang['main'].ErrorUnexpectedMsg
       });
     }
   }
@@ -273,15 +273,15 @@ function validateMIROApp ( filePath ) {
       log.error('Validation of MIRO app failed due to invalid file path.');
       return showErrorMsg({
             type: 'info',
-            title: 'Invalid MIRO app file',
-            message: 'The file you selected is not a valid MIRO app!'
+            title: lang['main'].ErrorInvalidHdr,
+            message: lang['main'].ErrorInvalidMsg
         });
     } else if ( filePath.length > 1 ) {
       log.error('Validation of MIRO app failed due to invalid file path.');
       return showErrorMsg({
             type: 'info',
-            title: 'Invalid MIRO app file',
-            message: 'Please drop only a single MIRO app file!'
+            title: lang['main'].ErrorInvalidHdr,
+            message: lang['main'].ErrorInvalidTwoMsg
         });
     }
     try {
@@ -378,7 +378,7 @@ MIRO version: ${newAppConf.miroversion}.`);
             mainWindow.setProgressBar(-1);
             showErrorMsg({
                 type: 'info',
-                title: 'Invalid app',
+                title: lang['main'].ErrorInvalidThreeMsg,
                 message: errMsgTemplate
             });
             return
@@ -388,10 +388,8 @@ MIRO version: ${newAppConf.miroversion}.`);
             mainWindow.setProgressBar(-1);
             showErrorMsg({
                 type: 'info',
-                title: 'MIRO app incompatible',
-                message: 'The MIRO app you want to add is not compatible \
-with the MIRO version you installed. Please ask the developer of the app \
-to update it and try again!'
+                title: lang['main'].ErrorAPIHdr,
+                message: lang['main'].ErrorAPIMsg
             });
             return;
           }
@@ -413,8 +411,8 @@ to update it and try again!'
       }
       showErrorMsg({
           type: 'error',
-          title: 'Unexpected error',
-          message: `There was a problem reading the MIRO app file. Error message: '${e.message}'`
+          title: lang['main'].ErrorUnexpectedHdr,
+          message: `${lang['main'].ErrorReadMsg} '${e.message}'`
       });
     }
 }
@@ -428,16 +426,16 @@ function validateAppLogo(filePath, id = null){
       log.info('App logo not valid due to bad format.');
       showErrorMsg({
             type: 'info',
-            title: 'Invalid MIRO app logo',
-            message: 'The file you selected is not a valid MIRO logo. Only jpg/jpeg and png supported!'
+            title: lang['main'].ErrorLogoHdr,
+            message: lang['main'].ErrorLogoMsg
         })
        return
     } else if ( filteredPath.length > 1 ) {
       log.info('App logo not valid due to multiple files being dropped.');
       showErrorMsg({
             type: 'info',
-            title: 'Invalid MIRO app logo',
-            message: 'Please drop only a single MIRO app logo!'
+            title: lang['main'].ErrorLogoHdr,
+            message: lang['main'].ErrorLogoMultiMsg
         })
       return
     }
@@ -446,8 +444,8 @@ function validateAppLogo(filePath, id = null){
       log.info(`App logo not valid due to file size being too large (${logoSize}MB)`);
       showErrorMsg({
             type: 'info',
-            title: 'Logo too large',
-            message: 'Logos must not be larger than 10MB!'
+            title: lang['main'].ErrorLogoLargeHdr,
+            message: lang['main'].ErrorLogoLargeMsg
         })
         return
     }
@@ -465,9 +463,8 @@ function addExampleApps(){
   } catch (e) {
      return showErrorMsg({
       type: 'info',
-        title: 'Model exists',
-        message: `A model with the name: ${e} already exists. \
-Please first delete this model before trying again.`
+        title: lang['main'].ErrorModelExistsHdr,
+        message: `${lang['main'].ErrorModelExistsMsg} ${e}`
     });
   }
   fs.copy(path.join(miroResourcePath, 'examples'), 
@@ -478,16 +475,15 @@ ${path.join(miroResourcePath, 'examples')} to: ${appDataPath}. Error mesage: ${e
         if ( e.code === 'EACCES' ) {
          showErrorMsg({
             type: 'error',
-            title: 'No write permissions',
-            message: `Model could not be added as you don't have permissions\
-      to write to this location: '${appDataPath}.'`
+            title: lang['main'].ErrorWriteHdr,
+            message: `${lang['main'].ErrorWriteMsg} '${appDataPath}.'`
           });
          return
         }
         return showErrorMsg({
             type: 'error',
-            title: 'Unexpected error',
-            message: `An unexpected error occurred. Error message: '${e.message}'`});
+            title: lang['main'].ErrorUnexpectedHdr,
+            message: `${lang['main'].ErrorUnexpectedMsg2} '${e.message}'`});
       };
       try {
         exampleAppsData.forEach((exampleApp) => {
@@ -501,16 +497,15 @@ ${path.join(miroResourcePath, 'examples')} to: ${appDataPath}. Error mesage: ${e
         if ( e.code === 'EACCES' ) {
          showErrorMsg({
             type: 'error',
-            title: 'No write permissions',
-            message: `Model could not be added as you don't have permissions\
-    to write to this location: '${configData.getConfigPath()}.'`
+            title: lang['main'].ErrorWriteHdr,
+            message: `${lang['main'].ErrorWriteMsg} '${configData.getConfigPath()}.'`
           });
           return
         }
         return showErrorMsg({
             type: 'error',
-            title: 'Unexpected error',
-            message: `An unexpected error occurred. Error message: '${e.message}'`});
+            title: lang['main'].ErrorUnexpectedHdr,
+            message: `${lang['main'].ErrorUnexpectedMsg2} '${e.message}'`});
       }
   });
 }
@@ -760,8 +755,8 @@ async function createMIROAppWindow(appData) {
     mainWindow.send('hide-loading-screen', appData.id);
     showErrorMsg({
       type: 'info',
-      title: 'App running',
-      message: 'A MIRO process is already running for your app. Currently, only one instance per app can be launched at a time.'
+      title: lang['main'].ErrorAppRunningHdr,
+      message: lang['main'].ErrorAppRunningMsg
     });
     return;
   }
@@ -780,10 +775,8 @@ ${requiredAPIVersion}.`);
     mainWindow.send('hide-loading-screen', appData.id);
     showErrorMsg({
         type: 'info',
-        title: 'MIRO app incompatible',
-        message: 'The MIRO app you want to launch is not compatible \
-with the MIRO version you installed. Please ask the developer of the app \
-to update it and try again!'
+        title: lang['main'].ErrorAPIHdr,
+        message: lang['main'].ErrorAppIncompMsg
     });
     return;
   }
@@ -829,8 +822,8 @@ ${message? `Message: ${message}` : ''}`);
       mainWindow.send('hide-loading-screen', appData.id);
       showErrorMsg({
         type: 'error',
-        title: 'Unexpected error',
-        message: message? message: 'The MIRO app could not be started. Please report to GAMS when this problem persists!'
+        title: lang['main'].ErrorUnexpectedHdr,
+        message: message? message: lang['main'].ErrorUnexpectedMsg
       });
     }
     if ( miroDevelopMode ) {
@@ -934,8 +927,7 @@ ${message? `Message: ${message}` : ''}`);
       });
     })
   } catch (e) {
-    onErrorStartup(appData.id, `Problems launching MIRO app.\
- Error message: ${e.message}.`);
+    onErrorStartup(appData.id, `${lang['main'].ErrorMsgLaunch} ${e.message}.`);
   }
 }
 
@@ -962,9 +954,8 @@ async function searchLibPath (devMode = false) {
         log.error(`Problems reading libPath. Error message: ${e.message}.`);
         showErrorMsg({
           type: 'error',
-          title: 'Unexpected error',
-          message: 'The MIRO installation could not be started. Please check the log files and \
-report to GAMS when this problem persists!'
+          title: lang['main'].ErrorUnexpectedHdr,
+          message: lang['main'].ErrorInstallStartMsg
         });
         return;
       }
@@ -988,9 +979,8 @@ report to GAMS when this problem persists!'
             log.error(`Problems reading libPath. Error message: ${e.message}.`);
             showErrorMsg({
               type: 'error',
-              title: 'Unexpected error',
-              message: 'The MIRO installation could not be started. Please check the log files and \
-report to GAMS when this problem persists!'
+              title: lang['main'].ErrorUnexpectedHdr,
+              message: lang['main'].ErrorInstallStartMsg
             });
             return;
           }
@@ -1000,12 +990,9 @@ report to GAMS when this problem persists!'
         if ( !libsInstalled ) {
           const installType = dialog.showMessageBoxSync(mainWindow, {
             type: 'info',
-            title: 'Installation',
-            message: `You don't have permissions to install libraries inside: \
-${libPath}. \nWould you like to install MIRO locally instead (${libPathTmp})?\n \
-In case you want to install MIRO globally, consider starting AppImage with sudo and --no-sandbox flag: \
-sudo ./GAMS-MIRO-${miroVersion}.AppImage --no-sandbox`,
-            buttons: ['Yes, local installation', 'No, quit']
+            title: lang['main'].ErrorInstallPermHdr,
+            message: `${lang['main'].ErrorInstallPerm1Msg} ${libPath}${lang['main'].ErrorInstallPerm2Msg} (${libPathTmp})${lang['main'].ErrorInstallPerm3Msg}${miroVersion}${lang['main'].ErrorInstallPerm4Msg}`,
+            buttons: [lang['main'].ErrorInstallPermBtnYes, lang['main'].ErrorInstallPermBtnNo]
           });
           if ( installType === 1 ) {
             app.exit(0);
@@ -1017,9 +1004,8 @@ sudo ./GAMS-MIRO-${miroVersion}.AppImage --no-sandbox`,
             log.error(`Problems creating libPath: ${libPathTmp}. Error message: ${e.message}.`);
             showErrorMsg({
               type: 'error',
-              title: 'Unexpected error',
-              message: 'The MIRO installation could not be started. Please check the log files and \
-report to GAMS when this problem persists!'
+              title: lang['main'].ErrorUnexpectedHdr,
+              message: lang['main'].ErrorInstallStartMsg
             });
             return;
           }
@@ -1094,23 +1080,21 @@ ipcMain.on('add-app', (e, app) => {
      if ( e.message === 'DuplicatedId' ) {
       showErrorMsg({
         type: 'info',
-          title: 'Model exists',
-          message: 'A model with the same name already exists. \
-Please first delete this model before trying again.'
+          title: lang['main'].ErrorModelExistsHdr,
+          message: lang['main'].ErrorModelExistsMsg2
       });
       return
      } else if ( e.code === 'EACCES' ) {
       showErrorMsg({
             type: 'error',
-            title: 'No write permissions',
-            message: `Model could not be saved as you don't have permissions\
- to write to this location: '${configData.getConfigPath()}.'`})
+            title: lang['main'].ErrorWriteHdr,
+            message: `${lang['main'].ErrorWritePerm2Msg} '${configData.getConfigPath()}.'`})
       return
      }
      showErrorMsg({
         type: 'error',
-        title: 'Unexpected error',
-        message: `An unexpected error occurred. Error message: '${e.message}'`});
+        title: lang['main'].ErrorUnexpectedHdr,
+        message: `${lang['main'].ErrorUnexpectedMsg2} '${e.message}'`});
      return
   }
 });
@@ -1140,16 +1124,15 @@ ipcMain.on('update-app', (e, app) => {
     if ( e.code === 'EACCES' ) {
       showErrorMsg({
         type: 'error',
-        title: 'No write permissions',
-        message: `Model could not be updated as you don't have permissions\
- to write to this location: '${configData.getConfigPath()}.'`
+        title: lang['main'].ErrorWriteHdr,
+        message: `${lang['main'].ErrorNoWritePermMsg} '${configData.getConfigPath()}.'`
       });
       return
      }
      showErrorMsg({
       type: 'error',
-        title: 'Unexpected error',
-        message: `An unexpected error occurred. Error message: '${e.message}'`
+        title: lang['main'].ErrorUnexpectedHdr,
+        message: `${lang['main'].ErrorUnexpectedMsg2} '${e.message}'`
       });
      return
   }
@@ -1168,11 +1151,9 @@ ipcMain.on('update-app', (e, app) => {
         dialog.showMessageBoxSync(settingsWindow, 
         {
           type: 'error',
-          title: `${idUpper} path invalid`,
-          message: `The path you selected is not a valid ${idUpper} path. \
-Note that in order to run MIRO at least ${idUpper} version \
-${configData.getMinimumVersion(el)} is required.`,
-          buttons: ['OK']
+          title: `${idUpper} ${lang['main'].ErrorInvalidPathHdr}`,
+          message: `${idUpper}${lang['main'].ErrorInvalidPathMsg} ${configData.getMinimumVersion(el)}`,
+          buttons: [lang['main'].BtnOk]
         });
       }
     } catch (e) {
@@ -1181,10 +1162,9 @@ ${configData.getMinimumVersion(el)} is required.`,
          dialog.showMessageBoxSync(settingsWindow, 
         {
           type: 'error',
-          title: 'Unexpected error',
-          message: `An unexpected error occurred while validating the ${idUpper} path you selected. \
-    Error message: ${e.message}.`,
-          buttons: ['OK']
+          title: lang['main'].ErrorUnexpectedHdr,
+          message: `${lang['main'].ErrorInvalidPathMsg2} ${idUpper} ${lang['main'].ErrorMessage} ${e.message}.`,
+          buttons: [lang['main'].BtnOk]
         });
        }
     }
@@ -1200,9 +1180,9 @@ ipcMain.on('save-general-config', async (e, newConfigData, needRestart) => {
         if ( dialog.showMessageBoxSync(settingsWindow, 
         {
           type: 'info',
-          title: 'Configuration updated',
-          message: 'Your configuration was successfully updated. MIRO must be restarted for your changes to take effect. Do you want to restart MIRO now?',
-          buttons: ['Cancel', 'OK']
+          title: lang['main'].SuccessUpdateHdr,
+          message: lang['main'].SuccessUpdateMsg,
+          buttons: [lang['main'].BtnCancel, lang['main'].BtnOk]
         }) === 1 ) {
           app.relaunch();
           app.exit();
@@ -1214,9 +1194,9 @@ ipcMain.on('save-general-config', async (e, newConfigData, needRestart) => {
         dialog.showMessageBoxSync(settingsWindow, 
            {
              type: 'info',
-             title: 'Configuration updated',
-             message: 'Your configuration has been updated successfully.',
-             buttons: ['OK']
+             title: lang['main'].SuccessUpdateHdr,
+             message: lang['main'].SuccessUpdateMsg2,
+             buttons: [lang['main'].BtnOk]
            });
       }
     }
@@ -1226,10 +1206,9 @@ ipcMain.on('save-general-config', async (e, newConfigData, needRestart) => {
       dialog.showMessageBoxSync(settingsWindow, 
       {
         type: 'error',
-        title: 'Unexpected error',
-        message: `Configuration data could not be saved.\
- Do you miss write permissions in this location: ${configData.getConfigPath()}?`,
-        buttons: ['OK']
+        title: lang['main'].ErrorUnexpectedHdr,
+        message: `${lang['main'].ErrorUnexpectedWriteMsg} ${configData.getConfigPath()}?`,
+        buttons: [lang['main'].BtnOk]
       })
     } 
   }
@@ -1243,8 +1222,8 @@ ipcMain.on('validate-logo', (e, filePath, id) => {
 ipcMain.on('delete-app', async (e, appId) => {
   log.debug(`Delete app (ID: ${appId}) request received`);
   const deleteAppConfirmedId = dialog.showMessageBoxSync(mainWindow, {
-   buttons: [ 'Remove', 'Cancel' ],
-   message: 'Are you sure you want to permanently remove the app?'
+   buttons: [ lang['main'].BtnRemove, lang['main'].BtnCancel ],
+   message: lang['main'].DeleteMsg
   });
   if ( deleteAppConfirmedId !== 0 ) {
     return
@@ -1260,9 +1239,8 @@ ipcMain.on('delete-app', async (e, appId) => {
     if ( e.code === 'EACCES' ) {
       showErrorMsg({
             type: 'error',
-            title: 'No write permissions',
-            message: `Model could not be removed as you don't have permissions\
- to write to this location: '${configData.getConfigPath()}.'`
+            title: lang['main'].ErrorWriteHdr,
+            message: `${lang['main'].ErrorWriteMsg2} '${configData.getConfigPath()}.'`
           });
      return
      }
@@ -1298,9 +1276,9 @@ app.on('ready', async () => {
   if ( errMsg ) {
     dialog.showMessageBoxSync({
       type: 'error',
-      title: 'Error initialising MIRO',
+      title: lang['main'].ErrorInit,
       message: errMsg,
-      buttons: [ 'OK' ]
+      buttons: [ lang['main'].BtnOk ]
     });
     app.quit();
     return;
@@ -1336,8 +1314,8 @@ app.on('ready', async () => {
     if ( !rPackagesInstalled ){
       showErrorMsg({
         type: 'error',
-        title: 'Failed to install R packages',
-        message: 'The R packages required to run MIRO could not be installed. Check log file for more information.'
+        title: lang['main'].ErrorRInstallHdr,
+        message: lang['main'].ErrorRInstallMsg
       });
       app.exit(1);
       return;
@@ -1345,9 +1323,8 @@ app.on('ready', async () => {
     if ( !modelPath ) {
       showErrorMsg({
         type: 'error',
-        title: 'No model path',
-        message: 'You need to specify the path to the main gms file via\
- the environment variable: MIRO_MODEL_PATH'
+        title: lang['main'].ErrorModelPathHdr,
+        message: lang['main'].ErrorModelPathMsg
       });
       app.exit(1);
       return;

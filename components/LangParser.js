@@ -48,6 +48,221 @@ const schema = {
        "type":"object",
        "additionalProperties":false,
        "properties":{
+           "ErrorUnexpectedHdr": {
+               "type":"string",
+               "minLength":1
+           }, 
+           "ErrorUnexpectedMsg": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorUnexpectedMsg2": {
+               "type":"string",
+               "minLength":1
+           },
+           "BtnCancel": {
+               "type":"string",
+               "minLength":1
+           },
+           "BtnOk": {
+               "type":"string",
+               "minLength":1
+           },
+           "BtnRemove": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorInvalidHdr": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorInvalidMsg": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorInvalidTwoMsg": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorInvalidThreeMsg": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorAPIHdr": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorAPIMsg": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorReadMsg": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorLogoHdr": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorLogoMsg": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorLogoMultiMsg": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorLogoLargeHdr": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorLogoLargeMsg": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorModelExistsHdr": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorModelExistsMsg": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorModelExistsMsg2": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorWriteHdr": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorWriteMsg": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorWriteMsg2": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorAppRunningHdr": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorAppRunningMsg": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorAppIncompMsg": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorMsgLaunch": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorInstallStartMsg": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorInstallPermHdr": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorInstallPerm1Msg": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorInstallPerm2Msg": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorInstallPerm3Msg": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorInstallPerm4Msg": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorInstallPermBtnYes": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorInstallPermBtnNo": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorWritePerm2Msg": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorNoWritePermMsg": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorInvalidPathHdr": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorInvalidPathMsg": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorInvalidPathMsg2": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorMessage": {
+               "type":"string",
+               "minLength":1
+           },
+           "SuccessUpdateHdr": {
+               "type":"string",
+               "minLength":1
+           },
+           "SuccessUpdateMssg": {
+               "type":"string",
+               "minLength":1
+           },
+           "SuccessUpdateMsg2": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorUnexpectedWriteMsg": {
+               "type":"string",
+               "minLength":1
+           },
+           "DeleteMsg": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorInit": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorRInstallHdr": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorRInstallMsg": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorModelPathHdr": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorModelPathMsg": {
+               "type":"string",
+               "minLength":1
+           }
+         },
+         "required": ["ErrorUnexpectedHdr", "ErrorUnexpectedMsg", "ErrorUnexpectedMsg2", "BtnCancel", "BtnOk", "BtnRemove", "ErrorInvalidHdr", "ErrorInvalidMsg", "ErrorInvalidTwoMsg", "ErrorInvalidThreeMsg", "ErrorAPIHdr", "ErrorAPIMsg", "ErrorReadMsg","ErrorLogoHdr", "ErrorLogoMsg", "ErrorLogoMultiMsg", "ErrorLogoLargeHdr", "ErrorLogoLargeMsg", "ErrorModelExistsHdr", "ErrorModelExistsMsg", "ErrorModelExistsMsg2", "ErrorWriteHdr", "ErrorWriteMsg", "ErrorWriteMsg2", "ErrorAppRunningHdr", "ErrorAppRunningMsg", "ErrorAppIncompMsg", "ErrorMsgLaunch", "ErrorInstallStartMsg", "ErrorInstallPermHdr", "ErrorInstallPerm1Msg", "ErrorInstallPerm2Msg", "ErrorInstallPerm3Msg", "ErrorInstallPerm4Msg", "ErrorInstallPermBtnYes", "ErrorInstallPermBtnNo", "ErrorWritePerm2Msg", "ErrorNoWritePermMsg", "ErrorInvalidPathHdr", "ErrorInvalidPathMsg", "ErrorInvalidPathMsg2", "ErrorMessage", "SuccessUpdateHdr", "SuccessUpdateMssg", "SuccessUpdateMsg2", "ErrorUnexpectedWriteMsg", "DeleteMsg", "ErrorInit", "ErrorRInstallHdr", "ErrorRInstallMsg", "ErrorModelPathHdr", "ErrorModelPathMsg"]
+     },
+     "general":{
+       "type":"object",
+       "additionalProperties":false,
+       "properties":{
            "title": {
                "type":"string",
                "minLength":1
@@ -502,23 +717,77 @@ const schema = {
                "minLength":1
            }
          },
-         "required": ["title"]
+         "required": ["title", "general-tab", "paths-tab", "launchBrowser", "browserReset", "generalLanguage", "languageReset", "generalLogging", "loggingReset", "generalLoglife", "loglifeReset", "pathMiroapp", "pathMiroappSelect", "resetPathMiroapp", "pathGams", "pathGamsSelect", "pathGamsReset", "pathLog", "pathLogSelect", "pathLogReset", "pathR", "pathRSelect", "pathRReset", "needHelp", "btSave", "btCancel", "dialogConfigPathHdr", "dialogConfigPathMsg", "dialogConfigPathBtn", "dialogConfigPathLabel", "dialogGamsPathHdr", "dialogGamsPathMsg", "dialogGamsPathLabel", "dialogGamsPathBtn", "dialogRPathHdr", "dialogRPathMsg", "dialogRPathLabel", "dialogRPathBtn", "dialogLogPathHdr", "dialogLogPathMsg", "dialogLogPathLabel", "dialogLogPathBtn", "dialogLogLifeErrHdr", "dialogLogLifeErrMsg", "dialogLogLifeErrBtn", "browseFiles"]
       }
    },
-   "required": ["update", "main", "menu", "settings"]
+   "required": ["update", "main", "general", "menu", "settings"]
 }
 
 const en = {
     "update": {
-      "title": "Check for Update",
-      "updateAvailable": "A new version of GAMS MIRO is available:",
-      "downloadUpdate": "You can download this version",
-      "here": "here",
-      "upToDate": "You are using the latest version of GAMS MIRO.",
-      "error": "An unexpected error has occurred. Please try again later.",
-      "btClose": "Ok"
+        "title": "Check for Update",
+        "updateAvailable": "A new version of GAMS MIRO is available:",
+        "downloadUpdate": "You can download this version",
+        "here": "here",
+        "upToDate": "You are using the latest version of GAMS MIRO.",
+        "error": "An unexpected error has occurred. Please try again later.",
+        "btClose": "Ok"
     },
     "main": {
+        "ErrorUnexpectedHdr": "Unexpected error",
+        "ErrorUnexpectedMsg": "The MIRO app could not be started. Please report to GAMS when this problem persists!",
+        "ErrorUnexpectedMsg2": "An unexpected error occurred. Error message:",
+        "ErrorMsgLaunch": "Problems launching MIRO app. Error message:",
+        "ErrorInvalidHdr": "Invalid MIRO app file",
+        "ErrorInvalidMsg": "The file you selected is not a valid MIRO app!",
+        "ErrorInvalidTwoMsg": "Please drop only a single MIRO app file!",
+        "ErrorInvalidThreeMsg": "Invalid app",
+        "ErrorAPIHdr": "MIRO app incompatible",
+        "ErrorAPIMsg": "The MIRO app you want to add is not compatible with the MIRO version you installed. Please ask the developer of the app to update it and try again!",
+        "ErrorAppIncompMsg": "The MIRO app you want to launch is not compatible with the MIRO version you installed. Please ask the developer of the app to update it and try again!",
+        "ErrorReadMsg": "There was a problem reading the MIRO app file. Error message:",
+        "ErrorLogoHdr": "Invalid MIRO app logo",
+        "ErrorLogoMsg": "The file you selected is not a valid MIRO logo. Only jpg/jpeg and png supported!",
+        "ErrorLogoMultiMsg": "Please drop only a single MIRO app logo!",
+        "ErrorLogoLargeHdr": "Logo too large",
+        "ErrorLogoLargeMsg": "Logos must not be larger than 10MB!",
+        "ErrorModelExistsHdr": "Model exists",
+        "ErrorModelExistsMsg": "A model with the same name already exists. Please first delete this model before trying again. Model name:",
+        "ErrorModelExistsMsg2": "A model with the same name already exists. Please first delete this model before trying again.",
+        "ErrorWriteHdr": "No write permissions",
+        "ErrorWriteMsg": "Model could not be added as you don't have permissions to write to this location:",
+        "ErrorWriteMsg2": "Model could not be removed as you don't have permissions to write to this location:",
+        "ErrorWritePerm2Msg": "Model could not be saved as you don't have permissions to write to this location:",
+        "ErrorNoWritePermMsg": "Model could not be updated as you don't have permissions to write to this location:",
+        "ErrorAppRunningHdr": "App running",
+        "ErrorAppRunningMsg": "A MIRO process is already running for your app. Currently, only one instance per app can be launched at a time.",
+        "ErrorInstallStartMsg": "The MIRO installation could not be started. Please check the log files and report to GAMS when this problem persists!",
+        "ErrorInstallPermHdr": "Installation",
+        "ErrorInstallPerm1Msg": "You don't have permissions to install libraries inside here:",
+        "ErrorInstallPerm2Msg": ". \nWould you like to install MIRO locally instead",
+        "ErrorInstallPerm3Msg": "?\n In case you want to install MIRO globally, consider starting AppImage with sudo and --no-sandbox flag: sudo ./GAMS-MIRO-",
+        "ErrorInstallPerm4Msg": ".AppImage --no-sandbox",
+        "ErrorInstallPermBtnYes": "Yes, local installation",
+        "ErrorInstallPermBtnNo": "No, quit",
+        "ErrorInvalidPathHdr": "path invalid",
+        "ErrorInvalidPathMsg": ": The path you selected is not a valid path. Note that in order to run MIRO at least the following version is required: ",
+        "ErrorInvalidPathMsg2": "An unexpected error occurred while validating the path you selected:",
+        "ErrorMessage": "Error message:",
+        "SuccessUpdateHdr": "Configuration updated",
+        "SuccessUpdateMssg": "Your configuration was successfully updated. MIRO must be restarted for your changes to take effect. Do you want to restart MIRO now?",
+        "SuccessUpdateMsg2": "Your configuration has been updated successfully.",
+        "ErrorUnexpectedWriteMsg": "Configuration data could not be saved. Do you miss write permissions in this location:",
+        "DeleteMsg": "Are you sure you want to permanently remove the app?",
+        "ErrorInit": "Error initialising MIRO",
+        "ErrorRInstallHdr": "Failed to install R packages",
+        "ErrorRInstallMsg": "The R packages required to run MIRO could not be installed. Check log file for more information.",
+        "ErrorModelPathHdr": "No model path",
+        "ErrorModelPathMsg": "You need to specify the path to the main gms file via the environment variable: MIRO_MODEL_PATH",
+        "BtnCancel": "Cancel",
+        "BtnOk": "OK",
+        "BtnRemove": "Remove"
+    },
+    "general": {
         "title": "MIRO Library",
         "noApps": "No apps",
         "btEdit": "Edit", 
@@ -535,7 +804,6 @@ const en = {
         "btLaunchHcube": "Hypercube mode",
         "btCancel": "Cancel",
         "btSave": "Save",
-        "btCancel": "Cancel",
         "btAddApp": "Add app",
         "errNoAppTitleHdr": "No title",
         "errNoAppTitleMsg": "Please enter a title for your MIRO app!",
@@ -611,6 +879,7 @@ const en = {
         "pathRReset": "Reset to default", 
         "needHelp": "Need help?", 
         "btSave": "Apply",
+        "btCancel": "Abbrechen",
         "dialogConfigPathHdr": "Select MIRO app path",
         "dialogConfigPathMsg": "Please select your MIRO app directory.",
         "dialogConfigPathBtn": "Select",
@@ -636,15 +905,69 @@ log file should be stored is invalid! Please enter only whole numbers!",
 }
 const de = {
     "update": {
-      "title": "Auf Update prüfen",
-      "updateAvailable": "Eine neue Version von GAMS MIRO ist verfügbar:",
-      "downloadUpdate": "Die neuste Version von GAMS MIRO finden Sie",
-      "here": "hier",
-      "upToDate": "Sie benutzen die neueste Version von GAMS MIRO.",
-      "error": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es später noch einmal.",
-      "btClose": "Ok"
+        "title": "Auf Update prüfen",
+        "updateAvailable": "Eine neue Version von GAMS MIRO ist verfügbar:",
+        "downloadUpdate": "Die neuste Version von GAMS MIRO finden Sie",
+        "here": "hier",
+        "upToDate": "Sie benutzen die neueste Version von GAMS MIRO.",
+        "error": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es später noch einmal.",
+        "btClose": "Ok"
     },
     "main": {
+        "ErrorUnexpectedHdr": "Unerwarteter Fehler",
+        "ErrorUnexpectedMsg": "Die MIRO-App konnte nicht gestartet werden. Bitte kontaktieren Sie GAMS, wenn dieses Problem weiterhin besteht!",
+        "ErrorUnexpectedMsg2": "Ein unerwarteter Fehler ist aufgetreten. Fehlermeldung:",
+        "ErrorMsgLaunch": "Probleme beim Start der MIRO-App. Fehlermeldung:",
+        "ErrorInvalidHdr": "Ungültige MIRO-App-Datei",
+        "ErrorInvalidMsg": "Die von Ihnen ausgewählte Datei ist keine gültige MIRO-App!",
+        "ErrorInvalidTwoMsg": "Bitte legen Sie nur eine einzige MIRO-App-Datei ab!",
+        "ErrorInvalidThreeMsg": "Ungültige App",
+        "ErrorAPIHdr": "MIRO-App nicht kompatibel",
+        "ErrorAPIMsg": "Die MIRO-App, die Sie hinzufügen möchten, ist nicht mit der installierten MIRO-Version kompatibel. Bitte fragen Sie den Entwickler der App, diese zu aktualisieren und versuchen Sie es erneut!",
+        "ErrorAppIncompMsg": "Die zu startende MIRO-App ist nicht mit der installierten MIRO-Version kompatibel. Bitte fragen Sie den Entwickler der App ein Update durchzuführen und versuchen Sie es erneut!",
+        "ErrorReadMsg": "Es gab ein Problem beim Lesen der MIRO-App-Datei. Fehlermeldung:",
+        "ErrorLogoHdr": "Ungültiges MIRO-App-Logo",
+        "ErrorLogoMsg": "Die von Ihnen ausgewählte Datei ist kein gültiges MIRO-Logo. Es werden nur jpg/jpeg und png unterstützt!",
+        "ErrorLogoMultiMsg": "Bitte legen Sie nur ein einzelnes MIRO-App-Logo ab!",
+        "ErrorLogoLargeHdr": "Logo zu groß",
+        "ErrorLogoLargeMsg": "Logos dürfen nicht größer als 10MB sein!",
+        "ErrorModelExistsHdr": "Modell existiert bereits",
+        "ErrorModelExistsMsg": "Ein Modell mit dem gleichen Namen existiert bereits. Bitte löschen Sie zuerst dieses Modell, bevor Sie es erneut versuchen. Name des Modells:",
+        "ErrorModelExistsMsg2": "Ein Modell mit dem gleichen Namen existiert bereits. Bitte löschen Sie zuerst dieses Modell, bevor Sie es erneut versuchen.",
+        "ErrorWriteHdr": "Keine Schreibrechte",
+        "ErrorWriteMsg": "Das Modell konnte nicht hinzugefügt werden, da Sie keine Berechtigungen zum Schreiben in diesem Verzeichnis haben:",
+        "ErrorWriteMsg2": "Das Modell konnte nicht entfernt werden, da Sie keine Berechtigungen zum Schreiben in diesem Verzeichnis haben:",
+        "ErrorWritePerm2Msg": "Das Modell konnte nicht gespeichert werden, da Sie keine Berechtigungen zum Schreiben in diesem Verzeichnis haben:",
+        "ErrorNoWritePermMsg": "Das Modell konnte nicht aktualisiert werden, da Sie keine Berechtigungen zum Schreiben in diesem Verzeichnis haben:",
+        "ErrorAppRunningHdr": "Anwendung läuft",
+        "ErrorAppRunningMsg": "Für Ihre App läuft bereits ein MIRO-Prozess. Derzeit kann nur eine Instanz pro App gleichzeitig gestartet werden.",
+        "ErrorInstallStartMsg": "Die MIRO-Installation konnte nicht gestartet werden. Bitte überprüfen Sie die Log-Dateien und kontaktieren Sie GAMS, wenn das Problem weiterhin besteht!",
+        "ErrorInstallPermHdr": "Installation",
+        "ErrorInstallPerm1Msg": "Sie haben keine Berechtigungen zur Installation von Bibliotheken in diesem Verzeichnis:",
+        "ErrorInstallPerm2Msg": ". \nMöchten Sie MIRO stattdessen lokal installieren",
+        "ErrorInstallPerm3Msg": "?\n Falls Sie MIRO global installieren wollen, dann sollten Sie das AppImage starten mit sudo und --no-sandbox Flag: sudo ./GAMS-MIRO-",
+        "ErrorInstallPerm4Msg": ".AppImage --no-sandbox",
+        "ErrorInstallPermBtnYes": "Ja, lokale Installation",
+        "ErrorInstallPermBtnNo": "Nein, beenden",
+        "ErrorInvalidPathHdr": "Pfad ungültig",
+        "ErrorInvalidPathMsg": ": Der von Ihnen gewählte Pfad ist kein gültiger Pfad. Beachten Sie, dass für den Betrieb von MIRO mindestens die folgende Version benötigt wird: ",
+        "ErrorInvalidPathMsg2": "Bei der Validierung des ausgewählten Pfades ist ein unerwarteter Fehler aufgetreten. Pfad:",
+        "ErrorMessage": "Fehlermeldung:",
+        "SuccessUpdateHdr": "Konfiguration aktualisiert",
+        "SuccessUpdateMssg": "Ihre Konfiguration wurde erfolgreich aktualisiert. MIRO muss neu gestartet werden, damit Ihre Änderungen wirksam werden. Wollen Sie MIRO jetzt neu starten?",
+        "SuccessUpdateMsg2": "Ihre Konfiguration wurde erfolgreich aktualisiert.",
+        "ErrorUnexpectedWriteMsg": "Konfigurationsdaten konnten nicht gespeichert werden. Fehlen Ihnen an dieser Stelle Schreibrechte:",
+        "DeleteMsg": "Sind Sie sicher, dass Sie die App dauerhaft entfernen möchten?",
+        "ErrorInit": "Fehler bei der Initialisierung von MIRO",
+        "ErrorRInstallHdr": "Installation von R Paketen fehlgeschlagen",
+        "ErrorRInstallMsg": "Die zum Betrieb von MIRO erforderlichen R Pakete konnten nicht installiert werden. Prüfen Sie die Logdatei für weitere Informationen.",
+        "ErrorModelPathHdr": "Kein Modellpfad",
+        "ErrorModelPathMsg": "Sie müssen den Pfad zur Haupt .gms Datei über die Umgebungsvariable angeben: MIRO_MODEL_PATH",
+        "BtnCancel": "Abbrechen",
+        "BtnOk": "OK",
+        "BtnRemove": "Entfernen"
+    },
+    "general": {
         "title": "MIRO Bibliothek",
         "noApps": "Keine Apps",
         "btEdit": "Bearbeiten", 

@@ -7,7 +7,7 @@ const fs = require('fs');
 window.Bootstrap = require('bootstrap');
 const $ = require('jquery');
 
-let lang = remote.getGlobal('lang').main;
+let lang = remote.getGlobal('lang').general;
 const btRemoveConfirm = document.getElementById('btRemoveModel');
 const appsWrapper = $('#appsWrapper');
 const noAppsNotice = $('#noAppsDiv');
