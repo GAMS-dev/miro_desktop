@@ -12,7 +12,7 @@ const log = require('electron-log');
 const menu = require('./components/menu.js');
 const installRPackages = require('./components/install-r.js');
 const requiredAPIVersion = 1;
-const miroVersion = '0.9.33';
+const miroVersion = '0.9.34';
 const libVersion = '1.0';
 const exampleAppsData = [
   {
@@ -203,7 +203,7 @@ const tryStartWebserver = async (progressCallback, onErrorStartup,
       'R_LIBS_SITE': libPath,
       'R_LIB_PATHS': libPath,
       'NODEBUG': !miroDevelopMode,
-      'MIRO_USE_TMP': appData.usetmpdir,
+      'MIRO_USE_TMP': appData.usetmpdir || appData.mode === 'hcube',
       'DBPATH': appData.dbPath,
       'MIRO_BUILD': miroBuildMode,
       'MIRO_BUILD_ARCHIVE':  appData.buildArchive === 'true',
@@ -348,7 +348,8 @@ function validateMIROApp ( filePath ) {
                   newAppConf.modesAvailable.push('hcube');
                 } else {
                   log.debug('Base mode configuration in new MIRO app found.');
-                  newAppConf.modesAvailable.push('base')
+                  newAppConf.modesAvailable.push('base');
+                  newAppConf.usetmpdir = miroConfMatch[2] === '1';
                 }
                 if ( newAppConf.id ) {
                   skipCnt++
@@ -356,7 +357,6 @@ function validateMIROApp ( filePath ) {
                 }
                 newAppConf.path = filePath[0];
                 newAppConf.id = miroConfMatch[1];
-                newAppConf.usetmpdir = miroConfMatch[2] === '1';
                 newAppConf.apiversion = parseInt(miroConfMatch[3], 10);
                 newAppConf.miroversion = miroConfMatch[4];
                 log.info(`New MIRO app successfully identified. Id: ${newAppConf.path}, \
@@ -1337,7 +1337,7 @@ app.on('ready', async () => {
       usetmpdir: process.env.MIRO_USE_TMP ? process.env.MIRO_USE_TMP: false,
       apiversion: requiredAPIVersion,
       miroversion: miroVersion,
-      buildArchive: process.env.MIRO_BUILD_ARCHIVE
+      buildArchive: process.env.MIRO_BUILD_ARCHIVE !== 'false'
     });
   } else {
     createMainWindow();

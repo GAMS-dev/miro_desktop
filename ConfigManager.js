@@ -8,7 +8,7 @@ const which = require('which');
 const execa = require('execa');
 const { tmpdir } = require('os');
 
-const minGams = '30.0';
+const minGams = '30.1';
 const minR = '3.6';
 const gamsDirNameRegex = /^(GAMS)?(\d+\.\d+)$/;
 
