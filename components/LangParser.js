@@ -220,7 +220,7 @@ const schema = {
                "type":"string",
                "minLength":1
            },
-           "SuccessUpdateMssg": {
+           "SuccessUpdateMsg": {
                "type":"string",
                "minLength":1
            },
@@ -257,7 +257,7 @@ const schema = {
                "minLength":1
            }
          },
-         "required": ["ErrorUnexpectedHdr", "ErrorUnexpectedMsg", "ErrorUnexpectedMsg2", "BtnCancel", "BtnOk", "BtnRemove", "ErrorInvalidHdr", "ErrorInvalidMsg", "ErrorInvalidTwoMsg", "ErrorInvalidThreeMsg", "ErrorAPIHdr", "ErrorAPIMsg", "ErrorReadMsg","ErrorLogoHdr", "ErrorLogoMsg", "ErrorLogoMultiMsg", "ErrorLogoLargeHdr", "ErrorLogoLargeMsg", "ErrorModelExistsHdr", "ErrorModelExistsMsg", "ErrorModelExistsMsg2", "ErrorWriteHdr", "ErrorWriteMsg", "ErrorWriteMsg2", "ErrorAppRunningHdr", "ErrorAppRunningMsg", "ErrorAppIncompMsg", "ErrorMsgLaunch", "ErrorInstallStartMsg", "ErrorInstallPermHdr", "ErrorInstallPerm1Msg", "ErrorInstallPerm2Msg", "ErrorInstallPerm3Msg", "ErrorInstallPerm4Msg", "ErrorInstallPermBtnYes", "ErrorInstallPermBtnNo", "ErrorWritePerm2Msg", "ErrorNoWritePermMsg", "ErrorInvalidPathHdr", "ErrorInvalidPathMsg", "ErrorInvalidPathMsg2", "ErrorMessage", "SuccessUpdateHdr", "SuccessUpdateMssg", "SuccessUpdateMsg2", "ErrorUnexpectedWriteMsg", "DeleteMsg", "ErrorInit", "ErrorRInstallHdr", "ErrorRInstallMsg", "ErrorModelPathHdr", "ErrorModelPathMsg"]
+         "required": ["ErrorUnexpectedHdr", "ErrorUnexpectedMsg", "ErrorUnexpectedMsg2", "BtnCancel", "BtnOk", "BtnRemove", "ErrorInvalidHdr", "ErrorInvalidMsg", "ErrorInvalidTwoMsg", "ErrorInvalidThreeMsg", "ErrorAPIHdr", "ErrorAPIMsg", "ErrorReadMsg","ErrorLogoHdr", "ErrorLogoMsg", "ErrorLogoMultiMsg", "ErrorLogoLargeHdr", "ErrorLogoLargeMsg", "ErrorModelExistsHdr", "ErrorModelExistsMsg", "ErrorModelExistsMsg2", "ErrorWriteHdr", "ErrorWriteMsg", "ErrorWriteMsg2", "ErrorAppRunningHdr", "ErrorAppRunningMsg", "ErrorAppIncompMsg", "ErrorMsgLaunch", "ErrorInstallStartMsg", "ErrorInstallPermHdr", "ErrorInstallPerm1Msg", "ErrorInstallPerm2Msg", "ErrorInstallPerm3Msg", "ErrorInstallPerm4Msg", "ErrorInstallPermBtnYes", "ErrorInstallPermBtnNo", "ErrorWritePerm2Msg", "ErrorNoWritePermMsg", "ErrorInvalidPathHdr", "ErrorInvalidPathMsg", "ErrorInvalidPathMsg2", "ErrorMessage", "SuccessUpdateHdr", "SuccessUpdateMsg", "SuccessUpdateMsg2", "ErrorUnexpectedWriteMsg", "DeleteMsg", "ErrorInit", "ErrorRInstallHdr", "ErrorRInstallMsg", "ErrorModelPathHdr", "ErrorModelPathMsg"]
      },
      "general":{
        "type":"object",
@@ -774,7 +774,7 @@ const en = {
         "ErrorInvalidPathMsg2": "An unexpected error occurred while validating the path you selected:",
         "ErrorMessage": "Error message:",
         "SuccessUpdateHdr": "Configuration updated",
-        "SuccessUpdateMssg": "Your configuration was successfully updated. MIRO must be restarted for your changes to take effect. Do you want to restart MIRO now?",
+        "SuccessUpdateMsg": "Your configuration was successfully updated. MIRO must be restarted for your changes to take effect. Do you want to restart MIRO now?",
         "SuccessUpdateMsg2": "Your configuration has been updated successfully.",
         "ErrorUnexpectedWriteMsg": "Configuration data could not be saved. Do you miss write permissions in this location:",
         "DeleteMsg": "Are you sure you want to permanently remove the app?",
@@ -954,7 +954,7 @@ const de = {
         "ErrorInvalidPathMsg2": "Bei der Validierung des ausgewählten Pfades ist ein unerwarteter Fehler aufgetreten. Pfad:",
         "ErrorMessage": "Fehlermeldung:",
         "SuccessUpdateHdr": "Konfiguration aktualisiert",
-        "SuccessUpdateMssg": "Ihre Konfiguration wurde erfolgreich aktualisiert. MIRO muss neu gestartet werden, damit Ihre Änderungen wirksam werden. Wollen Sie MIRO jetzt neu starten?",
+        "SuccessUpdateMsg": "Ihre Konfiguration wurde erfolgreich aktualisiert. MIRO muss neu gestartet werden, damit Ihre Änderungen wirksam werden. Wollen Sie MIRO jetzt neu starten?",
         "SuccessUpdateMsg2": "Ihre Konfiguration wurde erfolgreich aktualisiert.",
         "ErrorUnexpectedWriteMsg": "Konfigurationsdaten konnten nicht gespeichert werden. Fehlen Ihnen an dieser Stelle Schreibrechte:",
         "DeleteMsg": "Sind Sie sicher, dass Sie die App dauerhaft entfernen möchten?",
