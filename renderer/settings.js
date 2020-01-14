@@ -11,6 +11,7 @@ const cbLaunchExternal = $('#launchExternal');
 const inputLogLifetime = $('#logLifeTime');
 const inputLanguage    = $('#language');
 const inputLogLevel    = $('#logLevel');
+const saveButton       = $('#btSave');
 
 const lang = remote.getGlobal('lang').settings;
 ['title', 'general-tab', 'paths-tab', 'launchBrowser', 'browserReset', 'generalLanguage', 'languageReset', 'generalLogging', 'loggingReset', 'generalLoglife', 'loglifeReset', 'pathMiroapp', 'pathMiroappSelect', 'resetPathMiroapp', 'pathGams', 'pathGamsSelect', 'pathGamsReset', 'pathLog', 'pathLogSelect', 'pathLogReset', 'pathR', 'pathRSelect', 'pathRReset', 'needHelp', 'btSave'].forEach(id => {
@@ -76,8 +77,13 @@ const pathConfig = [
     }
 ];
 
+[inputLogLifetime, inputLanguage, inputLogLevel, cbLaunchExternal].forEach(el => {
+    el.on('change', () => {
+        saveButton.attr('disabled', false);
+    });
+});
 
-$('#btSave').on('click', (e) => {
+saveButton.on('click', (e) => {
     if ( pathValidating === true ) {
         return;
     }
@@ -107,6 +113,7 @@ $('#btSave').on('click', (e) => {
         requireRestart = true;
     }
     newConfig.logLevel    = inputLogLevel.val();
+    saveButton.attr('disabled', true);
     ipcRenderer.send('save-general-config', newConfig, requireRestart); 
 });
 
@@ -115,6 +122,7 @@ $('#btCancel').on('click', (e) => {
 });
 
 function updatePathConfig( pathSelectConfig, pathSelected ) {
+    saveButton.attr('disabled', false);
     newConfig[pathSelectConfig.id] = pathSelected;
     $(`#btPathSelect_${pathSelectConfig.id}`)
        .siblings('label').text(pathSelected);
@@ -159,7 +167,7 @@ pathConfig.forEach((el) => {
   $(`#btPathSelect_${el.id}`).siblings('.btn-reset').click(function() {
     const elKey = this.dataset.key;
     newConfig[elKey] = '';
-
+    saveButton.attr('disabled', false);
     if ( pathConfig.find(el2 => el2.id === elKey && 
         el2.requiresRestart === true ) ) {
         requireRestart = true;
@@ -170,6 +178,7 @@ pathConfig.forEach((el) => {
   });
 });
 $('.btn-reset-nonpath').click(function(e) {
+    saveButton.attr('disabled', false);
     const elKey = this.dataset.key;
     newConfig[elKey] = '';
     if ( elKey === 'launchExternal' ) {
@@ -187,6 +196,7 @@ $('.btn-reset-nonpath').click(function(e) {
 
 ipcRenderer.on('settings-loaded', (e, data, defaults) => {
     oldConfig = data;
+    saveButton.attr('disabled', true);
     defaultValues = defaults;
     if ( !data.important ) {
         importantKeys = [];

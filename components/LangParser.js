@@ -224,10 +224,6 @@ const schema = {
                "type":"string",
                "minLength":1
            },
-           "SuccessUpdateMsg2": {
-               "type":"string",
-               "minLength":1
-           },
            "ErrorUnexpectedWriteMsg": {
                "type":"string",
                "minLength":1
@@ -257,7 +253,7 @@ const schema = {
                "minLength":1
            }
          },
-         "required": ["ErrorUnexpectedHdr", "ErrorUnexpectedMsg", "ErrorUnexpectedMsg2", "BtnCancel", "BtnOk", "BtnRemove", "ErrorInvalidHdr", "ErrorInvalidMsg", "ErrorInvalidTwoMsg", "ErrorInvalidThreeMsg", "ErrorAPIHdr", "ErrorAPIMsg", "ErrorReadMsg","ErrorLogoHdr", "ErrorLogoMsg", "ErrorLogoMultiMsg", "ErrorLogoLargeHdr", "ErrorLogoLargeMsg", "ErrorModelExistsHdr", "ErrorModelExistsMsg", "ErrorModelExistsMsg2", "ErrorWriteHdr", "ErrorWriteMsg", "ErrorWriteMsg2", "ErrorAppRunningHdr", "ErrorAppRunningMsg", "ErrorAppIncompMsg", "ErrorMsgLaunch", "ErrorInstallStartMsg", "ErrorInstallPermHdr", "ErrorInstallPerm1Msg", "ErrorInstallPerm2Msg", "ErrorInstallPerm3Msg", "ErrorInstallPerm4Msg", "ErrorInstallPermBtnYes", "ErrorInstallPermBtnNo", "ErrorWritePerm2Msg", "ErrorNoWritePermMsg", "ErrorInvalidPathHdr", "ErrorInvalidPathMsg", "ErrorInvalidPathMsg2", "ErrorMessage", "SuccessUpdateHdr", "SuccessUpdateMsg", "SuccessUpdateMsg2", "ErrorUnexpectedWriteMsg", "DeleteMsg", "ErrorInit", "ErrorRInstallHdr", "ErrorRInstallMsg", "ErrorModelPathHdr", "ErrorModelPathMsg"]
+         "required": ["ErrorUnexpectedHdr", "ErrorUnexpectedMsg", "ErrorUnexpectedMsg2", "BtnCancel", "BtnOk", "BtnRemove", "ErrorInvalidHdr", "ErrorInvalidMsg", "ErrorInvalidTwoMsg", "ErrorInvalidThreeMsg", "ErrorAPIHdr", "ErrorAPIMsg", "ErrorReadMsg","ErrorLogoHdr", "ErrorLogoMsg", "ErrorLogoMultiMsg", "ErrorLogoLargeHdr", "ErrorLogoLargeMsg", "ErrorModelExistsHdr", "ErrorModelExistsMsg", "ErrorModelExistsMsg2", "ErrorWriteHdr", "ErrorWriteMsg", "ErrorWriteMsg2", "ErrorAppRunningHdr", "ErrorAppRunningMsg", "ErrorAppIncompMsg", "ErrorMsgLaunch", "ErrorInstallStartMsg", "ErrorInstallPermHdr", "ErrorInstallPerm1Msg", "ErrorInstallPerm2Msg", "ErrorInstallPerm3Msg", "ErrorInstallPerm4Msg", "ErrorInstallPermBtnYes", "ErrorInstallPermBtnNo", "ErrorWritePerm2Msg", "ErrorNoWritePermMsg", "ErrorInvalidPathHdr", "ErrorInvalidPathMsg", "ErrorInvalidPathMsg2", "ErrorMessage", "SuccessUpdateHdr", "SuccessUpdateMsg", "ErrorUnexpectedWriteMsg", "DeleteMsg", "ErrorInit", "ErrorRInstallHdr", "ErrorRInstallMsg", "ErrorModelPathHdr", "ErrorModelPathMsg"]
      },
      "general":{
        "type":"object",
@@ -775,7 +771,6 @@ const en = {
         "ErrorMessage": "Error message:",
         "SuccessUpdateHdr": "Configuration updated",
         "SuccessUpdateMsg": "Your configuration was successfully updated. MIRO must be restarted for your changes to take effect. Do you want to restart MIRO now?",
-        "SuccessUpdateMsg2": "Your configuration has been updated successfully.",
         "ErrorUnexpectedWriteMsg": "Configuration data could not be saved. Do you miss write permissions in this location:",
         "DeleteMsg": "Are you sure you want to permanently remove the app?",
         "ErrorInit": "Error initialising MIRO",
@@ -955,7 +950,6 @@ const de = {
         "ErrorMessage": "Fehlermeldung:",
         "SuccessUpdateHdr": "Konfiguration aktualisiert",
         "SuccessUpdateMsg": "Ihre Konfiguration wurde erfolgreich aktualisiert. MIRO muss neu gestartet werden, damit Ihre Änderungen wirksam werden. Wollen Sie MIRO jetzt neu starten?",
-        "SuccessUpdateMsg2": "Ihre Konfiguration wurde erfolgreich aktualisiert.",
         "ErrorUnexpectedWriteMsg": "Konfigurationsdaten konnten nicht gespeichert werden. Fehlen Ihnen an dieser Stelle Schreibrechte:",
         "DeleteMsg": "Sind Sie sicher, dass Sie die App dauerhaft entfernen möchten?",
         "ErrorInit": "Fehler bei der Initialisierung von MIRO",

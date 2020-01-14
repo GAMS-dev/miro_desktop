@@ -12,7 +12,7 @@ const log = require('electron-log');
 const menu = require('./components/menu.js');
 const installRPackages = require('./components/install-r.js');
 const requiredAPIVersion = 1;
-const miroVersion = '0.9.35';
+const miroVersion = '0.9.36';
 const libVersion = '1.0';
 const exampleAppsData = [
   {
@@ -1191,13 +1191,6 @@ ipcMain.on('save-general-config', async (e, newConfigData, needRestart) => {
         settingsWindow.webContents.send('settings-loaded', 
         await configData.getAll(),
         await configData.getAll(true));
-        dialog.showMessageBoxSync(settingsWindow, 
-           {
-             type: 'info',
-             title: lang['main'].SuccessUpdateHdr,
-             message: lang['main'].SuccessUpdateMsg2,
-             buttons: [lang['main'].BtnOk]
-           });
       }
     }
   } catch (e) {
