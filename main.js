@@ -12,7 +12,7 @@ const log = require('electron-log');
 const menu = require('./components/menu.js');
 const installRPackages = require('./components/install-r.js');
 const requiredAPIVersion = 1;
-const miroVersion = '0.9.36';
+const miroVersion = '0.9.37';
 const libVersion = '1.0';
 const exampleAppsData = [
   {
@@ -643,7 +643,7 @@ async function terminateProcesses () {
     }
     const pid = miroProcesses[i].pid;
     try{
-      kill(pid)
+      await kill(pid)
       log.debug(`R process with pid: ${pid} killed.`);
     } catch ( e ) {
       log.debug(`Problems killing R process with pid: ${pid}. Error message: ${e.message}`);
@@ -915,7 +915,7 @@ ${message? `Message: ${message}` : ''}`);
         }
         delete processIdMap[appID];
         miroAppWindows[appID] = null;
-      })
+      });
       miroAppWindows[appID].once('ready-to-show', () => {
         miroAppWindows[appID].show();
         miroAppWindows[appID].maximize();
