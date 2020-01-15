@@ -9,6 +9,7 @@ miro/less
 miro/srcjs
 miro/packrat
 miro/tests
+miro/model
 dist
 r/library
 r-src

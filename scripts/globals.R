@@ -69,7 +69,6 @@ packageVersionMap <- list(
     c('tidyr', '1.0.0'),
     c('memoise', '1.1.0'),
     'httr',
-    'RSQLite',
     'plotly',
     'shinydashboard',
     'timevis',
@@ -110,11 +109,13 @@ if ( identical(Sys.getenv('BUILD_DOCKER'), 'true') ) {
     isMac     <- FALSE
     isWindows <- FALSE
     isLinux   <- TRUE
+    packageVersionMap <- c(packageVersionMap, list("odbc"))
 } else {
     if ( identical(RLibPath, '') ) {
         stop("Library path not specified. Use environment variable LIB_PATH to specify where libraries should be installed.", 
             call. = FALSE)
     }
+    packageVersionMap <- c(packageVersionMap, list("RSQLite"))
 }
 
 # on Jenkins use default library

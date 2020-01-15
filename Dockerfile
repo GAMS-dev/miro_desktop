@@ -77,6 +77,7 @@ RUN apt-get update && apt-get install -y \
     python3-pip
 
 RUN pip3 install --upgrade pip
+RUN pip3 install numpy==1.14.5 pandas==0.23.1 matplotlib==2.2.2
 
 # install custom packages
 RUN mkdir /home/miro/r
@@ -85,7 +86,7 @@ COPY scripts /home/miro/scripts
 
 RUN Rscript ./home/miro/scripts/install_source.R
 
-RUN rm -rf /home/miro/packages /home/miro/scripts
+RUN rm -rf /home/miro/r /home/miro/scripts
 
 # copy MIRO to the image
 COPY miro /home/miro/app/
