@@ -10,6 +10,8 @@ if ( !fs.existsSync(path.join('.', 'r')) ) {
     console.log('R already exists. Skipping installation.');
     rExists = true;
 }
+const buildDocker = process.argv[2] === '--docker';
+
 const tryInstallRPackages = async (attempt = 0) => {
     if ( attempt === 3 ) {
         process.exit(1);
@@ -20,7 +22,8 @@ const tryInstallRPackages = async (attempt = 0) => {
             rPath = path.join('.', 'r', 'bin', 'Rscript');
         }
         const subproc =  execa(rPath, [ path.join('.', 'build', 'scripts', 'install-packages.R') ],
-            { env: { 'LIB_PATH': path.join('.', 'r', 'library')}});
+            { env: { 'LIB_PATH': path.join('.', 'r', 'library'), 
+            'BUILD_DOCKER': buildDocker? 'true': 'false'}});
         subproc.stderr.pipe(process.stderr);
         subproc.stdout.pipe(process.stderr);
         await subproc;
@@ -79,3 +82,18 @@ const tryInstallRPackages = async (attempt = 0) => {
         tryInstallRPackages()
     }
 })();
+if ( buildDocker ) {
+    (async () => {
+        try {
+            console.log(`Building Docker image...`);
+            // `gamsmiro-ui:${process.env.npm_package_version}`
+            const subproc =  execa('docker', [ 'build', '-t', `gamsmiro-ui`, '.' ]);
+            subproc.stderr.pipe(process.stderr);
+            subproc.stdout.pipe(process.stderr);
+            await subproc;
+        } catch (e) {
+            console.log(`Problems building Docker image. Error message: ${e.message}`);
+            process.exit(1);
+        }
+    })();
+}

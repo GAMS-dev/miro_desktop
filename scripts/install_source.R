@@ -11,6 +11,10 @@ if(R.version[["major"]] < 3 ||
 }
 listOfLibs = list.files(libSrcPath)
 
+if ( !length(RLibPath) ) {
+  RLibPath <- .libPaths()[1]
+}
+
 packageVersionMap <- c(list(dataTableVersionMap), 
   packageVersionMap)
 for(package in packageVersionMap){
@@ -22,7 +26,7 @@ for(package in packageVersionMap){
     if ( length(package) == 2L ) {
       packageFile = paste0(package[1], '_', package[2], '.tar.gz')
     } else {
-      packageFile = listOfLibs[grepl(package[1], 
+      packageFile = listOfLibs[grepl(paste0(package[1], '_'),
         listOfLibs, fixed = TRUE)][1]
     }
     install.packages(file.path(libSrcPath, packageFile), 

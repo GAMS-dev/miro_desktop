@@ -15,6 +15,7 @@ pipeline {
                         sh '''
                            yarn install --non-interactive
                            yarn dist
+                           yarn docker-build
                         '''
                     }
                 }
@@ -88,6 +89,13 @@ pipeline {
                         skipDefaultCheckout()
                     }
                     steps {
+                        withCredentials([usernamePassword(credentialsId: 'dockerhub_login', passwordVariable: 'hub_pass', usernameVariable: 'hub_user')]){
+                            sh '''
+                                docker login hub.gams.com:443 --username="${hub_user}" --password="${hub_pass}"
+                                docker tag gamsmiro-ui hub.gams.com:443/gamsmiro-ui
+                                docker push hub.gams.com:443/gamsmiro-ui
+                            '''
+                        }
                         archiveArtifacts artifacts: 'dist/*.AppImage', fingerprint: true
                     }
                 }

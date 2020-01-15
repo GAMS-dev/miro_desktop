@@ -30,6 +30,22 @@ for ( newPackage in newPackages ) {
 options(warn = 2)
 .libPaths( c( RlibPathDevel, .libPaths()) )
 
+listOfLibs <- character(0L)
+if ( isLinux ) {
+    listOfLibs <- list.files(file.path('r', 'library_src'))
+}
+
+packageIsInstalled <- function(package) {
+    if ( isLinux ) {
+        if ( length(package) == 2L ) {
+          return(paste0(package[1], '_', package[2], '.tar.gz') %in% listOfLibs)
+        }
+        return(sum(grepl(paste0(package[1], '_'),
+                         listOfLibs, fixed = TRUE)) > 0L)
+    }
+    return(package[1] %in% installedPackages)
+}
+
 dontDisplayMe <- lapply(requiredPackages, library, character.only = TRUE)
 
 if ( isLinux && !dir.exists(RlibPathSrc) && 
@@ -82,7 +98,7 @@ downloadPackage <- function(package) {
 }
 # data.table needs some special attention on OSX due to lacking openmp support in clang
 # see https://github.com/Rdatatable/data.table/wiki/Installation#openmp-enabled-compiler-for-mac
-if ( !'data.table' %in% installedPackages){
+if ( !packageIsInstalled(dataTableVersionMap) ){
     if ( isMac ) {
         makevarsPath <- '~/.R/Makevars'
         if ( file.exists(makevarsPath) ) {
@@ -111,12 +127,12 @@ if ( !'data.table' %in% installedPackages){
             unlink(makevarsPath)
         }
     })    
+} else {
+    print(sprintf("Skipping '%s' as it is already installed.", dataTableVersionMap[1]))
 }
 
 for(package in packageVersionMap){
-    if ( package[1] %in% installedPackages || isLinux && 
-        file.exists(file.path(RlibPathSrc, 
-            paste0(package[1], '_', package[2], '.tar.gz'))) ) {
+    if ( packageIsInstalled(package) ) {
         print(sprintf("Skipping '%s' as it is already installed.", package[1]))
         next
     }

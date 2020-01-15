@@ -9,7 +9,8 @@
     "test": "node ./test/run-tests.js",
     "start": "electron .",
     "pack": "node ./build/scripts/pre-pack.js && electron-builder --dir",
-    "dist": "node ./build/scripts/pre-pack.js && electron-builder"
+    "dist": "node ./build/scripts/pre-pack.js && electron-builder",
+    "docker-build": "node ./build/scripts/pre-pack.js --docker"
   },
   "build": {
     "appId": "com.gams.miro",

@@ -1,0 +1,15 @@
+.git
+.env
+.DS_Store
+.gitignore
+build/lib_devel
+miro/doc
+miro/examples
+miro/less
+miro/srcjs
+miro/packrat
+miro/tests
+dist
+r/library
+r-src
+node_modules
