@@ -29,7 +29,11 @@ const tryInstallRPackages = async (attempt = 0) => {
         await subproc;
     } catch (e) {
         console.log(`Problems installing R packages. Error message: ${e.message}`);
-        tryInstallRPackages(attempt + 1)
+        try {
+            await tryInstallRPackages(attempt + 1);
+        } catch (e) {
+            console.log(`Problems installing R packages. Error message: ${e.message}`);
+        }
     }
 }
 (async () => {

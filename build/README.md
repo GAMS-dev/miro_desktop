@@ -42,6 +42,16 @@ Additionally, the following system libraries are required:
     - brew: v8 (OSX)
     - csw: libv8_dev (Solaris)
 
+### Docker
+* R (>=3.6.1)
+
+Additionally, the following system library is required:
+
+* odbc
+    - deb: unixodbc-dev (Debian, Ubuntu, etc)
+    - rpm: unixODBC-devel (Fedora, CentOS, RHEL)
+    - csw: unixodbc_dev (Solaris)
+    - brew: unixodbc (Mac OSX)
 
 
 ## Building
