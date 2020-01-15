@@ -43,6 +43,7 @@ Additionally, the following system libraries are required:
     - csw: libv8_dev (Solaris)
 
 ### Docker
+* Docker
 * R (>=3.6.1)
 
 Additionally, the following system library is required:
