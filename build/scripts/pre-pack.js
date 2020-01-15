@@ -61,7 +61,12 @@ const tryInstallRPackages = async (attempt = 0) => {
                             });
                             process.exit(1);
                         }
-                        tryInstallRPackages();
+                        try {
+                            await tryInstallRPackages()
+                        } catch (e) {
+                            console.log(`Problems installing R packages. Error message: ${e.message}`);
+                            process.exit(1);
+                        }
                     });
                 });
             }).on('error', async (e) => {
@@ -79,11 +84,15 @@ const tryInstallRPackages = async (attempt = 0) => {
             process.exit(1);
         }
     } else {
-        tryInstallRPackages()
+        try {
+            await tryInstallRPackages()
+        } catch (e) {
+            console.log(`Problems installing R packages. Error message: ${e.message}`);
+            process.exit(1);
+        }
+        
     }
-})();
-if ( buildDocker ) {
-    (async () => {
+    if ( buildDocker ) {
         try {
             console.log(`Building Docker image...`);
             // `gamsmiro-ui:${process.env.npm_package_version}`
@@ -95,5 +104,5 @@ if ( buildDocker ) {
             console.log(`Problems building Docker image. Error message: ${e.message}`);
             process.exit(1);
         }
-    })();
-}
+    }
+})();
