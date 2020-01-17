@@ -246,7 +246,7 @@ a:hover {
 }
 @media (prefers-color-scheme: dark) {
   .drag-drop-area {
-    background-color: #838891;
+    background-color: #8790a0;
     border: 1px solid #000;
   }
 }
@@ -281,7 +281,7 @@ a:hover {
 }
 @media (prefers-color-scheme: dark) {
   .drag-drop-area-dragover {
-    background-color: #a6aab3 !important;
+    background-color: #798395 !important;
   }
 }
 .app-window {
@@ -470,6 +470,19 @@ a:hover {
 .modal-custom {
   margin-top: 100px;
 }
+@media (prefers-color-scheme: dark) {
+  .modal-content {
+      background-color: #494d55;
+  }
+}
+@media (prefers-color-scheme: dark) {
+  .close {
+      color: #f8f9fa;
+  }
+  .close:hover {
+      color: #ced4da
+  }
+}
 .log-file-container {
   font-size: 8pt;
   max-height: 50vh;
@@ -507,7 +520,7 @@ a:hover {
 }
 @media (prefers-color-scheme: dark) {
   .miro-launcher-input {
-      background-color: #838891;
+      background-color: #8790a0;
       color: #e9ecef;
   }
 }
@@ -522,7 +535,7 @@ a:hover {
 }
 @media (prefers-color-scheme: dark) {
   .custom-file-label {
-      background-color: #838891;
+      background-color: #8790a0;
       color: #e9ecef;
   }
 }
