@@ -181,6 +181,7 @@ a:hover {
 }
 .app-box {
     margin: 65px auto;
+    margin-bottom: 32.5px;
     padding: 45px 30px;
     background: #fff;
     position: relative;
