@@ -12,7 +12,7 @@ const log = require('electron-log');
 const menu = require('./components/menu.js');
 const installRPackages = require('./components/install-r.js');
 const requiredAPIVersion = 1;
-const miroVersion = '0.9.46';
+const miroVersion = '0.9.47';
 const libVersion = '1.0';
 const exampleAppsData = [
   {
@@ -26,6 +26,16 @@ overall Dow Jones index.`,
     apiversion: requiredAPIVersion,
     usetmpdir: true,
     modesAvailable: [ 'base', 'hcube' ]
+  },
+  {
+    id: 'sudoku',
+    title: 'Sudoku solver',
+    description: `This model allows you to solve your Sudokus.`,
+    logoPath: path.join('static_sudoku', 'sudoku.png'),
+    miroversion: miroVersion,
+    apiversion: requiredAPIVersion,
+    usetmpdir: true,
+    modesAvailable: [ 'base' ]
   },
   {
     id: 'transport',

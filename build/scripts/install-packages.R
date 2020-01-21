@@ -225,7 +225,7 @@ if(length(RlibPathDevel)){
 }
 Sys.setenv(MIRO_BUILD='true')
 Sys.setenv(MIRO_MODE='full')
-for ( modelName in c( 'pickstock', 'transport' ) ) {
+for ( modelName in c( 'pickstock', 'transport', 'sudoku' ) ) {
     if(!dir.exists(file.path(examplesPath, modelName)) &&
         !dir.create(file.path(examplesPath, modelName), recursive = TRUE)){
         stop(sprintf("Could not create path: %s", examplesPath))
