@@ -157,7 +157,7 @@ class ConfigManager extends Store {
       return 'en';
     } else if ( key === 'logLevel' ) {
       return 'TRACE';
-    } else if ( key === 'logLifeTime' ) {
+    } else if ( key === 'launchExternal' ) {
       return false;
     }
   }
@@ -323,12 +323,14 @@ class ConfigManager extends Store {
     };
 
     if ( process.platform === 'darwin' ) {
-      const latestGamsInstalled = fs.readdirSync('/Applications', 
+      let latestGamsInstalled = fs.readdirSync('/Applications', 
         { withFileTypes: true })
-        .filter(el => el.isDirectory())
+        .filter(el => el.isDirectory() && gamsDirNameRegex.test(el.name));
+      if ( latestGamsInstalled ) {
+        latestGamsInstalled = latestGamsInstalled
         .map(el => el.name.slice(4))
-        .filter(el => gamsDirNameRegex.test(el))
         .reduce(vCompReducer);
+      }
 
       if ( latestGamsInstalled && 
         this.vComp(latestGamsInstalled, minGams) ) {
@@ -347,10 +349,14 @@ ${latestGamsInstalled}`);
     }
 
     if ( !this.gamspathDefault  && process.platform === 'win32' ) {
-      const latestGamsInstalled = fs.readdirSync('C:\\GAMS\\win64', 
+      let latestGamsInstalled = fs.readdirSync('C:\\GAMS\\win64', 
             { withFileTypes: true })
-            .filter(el => el.isDirectory() && gamsDirNameRegex.test(el))
-            .reduce(vCompReducer);
+            .filter(el => el.isDirectory() && gamsDirNameRegex.test(el.name))
+            .map(el => el.name);
+      if ( latestGamsInstalled ) {
+        latestGamsInstalled = latestGamsInstalled
+        .reduce(vCompReducer);
+      }
 
       if ( latestGamsInstalled && 
         this.vComp(latestGamsInstalled, minGams) ) {
