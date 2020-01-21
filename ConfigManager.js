@@ -282,7 +282,11 @@ class ConfigManager extends Store {
         return false;
       }
       if ( contentRDir.find(el => el.name === 'bin') ) {
-        rpathTmp = path.join(rpathTmp, 'bin');
+        if ( process.platform === 'win32' ) {
+          rpathTmp = path.join(rpathTmp, 'bin', 'x64');
+        } else {
+          rpathTmp = path.join(rpathTmp, 'bin');
+        }
       } else if ( contentRDir.find(el => el.name === 'Resources') ) {
         rpathTmp = path.join(rpathTmp, 'Resources', 'bin');
       } else if ( !contentRDir.find(el => el.isFile() && 
@@ -301,8 +305,11 @@ class ConfigManager extends Store {
     let { stdout } = await execa(rpathTmp, ['-e', 
       'print(R.home())\nprint(paste0(R.Version()$major, \
 ".", R.Version()$minor))']);
+    if ( ! stdout ) {
+      return false;
+    }
     stdout = stdout.split('\n');
-    rpathTmp = stdout[0].match(/^\[1\] "([^"]*)"$/)[1];
+    rpathTmp = stdout[0].match(/^\[1\] "([^"]*)"/)[1];
     const rVersion = stdout[1].match(/^\[1\] "([^"]*)"$/);
     if ( rpathTmp && rVersion &&
       this.vComp(rVersion[1], minR) ) {
