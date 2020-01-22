@@ -914,4 +914,13 @@ a:hover {
   color:inherit;
   padding-right: 5px;
 }
-
+.centered-content {
+  text-align: center;
+}
+.about-wrapper {
+  margin:20px;
+  margin-top:40px;
+}
+.about-text {
+  font-size:10pt;
+}

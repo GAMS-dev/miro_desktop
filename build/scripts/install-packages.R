@@ -200,7 +200,7 @@ if (isMac) {
         setwd(currWorkDir)
     })
 }
-# replace MIRO API version and MIRO version in main.js and package.json with the one set in miro/app.R
+# replace MIRO API version, MIRO version and MIRO release date in main.js and package.json with the one set in miro/app.R
 local({
     eval(parse(text = readLines('./miro/app.R',
      n = 5L, warn = FALSE)))
@@ -209,6 +209,8 @@ local({
         paste0('const requiredAPIVersion = ', APIVersion, ';'), mainJS)
     mainJS = gsub("const miroVersion = '[^']+';",
         paste0("const miroVersion = '", MIROVersion, "';"), mainJS)
+    mainJS = gsub("global.miroRelease = '[^']+';",
+        paste0("global.miroRelease = '", MIRORDate, "';"), mainJS)
     writeLines(mainJS, './main.js')
     packageJSON = readLines('./package.json', warn = FALSE)
     packageJSON = gsub('"version": "[^"]+",',

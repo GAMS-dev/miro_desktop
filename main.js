@@ -104,8 +104,12 @@ const appDataPath = errMsg? null :
 const appsData = errMsg? null : 
    new AppDataStore(configData.getConfigPath());
 const langParser = new LangParser(configData.getSync('language'));
+
+// Set global variables
 global.lang = langParser.get();
 global.miroVersion = miroVersion;
+global.miroRelease = 'Jan 22 2020';
+
 const resourcesPath = DEVELOPMENT_MODE? app.getAppPath(): process.resourcesPath;
 
 let shutdown = false
@@ -579,6 +583,7 @@ const dockMenu = Menu.buildFromTemplate([
 let mainWindow
 let settingsWindow
 let checkForUpdateWindow
+let aboutDialogWindow
 let fileToOpen
 let appLoaded = false;
 
@@ -622,6 +627,37 @@ function createSettingsWindow() {
   settingsWindow.on('closed', () => {
     log.debug('Settings window closed.');
     settingsWindow = null
+  })
+}
+function openAboutDialog(){
+  log.debug('Creating about dialog window..');
+  if ( aboutDialogWindow ) {
+    log.debug('About dialog already open.');
+    aboutDialogWindow.show();
+    return;
+  }
+  aboutDialogWindow = new BrowserWindow({
+    title: "About GAMS MIRO",
+    width: 600,
+    height: 380,
+    resizable: false,
+    show: false,
+    webPreferences: {
+      nodeIntegration: true
+    }
+  });
+  aboutDialogWindow.loadFile(path.join(__dirname, 
+    'renderer', 'about.html'));
+  aboutDialogWindow.once('ready-to-show', async () => {
+    log.debug('About dialog ready to show.');
+    aboutDialogWindow.show();
+  });
+  aboutDialogWindow.on('page-title-updated', (e) => {
+    e.preventDefault();
+  });
+  aboutDialogWindow.on('closed', () => {
+    log.debug('About dialog closed.');
+    aboutDialogWindow = null;
   })
 }
 function openCheckUpdateWindow() {
@@ -1316,7 +1352,8 @@ app.on('ready', async () => {
   });
    
    Menu.setApplicationMenu(menu(addExampleApps,
-     activateEditMode, createSettingsWindow, openCheckUpdateWindow));
+     activateEditMode, createSettingsWindow, openCheckUpdateWindow,
+     openAboutDialog));
    
   if ( miroDevelopMode ) {
     if(!gotTheLock){

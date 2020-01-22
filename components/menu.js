@@ -5,14 +5,20 @@ const isMac = process.platform === 'darwin';
 module.exports = function(addExampleAppsCallback,
   activateEditCallback, 
   showSettingsCallback,
-  openCheckUpdateWindow){
+  openCheckUpdateWindow,
+  openAboutDialog){
   const lang = global.lang.menu;
   return Menu.buildFromTemplate([
     // { role: 'appMenu' }
     ...(isMac ? [{
       label: app.getName(),
       submenu: [
-        { label: lang['about'], role: 'about' },
+        { 
+          label: lang['about'],
+          click: async() => {
+            await openAboutDialog();
+          } 
+        },
         { type: 'separator' },
         { 
           label: lang['pref'],

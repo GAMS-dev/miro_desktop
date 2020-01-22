@@ -1,11 +1,10 @@
 'use strict'
-const { app, remote, shell } = require('electron');
+const { remote, shell } = require('electron');
 const https = require('https');
 const $ = require('jquery');
 const lang = remote.getGlobal('lang').update;
 const installedVersion = remote.getGlobal('miroVersion').split('.');
 
-$('#title').text(lang['title']);
 $('#btClose').text(lang['btClose']);
 
 $('#btClose').on('click', () => {
