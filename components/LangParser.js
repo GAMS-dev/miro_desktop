@@ -120,6 +120,10 @@ const schema = {
                "type":"string",
                "minLength":1
            },
+           "ErrorExampleExistsHdr": {
+               "type":"string",
+               "minLength":1
+           },
            "ErrorModelExistsHdr": {
                "type":"string",
                "minLength":1
@@ -253,7 +257,7 @@ const schema = {
                "minLength":1
            }
          },
-         "required": ["ErrorUnexpectedHdr", "ErrorUnexpectedMsg", "ErrorUnexpectedMsg2", "BtnCancel", "BtnOk", "BtnRemove", "ErrorInvalidHdr", "ErrorInvalidMsg", "ErrorInvalidTwoMsg", "ErrorInvalidThreeMsg", "ErrorAPIHdr", "ErrorAPIMsg", "ErrorReadMsg","ErrorLogoHdr", "ErrorLogoMsg", "ErrorLogoMultiMsg", "ErrorLogoLargeHdr", "ErrorLogoLargeMsg", "ErrorModelExistsHdr", "ErrorModelExistsMsg", "ErrorModelExistsMsg2", "ErrorWriteHdr", "ErrorWriteMsg", "ErrorWriteMsg2", "ErrorAppRunningHdr", "ErrorAppRunningMsg", "ErrorAppIncompMsg", "ErrorMsgLaunch", "ErrorInstallStartMsg", "ErrorInstallPermHdr", "ErrorInstallPerm1Msg", "ErrorInstallPerm2Msg", "ErrorInstallPerm3Msg", "ErrorInstallPerm4Msg", "ErrorInstallPermBtnYes", "ErrorInstallPermBtnNo", "ErrorWritePerm2Msg", "ErrorNoWritePermMsg", "ErrorInvalidPathHdr", "ErrorInvalidPathMsg", "ErrorInvalidPathMsg2", "ErrorMessage", "SuccessUpdateHdr", "SuccessUpdateMsg", "ErrorUnexpectedWriteMsg", "DeleteMsg", "ErrorInit", "ErrorRInstallHdr", "ErrorRInstallMsg", "ErrorModelPathHdr", "ErrorModelPathMsg"]
+         "required": ["ErrorUnexpectedHdr", "ErrorUnexpectedMsg", "ErrorUnexpectedMsg2", "BtnCancel", "BtnOk", "BtnRemove", "ErrorInvalidHdr", "ErrorInvalidMsg", "ErrorInvalidTwoMsg", "ErrorInvalidThreeMsg", "ErrorAPIHdr", "ErrorAPIMsg", "ErrorReadMsg","ErrorLogoHdr", "ErrorLogoMsg", "ErrorLogoMultiMsg", "ErrorLogoLargeHdr", "ErrorLogoLargeMsg", "ErrorExampleExistsHdr", "ErrorModelExistsHdr", "ErrorModelExistsMsg", "ErrorModelExistsMsg2", "ErrorWriteHdr", "ErrorWriteMsg", "ErrorWriteMsg2", "ErrorAppRunningHdr", "ErrorAppRunningMsg", "ErrorAppIncompMsg", "ErrorMsgLaunch", "ErrorInstallStartMsg", "ErrorInstallPermHdr", "ErrorInstallPerm1Msg", "ErrorInstallPerm2Msg", "ErrorInstallPerm3Msg", "ErrorInstallPerm4Msg", "ErrorInstallPermBtnYes", "ErrorInstallPermBtnNo", "ErrorWritePerm2Msg", "ErrorNoWritePermMsg", "ErrorInvalidPathHdr", "ErrorInvalidPathMsg", "ErrorInvalidPathMsg2", "ErrorMessage", "SuccessUpdateHdr", "SuccessUpdateMsg", "ErrorUnexpectedWriteMsg", "DeleteMsg", "ErrorInit", "ErrorRInstallHdr", "ErrorRInstallMsg", "ErrorModelPathHdr", "ErrorModelPathMsg"]
      },
      "general":{
        "type":"object",
@@ -751,8 +755,9 @@ const en = {
         "ErrorLogoMultiMsg": "Please drop only a single MIRO app logo!",
         "ErrorLogoLargeHdr": "Logo too large",
         "ErrorLogoLargeMsg": "Logos must not be larger than 10MB!",
-        "ErrorModelExistsHdr": "Model exists",
-        "ErrorModelExistsMsg": "A model with the same name already exists. Please first delete this model before trying again. Model name:",
+        "ErrorExampleExistsHdr": "Example models already exist",
+        "ErrorModelExistsHdr": "Model already exists",
+        "ErrorModelExistsMsg": "The following example models could not be added because they are already part of your library: ",
         "ErrorModelExistsMsg2": "A model with the same name already exists. Please first delete this model before trying again.",
         "ErrorWriteHdr": "No write permissions",
         "ErrorWriteMsg": "Model could not be added as you don't have permissions to write to this location:",
@@ -931,8 +936,9 @@ const de = {
         "ErrorLogoMultiMsg": "Bitte legen Sie nur ein einzelnes MIRO-App-Logo ab!",
         "ErrorLogoLargeHdr": "Logo zu groß",
         "ErrorLogoLargeMsg": "Logos dürfen nicht größer als 10MB sein!",
+        "ErrorExampleExistsHdr": "Beispielmodelle existieren bereits",
         "ErrorModelExistsHdr": "Modell existiert bereits",
-        "ErrorModelExistsMsg": "Ein Modell mit dem gleichen Namen existiert bereits. Bitte löschen Sie zuerst dieses Modell, bevor Sie es erneut versuchen. Name des Modells:",
+        "ErrorModelExistsMsg": "Die folgenden Beispielmodelle konnten nicht hinzugefügt werden, da sie bereits Teil Ihrer Bibliothek sind: ",
         "ErrorModelExistsMsg2": "Ein Modell mit dem gleichen Namen existiert bereits. Bitte löschen Sie zuerst dieses Modell, bevor Sie es erneut versuchen.",
         "ErrorWriteHdr": "Keine Schreibrechte",
         "ErrorWriteMsg": "Das Modell konnte nicht hinzugefügt werden, da Sie keine Berechtigungen zum Schreiben in diesem Verzeichnis haben:",

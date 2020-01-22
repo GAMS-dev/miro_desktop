@@ -467,7 +467,19 @@ function validateAppLogo(filePath, id = null){
 function addExampleApps(){
   const examplesToAdd = exampleAppsData
     .filter(exampleApp => appsData.isUniqueId(exampleApp.id));
-  const examplesAdded = examplesToAdd.map(app => app.id);
+  const examplesToAddNames = examplesToAdd.map(app => app.id);
+  const examplesSkipped = exampleAppsData
+     .filter(app => !examplesToAddNames.includes(app.id))
+     .map(app => app.id);
+  if ( examplesToAddNames.length === 0 ) {
+    log.debug(`All example models already exist. Nothing was added.`)
+    return showErrorMsg({
+      type: 'info',
+        title: lang['main'].ErrorExampleExistsHdr,
+        message: `${lang['main'].ErrorModelExistsMsg} ${examplesSkipped.toString()}`
+    });
+    return;
+  }
 
   fs.copy(path.join(miroResourcePath, 'examples'), 
     appDataPath, (e) => {
@@ -510,6 +522,14 @@ ${path.join(miroResourcePath, 'examples')} to: ${appDataPath}. Error mesage: ${e
             message: `${lang['main'].ErrorUnexpectedMsg2} '${e.message}'`});
       }
   });
+  log.debug(`Example models: ${examplesToAddNames.toString()} added to library.`);
+  if ( examplesSkipped.length ) {
+    return showErrorMsg({
+      type: 'info',
+        title: lang['main'].ErrorExampleExistsHdr,
+        message: `${lang['main'].ErrorModelExistsMsg} ${examplesSkipped.toString()}`
+    });
+  }
 }
 function activateEditMode( openNewAppForm = false, scrollToBottom = false ){
   log.debug(`Activating edit mode. Open 'new app' form: ${openNewAppForm}.`);
