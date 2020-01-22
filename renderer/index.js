@@ -30,7 +30,7 @@ const addAppWrapperHTML = `<div id="addAppBox" class="add-app-box app-box-fixed-
 const appFilesPlaceholder = lang['appFilesPlaceholder'];
 const appNamePlaceholder = lang['appNamePlaceholder'];
 const appDescPlaceholder = lang['appDescPlaceholder'];
-const appDbPathPlaceholder = path.join(remote.app.getPath('home'), '.miro');
+const appDbPathPlaceholder = lang['appDbPathPlaceholder'];
 const appDbPathReset = lang['appDbPathReset'];
 const appLogoPlaceholder = lang['appLogoPlaceholder'];
 const editHelper = `<div class="edit-info" style="display:none;">

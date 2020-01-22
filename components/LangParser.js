@@ -291,6 +291,10 @@ const schema = {
                "type":"string",
                "minLength":1
            },
+           "appDbPathPlaceholder": {
+               "type":"string",
+               "minLength":1
+           },
            "appLogoPlaceholder": {
                "type":"string",
                "minLength":1
@@ -397,8 +401,8 @@ const schema = {
            },
        },
        "required": ["title", "noApps", "btEdit", "btEditDone", "btAddExamples", "appFilesPlaceholder", "appNamePlaceholder", 
-       "appDescPlaceholder", "appLogoPlaceholder", "appDbPathReset", "editAppInfoText", "btLaunch", "btLaunchBase", "btLaunchHcube",
-       "btCancel", "btSave", "btAddApp", "errNoAppTitleHdr", "errNoAppTitleMsg" ,"errInvalidDbPathHdr",
+       "appDescPlaceholder", "appDbPathPlaceholder", "appLogoPlaceholder", "appDbPathReset", "editAppInfoText", "btLaunch", "btLaunchBase", 
+       "btLaunchHcube", "btCancel", "btSave", "btAddApp", "errNoAppTitleHdr", "errNoAppTitleMsg" ,"errInvalidDbPathHdr",
        "errInvalidDbPathMsg", "dialogSelectAppLogoHdr", "dialogSelectAppLogoMsg", "dialogSelectAppLogoBtn",
        "dialogSelectAppLogoFilter", "dialogSelectDbPathHdr", "dialogSelectDbPathMsg", "dialogSelectDbPathBtn",
        "dialogErrHdr", "dialogErrMsg", "dialogNewAppFilesHdr", "dialogNewAppFilesMsg", "dialogNewAppFilesBtn",
@@ -791,6 +795,7 @@ const en = {
         "appFilesPlaceholder": "Drop your MIRO app here or click to browse.",
         "appNamePlaceholder": "Define the app title",
         "appDescPlaceholder": "Short model description (optional)",
+        "appDbPathPlaceholder": "MIRO database path (optional)",
         "appLogoPlaceholder": "Different app logo? Drop your MIRO app logo here or click to browse.",
         "appDbPathReset": "Reset to default",
         "editAppInfoText": "Click on app to edit",
@@ -970,6 +975,7 @@ const de = {
         "appFilesPlaceholder": "Legen Sie Ihre MIRO-App hier ab oder klicken Sie zum Durchsuchen.",
         "appNamePlaceholder": "Definieren Sie den App-Titel",
         "appDescPlaceholder": "Kurze Modellbeschreibung (optional)",
+        "appDbPathPlaceholder": "MIRO-Datenbankpfad (optional)",
         "appLogoPlaceholder": "Anderes App-Logo? Legen Sie Ihr MIRO App-Logo hier ab oder klicken Sie zum Durchsuchen.",
         "appDbPathReset": "Zurücksetzen",
         "editAppInfoText": "Zum Bearbeiten auf App klicken",

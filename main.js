@@ -12,7 +12,7 @@ const log = require('electron-log');
 const menu = require('./components/menu.js');
 const installRPackages = require('./components/install-r.js');
 const requiredAPIVersion = 1;
-const miroVersion = '0.9.47';
+const miroVersion = '0.9.48';
 const libVersion = '1.0';
 const exampleAppsData = [
   {
@@ -21,7 +21,7 @@ const exampleAppsData = [
     description: `Optimization model to pick a small subset of the stocks together with \
 some weights, such that this portfolio has a similar behavior to our \
 overall Dow Jones index.`,
-    logoPath: path.join('static_pickstock', 'pickstock.png'),
+    logoPath: path.join('static_pickstock', 'pickstock_logo.png'),
     miroversion: miroVersion,
     apiversion: requiredAPIVersion,
     usetmpdir: true,
@@ -31,7 +31,7 @@ overall Dow Jones index.`,
     id: 'sudoku',
     title: 'Sudoku solver',
     description: `This model allows you to solve your Sudokus.`,
-    logoPath: path.join('static_sudoku', 'sudoku.png'),
+    logoPath: path.join('static_sudoku', 'sudoku_logo.png'),
     miroversion: miroVersion,
     apiversion: requiredAPIVersion,
     usetmpdir: true,
@@ -198,7 +198,8 @@ const tryStartWebserver = async (progressCallback, onErrorStartup,
       });
     }
   }
-
+  log.info(`MIRO app: ${appData.id} launched at port: ${shinyPort} with dbPath: ${appData.dbPath},\
+developMode: ${miroDevelopMode}.`);
   let shinyProcessAlreadyDead = false
   let noError = false
   miroProcesses[internalPid] = execa(path.join(rpath, 'bin', 'Rscript'),
@@ -464,19 +465,10 @@ function validateAppLogo(filePath, id = null){
       {id: id, path: filteredPath[0]});
 }
 function addExampleApps(){
-  try {
-    exampleAppsData.forEach((exampleApp) => {
-      if ( !appsData.isUniqueId(exampleApp.id) ) {
-        throw exampleApp.id;
-      }
-    });
-  } catch (e) {
-     return showErrorMsg({
-      type: 'info',
-        title: lang['main'].ErrorModelExistsHdr,
-        message: `${lang['main'].ErrorModelExistsMsg} ${e}`
-    });
-  }
+  const examplesToAdd = exampleAppsData
+    .filter(exampleApp => appsData.isUniqueId(exampleApp.id));
+  const examplesAdded = examplesToAdd.map(app => app.id);
+
   fs.copy(path.join(miroResourcePath, 'examples'), 
     appDataPath, (e) => {
        if (e) {
@@ -496,7 +488,7 @@ ${path.join(miroResourcePath, 'examples')} to: ${appDataPath}. Error mesage: ${e
             message: `${lang['main'].ErrorUnexpectedMsg2} '${e.message}'`});
       };
       try {
-        exampleAppsData.forEach((exampleApp) => {
+        examplesToAdd.forEach((exampleApp) => {
             appsData.addApp(exampleApp);
         });
         const updatedApps = appsData.getApps();
@@ -698,7 +690,7 @@ function createMainWindow (showRunningApps = false) {
     return;
   }
   mainWindow = new BrowserWindow({
-    title: global.lang.main.title,
+    title: "GAMS MIRO",
     width: 900,
     height: 750,
     minWidth: 800,
@@ -707,7 +699,7 @@ function createMainWindow (showRunningApps = false) {
     webPreferences: {
       nodeIntegration: true
     }
-  })
+  });
   mainWindow.loadFile(path.join(__dirname, 'renderer', 'index.html'))
   mainWindow.once('ready-to-show', () => {
     log.debug('Main window ready to show.');
