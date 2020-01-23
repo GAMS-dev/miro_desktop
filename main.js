@@ -247,7 +247,7 @@ developMode: ${miroDevelopMode}.`);
     }
   });
   const url = `http://127.0.0.1:${shinyPort}`;
-  await waitFor(1000)
+  await waitFor(1500)
   for (let i = 0; i <= 50; i++) {
     if (shinyProcessAlreadyDead) {
       if ( noError ) {
@@ -255,7 +255,7 @@ developMode: ${miroDevelopMode}.`);
       }
       break
     }
-    await waitFor(1000)
+    await waitFor(Math.min(i*100, 1000))
     try {
       const res = await http.head(url, {timeout: 1000})
       // TODO: check that it is really shiny and not some other webserver
@@ -267,8 +267,8 @@ developMode: ${miroDevelopMode}.`);
         return
       }
     } catch (e) {
-      log.debug(`Process: ${internalPid} not responding after ${i + 1} seconds.`);
-      if ( i > 5 ) {
+      if ( i > 10 ) {
+        log.debug(`Process: ${internalPid} not responding after ${i + 1} seconds.`);
         await progressCallback({
         code: 'notresponding'})
       }
