@@ -116,6 +116,7 @@ let shutdown = false
 let miroProcesses = [];
 const processIdMap = {};
 
+let applicationMenu;
 let rPackagesInstalled = true;
 let libPath = path.join(appRootDir, 'r', 'library');
 
@@ -794,6 +795,24 @@ function createMainWindow (showRunningApps = false) {
   mainWindow.on('page-title-updated', (e) => {
     e.preventDefault();
   });
+  mainWindow.on('focus', (e) => {
+    if ( !applicationMenu ) {
+      return;
+    }
+    const editMenuId = isMac? 2:1;
+    [0,1,2].forEach(i => {
+      applicationMenu.items[editMenuId].submenu.items[i].visible = true
+    });
+  });
+  mainWindow.on('blur', (e) => {
+    if ( !applicationMenu ) {
+      return;
+    }
+    const editMenuId = isMac? 2:1;
+    [0,1,2].forEach(i => {
+      applicationMenu.items[editMenuId].submenu.items[i].visible = false;
+    });
+  })
   mainWindow.on('closed', () => {
     log.debug('Main window closed.');
     mainWindow = null
@@ -1350,10 +1369,10 @@ app.on('ready', async () => {
   session.defaultSession.setPermissionRequestHandler((_1, _2, callback) => {
     callback(false)
   });
-   
-   Menu.setApplicationMenu(menu(addExampleApps,
+   applicationMenu = menu(addExampleApps,
      activateEditMode, createSettingsWindow, openCheckUpdateWindow,
-     openAboutDialog));
+     openAboutDialog);
+   Menu.setApplicationMenu(applicationMenu);
    
   if ( miroDevelopMode ) {
     if(!gotTheLock){
