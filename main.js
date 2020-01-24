@@ -175,6 +175,8 @@ const tryStartWebserver = async (progressCallback, onErrorStartup,
   log.debug(`Process: ${internalPid} is being started on port: ${shinyPort}.`);
   const gamspath = configData.get('gamspath');
   const logpath = configData.get('logpath');
+  const dbPath = (appData.dbpath === '' || appData.dbpath == null)? path.join(app.getPath('home'), '.miro') : appData.dbpath;
+  
   const generalConfig = {
     launchExternal: configData.get('launchExternal'),
     language: configData.get('language'),
@@ -203,7 +205,7 @@ const tryStartWebserver = async (progressCallback, onErrorStartup,
       });
     }
   }
-  log.info(`MIRO app: ${appData.id} launched at port: ${shinyPort} with dbPath: ${appData.dbPath},\
+  log.info(`MIRO app: ${appData.id} launched at port: ${shinyPort} with dbPath: ${dbPath},\
 developMode: ${miroDevelopMode}.`);
   let shinyProcessAlreadyDead = false
   let noError = false
@@ -220,7 +222,8 @@ developMode: ${miroDevelopMode}.`);
       'R_LIB_PATHS': libPath,
       'MIRO_NO_DEBUG': !miroDevelopMode,
       'MIRO_USE_TMP': appData.usetmpdir !== 'false' || appData.mode === 'hcube',
-      'MIRO_DB_PATH': appData.dbPath,
+      'MIRO_WS_PATH': miroWorkspaceDir,
+      'MIRO_DB_PATH': dbPath,
       'MIRO_BUILD': miroBuildMode,
       'MIRO_BUILD_ARCHIVE':  appData.buildArchive === true,
       'GAMS_SYS_DIR': await gamspath,
@@ -1404,7 +1407,6 @@ app.on('ready', async () => {
       id: path.basename(modelPath, 'gms'),
       modelPath: modelPath,
       mode: process.env.MIRO_MODE,
-      dbPath: path.join(app.getPath('home'), '.miro'),
       usetmpdir: process.env.MIRO_USE_TMP ? process.env.MIRO_USE_TMP: false,
       apiversion: requiredAPIVersion,
       miroversion: miroVersion,

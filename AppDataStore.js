@@ -23,7 +23,7 @@ const schema = {
             type: 'string',
             minLength: 1
           },
-          dbPath: {
+          dbpath: {
             type: 'string',
             minLength: 1
           },

@@ -61,7 +61,7 @@ function resetAppConfig(appID) {
     return;
   }
   const oldAppData = appData.find(app => app.id === appID);
-  const appDbPath = oldAppData.dbPath? oldAppData.dbPath: appDbPathPlaceholder;
+  const appDbPath = oldAppData.dbpath? oldAppData.dbpath: appDbPathPlaceholder;
   let logoPath = path.join(remote.app.getAppPath(), 'static', 'default_logo.png');
   if ( oldAppData.logoPath ) {
       logoPath = path.join(dataPath, appID, oldAppData.logoPath);
@@ -154,12 +154,6 @@ function expandAddAppForm(){
                         <p id="newAppDesc" class="app-desc editable" contenteditable="true">
                            ${appDescPlaceholder}
                         </p>
-                        <div class="custom-file db-path-field">
-                          <div id="newAppDbPath" class="custom-file-input browseFiles app-db-path"></div>
-                          <label id="newAppDbPathLabel" class="custom-file-label dbpath" for="newAppDbPath">
-                            ${appDbPathPlaceholder}</label>
-                            <small class="form-text reset-db-path" style="display:none">${appDbPathReset}</small>
-                        </div>
                         </div>
                         <div class="input-group mb-3" style="visibility:hidden;">
                           <div class="input-group-prepend">
@@ -267,14 +261,10 @@ appsWrapper.on('click', '.btn-save-changes', function(){
 });
 appsWrapper.on('click', '.reset-db-path', function(){
   const appID = this.dataset.id;
-  if ( appID ) {
-    $(`#appDbPathLabel_${appID}`).text(appDbPathPlaceholder);
-  } else {
-    $('#newAppDbPathLabel').text(appDbPathPlaceholder);
-  }
+  $(`#appDbPathLabel_${appID}`).text(appDbPathPlaceholder);
   $(this).hide();
   if ( newAppConfig ) {
-    delete newAppConfig.dbPath;
+    delete newAppConfig.dbpath;
   }
 });
 appsWrapper.on('click', '.delete-app-button', function(){
@@ -295,18 +285,6 @@ appsWrapper.on('click', '#btAddApp', () => {
             title: lang['errNoAppTitleHdr'],
             message: lang['errNoAppTitleMsg']
         });
-    }
-    const appDbPathTmp = $('#newAppDbPathLabel').text().trim();
-    if ( appDbPathTmp !== '' && appDbPathTmp !== appDbPathPlaceholder ) {
-        if ( fs.existsSync(appDbPathTmp) ) {
-            newAppConfig.dbPath = appDbPathTmp;
-        } else {
-            return ipcRenderer.send('show-error-msg', {
-                type: 'info',
-                title: lang['errInvalidDbPathHdr'],
-                message: lang['errInvalidDbPathMsg']
-            });
-        }
     }
     let descTmp  = $('#newAppDesc').text().trim();
     if ( descTmp === appDescPlaceholder ) {
@@ -505,24 +483,24 @@ title="${app.title} logo" data-id="${app.id}" class="app-logo">
                          </div>
                          <div class="custom-file db-path-field" style="display:none;">
                            <div id="appDbPath_${app.id}" class="custom-file-input browseFiles app-db-path" data-id="${app.id}" aria-describedby="resetDbPath"></div>
-                           <label id="appDbPathLabel_${app.id}" class="custom-file-label dbpath" for="appDbPath_${app.id}">${app.dbPath? app.dbPath: appDbPathPlaceholder}</label>
-                           <small data-id="${app.id}" class="form-text reset-db-path" style="${app.dbPath? '': 'display:none'}">${appDbPathReset}</small>
+                           <label id="appDbPathLabel_${app.id}" class="custom-file-label dbpath" for="appDbPath_${app.id}">${app.dbpath? app.dbpath: appDbPathPlaceholder}</label>
+                           <small data-id="${app.id}" class="form-text reset-db-path" style="${app.dbpath? '': 'display:none'}">${appDbPathReset}</small>
                          </div>
                      </div>
                      <div class="dropdown mb-3 btn-launch-wrapper">
                            ${app.modesAvailable.length <= 1 ? 
                             `<button class="btn btn-outline-secondary btn-launch launch-app" 
-                               type="button" data-id="${app.id}" 
+                               type="button" data-id="${app.id}" data-dbpath="${app.dbpath == null? '': app.dbpath}" 
                                data-usetmpdir="${app.usetmpdir}" data-mode="${app.modesAvailable[0]}" 
                                data-apiversion="${app.apiversion}" data-miroversion="${app.miroversion}">${lang['btLaunch']}</button>` : 
                             `<button class="btn btn-outline-secondary dropdown-toggle btn-launch" 
                                type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">${lang['btLaunch']}</button>
                              <div class="dropdown-menu dropdown-custom">
-                                 <a class="dropdown-item launch-app" href="#" data-id="${app.id}" 
-                                   data-usetmpdir="${app.usetmpdir}" data-mode="base" 
+                                 <a class="dropdown-item launch-app" data-id="${app.id}" 
+                                   data-usetmpdir="${app.usetmpdir}" data-mode="base" data-dbpath="${app.dbpath == null? '': app.dbpath}"
                                    data-apiversion="${app.apiversion}" data-miroversion="${app.miroversion}">${lang['btLaunchBase']}</a>
-                                 <a class="dropdown-item launch-app" href="#" data-id="${app.id}" 
-                                   data-usetmpdir="${app.usetmpdir}" data-mode="hcube" 
+                                 <a class="dropdown-item launch-app" data-id="${app.id}" 
+                                   data-usetmpdir="${app.usetmpdir}" data-mode="hcube" data-dbpath="${app.dbpath == null? '': app.dbpath}"
                                    data-apiversion="${app.apiversion}" data-miroversion="${app.miroversion}">${lang['btLaunchHcube']}</a>
                              </div>`}
                            
@@ -583,7 +561,7 @@ ipcRenderer.on('dbpath-received', (e, dbpathData) => {
   } else {
     dpPathFieldID = `#appDbPathLabel_${appID}`;
   }
-  newAppConfig.dbPath = dbpathData.path[0];
+  newAppConfig.dbpath = dbpathData.path[0];
   $(`${dpPathFieldID} + .reset-db-path`).show();
   $(dpPathFieldID).text(dbpathData.path[0]);
 });
