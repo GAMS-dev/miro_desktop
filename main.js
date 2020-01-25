@@ -12,7 +12,7 @@ const log = require('electron-log');
 const menu = require('./components/menu.js');
 const installRPackages = require('./components/install-r.js');
 const requiredAPIVersion = 1;
-const miroVersion = '0.9.56';
+const miroVersion = '0.9.57';
 const libVersion = '1.0';
 const exampleAppsData = [
   {
