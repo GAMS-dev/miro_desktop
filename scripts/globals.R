@@ -1,5 +1,5 @@
-CRANMirrors <- c('http://cran.us.r-project.org',
-    'https://cran.cnr.berkeley.edu/',
+CRANMirrors <- c('https://cloud.r-project.org/',
+    'https://ftp.fau.de/cran/',
     'https://stat.ethz.ch/CRAN/')
 
 RLibPath <- Sys.getenv('LIB_PATH')
