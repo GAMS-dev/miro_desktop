@@ -12,7 +12,7 @@ const log = require('electron-log');
 const menu = require('./components/menu.js');
 const installRPackages = require('./components/install-r.js');
 const requiredAPIVersion = 1;
-const miroVersion = '0.9.57';
+const miroVersion = '0.9.58';
 const libVersion = '1.0';
 const exampleAppsData = [
   {
@@ -108,7 +108,7 @@ const langParser = new LangParser(configData.getSync('language'));
 // Set global variables
 global.lang = langParser.get();
 global.miroVersion = miroVersion;
-global.miroRelease = 'Jan 25 2020';
+global.miroRelease = 'Jan 27 2020';
 
 const resourcesPath = DEVELOPMENT_MODE? app.getAppPath(): process.resourcesPath;
 
