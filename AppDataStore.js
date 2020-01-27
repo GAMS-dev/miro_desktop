@@ -68,9 +68,18 @@ class AppDataStore extends Store {
     return this
   }
 
-  updateApp (app) {
-    this.apps = [ ...this.apps.filter(t => t.id !== app.id), app ];
+  updateApps (apps) {
+    this.apps = apps;
     return this.saveApps()
+  }
+
+  updateApp (app) {
+    const appIdx = this.apps.findIndex(t => t.id === app.id);
+    if ( appIdx === -1 ) {
+      return this;
+    }
+    this.apps[appIdx] = app;
+    return this.saveApps();
   }
 
   getApps () {

@@ -5,6 +5,7 @@ const path = require('path');
 const { pathToFileURL } = require('url');
 const fs = require('fs');
 window.Bootstrap = require('bootstrap');
+const jQuery = require('jquery');
 const $ = require('jquery');
 
 let lang = remote.getGlobal('lang').general;
@@ -45,9 +46,20 @@ let newAppConfig
 let dragAddAppCounter = 0;
 let isInEditMode = false;
 let runningProcesses = [];
+let reorderAppsMode = false;
   
 const $overlay = $('#overlayScreen');
 const $body = $('body');
+
+// credits to Paolo Bergantino @https://stackoverflow.com/questions/698301/is-there-a-native-jquery-function-to-switch-elements
+jQuery.fn.swapWith = function(to) {
+    return this.each(function() {
+        var copy_to = $(to).clone(true);
+        var copy_from = $(this).clone(true);
+        $(to).replaceWith(copy_from);
+        $(this).replaceWith(copy_to);
+    });
+};
 
 ['title', 'btEdit', 'noApps', 'btAddExamples'].forEach(id => {
   const el = document.getElementById(id);
@@ -91,7 +103,10 @@ function toggleEditMode(){
     $('.db-path-field').hide();
     $('.btn-launch-wrapper').fadeIn(200);
     $('.launch-app-box').removeClass('app-box-hover');
+    $('.app-box').attr({'draggable': 'false',
+      'droppable': 'false'});
     isInEditMode = false;
+
   } else {
     if ( !appData.length ) {
       noAppsNotice.hide();
@@ -103,7 +118,11 @@ function toggleEditMode(){
     $('#addAppWrapper').fadeIn(200);
     $('.btn-launch-wrapper').fadeOut(200);
     $('.launch-app-box').addClass('app-box-hover');
+    $('.app-box').attr({'draggable': 'true',
+      'droppable': 'true'});
     isInEditMode = true;
+    reorderAppsMode = false;
+    dragAddAppCounter = 0;
   }
   $('#editIcon').toggleClass('fa-lock fa-lock-open');
 }
@@ -303,11 +322,11 @@ appsWrapper.on('click', '#addAppBox', function(){
   expandAddAppForm();
 });
 appsWrapper.on('drop', '.app-logo', function(e){
-    e.preventDefault();
-    e.stopPropagation();
-    if ( !isInEditMode ) {
+    if ( !isInEditMode || reorderAppsMode ) {
       return
     }
+    e.preventDefault();
+    e.stopPropagation();
     dragAddAppCounter = 0;
 
     const $this = $(this);
@@ -330,11 +349,11 @@ appsWrapper.on('click', '.app-logo', function(){
   }, 'validateLogo', this.dataset.id);
 });
 appsWrapper.on('dragenter', '#addAppBox', function(e){
-  e.preventDefault();
-  e.stopPropagation();
-  if ( !isInEditMode ) {
+  if ( !isInEditMode || reorderAppsMode ) {
     return
   }
+  e.preventDefault();
+  e.stopPropagation();
   dragAddAppCounter++;
   $('#addAppBox').addClass('index-dragover');
   $('#addApp').addClass('btn-add-app-dragover');
@@ -344,11 +363,11 @@ appsWrapper.on('dragover', '#addAppBox', function(e){
   e.stopPropagation();
 });
 appsWrapper.on('dragleave', '#addAppBox', function(e){
-  e.preventDefault();
-  e.stopPropagation();
-  if ( !isInEditMode ) {
+  if ( !isInEditMode || reorderAppsMode ) {
     return
   }
+  e.preventDefault();
+  e.stopPropagation();
   dragAddAppCounter--;
   if ( dragAddAppCounter === 0 ) {
     $('#addAppBox').removeClass('index-dragover');
@@ -356,11 +375,11 @@ appsWrapper.on('dragleave', '#addAppBox', function(e){
   }
 });
 appsWrapper.on('drop', '#addAppBox', function(e){
-  e.preventDefault();
-  e.stopPropagation();
-  if ( !isInEditMode ) {
+  if ( !isInEditMode || reorderAppsMode ) {
     return
   }
+  e.preventDefault();
+  e.stopPropagation();
   dragAddAppCounter = 0;
   $('#addAppBox').removeClass('index-dragover');
   $('#addApp').removeClass('btn-add-app-dragover');
@@ -372,26 +391,29 @@ appsWrapper.on('dragover', '.drag-drop-area', function(e){
   e.stopPropagation();
 });
 appsWrapper.on('dragenter', '.drag-drop-area', function(e){
-  e.preventDefault();
-  e.stopPropagation();
-  if ( !isInEditMode ) {
+  if ( !isInEditMode || reorderAppsMode ) {
     return
   }
+  e.preventDefault();
+  e.stopPropagation();
   dragAddAppCounter++;
   $(this).addClass('drag-drop-area-dragover');
 });
 appsWrapper.on('dragleave', '.drag-drop-area', function(e){
-  e.preventDefault();
-  e.stopPropagation();
-  if ( !isInEditMode ) {
+  if ( !isInEditMode || reorderAppsMode ) {
     return
   }
+  e.preventDefault();
+  e.stopPropagation();
   dragAddAppCounter--;
   if ( dragAddAppCounter === 0 ) {
     $(this).removeClass('drag-drop-area-dragover');
   }
 });
 appsWrapper.on('drop', '#newAppFiles', function(e){
+  if ( !isInEditMode || reorderAppsMode ){
+    return
+  }
   e.preventDefault();
   e.stopPropagation();
   dragAddAppCounter = 0;
@@ -409,6 +431,66 @@ appsWrapper.on('click', '#newAppFiles', () => {
           { name: lang['dialogNewAppFilesFilter'], extensions: ['miroapp'] }
       ]
   }, 'validateApp');
+});
+appsWrapper.on('dragstart', '.app-box', (e) => {
+  reorderAppsMode = true;
+  if ( !isInEditMode || !reorderAppsMode ) {
+    return
+  }
+  e.originalEvent.dataTransfer.setData('text/plain', e.originalEvent.target.id);
+  e.originalEvent.target.style.opacity = .5;
+});
+appsWrapper.on('dragenter', '.app-box', function(e) {
+  if ( !isInEditMode || !reorderAppsMode) {
+    return
+  }
+  e.preventDefault();
+  e.stopPropagation();
+  dragAddAppCounter++;
+  $(this).addClass('drag-drop-area-dragover');
+});
+appsWrapper.on('dragover', '.app-box', function(e){
+  e.preventDefault();
+  e.stopPropagation();
+});
+appsWrapper.on('dragleave', '.app-box', function(e) {
+  if ( !isInEditMode || !reorderAppsMode ) {
+    return
+  }
+  e.preventDefault();
+  e.stopPropagation();
+  dragAddAppCounter--;
+  if ( dragAddAppCounter === 0 ) {
+    $(this).removeClass('drag-drop-area-dragover');
+  }
+});
+appsWrapper.on('dragend', '.app-box', function(e) {
+  if ( !isInEditMode || !reorderAppsMode ) {
+    return
+  }
+  e.preventDefault();
+  e.stopPropagation();
+  reorderAppsMode = false;
+  e.originalEvent.dataTransfer.clearData();
+  $('.app-box').removeClass('drag-drop-area-dragover').css('opacity', '');
+});
+appsWrapper.on('drop', '.app-box', function(e) {
+  if ( !isInEditMode || !reorderAppsMode ) {
+    return
+  }
+  e.preventDefault();
+  reorderAppsMode = false;
+  dragAddAppCounter = 0;
+  $('.app-box').removeClass('drag-drop-area-dragover').css('opacity', '');
+
+  const id_from_raw = e.originalEvent.dataTransfer.getData("text/plain");
+  const id_from = id_from_raw.slice(7);
+  const id_to   = $(this).attr('id').slice(7);
+  const idx_from = appData.findIndex(el => el.id === id_from);
+  const idx_to   = appData.findIndex(el => el.id === id_to);
+  [appData[idx_from], appData[idx_to]] = [appData[idx_to], appData[idx_from]];
+  ipcRenderer.send('update-apps', appData);
+  $(`#${id_from_raw}`).parent().swapWith($(this).parent());
 });
 btEditWrapper.on('click', function(e){
   if ( $(this).hasClass('bt-disabled') ) {
@@ -440,7 +522,6 @@ appsWrapper.on('click', '.launch-app', function(){
   $(`#appLoadingScreen_${appID}`).show();
   runningProcesses.push(appID);
   btEditWrapper.addClass('bt-disabled');
-  console.log(this.dataset);
   ipcRenderer.send('launch-app', this.dataset);
 });
 ipcRenderer.on('apps-received', (e, apps, appDataPath, startup = false, deactivateEditMode = true, appsActive = []) => {

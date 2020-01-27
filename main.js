@@ -1184,6 +1184,19 @@ ipcMain.on('add-example-apps', (e) => {
   log.debug('Received request to add example apps.')
   addExampleApps();
 });
+ipcMain.on('update-apps', (e, apps) => {
+  try {
+    appsData.updateApps(apps);
+  } catch (e) {
+    log.error(`Update apps request failed. Error message: ${e.message}`);
+    showErrorMsg({
+      type: 'error',
+        title: lang['main'].ErrorUnexpectedHdr,
+        message: `${lang['main'].ErrorUnexpectedMsg2} '${e.message}'`
+      });
+     return
+  }
+});
 ipcMain.on('update-app', (e, app) => {
   log.debug('Update app request received.');
   try{
