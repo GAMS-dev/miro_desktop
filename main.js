@@ -979,9 +979,9 @@ ${message? `Message: ${message}` : ''}`);
       });
 
       miroAppWindows[appID].on('closed', async () => {
-        if ( mainWindow ) {
+        try {
           mainWindow.send('app-closed', appID);
-        }
+        } catch (e) {}
         const internalPid = processIdMap[appID];
         if ( Number.isInteger(internalPid) ) {
             const pid = miroProcesses[internalPid].pid;
@@ -1007,7 +1007,9 @@ ${message? `Message: ${message}` : ''}`);
       });
     })
   } catch (e) {
-    onErrorStartup(appData.id, `${lang['main'].ErrorMsgLaunch} ${e.message}.`);
+    try {
+      await onErrorStartup(appData.id, `${lang['main'].ErrorMsgLaunch} ${e.message}.`);
+    } catch (e) {}
   }
 }
 
@@ -1265,7 +1267,7 @@ ipcMain.on('save-general-config', async (e, newConfigData, needRestart) => {
           buttons: [lang['main'].BtnCancel, lang['main'].BtnOk]
         }) === 1 ) {
           app.relaunch();
-          app.exit();
+          app.quit();
         };
       } else {
         settingsWindow.webContents.send('settings-loaded', 
