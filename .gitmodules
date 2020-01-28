@@ -34,3 +34,7 @@
 [submodule "r-src/gdxrrwMIRO"]
 	path = r-src/gdxrrwMIRO
 	url = https://github.com/GAMS-dev/gdxrrw-miro.git
+[submodule "r-src/RPostgres"]
+	path = r-src/RPostgres
+	url = https://github.com/GAMS-dev/RPostgres.git
+	branch = master
