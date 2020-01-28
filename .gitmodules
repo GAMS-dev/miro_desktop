@@ -31,9 +31,6 @@
 [submodule "r-src/timevis"]
 	path = r-src/timevis
 	url = https://github.com/GAMS-dev/timevis.git
-[submodule "r-src/odbc"]
-	path = r-src/odbc
-	url = https://github.com/GAMS-dev/odbc.git
 [submodule "r-src/gdxrrwMIRO"]
 	path = r-src/gdxrrwMIRO
 	url = https://github.com/GAMS-dev/gdxrrw-miro.git
