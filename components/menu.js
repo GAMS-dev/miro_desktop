@@ -113,7 +113,18 @@ module.exports = function(addExampleAppsCallback,
             await shell.openExternal('https://gams.com/miro')
           }
         },
-        { type: 'separator' },
+        ...(isMac ? [
+          { type: 'separator' }
+        ] : [
+          { type: 'separator' },
+          { 
+            label: lang['about'],
+            click: async() => {
+              await openAboutDialog();
+            }
+          },
+          { type: 'separator' }
+        ]),
         {
           label: lang['update'],
           click: () => {
