@@ -573,6 +573,7 @@ function createSettingsWindow() {
     resizable: DEVELOPMENT_MODE,
     titleBarStyle: 'hidden',
     show: false,
+    frame: false,
     webPreferences: {
       nodeIntegration: true
     }
@@ -614,6 +615,7 @@ function openAboutDialog(){
     height: 380,
     resizable: false,
     show: false,
+    frame: false,
     webPreferences: {
       nodeIntegration: true
     }
@@ -646,6 +648,7 @@ function openCheckUpdateWindow() {
     resizable: false,
     titleBarStyle: 'hidden',
     show: false,
+    frame: false,
     webPreferences: {
       nodeIntegration: true
     }
