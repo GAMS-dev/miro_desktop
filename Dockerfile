@@ -70,9 +70,7 @@ RUN apt-get update && apt-get install -y \
     sudo \
     libcurl4-gnutls-dev \
     libv8-3.14-dev \
-    unixodbc \
-    unixodbc-dev \
-    odbc-postgresql \
+    libpq-dev \
     python3.6 \
     python3-pip
 

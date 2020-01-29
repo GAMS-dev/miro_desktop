@@ -62,7 +62,7 @@ packageVersionMap <- list(
     c('askpass', '1.1'),
     c('prettyunits', '1.0.2'),
     c('stringi', '1.4.3'),
-    c('DBI', '1.0.0'),
+    c('DBI', '1.1.0'),
     c('blob', '1.2.0'),
     c('hms', '0.5.0'),
     c('lifecycle', '0.1.0'),
@@ -109,7 +109,7 @@ if ( identical(Sys.getenv('BUILD_DOCKER'), 'true') ) {
     isMac     <- FALSE
     isWindows <- FALSE
     isLinux   <- TRUE
-    packageVersionMap <- c(packageVersionMap, list("odbc"))
+    packageVersionMap <- c(packageVersionMap, list("RPostgres"))
 } else {
     if ( identical(RLibPath, '') ) {
         stop("Library path not specified. Use environment variable LIB_PATH to specify where libraries should be installed.", 
