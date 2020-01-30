@@ -309,11 +309,14 @@ class ConfigManager extends Store {
       return false;
     }
     stdout = stdout.split('\n');
-    rpathTmp = stdout[0].match(/^\[1\] "([^"]*)"/)[1];
+    if(stdout.length < 2){
+      return false;
+    }
+    rpathTmp = stdout[0].match(/^\[1\] "([^"]*)"/);
     const rVersion = stdout[1].match(/^\[1\] "([^"]*)"$/);
     if ( rpathTmp && rVersion &&
       this.vComp(rVersion[1], minR) ) {
-      return rpathTmp;
+      return rpathTmp[1];
     }
     return false;
   }
