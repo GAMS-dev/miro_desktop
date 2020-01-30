@@ -52,5 +52,14 @@ requirements at markets and supplies at factories.`,
     apiversion: apiVersion,
     usetmpdir: true,
     modesAvailable: [ 'base', 'hcube' ]
+  },
+  {
+    id: 'inscribedsquare',
+    title: 'Inscribed Square',
+    description: `Maximal area Inscribed Square Problem`,
+    miroversion: miroVersion,
+    apiversion: apiVersion,
+    usetmpdir: true,
+    modesAvailable: [ 'base' ]
   }]
 }
