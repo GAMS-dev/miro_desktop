@@ -10,7 +10,7 @@ async function installRPackages(rpath, apppath, libpath, mainWindow, devMode = f
   if ( !rpath ) {
     dialog.showMessageBoxSync(mainWindow, {type: 'error',
         title: 'R not found',
-        message: 'No R installation was found on your machine. Please install R or specify the location of your existing R installation in the settings.',
+        message: 'No R installation was found on your machine. Please install R or specify the location of your existing R installation in the Preferences window (F7).',
         buttons: ['OK']})
     return false;
   }
