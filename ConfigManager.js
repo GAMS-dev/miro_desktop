@@ -266,6 +266,9 @@ class ConfigManager extends Store {
   }
 
   async validateR(rpath) {
+    if ( !rpath ) {
+      return false;
+    }
     let rpathTmp = rpath;
 
     if ( !path.basename(rpathTmp).toLowerCase().startsWith('rscript') ) {
@@ -312,8 +315,13 @@ class ConfigManager extends Store {
     if(stdout.length < 2){
       return false;
     }
-    rpathTmp = stdout[0].match(/^\[1\] "([^"]*)"/);
-    const rVersion = stdout[1].match(/^\[1\] "([^"]*)"$/);
+    const rOutRegex = /^\[1\] "([^"]*)"/;
+    const rpathIdx = stdout.findIndex(line => rOutRegex.test(line));
+    if ( rpathIdx === -1 ) {
+      return false;
+    }
+    rpathTmp = stdout[rpathIdx].match(rOutRegex);
+    const rVersion = stdout[rpathIdx + 1].match(/^\[1\] "([^"]*)"$/);
     if ( rpathTmp && rVersion &&
       this.vComp(rVersion[1], minR) ) {
       return rpathTmp[1];
