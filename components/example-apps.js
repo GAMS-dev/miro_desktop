@@ -33,5 +33,24 @@ requirements at markets and supplies at factories.`,
     apiversion: apiVersion,
     usetmpdir: true,
     modesAvailable: [ 'base', 'hcube' ]
+  },
+  {
+    id: 'tsp',
+    title: 'TSP',
+    description: 'Traveling Salesman Problem',
+    logoPath: path.join('static_tsp', 'tsp_logo.jpg'),
+    miroversion: miroVersion,
+    apiversion: apiVersion,
+    usetmpdir: true,
+    modesAvailable: [ 'base', 'hcube' ]
+  },
+  {
+    id: 'farming',
+    title: 'Farming model',
+    description: `Crop plant alloction problem with stochastic crop yield`,
+    miroversion: miroVersion,
+    apiversion: apiVersion,
+    usetmpdir: true,
+    modesAvailable: [ 'base', 'hcube' ]
   }]
 }
