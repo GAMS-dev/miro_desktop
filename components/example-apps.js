@@ -45,6 +45,16 @@ requirements at markets and supplies at factories.`,
     modesAvailable: [ 'base', 'hcube' ]
   },
   {
+    id: 'cpack',
+    title: 'Circle packing',
+    description: 'Packing identical size circles in the unit circle',
+    logoPath: path.join('static_cpack', 'cpack_logo.png'),
+    miroversion: miroVersion,
+    apiversion: apiVersion,
+    usetmpdir: true,
+    modesAvailable: [ 'base' ]
+  },
+  {
     id: 'farming',
     title: 'Farming model',
     description: `Crop plant alloction problem with stochastic crop yield`,
