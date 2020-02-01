@@ -689,28 +689,30 @@ function quitLauncher () {
     app.quit()
   }
 }
-const gotTheLock = app.requestSingleInstanceLock();
+if (!miroDevelopMode) {
+  const gotTheLock = app.requestSingleInstanceLock();
 
-if (!gotTheLock) {
-  app.quit()
-} else {
-  app.on('second-instance', (event, argv, cwd) => {
-    log.debug('Second MIRO instance launched.');
-    if (mainWindow) {
-      if (mainWindow.isMinimized()) mainWindow.restore();
-      mainWindow.focus();
-      if ( process.platform == 'win32' &&
-        argv.length >= 2 && !DEVELOPMENT_MODE && !miroDevelopMode ) {
-        const newMiroAppPath = argv[argv.length - 1];
-        if ( newMiroAppPath.startsWith('--') ) {
-          return;
+  if (!gotTheLock) {
+    app.quit()
+  } else {
+    app.on('second-instance', (event, argv, cwd) => {
+      log.debug('Second MIRO instance launched.');
+      if (mainWindow) {
+        if (mainWindow.isMinimized()) mainWindow.restore();
+        mainWindow.focus();
+        if ( process.platform == 'win32' &&
+          argv.length >= 2 && !DEVELOPMENT_MODE && !miroDevelopMode ) {
+          const newMiroAppPath = argv[argv.length - 1];
+          if ( newMiroAppPath.startsWith('--') ) {
+            return;
+          }
+          log.debug(`MIRO launcher opened by double clicking MIRO app at path: ${newMiroAppPath}.`);
+          activateEditMode(false, true);
+          validateMIROApp([newMiroAppPath]);
         }
-        log.debug(`MIRO launcher opened by double clicking MIRO app at path: ${newMiroAppPath}.`);
-        activateEditMode(false, true);
-        validateMIROApp([newMiroAppPath]);
       }
-    }
-  });
+    });
+  }
 }
 
 function createMainWindow (showRunningApps = false) {
@@ -1364,9 +1366,6 @@ app.on('ready', async () => {
    Menu.setApplicationMenu(applicationMenu);
    
   if ( miroDevelopMode ) {
-    if(!gotTheLock){
-      return;
-    }
     mainWindow = new BrowserWindow({ show: false, width: 0, height: 0});
     mainWindow.hide();
     const modelPath = process.env.MIRO_MODEL_PATH;
