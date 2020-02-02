@@ -38,3 +38,6 @@
 	path = r-src/RPostgres
 	url = https://github.com/GAMS-dev/RPostgres.git
 	branch = master
+[submodule "r-src/miro.util"]
+	path = r-src/miro.util
+	url = https://github.com/GAMS-dev/miro.util.git

@@ -95,6 +95,7 @@ packageVersionMap <- list(
     c('xts', '0.11-2'),
     c('dygraphs', '1.1.1.6'),
     c('future', '1.14.0'),
+    'miro.util',
     'rhandsontable')
 dataTableVersionMap <- c('data.table', '1.12.2')
 
