@@ -227,7 +227,7 @@ if(length(RlibPathDevel)){
 }
 Sys.setenv(MIRO_BUILD='true')
 for ( modelName in c( 'pickstock', 'transport', 'sudoku', 'tsp', 'farming', 'inscribedsquare', 'cpack' ) ) {
-    if(modelName %in% c('inscribedsquare', 'cpack')){
+    if(modelName %in% c('inscribedsquare', 'cpack', 'tsp')){
         Sys.setenv(MIRO_MODE='base')
     }else{
         Sys.setenv(MIRO_MODE='full')
