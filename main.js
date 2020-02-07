@@ -1250,7 +1250,8 @@ ipcMain.on('save-general-config', async (e, newConfigData, needRestart) => {
           type: 'info',
           title: lang['main'].SuccessUpdateHdr,
           message: lang['main'].SuccessUpdateMsg,
-          buttons: [lang['main'].BtnCancel, lang['main'].BtnOk]
+          buttons: [lang['main'].BtnCancel, lang['main'].BtnOk],
+          cancelId: 0
         }) === 1 ) {
           app.relaunch();
           app.quit();
@@ -1283,10 +1284,11 @@ ipcMain.on('validate-logo', (e, filePath, id) => {
 ipcMain.on('delete-app', async (e, appId) => {
   log.debug(`Delete app (ID: ${appId}) request received`);
   const deleteAppConfirmedId = dialog.showMessageBoxSync(mainWindow, {
-   buttons: [ lang['main'].BtnRemove, lang['main'].BtnCancel ],
+   buttons: [ lang['main'].BtnCancel, lang['main'].BtnRemove ],
+   cancelId: 0,
    message: lang['main'].DeleteMsg
   });
-  if ( deleteAppConfirmedId !== 0 ) {
+  if ( deleteAppConfirmedId !== 1 ) {
     return
   }
   try {
