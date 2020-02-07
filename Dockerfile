@@ -13,8 +13,8 @@ ARG BUILD_DOCKER=true
 ARG SCRIPTS_PATH=/home/miro/scripts
 
 
-RUN groupadd -g 999 miro && \
-    useradd -r -u 999 -g miro miro
+RUN groupadd -g 1000 miro && \
+    useradd -r -u 1000 -g miro miro
 
 ENV APP /home/miro/app
 RUN mkdir -p $APP
