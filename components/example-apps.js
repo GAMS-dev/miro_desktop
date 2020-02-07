@@ -42,7 +42,7 @@ requirements at markets and supplies at factories.`,
     miroversion: miroVersion,
     apiversion: apiVersion,
     usetmpdir: true,
-    modesAvailable: [ 'base', 'hcube' ]
+    modesAvailable: [ 'base' ]
   },
   {
     id: 'cpack',
@@ -58,6 +58,7 @@ requirements at markets and supplies at factories.`,
     id: 'farming',
     title: 'Farming model',
     description: `Crop plant alloction problem with stochastic crop yield`,
+    logoPath: path.join('static_farming', 'farming_logo.png'),
     miroversion: miroVersion,
     apiversion: apiVersion,
     usetmpdir: true,
