@@ -105,7 +105,8 @@ if ( !packageIsInstalled(dataTableVersionMap) ){
     if ( isMac ) {
         makevarsPath <- '~/.R/Makevars'
         if ( file.exists(makevarsPath) ) {
-            stop("Makevars already exist. Won't overwrite!")
+            unlink('~/.R/Makevars')
+            #stop("Makevars already exist. Won't overwrite!")
         }
         if (!dir.exists(dirname(makevarsPath)) && 
             !dir.create(dirname(makevarsPath), showWarnings = TRUE, recursive = TRUE)){
