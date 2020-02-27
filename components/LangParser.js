@@ -563,7 +563,15 @@ const schema = {
            "languageReset": {
                "type":"string",
                "minLength":1
-           }, 
+           },
+           "remoteExecution": {
+               "type":"string",
+               "minLength":1
+           },
+           "remoteExecReset": {
+               "type":"string",
+               "minLength":1
+           },
            "generalLogging": {
                "type":"string",
                "minLength":1
@@ -721,7 +729,7 @@ const schema = {
                "minLength":1
            }
          },
-         "required": ["title", "general-tab", "paths-tab", "launchBrowser", "browserReset", "generalLanguage", "languageReset", "generalLogging", "loggingReset", "generalLoglife", "loglifeReset", "pathMiroapp", "pathMiroappSelect", "resetPathMiroapp", "pathGams", "pathGamsSelect", "pathGamsReset", "pathLog", "pathLogSelect", "pathLogReset", "pathR", "pathRSelect", "pathRReset", "needHelp", "btSave", "btCancel", "dialogConfigPathHdr", "dialogConfigPathMsg", "dialogConfigPathBtn", "dialogConfigPathLabel", "dialogGamsPathHdr", "dialogGamsPathMsg", "dialogGamsPathLabel", "dialogGamsPathBtn", "dialogRPathHdr", "dialogRPathMsg", "dialogRPathLabel", "dialogRPathBtn", "dialogLogPathHdr", "dialogLogPathMsg", "dialogLogPathLabel", "dialogLogPathBtn", "dialogLogLifeErrHdr", "dialogLogLifeErrMsg", "dialogLogLifeErrBtn", "browseFiles"]
+         "required": ["title", "general-tab", "paths-tab", "launchBrowser", "browserReset", "generalLanguage", "languageReset", "remoteExecution", "remoteExecReset", "generalLogging", "loggingReset", "generalLoglife", "loglifeReset", "pathMiroapp", "pathMiroappSelect", "resetPathMiroapp", "pathGams", "pathGamsSelect", "pathGamsReset", "pathLog", "pathLogSelect", "pathLogReset", "pathR", "pathRSelect", "pathRReset", "needHelp", "btSave", "btCancel", "dialogConfigPathHdr", "dialogConfigPathMsg", "dialogConfigPathBtn", "dialogConfigPathLabel", "dialogGamsPathHdr", "dialogGamsPathMsg", "dialogGamsPathLabel", "dialogGamsPathBtn", "dialogRPathHdr", "dialogRPathMsg", "dialogRPathLabel", "dialogRPathBtn", "dialogLogPathHdr", "dialogLogPathMsg", "dialogLogPathLabel", "dialogLogPathBtn", "dialogLogLifeErrHdr", "dialogLogLifeErrMsg", "dialogLogLifeErrBtn", "browseFiles"]
       }
    },
    "required": ["update", "main", "general", "menu", "settings"]
@@ -866,6 +874,8 @@ const en = {
         "browserReset": "Reset to default", 
         "generalLanguage": "Language", 
         "languageReset": "Reset to default", 
+        "remoteExecution": "Execution of optimization on GAMS MIRO Server?", 
+        "remoteExecReset": "Reset to default",
         "generalLogging": "Logging Level", 
         "loggingReset": "Reset to default", 
         "generalLoglife": "Number of days log files are stored", 
@@ -1047,6 +1057,8 @@ const de = {
         "browserReset": "Auf Standard zurücksetzen", 
         "generalLanguage": "Sprache", 
         "languageReset": "Auf Standard zurücksetzen", 
+        "remoteExecution": "Ausführung der Optimierung auf GAMS MIRO Server?", 
+        "remoteExecReset": "Auf Standard zurücksetzen",
         "generalLogging": "Log Level", 
         "loggingReset": "Auf Standard zurücksetzen", 
         "generalLoglife": "Speicherdauer von Logdateien (in Tagen)", 

@@ -76,7 +76,7 @@ const langParser = new LangParser(configData.getSync('language'));
 // Set global variables
 global.lang = langParser.get();
 global.miroVersion = miroVersion;
-global.miroRelease = 'Feb 25 2020';
+global.miroRelease = 'Feb 27 2020';
 
 const resourcesPath = DEVELOPMENT_MODE? app.getAppPath(): process.resourcesPath;
 
@@ -147,6 +147,7 @@ const tryStartWebserver = async (progressCallback, onErrorStartup,
   
   const generalConfig = {
     launchExternal: configData.get('launchExternal'),
+    remoteExecution: configData.get('remoteExecution'),
     language: configData.get('language'),
     logLevel: configData.get('logLevel')
   }
@@ -197,6 +198,7 @@ developMode: ${miroDevelopMode}.`);
       'GAMS_SYS_DIR': await gamspath,
       'MIRO_LOG_PATH': await logpath,
       'LAUNCHINBROWSER': await generalConfig.launchExternal,
+      'MIRO_REMOTE_EXEC': await generalConfig.remoteExecution,
       'MIRO_LANG': await generalConfig.language,
       'MIRO_LOG_LEVEL': await generalConfig.logLevel,
       'MIRO_VERSION_STRING': appData.miroversion,
@@ -569,7 +571,7 @@ function createSettingsWindow() {
   settingsWindow = new BrowserWindow({
     title: lang.settings.title,
     width: 570,
-    height: 620,
+    height: 640,
     resizable: DEVELOPMENT_MODE,
     titleBarStyle: 'hidden',
     show: false,

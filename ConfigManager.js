@@ -32,6 +32,9 @@ const schema = {
   launchExternal: {
     type: 'boolean'
   },
+  remoteExecution: {
+    type: 'boolean'
+  },
   logLifeTime: {
     type: 'integer',
     minimum: -1
@@ -54,6 +57,7 @@ const schema = {
         'rpath',
         'logpath',
         'launchExternal',
+        'remoteExecution',
         'logLifeTime',
         'language',
         'logLevel'
@@ -78,8 +82,8 @@ class ConfigManager extends Store {
         const superPathConfigData = new Store({schema, 
           cwd: configPathTmp,
           name: 'settings'});
-        [ 'gamspath', 'rpath', 'logpath', 'launchExternal', 'logLifeTime',
-          'language', 'logLevel' ].forEach(el => {
+        [ 'gamspath', 'rpath', 'logpath', 'launchExternal', 'remoteExecution',
+         'logLifeTime', 'language', 'logLevel' ].forEach(el => {
           this[el] = superPathConfigData.get(el, '');
         });
         this.important = superPathConfigData.get(
@@ -92,8 +96,8 @@ class ConfigManager extends Store {
     this.configpathDefault = miroWorkspaceDir;
     this.logpathDefault = path.join(miroWorkspaceDir, "logs");
 
-    [ 'gamspath', 'rpath', 'logpath', 'launchExternal', 'logLifeTime',
-    'language', 'logLevel' ].forEach(el => {
+    [ 'gamspath', 'rpath', 'logpath', 'launchExternal', 'remoteExecution',
+     'logLifeTime', 'language', 'logLevel' ].forEach(el => {
       if ( this.important.find(iel => iel === el) ) {
         return;
       }
@@ -109,6 +113,7 @@ class ConfigManager extends Store {
       }
       if ( value == null || value === '' ||
        (key === 'launchExternal' && value === false) ||
+       (key === 'remoteExecution' && value === false) ||
        (key === 'logLifeTime' && value === -1) ||
        (key === 'language' && value === 'en') ||
        (key === 'logLevel' && value === 'TRACE') ) {
@@ -158,6 +163,8 @@ class ConfigManager extends Store {
     } else if ( key === 'logLevel' ) {
       return 'TRACE';
     } else if ( key === 'launchExternal' ) {
+      return false;
+    } else if ( key === 'remoteExecution' ) {
       return false;
     }
   }
