@@ -16,7 +16,7 @@ const saveButton       = $('#btSave');
 
 const lang = remote.getGlobal('lang').settings;
 ['title', 'general-tab', 'paths-tab', 'launchBrowser', 'browserReset', 'generalLanguage', 'languageReset',
-'remoteExecution', 'remoteExecReset', 'generalLogging', 'loggingReset', 'generalLoglife', 'loglifeReset', 
+'generalRemoteExec', 'remoteExecReset', 'generalLogging', 'loggingReset', 'generalLoglife', 'loglifeReset', 
 'pathMiroapp', 'pathMiroappSelect', 'resetPathMiroapp', 'pathGams', 'pathGamsSelect', 'pathGamsReset', 'pathLog',
 'pathLogSelect', 'pathLogReset', 'pathR', 'pathRSelect', 'pathRReset', 'needHelp', 'btSave'].forEach(id => {
   const el = document.getElementById(id);
