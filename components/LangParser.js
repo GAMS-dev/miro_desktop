@@ -1239,7 +1239,7 @@ const cn = {
         "browserReset": "重置为默认设置", 
         "generalLanguage": "语言", 
         "languageReset": "重置为默认设置", 
-        "generalRemoteExec": "Execution of models on GAMS MIRO Server?", 
+        "generalRemoteExec": "在GAMS MIRO Server上执行模型?", 
         "remoteExecReset": "重置为默认设置",
         "generalLogging": "日志记录级别", 
         "loggingReset": "重置为默认设置", 
