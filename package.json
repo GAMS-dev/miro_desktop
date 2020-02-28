@@ -10,7 +10,8 @@
     "start": "electron .",
     "pack": "node ./build/scripts/pre-pack.js && electron-builder --dir",
     "dist": "node ./build/scripts/pre-pack.js && electron-builder",
-    "docker-build": "node ./build/scripts/pre-pack.js --docker"
+    "docker-build": "node ./build/scripts/pre-pack.js --docker",
+    "docker-publish": "node ./build/scripts/docker-publish.js"
   },
   "build": {
     "appId": "com.gams.miro",

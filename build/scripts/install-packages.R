@@ -204,6 +204,7 @@ if (isMac) {
 local({
     eval(parse(text = readLines('./miro/app.R',
      n = 5L, warn = FALSE)))
+    writeLines(MIROVersion, './version')
     mainJS = readLines('./main.js', warn = FALSE)
     mainJS = gsub('const requiredAPIVersion = \\d+;', 
         paste0('const requiredAPIVersion = ', APIVersion, ';'), mainJS)
