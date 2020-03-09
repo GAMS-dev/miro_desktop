@@ -248,9 +248,6 @@ developMode: ${miroDevelopMode}.`);
     }
   }
   await onErrorStartup(appData.id);
-  try {
-    miroProcesses[internalPid].kill()
-  } catch (e) {}
 }
 
 let newAppConf
@@ -873,6 +870,13 @@ ${requiredAPIVersion}.`);
   const onErrorStartup = async (appID, message) => {
     log.debug(`Error during startup of MIRO app with ID: ${appData.id}. \
 ${message? `Message: ${message}` : ''}`);
+    
+    try {
+      miroProcesses[processIdMap[appID]].kill();
+      miroProcesses[processIdMap[appID]] = null;
+      delete processIdMap[appID];
+    } catch (e) {}
+
     if ( mainWindow && !miroDevelopMode) {
       mainWindow.send('hide-loading-screen', appData.id);
       showErrorMsg({
@@ -886,8 +890,6 @@ ${message? `Message: ${message}` : ''}`);
       app.exit(1);
       return;
     }
-    miroProcesses[processIdMap[appID]] = null;
-    delete processIdMap[appID];
   }
 
   const onProcessFinished = async(appID) => {
