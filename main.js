@@ -871,11 +871,11 @@ ${requiredAPIVersion}.`);
     log.debug(`Error during startup of MIRO app with ID: ${appData.id}. \
 ${message? `Message: ${message}` : ''}`);
     
-    try {
-      miroProcesses[processIdMap[appID]].kill();
+    try{
+      await kill(miroProcesses[processIdMap[appID]].pid)
       miroProcesses[processIdMap[appID]] = null;
       delete processIdMap[appID];
-    } catch (e) {}
+    } catch ( e ) {}
 
     if ( mainWindow && !miroDevelopMode) {
       mainWindow.send('hide-loading-screen', appData.id);
