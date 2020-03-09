@@ -230,8 +230,7 @@ developMode: ${miroDevelopMode}.`);
     }
     await waitFor(Math.min(i*100, 1000))
     try {
-      const res = await http.head(url, {timeout: 5000})
-      // TODO: check that it is really shiny and not some other webserver
+      const res = await http.head(`${url}/shared/shiny.css`, {timeout: 10000})
       if (res.status === 200) {
         await progressCallback({
           code: 'success', port: shinyPort})
