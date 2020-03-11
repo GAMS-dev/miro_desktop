@@ -738,6 +738,7 @@ function createMainWindow (showRunningApps = false) {
     minWidth: 800,
     minHeight: 600,
     titleBarStyle: 'hidden',
+    icon: process.platform === 'linux'? path.join(__dirname, 'static', 'logo1.png'): undefined,
     webPreferences: {
       nodeIntegration: true
     }
