@@ -19,7 +19,7 @@ packageVersionMap <- list(
     c('promises', '1.1.0'),
     c('httpuv', '1.5.2'),
     c('mime', '0.7'),
-    c('jsonlite', '1.6'),
+    'jsonlite',
     c('digest', '0.6.20'),
     c('sourcetools', '0.1.7'),
     c('xtable', '1.8-4'),
