@@ -516,6 +516,18 @@ const schema = {
                "type":"string",
                "minLength":1
            },
+           "resetZoom": {
+               "type":"string",
+               "minLength":1
+           },
+           "zoomIn": {
+               "type":"string",
+               "minLength":1
+           },
+           "zoomOut": {
+               "type":"string",
+               "minLength":1
+           },
            "help": {
                "type":"string",
                "minLength":1
@@ -530,7 +542,7 @@ const schema = {
            }
          },
          "required": ["pref", "file", "edit", "addApp", "editApp", "addExampleApps", "undo",
-         "redo", "cut", "copy", "paste", "selectAll", "view", "window", "minimize", "zoom", "front", "close", "quit", "fullscreen", "help", "doc", "update"]
+         "redo", "cut", "copy", "paste", "selectAll", "view", "window", "minimize", "zoom", "front", "close", "quit", "fullscreen", "resetZoom", "zoomIn", "zoomOut", "help", "doc", "update"]
       },
       "settings":{
         "type":"object",
@@ -862,6 +874,9 @@ const en = {
         "close": "Close Window",
         "quit": "Quit",
         "fullscreen": "Toggle Full Screen",
+        "resetZoom": "Reset Zoom",
+        "zoomIn": "Zoom In",
+        "zoomOut": "Zoom Out",
         "help": "Help",
         "doc": "Documentation",
         "update": "Check for Update"
@@ -874,7 +889,7 @@ const en = {
         "browserReset": "Reset to default", 
         "generalLanguage": "Language", 
         "languageReset": "Reset to default", 
-        "generalRemoteExec": "Execution of models on GAMS MIRO Server?", 
+        "generalRemoteExec": "Execution of models on GAMS MIRO Engine?", 
         "remoteExecReset": "Reset to default",
         "generalLogging": "Logging Level", 
         "loggingReset": "Reset to default", 
@@ -1043,6 +1058,9 @@ const de = {
         "zoom": "Maximieren",
         "front": "Alle nach vorne bringen",
         "fullscreen": "Vollbild umschalten",
+        "resetZoom": "Zoomfaktor zurücksetzen",
+        "zoomIn": "Vergrößern",
+        "zoomOut": "Verkleinern",
         "close": "Fenster schließen",
         "quit": "Beenden",
         "help": "Hilfe",
@@ -1057,7 +1075,7 @@ const de = {
         "browserReset": "Auf Standard zurücksetzen", 
         "generalLanguage": "Sprache", 
         "languageReset": "Auf Standard zurücksetzen", 
-        "generalRemoteExec": "Ausführung der Modelle auf GAMS MIRO Server?", 
+        "generalRemoteExec": "Ausführung der Modelle auf GAMS MIRO Engine?", 
         "remoteExecReset": "Auf Standard zurücksetzen",
         "generalLogging": "Log Level", 
         "loggingReset": "Auf Standard zurücksetzen", 
@@ -1227,6 +1245,9 @@ const cn = {
         "close": "关闭窗口",
         "quit": "退出",
         "fullscreen": "切换全屏",
+        "resetZoom": "重设缩放",
+        "zoomIn": "放大",
+        "zoomOut": "缩小",
         "help": "帮助",
         "doc": "文档",
         "update": "检查更新"
@@ -1239,7 +1260,7 @@ const cn = {
         "browserReset": "重置为默认设置", 
         "generalLanguage": "语言", 
         "languageReset": "重置为默认设置", 
-        "generalRemoteExec": "在GAMS MIRO Server上执行模型?", 
+        "generalRemoteExec": "在GAMS MIRO Engine上执行模型?", 
         "remoteExecReset": "重置为默认设置",
         "generalLogging": "日志记录级别", 
         "loggingReset": "重置为默认设置", 

@@ -249,6 +249,17 @@ developMode: ${miroDevelopMode}.`);
   await onErrorStartup(appData.id);
 }
 
+function hideZoomMenu(){
+  if ( !applicationMenu ) {
+    return;
+  }
+  const editMenuId = isMac? 3:2;
+  [1,2,3].forEach(i => {
+    applicationMenu.items[editMenuId].submenu.items[i].enabled = false;
+    applicationMenu.items[editMenuId].submenu.items[i].visible = false;
+  });
+}
+
 let newAppConf
 
 function validateMIROApp ( filePath ) {
@@ -946,11 +957,27 @@ ${message? `Message: ${message}` : ''}`);
         }
       })
 
-      miroAppWindows[appID].loadURL(url)
+      miroAppWindows[appID].loadURL(url);
+
+      miroAppWindows[appID].on('focus', (e) => {
+        if ( !applicationMenu ) {
+          return;
+        }
+        const editMenuId = isMac? 3:2;
+        [1,2,3].forEach(i => {
+          applicationMenu.items[editMenuId].submenu.items[i].enabled = true;
+          applicationMenu.items[editMenuId].submenu.items[i].visible = true;
+        });
+      });
+
+      miroAppWindows[appID].on('blur', (e) => {
+        hideZoomMenu();
+      });
 
       miroAppWindows[appID].on('close', (e) => {
         e.preventDefault();
         log.debug(`Window of MIRO app with ID: ${appID} closed.`);
+        hideZoomMenu();
         miroAppWindows[appID].destroy();
       });
 
