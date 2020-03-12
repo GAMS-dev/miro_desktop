@@ -12,7 +12,7 @@ const log = require('electron-log');
 const menu = require('./components/menu.js');
 const installRPackages = require('./components/install-r.js');
 const requiredAPIVersion = 1;
-const miroVersion = '0.9.98';
+const miroVersion = '0.9.97';
 const libVersion = '1.0';
 const exampleAppsData = require('./components/example-apps.js')(miroVersion, requiredAPIVersion);
 
@@ -738,7 +738,7 @@ function createMainWindow (showRunningApps = false) {
     minWidth: 800,
     minHeight: 600,
     titleBarStyle: 'hidden',
-    icon: process.platform === 'linux'? path.join(__dirname, 'static', 'logo.svg'): undefined,
+    icon: process.platform === 'linux'? path.join(__dirname, 'static', 'logo1.png'): undefined,
     webPreferences: {
       nodeIntegration: true
     }
