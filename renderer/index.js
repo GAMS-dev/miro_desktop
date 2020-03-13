@@ -535,7 +535,7 @@ ipcRenderer.on('apps-received', (e, apps, appDataPath, startup = false, deactiva
     if ( app.logoPath ) {
         logoPath = path.join(appDataPath, app.id, app.logoPath);
     }
-    html += `<div class="col-lg-4 col-6 miro-app-item" data-id="${app.id}" 
+    html += `<div class="col-xxl-3 col-lg-4 col-6 miro-app-item" data-id="${app.id}" 
                data-usetmp="${app.usetmpdir}" data-mode="${app.modesAvailable[0]}" 
                data-apiver="${app.apiversion}" data-mirover="${app.miroversion}">
                  <div id="appBox_${app.id}" class="app-box launch-app-box app-box-fixed-height" data-id="${app.id}">
