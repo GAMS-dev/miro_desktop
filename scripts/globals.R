@@ -91,7 +91,7 @@ packageVersionMap <- list(
     c('rpivotTable', '0.3.0'),
     c('futile.logger', '1.4.3'),
     c('zip', '2.0.3'),
-    c('leaflet.minicharts', '0.5.4'),
+    c('leaflet.minicharts', '0.6.0'),
     c('xts', '0.11-2'),
     c('dygraphs', '1.1.1.6'),
     c('future', '1.14.0'),
