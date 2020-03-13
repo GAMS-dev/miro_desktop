@@ -11,7 +11,8 @@
     "pack": "node ./build/scripts/pre-pack.js && electron-builder --dir",
     "dist": "node ./build/scripts/pre-pack.js && electron-builder",
     "docker-build": "node ./build/scripts/pre-pack.js --docker",
-    "docker-publish": "node ./build/scripts/docker-publish.js"
+    "docker-publish": "node ./build/scripts/docker-publish.js",
+    "docker-publish-unstable": "node ./build/scripts/docker-publish.js --unstable"
   },
   "build": {
     "appId": "com.gams.miro",
