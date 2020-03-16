@@ -17,10 +17,7 @@ if ( isLinux ) {
 }
 requiredPackages <- c('devtools', 'remotes', 'jsonlite', 'V8', 
     'jsonvalidate', 'zip', 'tibble', 'readr', 'R6', 'processx', 
-    'testthat', 'shinytest', 'Rcpp', 
-    'shiny', 'shinydashboard', 'rhandsontable', 'rpivotTable', 
-    'plotly', 'xts', 'dygraphs', 'leaflet', 'leaflet.minicharts', 
-    'timevis', 'DT')
+    'testthat', 'shinytest', 'Rcpp')
 if ( identical(Sys.getenv('BUILD_DOCKER'), 'true') ) {
     requiredPackages <- c(requiredPackages, 'DBI', 'blob')
 }
