@@ -6,3 +6,4 @@ build/lib_devel
 r/library
 r/library_src
 *.log
+version
