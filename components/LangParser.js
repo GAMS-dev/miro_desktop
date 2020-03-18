@@ -96,6 +96,10 @@ const schema = {
                "type":"string",
                "minLength":1
            },
+           "ErrorVersionMsg": {
+               "type":"string",
+               "minLength":1
+           },
            "ErrorReadMsg": {
                "type":"string",
                "minLength":1
@@ -257,7 +261,7 @@ const schema = {
                "minLength":1
            }
          },
-         "required": ["ErrorUnexpectedHdr", "ErrorUnexpectedMsg", "ErrorUnexpectedMsg2", "BtnCancel", "BtnOk", "BtnRemove", "ErrorInvalidHdr", "ErrorInvalidMsg", "ErrorInvalidTwoMsg", "ErrorInvalidThreeMsg", "ErrorAPIHdr", "ErrorAPIMsg", "ErrorReadMsg","ErrorLogoHdr", "ErrorLogoMsg", "ErrorLogoMultiMsg", "ErrorLogoLargeHdr", "ErrorLogoLargeMsg", "ErrorExampleExistsHdr", "ErrorModelExistsHdr", "ErrorModelExistsMsg", "ErrorModelExistsMsg2", "ErrorWriteHdr", "ErrorWriteMsg", "ErrorWriteMsg2", "ErrorAppRunningHdr", "ErrorAppRunningMsg", "ErrorAppIncompMsg", "ErrorMsgLaunch", "ErrorInstallStartMsg", "ErrorInstallPermHdr", "ErrorInstallPerm1Msg", "ErrorInstallPerm2Msg", "ErrorInstallPerm3Msg", "ErrorInstallPerm4Msg", "ErrorInstallPermBtnYes", "ErrorInstallPermBtnNo", "ErrorWritePerm2Msg", "ErrorNoWritePermMsg", "ErrorInvalidPathHdr", "ErrorInvalidPathMsg", "ErrorInvalidPathMsg2", "ErrorMessage", "SuccessUpdateHdr", "SuccessUpdateMsg", "ErrorUnexpectedWriteMsg", "DeleteMsg", "ErrorInit", "ErrorRInstallHdr", "ErrorRInstallMsg", "ErrorModelPathHdr", "ErrorModelPathMsg"]
+         "required": ["ErrorUnexpectedHdr", "ErrorUnexpectedMsg", "ErrorUnexpectedMsg2", "BtnCancel", "BtnOk", "BtnRemove", "ErrorInvalidHdr", "ErrorInvalidMsg", "ErrorInvalidTwoMsg", "ErrorInvalidThreeMsg", "ErrorAPIHdr", "ErrorAPIMsg", "ErrorVersionMsg", "ErrorReadMsg","ErrorLogoHdr", "ErrorLogoMsg", "ErrorLogoMultiMsg", "ErrorLogoLargeHdr", "ErrorLogoLargeMsg", "ErrorExampleExistsHdr", "ErrorModelExistsHdr", "ErrorModelExistsMsg", "ErrorModelExistsMsg2", "ErrorWriteHdr", "ErrorWriteMsg", "ErrorWriteMsg2", "ErrorAppRunningHdr", "ErrorAppRunningMsg", "ErrorAppIncompMsg", "ErrorMsgLaunch", "ErrorInstallStartMsg", "ErrorInstallPermHdr", "ErrorInstallPerm1Msg", "ErrorInstallPerm2Msg", "ErrorInstallPerm3Msg", "ErrorInstallPerm4Msg", "ErrorInstallPermBtnYes", "ErrorInstallPermBtnNo", "ErrorWritePerm2Msg", "ErrorNoWritePermMsg", "ErrorInvalidPathHdr", "ErrorInvalidPathMsg", "ErrorInvalidPathMsg2", "ErrorMessage", "SuccessUpdateHdr", "SuccessUpdateMsg", "ErrorUnexpectedWriteMsg", "DeleteMsg", "ErrorInit", "ErrorRInstallHdr", "ErrorRInstallMsg", "ErrorModelPathHdr", "ErrorModelPathMsg"]
      },
      "general":{
        "type":"object",
@@ -768,6 +772,7 @@ const en = {
         "ErrorInvalidThreeMsg": "Invalid app",
         "ErrorAPIHdr": "MIRO app incompatible",
         "ErrorAPIMsg": "The MIRO app you want to add is not compatible with the MIRO version you installed. Please ask the developer of the app to update it and try again!",
+        "ErrorVersionMsg": "The MIRO app you want to add was created with a newer MIRO version than the one you use. Please update your MIRO version and try again!",
         "ErrorAppIncompMsg": "The MIRO app you want to launch is not compatible with the MIRO version you installed. Please ask the developer of the app to update it and try again!",
         "ErrorReadMsg": "There was a problem reading the MIRO app file. Error message:",
         "ErrorLogoHdr": "Invalid MIRO app logo",
@@ -954,6 +959,7 @@ const de = {
         "ErrorInvalidThreeMsg": "Ungültige App",
         "ErrorAPIHdr": "MIRO-App nicht kompatibel",
         "ErrorAPIMsg": "Die MIRO-App, die Sie hinzufügen möchten, ist nicht mit der installierten MIRO-Version kompatibel. Bitte fragen Sie den Entwickler der App, diese zu aktualisieren und versuchen Sie es erneut!",
+        "ErrorVersionMsg": "Die MIRO-App, die Sie hinzufügen möchten, wurde mit einer neueren MIRO-Version erstellt als die, die Sie verwenden. Bitte aktualisieren Sie Ihre MIRO-Version und versuchen Sie es erneut!",
         "ErrorAppIncompMsg": "Die zu startende MIRO-App ist nicht mit der installierten MIRO-Version kompatibel. Bitte fragen Sie den Entwickler der App ein Update durchzuführen und versuchen Sie es erneut!",
         "ErrorReadMsg": "Es gab ein Problem beim Lesen der MIRO-App-Datei. Fehlermeldung:",
         "ErrorLogoHdr": "Ungültiges MIRO-App-Logo",
@@ -1139,6 +1145,7 @@ const cn = {
         "ErrorInvalidThreeMsg": "无效的应用程序",
         "ErrorAPIHdr": "MIRO应用程序不兼容",
         "ErrorAPIMsg": "要添加的MIRO应用程序与当前安装的MIRO版本不兼容。请联系开发者更新应用并重试！",
+        "ErrorVersionMsg": "The MIRO app you want to add was created with a newer MIRO version than the one you use. Please update your MIRO version and try again!",
         "ErrorAppIncompMsg": "要启动的MIRO应用程序与当前安装的MIRO版本不兼容。请联系开发者更新应用并重试！",
         "ErrorReadMsg": "读取MIRO应用程序文件时出现错误，错误信息如下：",
         "ErrorLogoHdr": "无效的MIRO应用程序标志",

@@ -86,9 +86,9 @@ module.exports = function(addExampleAppsCallback,
       label: lang['view'],
       submenu: [
         { label: lang['fullscreen'], role: 'togglefullscreen', accelerator: isMac ? 'Ctrl+Cmd+F' : 'F11' },
-        { label: lang['resetZoom'], role: 'resetZoom', accelerator: 'CmdOrCtrl+0', enabled: false, visible: false },
-        { label: lang['zoomIn'], role: 'zoomIn', accelerator: 'CmdOrCtrl+Plus', enabled: false, visible: false },
-        { label: lang['zoomOut'], role: 'zoomOut', accelerator: 'CmdOrCtrl+-', enabled: false, visible: false }
+        { label: lang['resetZoom'], role: 'resetZoom', enabled: false, visible: false },
+        { label: lang['zoomIn'], role: 'zoomIn', enabled: false, visible: false },
+        { label: lang['zoomOut'], role: 'zoomOut', enabled: false, visible: false }
       ]
     },
     // { role: 'windowMenu' }
