@@ -98,6 +98,21 @@ version: ${process.getSystemVersion()})...`);
 // enable overlay scrollbar
 app.commandLine.appendSwitch('--enable-features', 'OverlayScrollbar')
 
+function compareVersions(v1, v2) {
+  const v1parts = v1.split('.');
+  const v2parts = v2.split('.');
+  const v1Major = parseInt(v1parts[0], 10);
+  const v2Major = parseInt(v2parts[0], 10);
+  const v1Minor = parseInt(v1parts[1], 10);
+  const v2Minor = parseInt(v2parts[1], 10);
+  if ( v1Major > v2Major || (v1Major === v2Major && 
+    v1Minor >= v2Minor) ) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 /*
 MIT License
 
@@ -378,6 +393,15 @@ MIRO version: ${newAppConf.miroversion}.`);
                 message: errMsgTemplate
             });
             return
+          }
+          if ( compareVersions(newAppConf.miroversion, miroVersion) ) {
+            mainWindow.setProgressBar(-1);
+            showErrorMsg({
+                type: 'info',
+                title: lang['main'].ErrorAPIHdr,
+                message: lang['main'].ErrorVersionMsg
+            });
+            return;
           }
           if ( !newAppConf.apiversion ||
             newAppConf.apiversion !== requiredAPIVersion ) {
