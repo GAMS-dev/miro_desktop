@@ -115,6 +115,7 @@
     "fs-extra": "^8.1.0",
     "jquery": "^3.4.1",
     "popper.js": "^1.15.0",
+    "portscanner": "^2.2.0",
     "tree-kill": "^1.2.2",
     "which": "^2.0.1",
     "yauzl": "^2.10.0"

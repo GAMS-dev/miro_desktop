@@ -154,7 +154,14 @@ const tryStartWebserver = async (progressCallback, onErrorStartup,
     await onErrorStartup(appData.id)
     return
   }
-  let shinyPort = randomPort();
+  let shinyPort;
+  try {
+    shinyPort = await randomPort();
+  } catch(e){
+    log.debug(`Process could not be started, as scanning open ports failed with error: ${e.message}`);
+    await onErrorStartup(appData.id);
+    return;
+  }
   log.debug(`Process: ${internalPid} is being started on port: ${shinyPort}.`);
   const gamspath = configData.get('gamspath');
   const logpath = configData.get('logpath');
