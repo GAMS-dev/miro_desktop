@@ -84,9 +84,11 @@ module.exports = function(addExampleAppsCallback,
     // { role: 'viewMenu' }
     {
       label: lang['view'],
-      accelerator: isMac ? 'Ctrl+Cmd+F' : 'F11',
       submenu: [
-        { label: lang['fullscreen'], role: 'togglefullscreen' }
+        { label: lang['fullscreen'], role: 'togglefullscreen', accelerator: isMac ? 'Ctrl+Cmd+F' : 'F11' },
+        { label: lang['resetZoom'], role: 'resetZoom', enabled: false, visible: false },
+        { label: lang['zoomIn'], role: 'zoomIn', enabled: false, visible: false },
+        { label: lang['zoomOut'], role: 'zoomOut', enabled: false, visible: false }
       ]
     },
     // { role: 'windowMenu' }
@@ -94,8 +96,8 @@ module.exports = function(addExampleAppsCallback,
       label: lang['window'],
       submenu: [
         { label: lang['minimize'], role: 'minimize' },
-        { label: lang['zoom'], role: 'zoom' },
         ...(isMac ? [
+          { label: lang['zoom'], role: 'zoom' },
           { type: 'separator' },
           { label: lang['front'], role: 'front' }
         ] : [

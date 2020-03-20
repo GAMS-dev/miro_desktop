@@ -1,5 +1,7 @@
 GAMS MIRO Launcher as a whole is distributed under GPL-3 (GNU GENERAL PUBLIC LICENSE version 3). A copy of this license is included below.
 
+The entire source code is available at: https://github.com/GAMS-dev/miro_desktop
+
 GAMS MIRO Launcher includes other open source software components. The following
 is a list of these components:
 
@@ -25,6 +27,7 @@ is a list of these components:
 "asn1@0.2.4","MIT","https://github.com/joyent/node-asn1","https://github.com/joyent/node-asn1/raw/master/LICENSE","com.gams.miro"
 "assert-plus@1.0.0","MIT","https://github.com/mcavage/node-assert-plus","https://github.com/mcavage/node-assert-plus","com.gams.miro"
 "async-exit-hook@2.0.1","MIT","https://github.com/tapppi/async-exit-hook","https://github.com/tapppi/async-exit-hook/raw/master/license","com.gams.miro"
+"async@2.6.3","MIT","https://github.com/caolan/async","https://github.com/caolan/async/raw/master/LICENSE","com.gams.miro"
 "asynckit@0.4.0","MIT","https://github.com/alexindigo/asynckit","https://github.com/alexindigo/asynckit/raw/master/LICENSE","com.gams.miro"
 "aws-sign2@0.7.0","Apache-2.0","https://github.com/mikeal/aws-sign","https://github.com/mikeal/aws-sign/raw/master/LICENSE","com.gams.miro"
 "aws4@1.8.0","MIT","https://github.com/mhart/aws4","https://github.com/mhart/aws4/raw/master/LICENSE","com.gams.miro"
@@ -144,6 +147,7 @@ is a list of these components:
 "is-fullwidth-code-point@2.0.0","MIT","https://github.com/sindresorhus/is-fullwidth-code-point","https://github.com/sindresorhus/is-fullwidth-code-point/raw/master/license","com.gams.miro"
 "is-installed-globally@0.1.0","MIT","https://github.com/sindresorhus/is-installed-globally","https://github.com/sindresorhus/is-installed-globally/raw/master/license","com.gams.miro"
 "is-npm@3.0.0","MIT","https://github.com/sindresorhus/is-npm","https://github.com/sindresorhus/is-npm/raw/master/license","com.gams.miro"
+"is-number-like@1.0.8","ISC","https://github.com/vigour-io/is-number-like","https://github.com/vigour-io/is-number-like/raw/master/LICENSE","com.gams.miro"
 "is-obj@1.0.1","MIT","https://github.com/sindresorhus/is-obj","https://github.com/sindresorhus/is-obj/raw/master/license","configstore:com.gams.miro"
 "is-obj@2.0.0","MIT","https://github.com/sindresorhus/is-obj","https://github.com/sindresorhus/is-obj/raw/master/license","com.gams.miro"
 "is-path-inside@1.0.1","MIT","https://github.com/sindresorhus/is-path-inside","https://github.com/sindresorhus/is-path-inside/raw/master/license","com.gams.miro"
@@ -173,6 +177,8 @@ is a list of these components:
 "lazy-val@1.0.4","MIT","https://github.com/develar/lazy-val","https://github.com/develar/lazy-val","com.gams.miro"
 "load-json-file@1.1.0","MIT","https://github.com/sindresorhus/load-json-file","https://github.com/sindresorhus/load-json-file/raw/master/license","com.gams.miro"
 "locate-path@3.0.0","MIT","https://github.com/sindresorhus/locate-path","https://github.com/sindresorhus/locate-path/raw/master/license","com.gams.miro"
+"lodash.isfinite@3.3.2","MIT","https://github.com/lodash/lodash","https://github.com/lodash/lodash/raw/master/LICENSE","com.gams.miro"
+"lodash@4.17.15","MIT","https://github.com/lodash/lodash","https://github.com/lodash/lodash/raw/master/LICENSE","com.gams.miro"
 "loud-rejection@1.6.0","MIT","https://github.com/sindresorhus/loud-rejection","https://github.com/sindresorhus/loud-rejection/raw/master/license","com.gams.miro"
 "lowercase-keys@1.0.1","MIT","https://github.com/sindresorhus/lowercase-keys","https://github.com/sindresorhus/lowercase-keys/raw/master/license","com.gams.miro"
 "lowercase-keys@2.0.0","MIT","https://github.com/sindresorhus/lowercase-keys","https://github.com/sindresorhus/lowercase-keys/raw/master/license","cacheable-request:com.gams.miro"
@@ -227,6 +233,7 @@ is a list of these components:
 "pinkie@2.0.4","MIT","https://github.com/floatdrop/pinkie","https://github.com/floatdrop/pinkie/raw/master/license","com.gams.miro"
 "pkg-up@3.1.0","MIT","https://github.com/sindresorhus/pkg-up","https://github.com/sindresorhus/pkg-up/raw/master/license","com.gams.miro"
 "popper.js@1.16.0","MIT","https://github.com/FezVrasta/popper.js","https://github.com/FezVrasta/popper.js","com.gams.miro"
+"portscanner@2.2.0","MIT","https://github.com/baalexander/node-portscanner","https://github.com/baalexander/node-portscanner/raw/master/LICENSE","com.gams.miro"
 "prepend-http@2.0.0","MIT","https://github.com/sindresorhus/prepend-http","https://github.com/sindresorhus/prepend-http/raw/master/license","com.gams.miro"
 "pretty-bytes@1.0.4","MIT","https://github.com/sindresorhus/pretty-bytes","https://github.com/sindresorhus/pretty-bytes/raw/master/license","com.gams.miro"
 "process-nextick-args@2.0.1","MIT","https://github.com/calvinmetcalf/process-nextick-args","https://github.com/calvinmetcalf/process-nextick-args/raw/master/license.md","com.gams.miro"

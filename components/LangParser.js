@@ -96,6 +96,10 @@ const schema = {
                "type":"string",
                "minLength":1
            },
+           "ErrorVersionMsg": {
+               "type":"string",
+               "minLength":1
+           },
            "ErrorReadMsg": {
                "type":"string",
                "minLength":1
@@ -257,7 +261,7 @@ const schema = {
                "minLength":1
            }
          },
-         "required": ["ErrorUnexpectedHdr", "ErrorUnexpectedMsg", "ErrorUnexpectedMsg2", "BtnCancel", "BtnOk", "BtnRemove", "ErrorInvalidHdr", "ErrorInvalidMsg", "ErrorInvalidTwoMsg", "ErrorInvalidThreeMsg", "ErrorAPIHdr", "ErrorAPIMsg", "ErrorReadMsg","ErrorLogoHdr", "ErrorLogoMsg", "ErrorLogoMultiMsg", "ErrorLogoLargeHdr", "ErrorLogoLargeMsg", "ErrorExampleExistsHdr", "ErrorModelExistsHdr", "ErrorModelExistsMsg", "ErrorModelExistsMsg2", "ErrorWriteHdr", "ErrorWriteMsg", "ErrorWriteMsg2", "ErrorAppRunningHdr", "ErrorAppRunningMsg", "ErrorAppIncompMsg", "ErrorMsgLaunch", "ErrorInstallStartMsg", "ErrorInstallPermHdr", "ErrorInstallPerm1Msg", "ErrorInstallPerm2Msg", "ErrorInstallPerm3Msg", "ErrorInstallPerm4Msg", "ErrorInstallPermBtnYes", "ErrorInstallPermBtnNo", "ErrorWritePerm2Msg", "ErrorNoWritePermMsg", "ErrorInvalidPathHdr", "ErrorInvalidPathMsg", "ErrorInvalidPathMsg2", "ErrorMessage", "SuccessUpdateHdr", "SuccessUpdateMsg", "ErrorUnexpectedWriteMsg", "DeleteMsg", "ErrorInit", "ErrorRInstallHdr", "ErrorRInstallMsg", "ErrorModelPathHdr", "ErrorModelPathMsg"]
+         "required": ["ErrorUnexpectedHdr", "ErrorUnexpectedMsg", "ErrorUnexpectedMsg2", "BtnCancel", "BtnOk", "BtnRemove", "ErrorInvalidHdr", "ErrorInvalidMsg", "ErrorInvalidTwoMsg", "ErrorInvalidThreeMsg", "ErrorAPIHdr", "ErrorAPIMsg", "ErrorVersionMsg", "ErrorReadMsg","ErrorLogoHdr", "ErrorLogoMsg", "ErrorLogoMultiMsg", "ErrorLogoLargeHdr", "ErrorLogoLargeMsg", "ErrorExampleExistsHdr", "ErrorModelExistsHdr", "ErrorModelExistsMsg", "ErrorModelExistsMsg2", "ErrorWriteHdr", "ErrorWriteMsg", "ErrorWriteMsg2", "ErrorAppRunningHdr", "ErrorAppRunningMsg", "ErrorAppIncompMsg", "ErrorMsgLaunch", "ErrorInstallStartMsg", "ErrorInstallPermHdr", "ErrorInstallPerm1Msg", "ErrorInstallPerm2Msg", "ErrorInstallPerm3Msg", "ErrorInstallPerm4Msg", "ErrorInstallPermBtnYes", "ErrorInstallPermBtnNo", "ErrorWritePerm2Msg", "ErrorNoWritePermMsg", "ErrorInvalidPathHdr", "ErrorInvalidPathMsg", "ErrorInvalidPathMsg2", "ErrorMessage", "SuccessUpdateHdr", "SuccessUpdateMsg", "ErrorUnexpectedWriteMsg", "DeleteMsg", "ErrorInit", "ErrorRInstallHdr", "ErrorRInstallMsg", "ErrorModelPathHdr", "ErrorModelPathMsg"]
      },
      "general":{
        "type":"object",
@@ -516,6 +520,18 @@ const schema = {
                "type":"string",
                "minLength":1
            },
+           "resetZoom": {
+               "type":"string",
+               "minLength":1
+           },
+           "zoomIn": {
+               "type":"string",
+               "minLength":1
+           },
+           "zoomOut": {
+               "type":"string",
+               "minLength":1
+           },
            "help": {
                "type":"string",
                "minLength":1
@@ -530,7 +546,7 @@ const schema = {
            }
          },
          "required": ["pref", "file", "edit", "addApp", "editApp", "addExampleApps", "undo",
-         "redo", "cut", "copy", "paste", "selectAll", "view", "window", "minimize", "zoom", "front", "close", "quit", "fullscreen", "help", "doc", "update"]
+         "redo", "cut", "copy", "paste", "selectAll", "view", "window", "minimize", "zoom", "front", "close", "quit", "fullscreen", "resetZoom", "zoomIn", "zoomOut", "help", "doc", "update"]
       },
       "settings":{
         "type":"object",
@@ -563,7 +579,15 @@ const schema = {
            "languageReset": {
                "type":"string",
                "minLength":1
-           }, 
+           },
+           "generalRemoteExec": {
+               "type":"string",
+               "minLength":1
+           },
+           "remoteExecReset": {
+               "type":"string",
+               "minLength":1
+           },
            "generalLogging": {
                "type":"string",
                "minLength":1
@@ -721,7 +745,7 @@ const schema = {
                "minLength":1
            }
          },
-         "required": ["title", "general-tab", "paths-tab", "launchBrowser", "browserReset", "generalLanguage", "languageReset", "generalLogging", "loggingReset", "generalLoglife", "loglifeReset", "pathMiroapp", "pathMiroappSelect", "resetPathMiroapp", "pathGams", "pathGamsSelect", "pathGamsReset", "pathLog", "pathLogSelect", "pathLogReset", "pathR", "pathRSelect", "pathRReset", "needHelp", "btSave", "btCancel", "dialogConfigPathHdr", "dialogConfigPathMsg", "dialogConfigPathBtn", "dialogConfigPathLabel", "dialogGamsPathHdr", "dialogGamsPathMsg", "dialogGamsPathLabel", "dialogGamsPathBtn", "dialogRPathHdr", "dialogRPathMsg", "dialogRPathLabel", "dialogRPathBtn", "dialogLogPathHdr", "dialogLogPathMsg", "dialogLogPathLabel", "dialogLogPathBtn", "dialogLogLifeErrHdr", "dialogLogLifeErrMsg", "dialogLogLifeErrBtn", "browseFiles"]
+         "required": ["title", "general-tab", "paths-tab", "launchBrowser", "browserReset", "generalLanguage", "languageReset", "generalRemoteExec", "remoteExecReset", "generalLogging", "loggingReset", "generalLoglife", "loglifeReset", "pathMiroapp", "pathMiroappSelect", "resetPathMiroapp", "pathGams", "pathGamsSelect", "pathGamsReset", "pathLog", "pathLogSelect", "pathLogReset", "pathR", "pathRSelect", "pathRReset", "needHelp", "btSave", "btCancel", "dialogConfigPathHdr", "dialogConfigPathMsg", "dialogConfigPathBtn", "dialogConfigPathLabel", "dialogGamsPathHdr", "dialogGamsPathMsg", "dialogGamsPathLabel", "dialogGamsPathBtn", "dialogRPathHdr", "dialogRPathMsg", "dialogRPathLabel", "dialogRPathBtn", "dialogLogPathHdr", "dialogLogPathMsg", "dialogLogPathLabel", "dialogLogPathBtn", "dialogLogLifeErrHdr", "dialogLogLifeErrMsg", "dialogLogLifeErrBtn", "browseFiles"]
       }
    },
    "required": ["update", "main", "general", "menu", "settings"]
@@ -748,6 +772,7 @@ const en = {
         "ErrorInvalidThreeMsg": "Invalid app",
         "ErrorAPIHdr": "MIRO app incompatible",
         "ErrorAPIMsg": "The MIRO app you want to add is not compatible with the MIRO version you installed. Please ask the developer of the app to update it and try again!",
+        "ErrorVersionMsg": "The MIRO app you want to add was created with a newer MIRO version than the one you use. Please update your MIRO version and try again!",
         "ErrorAppIncompMsg": "The MIRO app you want to launch is not compatible with the MIRO version you installed. Please ask the developer of the app to update it and try again!",
         "ErrorReadMsg": "There was a problem reading the MIRO app file. Error message:",
         "ErrorLogoHdr": "Invalid MIRO app logo",
@@ -854,6 +879,9 @@ const en = {
         "close": "Close Window",
         "quit": "Quit",
         "fullscreen": "Toggle Full Screen",
+        "resetZoom": "Reset Zoom",
+        "zoomIn": "Zoom In",
+        "zoomOut": "Zoom Out",
         "help": "Help",
         "doc": "Documentation",
         "update": "Check for Update"
@@ -866,6 +894,8 @@ const en = {
         "browserReset": "Reset to default", 
         "generalLanguage": "Language", 
         "languageReset": "Reset to default", 
+        "generalRemoteExec": "Execution of models on GAMS MIRO Engine?", 
+        "remoteExecReset": "Reset to default",
         "generalLogging": "Logging Level", 
         "loggingReset": "Reset to default", 
         "generalLoglife": "Number of days log files are stored", 
@@ -929,6 +959,7 @@ const de = {
         "ErrorInvalidThreeMsg": "Ungültige App",
         "ErrorAPIHdr": "MIRO-App nicht kompatibel",
         "ErrorAPIMsg": "Die MIRO-App, die Sie hinzufügen möchten, ist nicht mit der installierten MIRO-Version kompatibel. Bitte fragen Sie den Entwickler der App, diese zu aktualisieren und versuchen Sie es erneut!",
+        "ErrorVersionMsg": "Die MIRO-App, die Sie hinzufügen möchten, wurde mit einer neueren MIRO-Version erstellt als die, die Sie verwenden. Bitte aktualisieren Sie Ihre MIRO-Version und versuchen Sie es erneut!",
         "ErrorAppIncompMsg": "Die zu startende MIRO-App ist nicht mit der installierten MIRO-Version kompatibel. Bitte fragen Sie den Entwickler der App ein Update durchzuführen und versuchen Sie es erneut!",
         "ErrorReadMsg": "Es gab ein Problem beim Lesen der MIRO-App-Datei. Fehlermeldung:",
         "ErrorLogoHdr": "Ungültiges MIRO-App-Logo",
@@ -1033,6 +1064,9 @@ const de = {
         "zoom": "Maximieren",
         "front": "Alle nach vorne bringen",
         "fullscreen": "Vollbild umschalten",
+        "resetZoom": "Zoomfaktor zurücksetzen",
+        "zoomIn": "Vergrößern",
+        "zoomOut": "Verkleinern",
         "close": "Fenster schließen",
         "quit": "Beenden",
         "help": "Hilfe",
@@ -1047,6 +1081,8 @@ const de = {
         "browserReset": "Auf Standard zurücksetzen", 
         "generalLanguage": "Sprache", 
         "languageReset": "Auf Standard zurücksetzen", 
+        "generalRemoteExec": "Ausführung der Modelle auf GAMS MIRO Engine?", 
+        "remoteExecReset": "Auf Standard zurücksetzen",
         "generalLogging": "Log Level", 
         "loggingReset": "Auf Standard zurücksetzen", 
         "generalLoglife": "Speicherdauer von Logdateien (in Tagen)", 
@@ -1088,12 +1124,199 @@ const de = {
         "browseFiles": "Durchsuchen"
    }
 }
-
+const cn = {
+    "update": {
+        "title": "检查更新",
+        "updateAvailable": "GAMS MIRO有新版本可用：",
+        "downloadUpdate": "您可以下载这个版本",
+        "here": "这里",
+        "upToDate": "您正在使用最新版本的GAMS MIRO",
+        "error": "出现意外错误，请稍后再试。",
+        "btClose": "确定"
+    },
+    "main": {
+        "ErrorUnexpectedHdr": "意外错误",
+        "ErrorUnexpectedMsg": "MIRO的应用程序无法启动。如果问题仍然存在, 请联系GAMS！",
+        "ErrorUnexpectedMsg2": "出现意外错误。错误信息如下：",
+        "ErrorMsgLaunch": "启动MIRO应用程序时出现错误。错误信息如下：",
+        "ErrorInvalidHdr": "无效的MIRO应用程序文件",
+        "ErrorInvalidMsg": "选择的文件不是有效的MIRO应用程序！",
+        "ErrorInvalidTwoMsg": "请只删除一个MIRO应用程序文件！",
+        "ErrorInvalidThreeMsg": "无效的应用程序",
+        "ErrorAPIHdr": "MIRO应用程序不兼容",
+        "ErrorAPIMsg": "要添加的MIRO应用程序与当前安装的MIRO版本不兼容。请联系开发者更新应用并重试！",
+        "ErrorVersionMsg": "要添加的MIRO应用程序是由更高的MIRO版本创建的，请更新本地MIRO版本再重试。",
+        "ErrorAppIncompMsg": "要启动的MIRO应用程序与当前安装的MIRO版本不兼容。请联系开发者更新应用并重试！",
+        "ErrorReadMsg": "读取MIRO应用程序文件时出现错误，错误信息如下：",
+        "ErrorLogoHdr": "无效的MIRO应用程序标志",
+        "ErrorLogoMsg": "该文件不是有效的MIRO标志，仅支持JPG，JPEG和PNG！",
+        "ErrorLogoMultiMsg": "请只删除一个MIRO应用程序标志！",
+        "ErrorLogoLargeHdr": "标志太大",
+        "ErrorLogoLargeMsg": "标志的大小不超过10MB!",
+        "ErrorExampleExistsHdr": "示例模型已存在",
+        "ErrorModelExistsHdr": "模型已存在",
+        "ErrorModelExistsMsg": "无法添加以下示例模型，因为它们已存在：",
+        "ErrorModelExistsMsg2": "具有相同名称的模型已经存在，请先删除此模型再重试。",
+        "ErrorWriteHdr": "无写入权限",
+        "ErrorWriteMsg": "无法添加模型，因为没有此处的写入权限：",
+        "ErrorWriteMsg2": "无法删除模型，因为没有此处的写入权限：",
+        "ErrorWritePerm2Msg": "无法保存模型，因为没有此处的写入权限：",
+        "ErrorNoWritePermMsg": "无法更新模型，因为没有此处的写入权限：",
+        "ErrorAppRunningHdr": "正在运行该应用程序",
+        "ErrorAppRunningMsg": "当前已有运行的MIRO进程。目前，一次只能启动一个MIRO进程。",
+        "ErrorInstallStartMsg": "无法安装MIRO。如果问题仍然存在，请检查日志文件并联系GAMS！",
+        "ErrorInstallPermHdr": "安装",
+        "ErrorInstallPerm1Msg": "没有在此处安装库的权限：",
+        "ErrorInstallPerm2Msg": ". \n 是否要在本地安装MIRO",
+        "ErrorInstallPerm3Msg": "?\n 如果要全局安装MIRO，请使用sudo和--no-sandbox启动 AppImage： sudo ./GAMS-MIRO-",
+        "ErrorInstallPerm4Msg": ".AppImage --no-sandbox",
+        "ErrorInstallPermBtnYes": "是, 本地安装",
+        "ErrorInstallPermBtnNo": "否, 退出",
+        "ErrorInvalidPathHdr": "无效路径",
+        "ErrorInvalidPathMsg": "： 该路径不是有效路径。要运行MIRO，至少需要以下版本：",
+        "ErrorInvalidPathMsg2": "验证所选路径时发生意外错误：",
+        "ErrorMessage": "错误信息：",
+        "SuccessUpdateHdr": "配置已更新",
+        "SuccessUpdateMsg": "配置已成功更新。必须重新启动MIRO才能使配置的更改生效。是否要立即重启MIRO？",
+        "ErrorUnexpectedWriteMsg": "无法保存配置数据。您是否缺少此位置的写入权限：",
+        "DeleteMsg": "要永久删除该应用程序吗？",
+        "ErrorInit": "初始化MIRO时出错",
+        "ErrorRInstallHdr": "无法安装R软件包",
+        "ErrorRInstallMsg": "无法安装运行MIRO所需的R软件包。检查日志文件以获取更多信息。",
+        "ErrorModelPathHdr": "无模型路径",
+        "ErrorModelPathMsg": "您需要通过环境变量指定主gms文件的路径：MIRO_MODEL_PATH",
+        "BtnCancel": "取消",
+        "BtnOk": "确认",
+        "BtnRemove": "删除"
+    },
+    "general": {
+        "title": "MIRO库",
+        "noApps": "无应用程序",
+        "btEdit": "编辑", 
+        "btEditDone": "完成",
+        "btAddExamples": "添加示例应用程序",
+        "appFilesPlaceholder": "将MIRO应用程序放在此处或单击以浏览。",
+        "appNamePlaceholder": "应用程序标题",
+        "appDescPlaceholder": "缩短模型的说明（可选）",
+        "appDbPathPlaceholder": "MIRO数据库路径（可选）",
+        "appLogoPlaceholder": "不同的应用程序的标志？将MIRO应用程序放在此处或单击以浏览。",
+        "appDbPathReset": "重置为默认设置",
+        "editAppInfoText": "点击应用进行修改",
+        "btLaunch": "启动",
+        "btLaunchBase": "基本模式",
+        "btLaunchHcube": "Hypercube模式",
+        "btCancel": "取消",
+        "btSave": "保存",
+        "btAddApp": "添加应用程序",
+        "errNoAppTitleHdr": "无标题",
+        "errNoAppTitleMsg": "请为MIRO应用程序输入标题！",
+        "errInvalidDbPathHdr": "无效的数据库路径",
+        "errInvalidDbPathMsg": "该数据库路径不存在。",
+        "dialogSelectAppLogoHdr": "选择MIRO应用标志",
+        "dialogSelectAppLogoMsg": "请选择MIRO应用的标志（支持JPG / JPEG / PNG）",
+        "dialogSelectAppLogoBtn": "选择",
+        "dialogSelectAppLogoFilter": "图片",
+        "dialogSelectDbPathHdr": "选择数据库路径",
+        "dialogSelectDbPathMsg": "请选择数据库应位于的目录。",
+        "dialogSelectDbPathBtn": "选择",
+        "dialogErrHdr": "意外错误",
+        "dialogErrMsg": "找不到MIRO应用配置。如果问题仍然存在，请联系GAMS！",
+        "dialogNewAppFilesHdr": "选择MIRO应用程序",
+        "dialogNewAppFilesMsg": "请选择要添加的MIRO应用程序",
+        "dialogNewAppFilesBtn": "添加应用程序",
+        "dialogNewAppFilesFilter": "MIRO应用程序"
+   },
+   "menu": {
+        "pref": "偏好设置",
+        "about": "关于GAMS MIRO",
+        "services": "服务",
+        "hide": "隐藏GAMS MIRO",
+        "unhide": "显示所有",
+        "hideothers": "隐藏其他",
+        "file": "文件",
+        "edit": "编辑",
+        "addApp": "➕ 添加MIRO应用程序",
+        "editApp": "⚙️ 编辑应用程序",
+        "addExampleApps": "添加示例应用程序",
+        "undo": "撤消",
+        "redo": "重做",
+        "cut": "剪切",
+        "copy": "复制",
+        "paste": "粘贴",
+        "selectAll": "全选",
+        "view": "视图",
+        "window": "窗口",
+        "minimize": "最小化",
+        "zoom": "放大",
+        "front": "将所有窗口前置",
+        "close": "关闭窗口",
+        "quit": "退出",
+        "fullscreen": "切换全屏",
+        "resetZoom": "重置缩放",
+        "zoomIn": "放大",
+        "zoomOut": "缩小",
+        "help": "帮助",
+        "doc": "文档",
+        "update": "检查更新"
+   },
+   "settings": {
+        "title": "偏好设置",
+        "general-tab": "通用", 
+        "paths-tab": "路径", 
+        "launchBrowser": "在浏览器中启动MIRO应用程序？", 
+        "browserReset": "重置为默认设置", 
+        "generalLanguage": "语言", 
+        "languageReset": "重置为默认设置", 
+        "generalRemoteExec": "在GAMS MIRO Engine上执行模型?", 
+        "remoteExecReset": "重置为默认设置",
+        "generalLogging": "日志记录级别", 
+        "loggingReset": "重置为默认设置", 
+        "generalLoglife": "日志文件的存储天数", 
+        "loglifeReset": "重置为默认设置", 
+        "pathMiroapp": "MIRO应用程序路径", 
+        "pathMiroappSelect": "选择MIRO应用程序路径", 
+        "resetPathMiroapp": "重置为默认设置", 
+        "pathGams": "GAMS路径", 
+        "pathGamsSelect": "选择GAMS路径", 
+        "pathGamsReset": "重置为默认设置", 
+        "pathLog": "日志文件路径", 
+        "pathLogSelect": "选择日志文件路径", 
+        "pathLogReset": "重置为默认设置", 
+        "pathR": "R路径", 
+        "pathRSelect": "选择R路径", 
+        "pathRReset": "重置为默认设置", 
+        "needHelp": "需要帮助？", 
+        "btSave": "应用",
+        "btCancel": "关闭",
+        "dialogConfigPathHdr": "选择MIRO应用程序路径",
+        "dialogConfigPathMsg": "请选择该MIRO应用程序的目录",
+        "dialogConfigPathBtn": "选择",
+        "dialogConfigPathLabel": "选择MIRO应用程序路径",
+        "dialogGamsPathHdr": "请选择GAMS的安装路径",
+        "dialogGamsPathMsg": "请选择GAMS的安装路径",
+        "dialogGamsPathLabel": "选择GAMS路径",
+        "dialogGamsPathBtn": "选择",
+        "dialogRPathHdr": "请选择R的安装路径",
+        "dialogRPathMsg": "请选择R的安装路径",
+        "dialogRPathLabel": "选择R路径",
+        "dialogRPathBtn": "选择",
+        "dialogLogPathHdr": "请选择日志存储路径",
+        "dialogLogPathMsg": "请选择日志存储路径",
+        "dialogLogPathLabel": "选择日志文件路径",
+        "dialogLogPathBtn": "选择",
+        "dialogLogLifeErrHdr": "无效的日志周期",
+        "dialogLogLifeErrMsg": "输入的值无效（天\ 应储存的日志文件）！ 请仅输入整数！",
+		"dialogLogLifeErrBtn": "确定",
+        "browseFiles": "浏览"
+	}
+}
 
 class LangParser {
     constructor (lang) {
         if ( lang === 'de' ) {
             this.lang = de;
+        } else if ( lang === 'cn' ) {
+            this.lang = cn;
         } else {
             this.lang = en;
         }

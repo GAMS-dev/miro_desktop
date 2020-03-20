@@ -12,7 +12,7 @@ const log = require('electron-log');
 const menu = require('./components/menu.js');
 const installRPackages = require('./components/install-r.js');
 const requiredAPIVersion = 1;
-const miroVersion = '0.9.79';
+const miroVersion = '0.10.1';
 const libVersion = '1.0';
 const exampleAppsData = require('./components/example-apps.js')(miroVersion, requiredAPIVersion);
 
@@ -76,7 +76,7 @@ const langParser = new LangParser(configData.getSync('language'));
 // Set global variables
 global.lang = langParser.get();
 global.miroVersion = miroVersion;
-global.miroRelease = 'Feb 10 2020';
+global.miroRelease = 'Mar 18 2020';
 
 const resourcesPath = DEVELOPMENT_MODE? app.getAppPath(): process.resourcesPath;
 
@@ -97,6 +97,21 @@ version: ${process.getSystemVersion()})...`);
 
 // enable overlay scrollbar
 app.commandLine.appendSwitch('--enable-features', 'OverlayScrollbar')
+
+function compareVersions(v1, v2) {
+  const v1parts = v1.split('.');
+  const v2parts = v2.split('.');
+  const v1Major = parseInt(v1parts[0], 10);
+  const v2Major = parseInt(v2parts[0], 10);
+  const v1Minor = parseInt(v1parts[1], 10);
+  const v2Minor = parseInt(v2parts[1], 10);
+  if ( v1Major > v2Major || (v1Major === v2Major && 
+    v1Minor >= v2Minor) ) {
+    return true;
+  } else {
+    return false;
+  }
+}
 
 /*
 MIT License
@@ -139,7 +154,14 @@ const tryStartWebserver = async (progressCallback, onErrorStartup,
     await onErrorStartup(appData.id)
     return
   }
-  let shinyPort = randomPort();
+  let shinyPort;
+  try {
+    shinyPort = await randomPort();
+  } catch(e){
+    log.debug(`Process could not be started, as scanning open ports failed with error: ${e.message}`);
+    await onErrorStartup(appData.id);
+    return;
+  }
   log.debug(`Process: ${internalPid} is being started on port: ${shinyPort}.`);
   const gamspath = configData.get('gamspath');
   const logpath = configData.get('logpath');
@@ -147,6 +169,7 @@ const tryStartWebserver = async (progressCallback, onErrorStartup,
   
   const generalConfig = {
     launchExternal: configData.get('launchExternal'),
+    remoteExecution: configData.get('remoteExecution'),
     language: configData.get('language'),
     logLevel: configData.get('logLevel')
   }
@@ -197,6 +220,7 @@ developMode: ${miroDevelopMode}.`);
       'GAMS_SYS_DIR': await gamspath,
       'MIRO_LOG_PATH': await logpath,
       'LAUNCHINBROWSER': await generalConfig.launchExternal,
+      'MIRO_REMOTE_EXEC': await generalConfig.remoteExecution,
       'MIRO_LANG': await generalConfig.language,
       'MIRO_LOG_LEVEL': await generalConfig.logLevel,
       'MIRO_VERSION_STRING': appData.miroversion,
@@ -228,8 +252,7 @@ developMode: ${miroDevelopMode}.`);
     }
     await waitFor(Math.min(i*100, 1000))
     try {
-      const res = await http.head(url, {timeout: 1000})
-      // TODO: check that it is really shiny and not some other webserver
+      const res = await http.head(`${url}/shared/shiny.css`, {timeout: 10000})
       if (res.status === 200) {
         await progressCallback({
           code: 'success', port: shinyPort})
@@ -246,9 +269,17 @@ developMode: ${miroDevelopMode}.`);
     }
   }
   await onErrorStartup(appData.id);
-  try {
-    miroProcesses[internalPid].kill()
-  } catch (e) {}
+}
+
+function hideZoomMenu(){
+  if ( !applicationMenu ) {
+    return;
+  }
+  const editMenuId = isMac? 3:2;
+  [1,2,3].forEach(i => {
+    applicationMenu.items[editMenuId].submenu.items[i].enabled = false;
+    applicationMenu.items[editMenuId].submenu.items[i].visible = false;
+  });
 }
 
 let newAppConf
@@ -369,6 +400,15 @@ MIRO version: ${newAppConf.miroversion}.`);
                 message: errMsgTemplate
             });
             return
+          }
+          if ( compareVersions(newAppConf.miroversion, miroVersion) ) {
+            mainWindow.setProgressBar(-1);
+            showErrorMsg({
+                type: 'info',
+                title: lang['main'].ErrorAPIHdr,
+                message: lang['main'].ErrorVersionMsg
+            });
+            return;
           }
           if ( !newAppConf.apiversion ||
             newAppConf.apiversion !== requiredAPIVersion ) {
@@ -569,7 +609,7 @@ function createSettingsWindow() {
   settingsWindow = new BrowserWindow({
     title: lang.settings.title,
     width: 570,
-    height: 620,
+    height: 640,
     resizable: DEVELOPMENT_MODE,
     titleBarStyle: 'hidden',
     show: false,
@@ -729,6 +769,7 @@ function createMainWindow (showRunningApps = false) {
     minWidth: 800,
     minHeight: 600,
     titleBarStyle: 'hidden',
+    icon: process.platform === 'linux'? path.join(__dirname, 'static', 'Icon-512x512.png'): undefined,
     webPreferences: {
       nodeIntegration: true
     }
@@ -871,6 +912,13 @@ ${requiredAPIVersion}.`);
   const onErrorStartup = async (appID, message) => {
     log.debug(`Error during startup of MIRO app with ID: ${appData.id}. \
 ${message? `Message: ${message}` : ''}`);
+    
+    try{
+      await kill(miroProcesses[processIdMap[appID]].pid)
+      miroProcesses[processIdMap[appID]] = null;
+      delete processIdMap[appID];
+    } catch ( e ) {}
+
     if ( mainWindow && !miroDevelopMode) {
       mainWindow.send('hide-loading-screen', appData.id);
       showErrorMsg({
@@ -884,8 +932,6 @@ ${message? `Message: ${message}` : ''}`);
       app.exit(1);
       return;
     }
-    miroProcesses[processIdMap[appID]] = null;
-    delete processIdMap[appID];
   }
 
   const onProcessFinished = async(appID) => {
@@ -943,11 +989,27 @@ ${message? `Message: ${message}` : ''}`);
         }
       })
 
-      miroAppWindows[appID].loadURL(url)
+      miroAppWindows[appID].loadURL(url);
+
+      miroAppWindows[appID].on('focus', (e) => {
+        if ( !applicationMenu ) {
+          return;
+        }
+        const editMenuId = isMac? 3:2;
+        [1,2,3].forEach(i => {
+          applicationMenu.items[editMenuId].submenu.items[i].enabled = true;
+          applicationMenu.items[editMenuId].submenu.items[i].visible = true;
+        });
+      });
+
+      miroAppWindows[appID].on('blur', (e) => {
+        hideZoomMenu();
+      });
 
       miroAppWindows[appID].on('close', (e) => {
         e.preventDefault();
         log.debug(`Window of MIRO app with ID: ${appID} closed.`);
+        hideZoomMenu();
         miroAppWindows[appID].destroy();
       });
 

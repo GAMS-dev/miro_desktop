@@ -25,6 +25,18 @@ a {
 a:hover {
     color: #e18d0f;
 }
+@media screen and (min-width: 1600px) {
+  .container {
+      max-width: 1440px;
+  }
+}
+@media screen and (min-width: 1600px) {
+  .col-xxl-3 {
+    -ms-flex: 0 0 25%;
+    flex: 0 0 25%;
+    max-width: 25%;
+  }
+}
 #btEditWrapper {
   cursor: pointer;
 }

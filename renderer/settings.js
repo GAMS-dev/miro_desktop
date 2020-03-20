@@ -8,13 +8,17 @@ const $ = require('jquery');
 const currentWindow = remote.getCurrentWindow();
 
 const cbLaunchExternal = $('#launchExternal');
+const cbRemoteExecution = $('#remoteExecution');
 const inputLogLifetime = $('#logLifeTime');
 const inputLanguage    = $('#language');
 const inputLogLevel    = $('#logLevel');
 const saveButton       = $('#btSave');
 
 const lang = remote.getGlobal('lang').settings;
-['title', 'general-tab', 'paths-tab', 'launchBrowser', 'browserReset', 'generalLanguage', 'languageReset', 'generalLogging', 'loggingReset', 'generalLoglife', 'loglifeReset', 'pathMiroapp', 'pathMiroappSelect', 'resetPathMiroapp', 'pathGams', 'pathGamsSelect', 'pathGamsReset', 'pathLog', 'pathLogSelect', 'pathLogReset', 'pathR', 'pathRSelect', 'pathRReset', 'needHelp', 'btSave'].forEach(id => {
+['title', 'general-tab', 'paths-tab', 'launchBrowser', 'browserReset', 'generalLanguage', 'languageReset',
+'generalRemoteExec', 'remoteExecReset', 'generalLogging', 'loggingReset', 'generalLoglife', 'loglifeReset', 
+'pathMiroapp', 'pathMiroappSelect', 'resetPathMiroapp', 'pathGams', 'pathGamsSelect', 'pathGamsReset', 'pathLog',
+'pathLogSelect', 'pathLogReset', 'pathR', 'pathRSelect', 'pathRReset', 'needHelp', 'btSave'].forEach(id => {
   const el = document.getElementById(id);
   if ( el ) {
     el.innerText = lang[id];
@@ -77,7 +81,7 @@ const pathConfig = [
     }
 ];
 
-[inputLogLifetime, inputLanguage, inputLogLevel, cbLaunchExternal].forEach(el => {
+[inputLogLifetime, inputLanguage, inputLogLevel, cbLaunchExternal, cbRemoteExecution].forEach(el => {
     el.on('change', () => {
         saveButton.attr('disabled', false);
     });
@@ -102,7 +106,8 @@ saveButton.on('click', (e) => {
         }
     }
     newConfig.logLifeTime = logLifeVal;
-    newConfig.launchExternal = cbLaunchExternal.is(":checked");
+    newConfig.launchExternal = cbLaunchExternal.is(':checked');
+    newConfig.remoteExecution = cbRemoteExecution.is(':checked');
 
     newConfig.language    = optionAliasMap.language[inputLanguage.val()];
     let oldLanguage = defaultValues.language;
@@ -183,6 +188,8 @@ $('.btn-reset-nonpath').click(function(e) {
     newConfig[elKey] = '';
     if ( elKey === 'launchExternal' ) {
         cbLaunchExternal.prop('checked', defaultValues[elKey]);
+    } else if ( elKey === 'remoteExecution' ) {
+        cbRemoteExecution.prop('checked', defaultValues[elKey]);
     } else if ( elKey === 'logLifeTime' ) {
         inputLogLifetime.val(defaultValues[elKey]);
     } else if ( elKey === 'language' ) {
@@ -219,7 +226,7 @@ ipcRenderer.on('settings-loaded', (e, data, defaults) => {
         newValue = defaultValues[key];
       } else {
         if ( !isImportant ) {
-            if ( ['launchExternal', 'logLifeTime', 
+            if ( ['launchExternal', 'remoteExecution', 'logLifeTime', 
                   'language', 'logLevel'].find(el => el === key ) ) {
                 if ( newValue !== defaultValues[key] ) {
                     $(`[data-key="${key}"]`).show();
@@ -233,6 +240,11 @@ ipcRenderer.on('settings-loaded', (e, data, defaults) => {
         cbLaunchExternal.prop('checked', newValue);
         if ( isImportant ) {
             cbLaunchExternal.attr('disabled', true);
+        }
+      } else if ( key === 'remoteExecution' ) {
+        cbRemoteExecution.prop('checked', newValue);
+        if ( isImportant ) {
+            cbRemoteExecution.attr('disabled', true);
         }
       } else if ( ['logLifeTime', 'logLevel', 'language' ].find(el => el === key) ) {
         $(`#${key}`).val(key === 'language'? Object.keys(optionAliasMap.language)
