@@ -989,7 +989,7 @@ ${message? `Message: ${message}` : ''}`);
         }
       })
 
-      miroAppWindows[appID].loadURL(url);
+      miroAppWindows[appID].loadURL(url, { extraHeaders: 'pragma: no-cache\n' });
 
       miroAppWindows[appID].on('focus', (e) => {
         if ( !applicationMenu ) {
