@@ -1,6 +1,6 @@
 [submodule "miro"]
 	path = miro
-	url = https://git.gams.com/fproske/gmswebui.git
+	url = git@git.gams.com:fproske/gmswebui.git
 [submodule "r-src/shiny"]
 	path = r-src/shiny
 	url = https://github.com/GAMS-dev/shiny.git
