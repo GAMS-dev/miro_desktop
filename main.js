@@ -1355,6 +1355,22 @@ ipcMain.on('delete-app', async (e, appId) => {
   }
   try {
     const rmPromise = fs.remove(path.join(appDataPath, appId));
+    try {
+      const cacheContent = await fs.promises.readdir(path.join(miroWorkspaceDir, 'cache'));
+      const removeCacheFilePromises = cacheContent
+          .filter(cacheFile => cacheFile.startsWith(`${appId}_`))
+          .forEach((cacheFile) => {
+            return fs.promises.unlink(path.join(miroWorkspaceDir, 'cache', cacheFile));
+          });
+      if (removeCacheFilePromises != null) {
+        await Promise.all(removeCacheFilePromises);
+      }
+    } catch (e) {
+      if (e.code !== 'ENOENT') {
+        log.error(`Problems removing cache! Error message: '${e.message}'.`);
+      }
+    }
+    const rmCachePromise = fs.remove(path.join(appDataPath, appId));
     const updatedApps = appsData.deleteApp(appId).apps;
     await rmPromise;
     mainWindow.send('apps-received', updatedApps, appDataPath, false, false);
