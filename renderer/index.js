@@ -617,7 +617,7 @@ title="${app.title} logo" data-id="${app.id}" class="app-logo">
    }
 });
 $('#downloadR').click((e) => {
-   shell.openExternal('https://gams.com/miro/installation.html');
+   shell.openExternal('https://gams.com/miro/download.html');
 });
 $('#btAddExamples').click((e) => {
   ipcRenderer.send('add-example-apps');
