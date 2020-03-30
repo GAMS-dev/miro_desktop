@@ -1282,7 +1282,8 @@ ipcMain.on('update-app', (e, app) => {
         {
           type: 'error',
           title: `${idUpper} ${lang['main'].ErrorInvalidPathHdr}`,
-          message: `${idUpper}${lang['main'].ErrorInvalidPathMsg} ${configData.getMinimumVersion(el)}`,
+          message: `${idUpper}${el === 'r' && process.platform === 'darwin'? lang['main'].ErrorInvalidPathMsgMac : 
+          lang['main'].ErrorInvalidPathMsg} ${configData.getMinimumVersion(el)}`,
           buttons: [lang['main'].BtnOk]
         });
       }
