@@ -2,6 +2,15 @@ const path  = require('path');
 const fs    = require('fs-extra');
 const execa = require('execa');
 
+let gamsSysDir = '';
+
+if (typeof process.argv[2] === 'string' && process.argv[2].startsWith('gams_sys_dir')) {
+    const gamsSysDirMatch = process.argv[2].match(/^gams_sys_dir="?([^"]+)"?$/);
+    if (gamsSysDirMatch) {
+        gamsSysDir = gamsSysDirMatch[1];
+    }
+}
+
 (async () => {
     try {
         let rPath = 'Rscript';
@@ -9,7 +18,7 @@ const execa = require('execa');
             rPath = path.join(__dirname, '..', 'r', 'bin', 'Rscript');
         }
         const subproc =  execa(rPath, [ path.join(__dirname, '..', 'miro', 'run_tests.R') ],
-            { env: { 'LIB_PATH': path.join(__dirname, '..', 'r', 'library')},
+            { env: { 'LIB_PATH': path.join(__dirname, '..', 'r', 'library'), 'GAMS_SYS_DIR': gamsSysDir},
             cwd: path.join(__dirname, '..', 'miro')});
         subproc.stderr.pipe(process.stderr);
         subproc.stdout.pipe(process.stderr);

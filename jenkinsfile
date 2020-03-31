@@ -62,7 +62,7 @@ pipeline {
                     }
                     steps {
                         bat '''
-                           yarn test
+                           yarn test gams_sys_dir=%GAMS_CORE_PATH%
                         '''
                         junit allowEmptyResults: true, testResults: 'miro/test-out.xml'
                     }
@@ -74,7 +74,7 @@ pipeline {
                     }
                     steps {
                         sh '''
-                           yarn test
+                           yarn test gams_sys_dir=${GAMS_CORE_PATH}
                         '''
                         junit allowEmptyResults: true, testResults: 'miro/test-out.xml'
                     }
