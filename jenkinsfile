@@ -61,9 +61,11 @@ pipeline {
                         skipDefaultCheckout()
                     }
                     steps {
-                        bat '''
-                           yarn test gams_sys_dir=%GAMS_CORE_PATH%
-                        '''
+                        withCredentials([string(credentialsId: 'MIRO_TEST_GAMS_LICE', variable: 'MIRO_TEST_GAMS_LICE')]) {
+                            bat '''
+                               yarn test gams_sys_dir=%GAMS_CORE_PATH%
+                            '''
+                        }
                         junit allowEmptyResults: true, testResults: 'miro/test-out.xml'
                     }
                 }
@@ -73,9 +75,11 @@ pipeline {
                         skipDefaultCheckout()
                     }
                     steps {
-                        sh '''
-                           yarn test gams_sys_dir=${GAMS_CORE_PATH}
-                        '''
+                        withCredentials([string(credentialsId: 'MIRO_TEST_GAMS_LICE', variable: 'MIRO_TEST_GAMS_LICE')]) {
+                            sh '''
+                               yarn test gams_sys_dir=${GAMS_CORE_PATH}
+                            '''
+                        }
                         junit allowEmptyResults: true, testResults: 'miro/test-out.xml'
                     }
                 }
