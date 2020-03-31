@@ -61,7 +61,7 @@ pipeline {
                         skipDefaultCheckout()
                     }
                     steps {
-                        withCredentials([string(credentialsId: 'MIRO_TEST_GAMS_LICE', variable: 'MIRO_TEST_GAMS_LICE')]) {
+                        withCredentials([file(credentialsId: 'MIRO_TEST_GAMS_LICE', variable: 'MIRO_TEST_GAMS_LICE')]) {
                             bat '''
                                yarn test gams_sys_dir=%GAMS_CORE_PATH%
                             '''
@@ -75,7 +75,7 @@ pipeline {
                         skipDefaultCheckout()
                     }
                     steps {
-                        withCredentials([string(credentialsId: 'MIRO_TEST_GAMS_LICE', variable: 'MIRO_TEST_GAMS_LICE')]) {
+                        withCredentials([file(credentialsId: 'MIRO_TEST_GAMS_LICE', variable: 'MIRO_TEST_GAMS_LICE')]) {
                             sh '''
                                yarn test gams_sys_dir=${GAMS_CORE_PATH}
                             '''
