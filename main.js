@@ -76,7 +76,7 @@ const langParser = new LangParser(configData.getSync('language'));
 // Set global variables
 global.lang = langParser.get();
 global.miroVersion = miroVersion;
-global.miroRelease = 'Mar 25 2020';
+global.miroRelease = 'Apr 08 2020';
 
 const resourcesPath = DEVELOPMENT_MODE? app.getAppPath(): process.resourcesPath;
 
