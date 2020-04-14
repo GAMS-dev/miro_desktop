@@ -401,7 +401,7 @@ MIRO version: ${newAppConf.miroversion}.`);
             });
             return
           }
-          if ( compareVersions(newAppConf.miroversion, miroVersion) ) {
+          if ( !compareVersions(miroVersion, newAppConf.miroversion) ) {
             mainWindow.setProgressBar(-1);
             showErrorMsg({
                 type: 'info',
