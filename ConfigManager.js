@@ -248,7 +248,7 @@ class ConfigManager extends Store {
           const rVersionsAvailable = fs.readdirSync(
             rPathRoot).filter(el => {
                 try {
-                  return this.vComp(el, minR, compR = true);
+                  return this.vComp(el, minR, true);
                 } catch (e) {
                   return false
                 }            
@@ -330,7 +330,7 @@ class ConfigManager extends Store {
     rpathTmp = stdout[rpathIdx].match(rOutRegex);
     const rVersion = stdout[rpathIdx + 1].match(/^\[1\] "([^"]*)"$/);
     if ( rpathTmp && rVersion &&
-      this.vComp(rVersion[1], minR, compR = true) ) {
+      this.vComp(rVersion[1], minR, true) ) {
       return rpathTmp[1];
     }
     return false;
