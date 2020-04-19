@@ -857,8 +857,17 @@ async function createMIROAppWindow(appData) {
   const rpath = await configData.get('rpath');
   if ( !rpath ) {
     log.info('No R path set.');
-    mainWindow.send('hide-loading-screen', appData.id);
-    mainWindow.send('invalid-r');
+    if ( miroDevelopMode ) {
+      showErrorMsg({
+        type: 'info',
+        title: lang['main'].ErrorRNotFoundHdr,
+        message: lang['main'].ErrorRNotFoundMsg
+      });
+      app.exit(1);
+    } else {
+      mainWindow.send('hide-loading-screen', appData.id);
+      mainWindow.send('invalid-r');
+    }
     return;
   }
   if ( !appData.apiversion ||

@@ -263,9 +263,17 @@ const schema = {
            "ErrorModelPathMsg": {
                "type":"string",
                "minLength":1
-           }
+           },
+           "ErrorRNotFoundHdr": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorRNotFoundMsg": {
+               "type":"string",
+               "minLength":1
+           },
          },
-         "required": ["ErrorUnexpectedHdr", "ErrorUnexpectedMsg", "ErrorUnexpectedMsg2", "BtnCancel", "BtnOk", "BtnRemove", "ErrorInvalidHdr", "ErrorInvalidMsg", "ErrorInvalidTwoMsg", "ErrorInvalidThreeMsg", "ErrorAPIHdr", "ErrorAPIMsg", "ErrorVersionMsg", "ErrorReadMsg","ErrorLogoHdr", "ErrorLogoMsg", "ErrorLogoMultiMsg", "ErrorLogoLargeHdr", "ErrorLogoLargeMsg", "ErrorExampleExistsHdr", "ErrorModelExistsHdr", "ErrorModelExistsMsg", "ErrorModelExistsMsg2", "ErrorWriteHdr", "ErrorWriteMsg", "ErrorWriteMsg2", "ErrorAppRunningHdr", "ErrorAppRunningMsg", "ErrorAppIncompMsg", "ErrorMsgLaunch", "ErrorInstallStartMsg", "ErrorInstallPermHdr", "ErrorInstallPerm1Msg", "ErrorInstallPerm2Msg", "ErrorInstallPerm3Msg", "ErrorInstallPerm4Msg", "ErrorInstallPermBtnYes", "ErrorInstallPermBtnNo", "ErrorWritePerm2Msg", "ErrorNoWritePermMsg", "ErrorInvalidPathHdr", "ErrorInvalidPathMsg", "ErrorInvalidPathMsgMac", "ErrorInvalidPathMsg2", "ErrorMessage", "SuccessUpdateHdr", "SuccessUpdateMsg", "ErrorUnexpectedWriteMsg", "DeleteMsg", "ErrorInit", "ErrorRInstallHdr", "ErrorRInstallMsg", "ErrorModelPathHdr", "ErrorModelPathMsg"]
+         "required": ["ErrorUnexpectedHdr", "ErrorUnexpectedMsg", "ErrorUnexpectedMsg2", "BtnCancel", "BtnOk", "BtnRemove", "ErrorInvalidHdr", "ErrorInvalidMsg", "ErrorInvalidTwoMsg", "ErrorInvalidThreeMsg", "ErrorAPIHdr", "ErrorAPIMsg", "ErrorVersionMsg", "ErrorReadMsg","ErrorLogoHdr", "ErrorLogoMsg", "ErrorLogoMultiMsg", "ErrorLogoLargeHdr", "ErrorLogoLargeMsg", "ErrorExampleExistsHdr", "ErrorModelExistsHdr", "ErrorModelExistsMsg", "ErrorModelExistsMsg2", "ErrorWriteHdr", "ErrorWriteMsg", "ErrorWriteMsg2", "ErrorAppRunningHdr", "ErrorAppRunningMsg", "ErrorAppIncompMsg", "ErrorMsgLaunch", "ErrorInstallStartMsg", "ErrorInstallPermHdr", "ErrorInstallPerm1Msg", "ErrorInstallPerm2Msg", "ErrorInstallPerm3Msg", "ErrorInstallPerm4Msg", "ErrorInstallPermBtnYes", "ErrorInstallPermBtnNo", "ErrorWritePerm2Msg", "ErrorNoWritePermMsg", "ErrorInvalidPathHdr", "ErrorInvalidPathMsg", "ErrorInvalidPathMsgMac", "ErrorInvalidPathMsg2", "ErrorMessage", "SuccessUpdateHdr", "SuccessUpdateMsg", "ErrorUnexpectedWriteMsg", "DeleteMsg", "ErrorInit", "ErrorRInstallHdr", "ErrorRInstallMsg", "ErrorModelPathHdr", "ErrorModelPathMsg", "ErrorRNotFoundHdr", "ErrorRNotFoundMsg"]
      },
      "general":{
        "type":"object",
@@ -817,6 +825,8 @@ const en = {
         "ErrorRInstallMsg": "The R packages required to run MIRO could not be installed. Check log file for more information.",
         "ErrorModelPathHdr": "No model path",
         "ErrorModelPathMsg": "You need to specify the path to the main gms file via the environment variable: MIRO_MODEL_PATH",
+        "ErrorRNotFoundHdr": "R not found",
+        "ErrorRNotFoundMsg": "In order to use MIRO, you have to have R installed. You can add the path to your R installations in the Preferences menu.",
         "BtnCancel": "Cancel",
         "BtnOk": "OK",
         "BtnRemove": "Remove"
@@ -1005,6 +1015,8 @@ const de = {
         "ErrorRInstallMsg": "Die zum Betrieb von MIRO erforderlichen R Pakete konnten nicht installiert werden. Prüfen Sie die Logdatei für weitere Informationen.",
         "ErrorModelPathHdr": "Kein Modellpfad",
         "ErrorModelPathMsg": "Sie müssen den Pfad zur Haupt .gms Datei über die Umgebungsvariable angeben: MIRO_MODEL_PATH",
+        "ErrorRNotFoundHdr": "R nicht gefunden",
+        "ErrorRNotFoundMsg": "Um MIRO verwenden zu können, müssen Sie R installiert haben. Sie können den Pfad zu Ihren R-Installationen im Einstellungs-Menü hinzufügen.",
         "BtnCancel": "Abbrechen",
         "BtnOk": "OK",
         "BtnRemove": "Entfernen"
@@ -1192,6 +1204,8 @@ const cn = {
         "ErrorRInstallMsg": "无法安装运行MIRO所需的R软件包。检查日志文件以获取更多信息。",
         "ErrorModelPathHdr": "无模型路径",
         "ErrorModelPathMsg": "您需要通过环境变量指定主gms文件的路径：MIRO_MODEL_PATH",
+        "ErrorRNotFoundHdr": "未找到R",
+        "ErrorRNotFoundMsg": "为了使用MIRO，你必须安装了R。你可以在 \"首选项 \"菜单中添加到你的R安装路径。",
         "BtnCancel": "取消",
         "BtnOk": "确认",
         "BtnRemove": "删除"
