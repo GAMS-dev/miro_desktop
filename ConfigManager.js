@@ -248,7 +248,7 @@ class ConfigManager extends Store {
           const rVersionsAvailable = fs.readdirSync(
             rPathRoot).filter(el => {
                 try {
-                  return this.vComp(el, minR);
+                  return this.vComp(el, minR, compR = true);
                 } catch (e) {
                   return false
                 }            
@@ -330,7 +330,7 @@ class ConfigManager extends Store {
     rpathTmp = stdout[rpathIdx].match(rOutRegex);
     const rVersion = stdout[rpathIdx + 1].match(/^\[1\] "([^"]*)"$/);
     if ( rpathTmp && rVersion &&
-      this.vComp(rVersion[1], minR) ) {
+      this.vComp(rVersion[1], minR, compR = true) ) {
       return rpathTmp[1];
     }
     return false;
@@ -476,8 +476,8 @@ ${latestGamsInstalled}`);
     return await this.validateR(pathToValidate);
   }
 
-  vComp(v1, v2) {
-    if ( process.platform === 'darwin' ) {
+  vComp(v1, v2, compR = false) {
+    if ( compR && process.platform === 'darwin' ) {
       // since packages need to be recompiled on R 4.0, r 3.6 is the only supported version on Mac
       return v1 === v2;
     }
