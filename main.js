@@ -401,7 +401,7 @@ MIRO version: ${newAppConf.miroversion}.`);
             });
             return
           }
-          if ( compareVersions(newAppConf.miroversion, miroVersion) ) {
+          if ( !compareVersions(miroVersion, newAppConf.miroversion) ) {
             mainWindow.setProgressBar(-1);
             showErrorMsg({
                 type: 'info',
@@ -769,7 +769,7 @@ function createMainWindow (showRunningApps = false) {
     minWidth: 800,
     minHeight: 600,
     titleBarStyle: 'hidden',
-    icon: process.platform === 'linux'? path.join(__dirname, 'static', 'Icon-512x512.png'): undefined,
+    icon: process.platform === 'linux'? path.join(__dirname, 'static', 'icon_64x64.png'): undefined,
     webPreferences: {
       nodeIntegration: true
     }
@@ -989,7 +989,7 @@ ${message? `Message: ${message}` : ''}`);
         }
       })
 
-      miroAppWindows[appID].loadURL(url);
+      miroAppWindows[appID].loadURL(url, { extraHeaders: 'pragma: no-cache\n' });
 
       miroAppWindows[appID].on('focus', (e) => {
         if ( !applicationMenu ) {
@@ -1282,7 +1282,8 @@ ipcMain.on('update-app', (e, app) => {
         {
           type: 'error',
           title: `${idUpper} ${lang['main'].ErrorInvalidPathHdr}`,
-          message: `${idUpper}${lang['main'].ErrorInvalidPathMsg} ${configData.getMinimumVersion(el)}`,
+          message: `${idUpper}${el === 'r' && process.platform === 'darwin'? lang['main'].ErrorInvalidPathMsgMac : 
+          lang['main'].ErrorInvalidPathMsg} ${configData.getMinimumVersion(el)}`,
           buttons: [lang['main'].BtnOk]
         });
       }
