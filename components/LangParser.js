@@ -220,6 +220,10 @@ const schema = {
                "type":"string",
                "minLength":1
            },
+           "ErrorInvalidPathMsgMac": {
+               "type":"string",
+               "minLength":1
+           },
            "ErrorMessage": {
                "type":"string",
                "minLength":1
@@ -261,7 +265,7 @@ const schema = {
                "minLength":1
            }
          },
-         "required": ["ErrorUnexpectedHdr", "ErrorUnexpectedMsg", "ErrorUnexpectedMsg2", "BtnCancel", "BtnOk", "BtnRemove", "ErrorInvalidHdr", "ErrorInvalidMsg", "ErrorInvalidTwoMsg", "ErrorInvalidThreeMsg", "ErrorAPIHdr", "ErrorAPIMsg", "ErrorVersionMsg", "ErrorReadMsg","ErrorLogoHdr", "ErrorLogoMsg", "ErrorLogoMultiMsg", "ErrorLogoLargeHdr", "ErrorLogoLargeMsg", "ErrorExampleExistsHdr", "ErrorModelExistsHdr", "ErrorModelExistsMsg", "ErrorModelExistsMsg2", "ErrorWriteHdr", "ErrorWriteMsg", "ErrorWriteMsg2", "ErrorAppRunningHdr", "ErrorAppRunningMsg", "ErrorAppIncompMsg", "ErrorMsgLaunch", "ErrorInstallStartMsg", "ErrorInstallPermHdr", "ErrorInstallPerm1Msg", "ErrorInstallPerm2Msg", "ErrorInstallPerm3Msg", "ErrorInstallPerm4Msg", "ErrorInstallPermBtnYes", "ErrorInstallPermBtnNo", "ErrorWritePerm2Msg", "ErrorNoWritePermMsg", "ErrorInvalidPathHdr", "ErrorInvalidPathMsg", "ErrorInvalidPathMsg2", "ErrorMessage", "SuccessUpdateHdr", "SuccessUpdateMsg", "ErrorUnexpectedWriteMsg", "DeleteMsg", "ErrorInit", "ErrorRInstallHdr", "ErrorRInstallMsg", "ErrorModelPathHdr", "ErrorModelPathMsg"]
+         "required": ["ErrorUnexpectedHdr", "ErrorUnexpectedMsg", "ErrorUnexpectedMsg2", "BtnCancel", "BtnOk", "BtnRemove", "ErrorInvalidHdr", "ErrorInvalidMsg", "ErrorInvalidTwoMsg", "ErrorInvalidThreeMsg", "ErrorAPIHdr", "ErrorAPIMsg", "ErrorVersionMsg", "ErrorReadMsg","ErrorLogoHdr", "ErrorLogoMsg", "ErrorLogoMultiMsg", "ErrorLogoLargeHdr", "ErrorLogoLargeMsg", "ErrorExampleExistsHdr", "ErrorModelExistsHdr", "ErrorModelExistsMsg", "ErrorModelExistsMsg2", "ErrorWriteHdr", "ErrorWriteMsg", "ErrorWriteMsg2", "ErrorAppRunningHdr", "ErrorAppRunningMsg", "ErrorAppIncompMsg", "ErrorMsgLaunch", "ErrorInstallStartMsg", "ErrorInstallPermHdr", "ErrorInstallPerm1Msg", "ErrorInstallPerm2Msg", "ErrorInstallPerm3Msg", "ErrorInstallPerm4Msg", "ErrorInstallPermBtnYes", "ErrorInstallPermBtnNo", "ErrorWritePerm2Msg", "ErrorNoWritePermMsg", "ErrorInvalidPathHdr", "ErrorInvalidPathMsg", "ErrorInvalidPathMsgMac", "ErrorInvalidPathMsg2", "ErrorMessage", "SuccessUpdateHdr", "SuccessUpdateMsg", "ErrorUnexpectedWriteMsg", "DeleteMsg", "ErrorInit", "ErrorRInstallHdr", "ErrorRInstallMsg", "ErrorModelPathHdr", "ErrorModelPathMsg"]
      },
      "general":{
        "type":"object",
@@ -801,6 +805,7 @@ const en = {
         "ErrorInstallPermBtnNo": "No, quit",
         "ErrorInvalidPathHdr": "path invalid",
         "ErrorInvalidPathMsg": ": The path you selected is not a valid path. Note that in order to run MIRO at least the following version is required: ",
+        "ErrorInvalidPathMsgMac": ": The path you selected is not a valid path. Note that in order to run MIRO the following version is required: ",
         "ErrorInvalidPathMsg2": "An unexpected error occurred while validating the path you selected:",
         "ErrorMessage": "Error message:",
         "SuccessUpdateHdr": "Configuration updated",
@@ -988,6 +993,7 @@ const de = {
         "ErrorInstallPermBtnNo": "Nein, beenden",
         "ErrorInvalidPathHdr": "Pfad ungültig",
         "ErrorInvalidPathMsg": ": Der von Ihnen gewählte Pfad ist kein gültiger Pfad. Beachten Sie, dass für den Betrieb von MIRO mindestens die folgende Version benötigt wird: ",
+        "ErrorInvalidPathMsgMac": ": Der von Ihnen gewählte Pfad ist kein gültiger Pfad. Beachten Sie, dass für den Betrieb von MIRO die folgende Version benötigt wird: ",
         "ErrorInvalidPathMsg2": "Bei der Validierung des ausgewählten Pfades ist ein unerwarteter Fehler aufgetreten. Pfad:",
         "ErrorMessage": "Fehlermeldung:",
         "SuccessUpdateHdr": "Konfiguration aktualisiert",
@@ -1174,6 +1180,7 @@ const cn = {
         "ErrorInstallPermBtnNo": "否, 退出",
         "ErrorInvalidPathHdr": "无效路径",
         "ErrorInvalidPathMsg": "： 该路径不是有效路径。要运行MIRO，至少需要以下版本：",
+        "ErrorInvalidPathMsgMac": "： 该路径不是有效路径。要运行MIRO，需要以下版本：",
         "ErrorInvalidPathMsg2": "验证所选路径时发生意外错误：",
         "ErrorMessage": "错误信息：",
         "SuccessUpdateHdr": "配置已更新",
