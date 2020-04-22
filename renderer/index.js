@@ -597,7 +597,7 @@ title="${app.title} logo" data-id="${app.id}" class="app-logo">
              </div>`
     return html
   }, '');
-  const addAppWrapperHTMLFull = `<div id="addAppWrapper" class="col-lg-4 col-6" style="display:none;">
+  const addAppWrapperHTMLFull = `<div id="addAppWrapper" class="col-xxl-3 col-lg-4 col-6" style="display:none;">
                                   ${addAppWrapperHTML}
                                 </div>`;
   loadingScreen.hide();
