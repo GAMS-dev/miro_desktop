@@ -101,18 +101,18 @@
   "author": "GAMS Development Corp.",
   "license": "GPL-3.0-only",
   "devDependencies": {
-    "electron": "^6.0.11",
-    "electron-builder": "^21.2.0"
+    "electron": "^8.2.3",
+    "electron-builder": "^22.5.1"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.11.2",
     "ajv": "^6.10.2",
     "axios": "^0.19.0",
     "bootstrap": "^4.3.1",
-    "electron-log": "^3.0.8",
+    "electron-log": "^4.1.1",
     "electron-store": "^5.0.0",
-    "execa": "^3.0.0",
-    "fs-extra": "^8.1.0",
+    "execa": "^4.0.0",
+    "fs-extra": "^9.0.0",
     "jquery": "^3.4.1",
     "popper.js": "^1.15.0",
     "portscanner": "^2.2.0",
