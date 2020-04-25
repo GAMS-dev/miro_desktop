@@ -491,16 +491,16 @@ ${latestGamsInstalled}`);
   }
 
   vComp(v1, v2, compR = false) {
-    if ( compR && process.platform === 'darwin' ) {
-      // since packages need to be recompiled on R 4.0, r 3.6 is the only supported version on Mac
-      return v1 === v2;
-    }
     const v1parts = v1.split('.');
     const v2parts = v2.split('.');
     const v1Major = parseInt(v1parts[0], 10);
     const v2Major = parseInt(v2parts[0], 10);
     const v1Minor = parseInt(v1parts[1], 10);
     const v2Minor = parseInt(v2parts[1], 10);
+    if ( compR && process.platform === 'darwin' ) {
+      // since packages need to be recompiled on R 4.0, r 3.6 is the only supported version on Mac
+      return (v1Major === v2Major && v1Minor === v2Minor);
+    }
     if ( v1Major > v2Major || (v1Major === v2Major && 
       v1Minor >= v2Minor) ) {
       return true;
