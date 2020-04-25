@@ -7,6 +7,7 @@ const path  = require('path');
 const which = require('which');
 const execa = require('execa');
 const { tmpdir } = require('os');
+const log = require('electron-log');
 
 const minGams = '30.2';
 const minR = '3.6';
@@ -250,6 +251,7 @@ class ConfigManager extends Store {
                 try {
                   return this.vComp(el, minR, true);
                 } catch (e) {
+                  log.error(e);
                   return false
                 }            
           });
@@ -266,7 +268,7 @@ class ConfigManager extends Store {
         }
       }
     } catch(e) { 
-      console.log(e)
+      log.error(e);
       this.rpathDefault = '';
     }
     return this.rpathDefault;
@@ -274,12 +276,14 @@ class ConfigManager extends Store {
 
   async validateR(rpath) {
     if ( !rpath ) {
+      log.info("R path to validate is empty");
       return false;
     }
     let rpathTmp = rpath;
 
     if ( !path.basename(rpathTmp).toLowerCase().startsWith('rscript') ) {
       if ( !fs.lstatSync(rpathTmp).isDirectory() ) {
+        log.info("R path to validate is not a directory");
         return false;
       }
       // Directory was selected, so scan it
@@ -288,7 +292,7 @@ class ConfigManager extends Store {
         contentRDir = await fs.promises.readdir(rpathTmp, 
           { withFileTypes: true });
       } catch (e) {
-        console.error(e);
+        log.error(e);
         return false;
       }
       if ( contentRDir.find(el => el.name === 'bin') ) {
@@ -301,6 +305,7 @@ class ConfigManager extends Store {
         rpathTmp = path.join(rpathTmp, 'Resources', 'bin');
       } else if ( !contentRDir.find(el => el.isFile() && 
            (el.name === 'Rscript' || el.name === 'Rscript.exe')) ) {
+        log.info("R path to validate is not a directory");
         return false;
       }
       if ( process.platform === 'win32' ) {
@@ -309,6 +314,7 @@ class ConfigManager extends Store {
         rpathTmp = path.join(rpathTmp, 'Rscript');
       }
       if (!fs.existsSync(rpathTmp)) {
+        log.info("Rscript executable not found in R path");
         return false;
       }
     }
@@ -316,15 +322,18 @@ class ConfigManager extends Store {
       'print(R.home())\nprint(paste0(R.Version()$major, \
 ".", R.Version()$minor))']);
     if ( ! stdout ) {
+      log.info("Stdout of Rscript is empty");
       return false;
     }
     stdout = stdout.split('\n');
     if(stdout.length < 2){
+      log.info(`Stdout of Rscript is invalid: ${stdout.join("\n")}`);
       return false;
     }
     const rOutRegex = /^\[1\] "([^"]*)"/;
     const rpathIdx = stdout.findIndex(line => rOutRegex.test(line));
     if ( rpathIdx === -1 ) {
+      log.info(`Stdout of Rscript is invalid: ${stdout.join("\n")}`);
       return false;
     }
     rpathTmp = stdout[rpathIdx].match(rOutRegex);
@@ -333,6 +342,7 @@ class ConfigManager extends Store {
       this.vComp(rVersion[1], minR, true) ) {
       return rpathTmp[1];
     }
+    log.info(`Stdout of Rscript is invalid: ${stdout.join("\n")}`);
     return false;
   }
 
@@ -363,7 +373,7 @@ class ConfigManager extends Store {
           `GAMS${latestGamsInstalled}`,
           'GAMS Terminal.app', 'Contents', 'MacOS');
       } else if ( latestGamsInstalled ) {
-        console.log(`Latest installed GAMS version found: \
+        log.info(`Latest installed GAMS version found: \
 ${latestGamsInstalled}`);
       }
     } else {
@@ -388,7 +398,7 @@ ${latestGamsInstalled}`);
         this.gamspathDefault = path.join('C:\\GAMS\\win64', 
           latestGamsInstalled);
       } else if ( latestGamsInstalled ) {
-        console.log(`Latest installed GAMS version found: \
+        log.info(`Latest installed GAMS version found: \
   ${latestGamsInstalled}`);
       }
     }
@@ -410,7 +420,7 @@ ${latestGamsInstalled}`);
       contentGamsDir = await fs.promises.readdir(gamsDir, 
         { withFileTypes: true });
     } catch (e) {
-      console.error(e);
+      log.error(e);
       return false
     }
     if ( contentGamsDir.find(el => el.isFile() && 
@@ -434,6 +444,7 @@ ${latestGamsInstalled}`);
           gamsExecDir = path.join(gamsDir, gamsDirName, 'GAMS Terminal.app',
             'Contents', 'MacOS', 'gams');
         } else {
+          log.info("System is neither Windows nor MacOS. On Linux, must select sysdir directly.");
           return false;
         }
       } else if ( process.platform === 'win32' && 
@@ -444,6 +455,7 @@ ${latestGamsInstalled}`);
         gamsExecDir = path.join(gamsDir, 'GAMS Terminal.app',
             'Contents', 'MacOS', 'gams');
       } else {
+        log.info("System is neither Windows nor MacOS (or Terminal.app was not found). On Linux, must select sysdir directly.");
         return false;
       }
     }
@@ -453,6 +465,7 @@ ${latestGamsInstalled}`);
         `curdir=${tmpdir}`]);
       stdout = stdout.split('\n');
       if ( stdout.length < 2 ) {
+        log.info(`Invalid stdout from GAMS: ${stdout.slice(0,5).join("\n")}`);
         return false;
       }
       const selectedGamsVer = stdout[1]
@@ -461,10 +474,11 @@ ${latestGamsInstalled}`);
         this.vComp(selectedGamsVer[1], minGams) ) {
         return path.dirname(gamsExecDir);
       } else {
+        log.info(`Invalid stdout from GAMS: ${stdout.slice(0,5).join("\n")}`);
         return false;
       }
     } catch(e) {
-      console.error(e);
+      log.error(e);
       return false;
     }
   }
