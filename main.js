@@ -61,7 +61,7 @@ if ( ! errMsg ) {
     }
     log.transports.file.file = path.join(logPath, 
       'launcher.log');
-    log.info(`MIRO launcher is being started (execPath: ${appRootDir}, \
+    log.info(`MIRO launcher (version ${miroVersion} is being started (execPath: ${appRootDir}, \
 pid: ${process.pid}, Log path: ${logPath}, \
 platform: ${process.platform}, arch: ${process.arch}, \
 version: ${process.getSystemVersion()})...`);
