@@ -247,7 +247,10 @@ class ConfigManager extends Store {
           const rPathRoot = path.join('/', 'Library', 'Frameworks',
                'R.framework', 'Versions');
           const rVersionsAvailable = fs.readdirSync(
-            rPathRoot).filter(el => {
+            rPathRoot, { withFileTypes: true} )
+            .filter(el => (el.isDirectory()))
+            .map(el => (el.name))
+            .filter(el => {
                 try {
                   return this.vComp(el, minR, true);
                 } catch (e) {
@@ -358,20 +361,41 @@ class ConfigManager extends Store {
     };
 
     if ( process.platform === 'darwin' ) {
-      let latestGamsInstalled = fs.readdirSync('/Applications', 
-        { withFileTypes: true })
-        .filter(el => el.isDirectory() && gamsDirNameRegex.test(el.name));
-      if ( latestGamsInstalled ) {
-        latestGamsInstalled = latestGamsInstalled
-        .map(el => el.name.slice(4))
-        .reduce(vCompReducer);
+      let latestGamsInstalled;
+      let isFramework;
+      if (fs.existsSync('/Library/Frameworks/GAMS.framework/Versions')) {
+        isFramework = true;
+        latestGamsInstalled = fs.readdirSync('/Library/Frameworks/GAMS.framework/Versions',
+          { withFileTypes: true })
+          .filter(el => el.isDirectory());
+        if (latestGamsInstalled) {
+          latestGamsInstalled = latestGamsInstalled
+            .map(el => el.name)
+            .reduce(vCompReducer);
+        }
+      } else {
+        isFramework = false;
+        latestGamsInstalled = fs.readdirSync('/Applications',
+          { withFileTypes: true })
+          .filter(el => el.isDirectory() && gamsDirNameRegex.test(el.name));
+        if ( latestGamsInstalled ) {
+          latestGamsInstalled = latestGamsInstalled
+          .map(el => el.name.slice(4))
+          .reduce(vCompReducer);
+        }
       }
 
       if ( latestGamsInstalled && 
         this.vComp(latestGamsInstalled, minGams) ) {
-        this.gamspathDefault = path.join('/Applications', 
-          `GAMS${latestGamsInstalled}`,
-          'GAMS Terminal.app', 'Contents', 'MacOS');
+        if (isFramework) {
+          this.gamspathDefault = path.join('/Library/Frameworks/GAMS.framework/Versions', 
+            latestGamsInstalled,
+            'Resources');
+        } else {
+          this.gamspathDefault = path.join('/Applications', 
+            `GAMS${latestGamsInstalled}`,
+            'GAMS Terminal.app', 'Contents', 'MacOS');
+        }
       } else if ( latestGamsInstalled ) {
         log.info(`Latest installed GAMS version found: \
 ${latestGamsInstalled}`);
@@ -433,7 +457,7 @@ ${latestGamsInstalled}`);
     } else {
       // gams executable not in selected folder
       contentGamsDir = contentGamsDir
-        .filter(el => el.isDirectory());
+        .filter(el => el.isDirectory() || el.isSymbolicLink());
       const gamsDirName = contentGamsDir.find(el => {
             gamsDirNameRegex.test(el.name)
           });
@@ -450,10 +474,18 @@ ${latestGamsInstalled}`);
       } else if ( process.platform === 'win32' && 
         contentGamsDir.find(el => el.name === 'sysdir') ) {
         gamsExecDir = path.join(gamsDir, 'sysdir', 'gams.exe');
-      } else if ( process.platform === 'darwin' && 
-        contentGamsDir.find(el => el.name === 'GAMS Terminal.app') ) {
-        gamsExecDir = path.join(gamsDir, 'GAMS Terminal.app',
+      } else if ( process.platform === 'darwin' ) {
+        if (contentGamsDir.find(el => el.name === 'GAMS Terminal.app')) {
+          gamsExecDir = path.join(gamsDir, 'GAMS Terminal.app',
             'Contents', 'MacOS', 'gams');
+        } else if (contentGamsDir.find(el => el.name === 'GAMS.framework')) {
+          gamsExecDir = path.join(gamsDir, 'GAMS.framework', 'Resources', 'gams');
+        } else if (contentGamsDir.find(el => el.name === 'Current')) {
+          gamsExecDir = path.join(gamsDir, 'Current', 'Resources', 'gams');
+        } else {
+          log.info("Directory selected does not contain a valid GAMS installation.");
+          return false;
+        }
       } else {
         log.info("System is neither Windows nor MacOS (or Terminal.app was not found). On Linux, must select sysdir directly.");
         return false;
