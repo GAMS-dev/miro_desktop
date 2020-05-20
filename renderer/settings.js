@@ -1,11 +1,9 @@
 'use strict'
 
-const { ipcRenderer, remote, shell } = require('electron');
+const { ipcRenderer, shell } = require('electron');
 const path = require('path');
 window.Bootstrap = require('bootstrap');
 const $ = require('jquery');
-
-const currentWindow = remote.getCurrentWindow();
 
 const cbLaunchExternal = $('#launchExternal');
 const cbRemoteExecution = $('#remoteExecution');
@@ -14,23 +12,8 @@ const inputLanguage    = $('#language');
 const inputLogLevel    = $('#logLevel');
 const saveButton       = $('#btSave');
 
-const lang = remote.getGlobal('lang').settings;
-['title', 'general-tab', 'paths-tab', 'launchBrowser', 'browserReset', 'generalLanguage', 'languageReset',
-'generalRemoteExec', 'remoteExecReset', 'generalLogging', 'loggingReset', 'generalLoglife', 'loglifeReset', 
-'pathMiroapp', 'pathMiroappSelect', 'resetPathMiroapp', 'pathGams', 'pathGamsSelect', 'pathGamsReset', 'pathLog',
-'pathLogSelect', 'pathLogReset', 'pathR', 'pathRSelect', 'pathRReset', 'needHelp', 'btSave'].forEach(id => {
-  const el = document.getElementById(id);
-  if ( el ) {
-    el.innerText = lang[id];
-  }
-});
-document.getElementById('btCancel').value = lang['btCancel'];
-['pathMiroappSelect', 'pathGamsSelect', 'pathLogSelect', 'pathRSelect'].forEach(id => {
-  const el = document.getElementById(id);
-  if ( el ) {
-    $(el).addClass('browseLang').attr('content-after', lang['browseFiles']);
-  }
-});
+let lang = {};
+
 $('#helpLink').on('click', () => {
     shell.openExternal('https://gams.com/miro/deployment.html#sbs-customize-app');
 }); 
@@ -49,37 +32,17 @@ const optionAliasMap = {
     }
 }
 
-const pathConfig = [
-    {
-        id: 'configpath',
-        title: lang['dialogConfigPathHdr'],
-        message: lang['dialogConfigPathMsg'],
-        buttonLabel: lang['dialogConfigPathBtn'],
-        label: lang['dialogConfigPathLabel'],
+const pathConfig = {
+    configpath: {
         requiresRestart: true
     },
-    {
-        id: 'gamspath',
-        title: lang['dialogGamsPathHdr'],
-        message: lang['dialogGamsPathMsg'],
-        label: lang['dialogGamsPathLabel'],
-        buttonLabel: lang['dialogGamsPathBtn'],
+    gamspath: {
     },
-    {
-        id: 'rpath',
-        title: lang['dialogRPathHdr'],
-        message: lang['dialogRPathMsg'],
-        label: lang['dialogRPathLabel'],
-        buttonLabel: lang['dialogRPathBtn']
+    rpath: {
     },
-    {
-        id: 'logpath',
-        title: lang['dialogLogPathHdr'],
-        message: lang['dialogLogPathMsg'],
-        label: lang['dialogLogPathLabel'],
-        buttonLabel: lang['dialogLogPathBtn']
+    logpath: {
     }
-];
+};
 
 [inputLogLifetime, inputLanguage, inputLogLevel, cbLaunchExternal, cbRemoteExecution].forEach(el => {
     el.on('change', () => {
@@ -95,13 +58,6 @@ saveButton.on('click', (e) => {
     if ( logLifeVal !== '' ) {
         logLifeVal = parseInt(logLifeVal, 10);
         if ( Number.isNaN(logLifeVal) ) {
-            remote.dialog.showMessageBoxSync(currentWindow,
-            {
-                type: 'warning',
-                title: lang['dialogLogLifeErrHdr'],
-                message: lang['dialogLogLifeErrMsg'],
-                buttons: [ lang['dialogLogLifeErrBtn'] ]
-            });
             return;
         }
     }
@@ -123,58 +79,41 @@ saveButton.on('click', (e) => {
 });
 
 $('#btCancel').on('click', (e) => {
-    currentWindow.close();
+    ipcRenderer.send('close-window', 'settings');
 });
 
-function updatePathConfig( pathSelectConfig, pathSelected ) {
-    saveButton.attr('disabled', false);
-    newConfig[pathSelectConfig.id] = pathSelected;
-    $(`#btPathSelect_${pathSelectConfig.id}`)
-       .siblings('label').text(pathSelected);
-
-    if ( pathSelectConfig.requiresRestart === true) {
-        requireRestart = true;
-    }
-}
-
-function genPathSelectHandler( pathSelectConfig ) {
+function genPathSelectHandler( id ) {
     return (event) => { 
         if ( importantKeys && importantKeys.find(el => 
-            el === pathSelectConfig.id ) ) {
+            el === id ) ) {
             return;
         }
-        const pathSelected = remote.dialog.showOpenDialogSync(currentWindow, {
-             title: pathSelectConfig.title,
-             message: pathSelectConfig.message,
-             buttonLabel: pathSelectConfig.buttonLabel,
-             properties: [ 'openDirectory', 'createDirectory' ]
-        });
-        if ( !pathSelected ) {
-            return;
-        }
-        if ( pathSelectConfig.id === 'gamspath' ) {
-            pathValidating = true;
-            ipcRenderer.send('validate-gams', pathSelected[0]);
-            return;
-        } else if ( pathSelectConfig.id === 'rpath' ) {
-            pathValidating = true;
-            ipcRenderer.send('validate-r', pathSelected[0]);
-            return;
-        }
-        updatePathConfig(pathSelectConfig, pathSelected[0]);
-    };
+        pathValidating = true;
+        ipcRenderer.send('settings-select-new-path', id, 
+            newConfig[id]? newConfig[id]: (oldConfig[id]? oldConfig[id]: defaultValues[id]));
+    }
 }
+ipcRenderer.on('settings-new-path-selected', (e, id, pathSelected) => {
+    saveButton.attr('disabled', false);
+    pathValidating = false;
+    newConfig[id] = pathSelected;
+    $(`#btPathSelect_${id}`)
+       .siblings('label').text(pathSelected);
 
-pathConfig.forEach((el) => {
-  $(`#btPathSelect_${el.id}`).click(genPathSelectHandler(el));
+    if ( pathConfig[id].requiresRestart === true) {
+        requireRestart = true;
+    }
 });
-pathConfig.forEach((el) => {
-  $(`#btPathSelect_${el.id}`).siblings('.btn-reset').click(function() {
+
+Object.keys(pathConfig).forEach(id => {
+  $(`#btPathSelect_${id}`).click(genPathSelectHandler(id));
+
+  $(`#btPathSelect_${id}`).siblings('.btn-reset').click(function() {
     const elKey = this.dataset.key;
     newConfig[elKey] = '';
     saveButton.attr('disabled', false);
-    if ( pathConfig.find(el2 => el2.id === elKey && 
-        el2.requiresRestart === true ) ) {
+    if ( Object.keys(pathConfig).find(id2 => id2 === elKey && 
+        pathConfig[id2].requiresRestart === true ) ) {
         requireRestart = true;
     }
     const $this = $(this);
@@ -201,7 +140,26 @@ $('.btn-reset-nonpath').click(function(e) {
     $(this).hide();
 });
 
-ipcRenderer.on('settings-loaded', (e, data, defaults) => {
+ipcRenderer.on('settings-loaded', (e, data, defaults, langData) => {
+    if ( langData != null && lang['title'] == null) {
+        lang = langData;
+        ['title', 'general-tab', 'paths-tab', 'launchBrowser', 'browserReset', 'generalLanguage', 'languageReset',
+        'generalRemoteExec', 'remoteExecReset', 'generalLogging', 'loggingReset', 'generalLoglife', 'loglifeReset', 
+        'pathMiroapp', 'pathMiroappSelect', 'resetPathMiroapp', 'pathGams', 'pathGamsSelect', 'pathGamsReset', 'pathLog',
+        'pathLogSelect', 'pathLogReset', 'pathR', 'pathRSelect', 'pathRReset', 'needHelp', 'btSave'].forEach(id => {
+          const el = document.getElementById(id);
+          if ( el ) {
+            el.innerText = lang[id];
+          }
+        });
+        document.getElementById('btCancel').value = lang['btCancel'];
+        ['pathMiroappSelect', 'pathGamsSelect', 'pathLogSelect', 'pathRSelect'].forEach(id => {
+          const el = document.getElementById(id);
+          if ( el ) {
+            $(el).addClass('browseLang').attr('content-after', lang['browseFiles']);
+          }
+        });
+    }
     oldConfig = data;
     saveButton.attr('disabled', true);
     defaultValues = defaults;
@@ -260,10 +218,4 @@ ipcRenderer.on('settings-loaded', (e, data, defaults) => {
         pathSelectEl.siblings('label').text(newValue);
       }
     }
-});
-[ 'gamspath', 'rpath' ].forEach(el => {
-    ipcRenderer.on(`${el}-validated`, (e, path) => {
-        pathValidating = false;
-        updatePathConfig(pathConfig.filter(el2 => el2.id === el)[0], path);
-    });
 });

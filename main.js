@@ -13,6 +13,7 @@ const menu = require('./components/menu.js');
 const installRPackages = require('./components/install-r.js');
 const requiredAPIVersion = 1;
 const miroVersion = '1.0.99';
+const miroRelease = 'Apr 08 2020';
 const libVersion = '1.0';
 const exampleAppsData = require('./components/example-apps.js')(miroVersion, requiredAPIVersion);
 
@@ -59,8 +60,8 @@ if ( ! errMsg ) {
     if ( !fs.existsSync(logPath)) {
       fs.mkdirSync(logPath, {recursive: true});
     }
-    log.transports.file.file = path.join(logPath, 
-      'launcher.log');
+    log.transports.file.resolvePath = () => (path.join(logPath,
+      'launcher.log'));
     log.info(`MIRO launcher (version ${miroVersion} is being started (execPath: ${appRootDir}, \
 pid: ${process.pid}, Log path: ${logPath}, \
 platform: ${process.platform}, arch: ${process.arch}, \
@@ -74,9 +75,8 @@ const appsData = errMsg? null :
 const langParser = new LangParser(configData.getSync('language'));
 
 // Set global variables
-global.lang = langParser.get();
-global.miroVersion = miroVersion;
-global.miroRelease = 'Apr 08 2020';
+const lang = langParser.get();
+global.lang = lang;
 
 const resourcesPath = DEVELOPMENT_MODE? app.getAppPath(): process.resourcesPath;
 
@@ -626,7 +626,7 @@ function createSettingsWindow() {
     log.debug('Settings window ready to show.');
     settingsWindow.webContents.send('settings-loaded', 
       await configData.getAll(), 
-      await configData.getAll(true));
+      await configData.getAll(true), lang.settings);
     log.debug('Settings window settings loaded.');
     settingsWindow.show();
   })
@@ -650,7 +650,7 @@ function openAboutDialog(){
     return;
   }
   aboutDialogWindow = new BrowserWindow({
-    title: "About GAMS MIRO",
+    title: 'About GAMS MIRO',
     width: 600,
     height: 380,
     resizable: false,
@@ -661,7 +661,12 @@ function openAboutDialog(){
     }
   });
   aboutDialogWindow.loadFile(path.join(__dirname, 
-    'renderer', 'about.html'));
+    'renderer', 'about.html'), 
+    {query: {
+      'miroVersion': miroVersion,
+      'miroRelease': miroRelease,
+      'btClose': lang.update.btClose}
+    });
   aboutDialogWindow.once('ready-to-show', async () => {
     log.debug('About dialog ready to show.');
     aboutDialogWindow.show();
@@ -694,9 +699,12 @@ function openCheckUpdateWindow() {
     }
   });
   checkForUpdateWindow.loadFile(path.join(__dirname, 
-    'renderer', 'update.html'));
+    'renderer', 'update.html'), {query: {
+      'miroVersion': miroVersion}
+    });
   checkForUpdateWindow.once('ready-to-show', async () => {
     log.debug('Check for Update window ready to show.');
+    checkForUpdateWindow.send('lang-data-received', lang['update']);
     checkForUpdateWindow.show();
   });
   checkForUpdateWindow.on('page-title-updated', (e) => {
@@ -774,7 +782,9 @@ function createMainWindow (showRunningApps = false) {
       nodeIntegration: true
     }
   });
-  mainWindow.loadFile(path.join(__dirname, 'renderer', 'index.html'))
+  mainWindow.loadFile(path.join(__dirname, 'renderer', 'index.html'), {query: {
+      'appPath': app.getAppPath()}
+  });
   mainWindow.once('ready-to-show', () => {
     log.debug('Main window ready to show.');
     mainWindow.show();
@@ -788,7 +798,7 @@ function createMainWindow (showRunningApps = false) {
       appsActive = Object.keys(processIdMap);
     }
     mainWindow.webContents.send('apps-received', 
-      appsData.apps, appDataPath, true, true, appsActive);
+      appsData.apps, appDataPath, true, true, appsActive, lang.general);
     log.debug(`App data (${appsData.apps.length} app(s)) loaded into main window.`);
     if ( appLoaded || miroDevelopMode ) {
       return;
@@ -1166,6 +1176,88 @@ async function searchLibPath (devMode = false) {
 ipcMain.on('show-error-msg', (e, options) => {
   log.debug(`New error message received. Title: ${options.title}, message: ${options.message}.`);
   showErrorMsg(options)
+});
+ipcMain.on('settings-select-new-path', async (e, id, defaultPath) => {
+  if ( settingsWindow ){
+    const langData = {
+        configpath: {
+            title: lang.settings['dialogConfigPathHdr'],
+            message: lang.settings['dialogConfigPathMsg'],
+            buttonLabel: lang.settings['dialogConfigPathBtn'],
+            label: lang.settings['dialogConfigPathLabel']
+        },
+        gamspath: {
+            title: lang.settings['dialogGamsPathHdr'],
+            message: lang.settings['dialogGamsPathMsg'],
+            label: lang.settings['dialogGamsPathLabel'],
+            buttonLabel: lang.settings['dialogGamsPathBtn'],
+        },
+        rpath: {
+            title: lang.settings['dialogRPathHdr'],
+            message: lang.settings['dialogRPathMsg'],
+            label: lang.settings['dialogRPathLabel'],
+            buttonLabel: lang.settings['dialogRPathBtn']
+        },
+        logpath: {
+            title: lang.settings['dialogLogPathHdr'],
+            message: lang.settings['dialogLogPathMsg'],
+            label: lang.settings['dialogLogPathLabel'],
+            buttonLabel: lang.settings['dialogLogPathBtn']
+        }
+    };
+    const pathSelected = dialog.showOpenDialogSync(settingsWindow, {
+         title: langData[id].title,
+         message: langData[id].message,
+         buttonLabel: langData[id].buttonLabel,
+         defaultPath: defaultPath,
+         properties: [ 'openDirectory', 'createDirectory' ]
+    });
+    if ( !pathSelected ) {
+        return;
+    }
+    if ( id === 'gamspath' || id === 'rpath' ) {
+        let configId;
+        if ( id === 'gamspath' ) {
+          configId = 'gams';
+        } else {
+          configId = 'r';
+        }
+        let idUpper = configId.toUpperCase();
+
+        log.debug(`Request to validate ${idUpper} path at location: ${pathSelected[0]} received.`);
+
+        try {
+          const validatedPath = await configData.validate(configId, pathSelected[0]);
+          if ( validatedPath !== false && validatedPath != null && settingsWindow ) {
+            log.debug(`${idUpper} path is valid!`);
+          } else {
+            log.debug(`${idUpper} path is invalid!`);
+            dialog.showMessageBoxSync(settingsWindow, 
+            {
+              type: 'error',
+              title: `${idUpper} ${lang['main'].ErrorInvalidPathHdr}`,
+              message: `${idUpper}${configId === 'r' && process.platform === 'darwin'? lang['main'].ErrorInvalidPathMsgMac : 
+              lang['main'].ErrorInvalidPathMsg} ${configData.getMinimumVersion(configId)}`,
+              buttons: [lang['main'].BtnOk]
+            });
+            return;
+          }
+        } catch (e) {
+          log.error(`Error while validating ${idUpper} version. Error message: ${e.message}`);
+          if ( settingsWindow ) {
+             dialog.showMessageBoxSync(settingsWindow, 
+              {
+                type: 'error',
+                title: lang['main'].ErrorUnexpectedHdr,
+                message: `${lang['main'].ErrorInvalidPathMsg2} ${idUpper} ${lang['main'].ErrorMessage} ${e.message}.`,
+                buttons: [lang['main'].BtnOk]
+              });
+           }
+           return;
+        }
+    }
+    settingsWindow.webContents.send('settings-new-path-selected', id, pathSelected[0]);
+  }
 })
 
 ipcMain.on('browse-app', (e, options, callback, id = null) => {
@@ -1276,40 +1368,6 @@ ipcMain.on('update-app', (e, app) => {
      return
   }
 });
-[ 'gams', 'r' ].forEach((el) => {
-  ipcMain.on(`validate-${el}`, async (e, pathToValidate) => {
-    const idUpper = el.toUpperCase();
-    log.debug(`Request to validate ${idUpper} path at location: ${pathToValidate} received.`);
-    try {
-      const validatedPath = await configData.validate(el, pathToValidate);
-      if ( validatedPath !== false && validatedPath != null && settingsWindow ) {
-        log.debug(`${idUpper} path is valid!`);
-        settingsWindow.webContents.send(`${el}path-validated`, validatedPath);
-      } else {
-        log.debug(`${idUpper} path is invalid!`);
-        dialog.showMessageBoxSync(settingsWindow, 
-        {
-          type: 'error',
-          title: `${idUpper} ${lang['main'].ErrorInvalidPathHdr}`,
-          message: `${idUpper}${el === 'r' && process.platform === 'darwin'? lang['main'].ErrorInvalidPathMsgMac : 
-          lang['main'].ErrorInvalidPathMsg} ${configData.getMinimumVersion(el)}`,
-          buttons: [lang['main'].BtnOk]
-        });
-      }
-    } catch (e) {
-      log.error(`Error while validating ${idUpper} version. Error message: ${e.message}`);
-      if ( settingsWindow ) {
-         dialog.showMessageBoxSync(settingsWindow, 
-        {
-          type: 'error',
-          title: lang['main'].ErrorUnexpectedHdr,
-          message: `${lang['main'].ErrorInvalidPathMsg2} ${idUpper} ${lang['main'].ErrorMessage} ${e.message}.`,
-          buttons: [lang['main'].BtnOk]
-        });
-       }
-    }
-  });
-});
 
 ipcMain.on('save-general-config', async (e, newConfigData, needRestart) => {
   log.debug('Save general config request received.');
@@ -1400,6 +1458,16 @@ ipcMain.on('delete-app', async (e, appId) => {
 
 ipcMain.on('launch-app', (e, appData) => {
   createMIROAppWindow(appData);
+});
+
+ipcMain.on('close-window', (e, id) => {
+  if (id === 'about' && aboutDialogWindow) {
+    aboutDialogWindow.close();
+  } else if (id === 'settings' && settingsWindow) {
+    settingsWindow.close();
+  } else if(id === 'update' && checkForUpdateWindow) {
+    checkForUpdateWindow.close();
+  }
 });
 
 app.on('will-finish-launching', () => {

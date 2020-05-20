@@ -210,8 +210,8 @@ local({
         paste0('const requiredAPIVersion = ', APIVersion, ';'), mainJS)
     mainJS = gsub("const miroVersion = '[^']+';",
         paste0("const miroVersion = '", MIROVersion, "';"), mainJS)
-    mainJS = gsub("global.miroRelease = '[^']+';",
-        paste0("global.miroRelease = '", MIRORDate, "';"), mainJS)
+    mainJS = gsub("const miroRelease = '[^']+';",
+        paste0("const miroRelease = '", MIRORDate, "';"), mainJS)
     writeLines(mainJS, './main.js')
     packageJSON = readLines('./package.json', warn = FALSE)
     packageJSON = gsub('"version": "[^"]+",',
