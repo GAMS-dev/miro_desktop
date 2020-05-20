@@ -615,7 +615,8 @@ function createSettingsWindow() {
     show: false,
     frame: false,
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: true,
+      enableRemoteModule: false
     }
   });
 
@@ -657,7 +658,8 @@ function openAboutDialog(){
     show: false,
     frame: false,
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: true,
+      enableRemoteModule: false
     }
   });
   aboutDialogWindow.loadFile(path.join(__dirname, 
@@ -695,7 +697,8 @@ function openCheckUpdateWindow() {
     show: false,
     frame: false,
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: true,
+      enableRemoteModule: false
     }
   });
   checkForUpdateWindow.loadFile(path.join(__dirname, 
@@ -779,7 +782,8 @@ function createMainWindow (showRunningApps = false) {
     titleBarStyle: 'hidden',
     icon: process.platform === 'linux'? path.join(__dirname, 'static', 'Icon-512x512.png'): undefined,
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: true,
+      enableRemoteModule: false
     }
   });
   mainWindow.loadFile(path.join(__dirname, 'renderer', 'index.html'), {query: {
