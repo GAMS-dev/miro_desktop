@@ -44,3 +44,7 @@
 [submodule "r-src/jsonlite"]
 	path = r-src/jsonlite
 	url = https://github.com/GAMS-dev/jsonlite.git
+[submodule "r-src/sortable"]
+	path = r-src/sortable
+	url = https://github.com/GAMS-dev/sortable.git
+	branch = master
