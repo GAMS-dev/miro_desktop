@@ -243,7 +243,7 @@ for ( modelName in c( 'pickstock', 'transport', 'sudoku', 'tsp', 'farming', 'ins
 
     Sys.setenv(MIRO_MODEL_PATH=file.path(modelPath, paste0(modelName, '.gms')))
 
-    buildProc = run(file.path(R.home(), 'bin', 'Rscript'), 
+    buildProc = processx::run(file.path(R.home(), 'bin', 'Rscript'), 
         c('--vanilla', './app.R'), error_on_status = FALSE,
         wd = file.path(getwd(), 'miro'))
     if(buildProc$status != 0L) {
