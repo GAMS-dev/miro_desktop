@@ -21,42 +21,16 @@ exports.default = async function signing(context) {
   const appFile = path.join(context.appOutDir, `${appName}.app`);
   const frameworksDir = path.join(appFile, 'Contents', 'Frameworks');
 
-  const objectsToSign = [
-  {
-      file: path.join(frameworksDir, 'Electron Framework.framework', 'Versions', 'A', 'Libraries', 'libEGL.dylib'),
-      flags: []
-  },
-  {
-      file: path.join(frameworksDir, 'Electron Framework.framework', 'Versions', 'A', 'Libraries', 'libffmpeg.dylib'),
-      flags: []
-  },
-  {
-      file: path.join(frameworksDir, 'Electron Framework.framework', 'Versions', 'A', 'Libraries', 'libGLESv2.dylib'),
-      flags: []
-  },
-  {
-      file: path.join(frameworksDir, 'Electron Framework.framework', 'Versions', 'A', 'Libraries', 'libswiftshader_libEGL.dylib'),
-      flags: []
-  },
-  {
-      file: path.join(frameworksDir, 'Electron Framework.framework', 'Versions', 'A', 'Libraries', 'libswiftshader_libGLESv2.dylib'),
-      flags: []
-  },
-  {
-      file: path.join(frameworksDir, 'Squirrel.framework', 'Versions', 'A', 'Resources', 'ShipIt'),
-      flags: ['--options', 'runtime', '--entitlements', entitlementsFile]
-  },
-  {
-      file: appFile,
-      flags: ['--options', 'runtime', '--entitlements', entitlementsFile, '--deep']
-  }];
-
-  for ( const objectToSign of objectsToSign ) {
-      const signProc = execa('codesign', ['--sign', codesignIdentity, '--force', 
-         '--timestamp'].concat(objectToSign.flags, objectToSign.file));
-      signProc.stderr.pipe(process.stderr);
-      signProc.stdout.pipe(process.stderr);
-      await signProc;
+  try{
+    const signProc = execa(path.join('.', 'build', 'scripts', 'sign-dmg.sh'), 
+      [frameworksDir, codesignIdentity, entitlementsFile], {shell: true});
+    signProc.stderr.pipe(process.stderr);
+    signProc.stdout.pipe(process.stderr);
+    await signProc;
+  } catch (e) {
+      console.log(`Problems signing app. Error message: ${e.message}`);
+      throw e;
   }
+
   return;
 };
