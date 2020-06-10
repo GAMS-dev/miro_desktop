@@ -49,8 +49,7 @@ packageIsInstalled <- function(package) {
     return(package[1] %in% installedPackages)
 }
 
-dontDisplayMe <- lapply(requiredPackages[!requiredPackages %in% c('Rcpp')], 
-    library, character.only = TRUE)
+dontDisplayMe <- lapply(c('devtools', 'remotes'), library, character.only = TRUE)
 
 if ( isLinux && !dir.exists(RlibPathSrc) && 
     !dir.create(RlibPathSrc, showWarnings = TRUE, recursive = TRUE)) {
