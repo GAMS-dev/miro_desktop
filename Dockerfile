@@ -69,9 +69,9 @@ RUN add-apt-repository ppa:deadsnakes/ppa
 RUN apt-get update && apt-get install -y \
     sudo \
     libcurl4-gnutls-dev \
-    libv8-3.14-dev \
+    libv8-dev \
     libpq-dev \
-    python3.6 \
+    python3.8 \
     python3-pip
 
 RUN pip3 install --upgrade pip
