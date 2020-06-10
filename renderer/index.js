@@ -506,7 +506,7 @@ appsWrapper.on('click', '.launch-app', function(){
   $(`#appLoadingScreen_${appID}`).show();
   runningProcesses.push(appID);
   btEditWrapper.addClass('bt-disabled');
-  ipcRenderer.send('launch-app', this.dataset);
+  ipcRenderer.send('launch-app', Object.assign({}, this.dataset));
 });
 ipcRenderer.on('apps-received', (e, apps, appDataPath, startup = false, deactivateEditMode = true, appsActive = [], langData = null) => {
   if ( isInEditMode ) {
