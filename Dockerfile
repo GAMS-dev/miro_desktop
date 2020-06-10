@@ -41,7 +41,7 @@ RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen \
 ENV LC_ALL en_US.UTF-8
 ENV LANG en_US.UTF-8
 
-RUN echo "deb https://cloud.r-project.org/bin/linux/ubuntu xenial-cran35/" > /etc/apt/sources.list.d/cran.list
+RUN echo "deb https://cloud.r-project.org/bin/linux/ubuntu xenial-cran40/" > /etc/apt/sources.list.d/cran.list
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
 
 
