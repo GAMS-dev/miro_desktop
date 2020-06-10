@@ -23,7 +23,7 @@ exports.default = async function signing(context) {
 
   try{
     const signProc = execa(path.join('.', 'build', 'scripts', 'sign-dmg.sh'), 
-      [frameworksDir, codesignIdentity, entitlementsFile], {shell: true});
+      [`"${frameworksDir}"`, codesignIdentity, `"${entitlementsFile}"`], {shell: true});
     signProc.stderr.pipe(process.stderr);
     signProc.stdout.pipe(process.stderr);
     await signProc;
