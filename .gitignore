@@ -7,3 +7,4 @@ r/library
 r/library_src
 *.log
 version
+.Rproj.user
