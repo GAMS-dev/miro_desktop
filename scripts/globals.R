@@ -18,7 +18,7 @@ packageVersionMap <- list(
     c('rlang', '0.4.6'),
     c('later', '1.0.0'),
     c('promises', '1.1.0'),
-    c('httpuv', '1.5.2'),
+    c('httpuv', '1.5.4'),
     c('mime', '0.9'),
     'jsonlite',
     c('digest', '0.6.25'),
@@ -26,7 +26,7 @@ packageVersionMap <- list(
     c('xtable', '1.8-4'),
     c('fastmap', '1.0.1'),
     c('curl', '4.3'),
-    c('V8', '3.0.2'),
+    c('V8', '3.1.0'),
     c('htmltools', '0.4.0'),
     c('withr', '2.2.0'),
     c('leaflet.providers', '1.9.0'),
@@ -39,7 +39,7 @@ packageVersionMap <- list(
     c('lazyeval', '0.2.2'),
     c('pkgconfig', '2.0.3'),
     c('ellipsis', '0.3.1'),
-    c('vctrs', '0.3.0'),
+    c('vctrs', '0.3.1'),
     c('tidyselect', '1.1.0'),
     c('plogr', '0.2.0'),
     c('htmlwidgets', '1.5.1'),
@@ -98,7 +98,9 @@ packageVersionMap <- list(
     c('dygraphs', '1.1.1.6'),
     c('future', '1.17.0'),
     'miro.util',
-    'rhandsontable')
+    'rhandsontable',
+    'sortable',
+    'chartjs')
 dataTableVersionMap <- c('data.table', '1.12.2')
 
 isMac <- Sys.info()['sysname'] == 'Darwin' || grepl("^darwin", R.version$os)
