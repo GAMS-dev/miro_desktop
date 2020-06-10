@@ -19,11 +19,11 @@ exports.default = async function signing(context) {
   const entitlementsFile = path.join(context.packager.info['_buildResourcesDir'], 
       'entitlements.mac.plist');
   const appFile = path.join(context.appOutDir, `${appName}.app`);
-  const frameworksDir = path.join(appFile, 'Contents', 'Frameworks');
+  const contentDir = path.join(appFile, 'Contents');
 
   try{
     const signProc = execa(path.join('.', 'build', 'scripts', 'sign-dmg.sh'), 
-      [`"${frameworksDir}"`, codesignIdentity, `"${entitlementsFile}"`], {shell: true});
+      [`"${contentDir}"`, codesignIdentity, `"${entitlementsFile}"`], {shell: true});
     signProc.stderr.pipe(process.stderr);
     signProc.stdout.pipe(process.stderr);
     await signProc;
