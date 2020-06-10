@@ -49,12 +49,8 @@
       "mimeType": "application/miro"
     },
     "mac": {
-      "extraFiles": [
-        {
-          "from": "r",
-          "to": "MacOS/r",
-          "filter": "**/*"
-        }
+      "extraResources": [
+        "r"
       ],
       "category": "public.app-category.productivity",
       "icon": "./build/icon.icns",
