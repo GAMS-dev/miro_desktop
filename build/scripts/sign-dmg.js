@@ -43,10 +43,6 @@ exports.default = async function signing(context) {
       flags: []
   },
   {
-      file: path.join(frameworksDir, 'Electron Framework.framework', 'Versions', 'A', 'Resources', 'crashpad_handler'),
-      flags: ['--options', 'runtime', '--entitlements', entitlementsFile]
-  },
-  {
       file: path.join(frameworksDir, 'Squirrel.framework', 'Versions', 'A', 'Resources', 'ShipIt'),
       flags: ['--options', 'runtime', '--entitlements', entitlementsFile]
   },

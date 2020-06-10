@@ -12,8 +12,7 @@ if ( isLinux ) {
     writeLines('', file.path(RLibPath, 'EMPTY'))
 } else if ( isWindows ) {
     # make sure Rtools compilers are used on Windows
-    Sys.setenv(PATH = paste("C:/Rtools/bin", Sys.getenv("PATH"), sep=";"))
-    Sys.setenv(BINPREF = "C:/Rtools/mingw_$(WIN)/bin/")
+    Sys.setenv(PATH = paste("${RTOOLS40_HOME}\\usr\\bin", Sys.getenv("PATH"), sep=";"))
 }
 requiredPackages <- c('devtools', 'remotes', 'jsonlite', 'V8', 
     'jsonvalidate', 'zip', 'tibble', 'readr', 'R6', 'processx', 
