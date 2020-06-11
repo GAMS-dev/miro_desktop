@@ -20,6 +20,7 @@ const exampleAppsData = require('./components/example-apps.js')(miroVersion, req
 const LangParser = require('./components/LangParser.js');
 const AppDataStore = require('./AppDataStore');
 const ConfigManager = require('./ConfigManager');
+const MiroDb = require('./MiroDb');
 const unzip     = require('./Unzip');
 const { randomPort, waitFor, isNull } = require('./helpers');
 
@@ -114,6 +115,10 @@ function compareVersions(v1, v2) {
   }
 }
 
+const getAppDbPath = (appDbPath) => {
+  return (appDbPath === '' || appDbPath == null)? path.join(app.getPath('home'), '.miro') : appDbPath
+}
+
 /*
 MIT License
 
@@ -166,7 +171,7 @@ const tryStartWebserver = async (progressCallback, onErrorStartup,
   log.debug(`Process: ${internalPid} is being started on port: ${shinyPort}.`);
   const gamspath = configData.get('gamspath');
   const logpath = configData.get('logpath');
-  const dbPath = (appData.dbpath === '' || appData.dbpath == null)? path.join(app.getPath('home'), '.miro') : appData.dbpath;
+  const dbPath = getAppDbPath(appData.dbpath);
   
   const generalConfig = {
     launchExternal: configData.get('launchExternal'),
@@ -1436,6 +1441,16 @@ ipcMain.on('delete-app', async (e, appId) => {
   if ( deleteAppConfirmedId !== 1 ) {
     return
   }
+  const deleteAppData = dialog.showMessageBoxSync(mainWindow, {
+   buttons: [ lang['main'].BtnCancel, lang['main'].BtnRemove ],
+   cancelId: 0,
+   message: lang['main'].DeleteDataMsg
+  }) === 1;
+
+  let appDbPath;
+  if ( deleteAppData ) {
+    appDbPath = appsData.getAppConfigValue(appId, 'dbPath');
+  }
   try {
     const rmPromise = fs.remove(path.join(appDataPath, appId));
     try {
@@ -1461,13 +1476,39 @@ ipcMain.on('delete-app', async (e, appId) => {
   } catch (e) {
     log.error(`Delete app (ID: ${appId}) request failed. Error message: ${e.message}`);
     if ( e.code === 'EACCES' ) {
-      showErrorMsg({
-            type: 'error',
-            title: lang['main'].ErrorWriteHdr,
-            message: `${lang['main'].ErrorWriteMsg2} '${configData.getConfigPath()}.'`
-          });
-     return
+        showErrorMsg({
+          type: 'error',
+          title: lang['main'].ErrorWriteHdr,
+          message: `${lang['main'].ErrorWriteMsg2} '${configData.getConfigPath()}.'`
+        });
+     } else {
+        showErrorMsg({
+          type: 'error',
+          title: lang['main'].ErrorUnexpectedHdr,
+          message: lang['main'].ErrorUnexpectedMsg2
+        });
      }
+  } finally {
+    if ( deleteAppData ) {
+      try {
+        const miroDb = new MiroDb(path.join(getAppDbPath(appDbPath), 
+          'miro.sqlite3'));
+        try {
+          miroDb.removeAppDbTables(appId);
+        } catch (e) {
+          throw e;
+        } finally {
+          miroDb.close()
+        }
+      } catch (e) {
+        log.error(`Problems removing data (app ID: ${appId}). Error message: ${e.message}`);
+        showErrorMsg({
+          type: 'error',
+          title: lang['main'].ErrorUnexpectedHdr,
+          message: lang['main'].ErrorUnexpectedMsg2
+        });
+      }
+    }
   }
 });
 

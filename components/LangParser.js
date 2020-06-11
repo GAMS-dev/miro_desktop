@@ -244,6 +244,10 @@ const schema = {
                "type":"string",
                "minLength":1
            },
+           "DeleteDataMsg": {
+               "type":"string",
+               "minLength":1
+           },
            "ErrorInit": {
                "type":"string",
                "minLength":1
@@ -273,7 +277,7 @@ const schema = {
                "minLength":1
            },
          },
-         "required": ["ErrorUnexpectedHdr", "ErrorUnexpectedMsg", "ErrorUnexpectedMsg2", "BtnCancel", "BtnOk", "BtnRemove", "ErrorInvalidHdr", "ErrorInvalidMsg", "ErrorInvalidTwoMsg", "ErrorInvalidThreeMsg", "ErrorAPIHdr", "ErrorAPIMsg", "ErrorVersionMsg", "ErrorReadMsg","ErrorLogoHdr", "ErrorLogoMsg", "ErrorLogoMultiMsg", "ErrorLogoLargeHdr", "ErrorLogoLargeMsg", "ErrorExampleExistsHdr", "ErrorModelExistsHdr", "ErrorModelExistsMsg", "ErrorModelExistsMsg2", "ErrorWriteHdr", "ErrorWriteMsg", "ErrorWriteMsg2", "ErrorAppRunningHdr", "ErrorAppRunningMsg", "ErrorAppIncompMsg", "ErrorMsgLaunch", "ErrorInstallStartMsg", "ErrorInstallPermHdr", "ErrorInstallPerm1Msg", "ErrorInstallPerm2Msg", "ErrorInstallPerm3Msg", "ErrorInstallPerm4Msg", "ErrorInstallPermBtnYes", "ErrorInstallPermBtnNo", "ErrorWritePerm2Msg", "ErrorNoWritePermMsg", "ErrorInvalidPathHdr", "ErrorInvalidPathMsg", "ErrorInvalidPathMsgMac", "ErrorInvalidPathMsg2", "ErrorMessage", "SuccessUpdateHdr", "SuccessUpdateMsg", "ErrorUnexpectedWriteMsg", "DeleteMsg", "ErrorInit", "ErrorRInstallHdr", "ErrorRInstallMsg", "ErrorModelPathHdr", "ErrorModelPathMsg", "ErrorRNotFoundHdr", "ErrorRNotFoundMsg"]
+         "required": ["ErrorUnexpectedHdr", "ErrorUnexpectedMsg", "ErrorUnexpectedMsg2", "BtnCancel", "BtnOk", "BtnRemove", "ErrorInvalidHdr", "ErrorInvalidMsg", "ErrorInvalidTwoMsg", "ErrorInvalidThreeMsg", "ErrorAPIHdr", "ErrorAPIMsg", "ErrorVersionMsg", "ErrorReadMsg","ErrorLogoHdr", "ErrorLogoMsg", "ErrorLogoMultiMsg", "ErrorLogoLargeHdr", "ErrorLogoLargeMsg", "ErrorExampleExistsHdr", "ErrorModelExistsHdr", "ErrorModelExistsMsg", "ErrorModelExistsMsg2", "ErrorWriteHdr", "ErrorWriteMsg", "ErrorWriteMsg2", "ErrorAppRunningHdr", "ErrorAppRunningMsg", "ErrorAppIncompMsg", "ErrorMsgLaunch", "ErrorInstallStartMsg", "ErrorInstallPermHdr", "ErrorInstallPerm1Msg", "ErrorInstallPerm2Msg", "ErrorInstallPerm3Msg", "ErrorInstallPerm4Msg", "ErrorInstallPermBtnYes", "ErrorInstallPermBtnNo", "ErrorWritePerm2Msg", "ErrorNoWritePermMsg", "ErrorInvalidPathHdr", "ErrorInvalidPathMsg", "ErrorInvalidPathMsgMac", "ErrorInvalidPathMsg2", "ErrorMessage", "SuccessUpdateHdr", "SuccessUpdateMsg", "ErrorUnexpectedWriteMsg", "DeleteMsg", "DeleteDataMsg", "ErrorInit", "ErrorRInstallHdr", "ErrorRInstallMsg", "ErrorModelPathHdr", "ErrorModelPathMsg", "ErrorRNotFoundHdr", "ErrorRNotFoundMsg"]
      },
      "general":{
        "type":"object",
@@ -820,6 +824,7 @@ const en = {
         "SuccessUpdateMsg": "Your configuration was successfully updated. MIRO must be restarted for your changes to take effect. Do you want to restart MIRO now?",
         "ErrorUnexpectedWriteMsg": "Configuration data could not be saved. Do you miss write permissions in this location:",
         "DeleteMsg": "Are you sure you want to permanently remove the app?",
+        "DeleteDataMsg": "Do you want to permanently remove all data belonging to this app? This cannot be undone.",
         "ErrorInit": "Error initialising MIRO",
         "ErrorRInstallHdr": "Failed to install R packages",
         "ErrorRInstallMsg": "The R packages required to run MIRO could not be installed. Check log file for more information.",
@@ -1010,6 +1015,7 @@ const de = {
         "SuccessUpdateMsg": "Ihre Konfiguration wurde erfolgreich aktualisiert. MIRO muss neu gestartet werden, damit Ihre Änderungen wirksam werden. Wollen Sie MIRO jetzt neu starten?",
         "ErrorUnexpectedWriteMsg": "Konfigurationsdaten konnten nicht gespeichert werden. Fehlen Ihnen an dieser Stelle Schreibrechte:",
         "DeleteMsg": "Sind Sie sicher, dass Sie die App dauerhaft entfernen möchten?",
+        "DeleteDataMsg": "Möchten Sie alle Daten, die zu dieser App gehören, dauerhaft entfernen? Dies kann nicht rückgängig gemacht werden.",
         "ErrorInit": "Fehler bei der Initialisierung von MIRO",
         "ErrorRInstallHdr": "Installation von R Paketen fehlgeschlagen",
         "ErrorRInstallMsg": "Die zum Betrieb von MIRO erforderlichen R Pakete konnten nicht installiert werden. Prüfen Sie die Logdatei für weitere Informationen.",
@@ -1199,6 +1205,7 @@ const cn = {
         "SuccessUpdateMsg": "配置已成功更新。必须重新启动MIRO才能使配置的更改生效。是否要立即重启MIRO？",
         "ErrorUnexpectedWriteMsg": "无法保存配置数据。您是否缺少此位置的写入权限：",
         "DeleteMsg": "要永久删除该应用程序吗？",
+        "DeleteDataMsg": "你想永久删除属于这个应用程序的所有数据吗？这一点是无法挽回的。",
         "ErrorInit": "初始化MIRO时出错",
         "ErrorRInstallHdr": "无法安装R软件包",
         "ErrorRInstallMsg": "无法安装运行MIRO所需的R软件包。检查日志文件以获取更多信息。",
