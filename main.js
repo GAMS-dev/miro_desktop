@@ -359,13 +359,23 @@ function validateMIROApp ( filePath ) {
             if ( skipCnt > 1 ) {
               break
             }
-            if ( fileName.endsWith('.miroconf') ) {
+            if ( path.dirname(fileName) === "." && fileName.endsWith('.miroconf') ) {
               const miroConfMatch = fileName.match(miroConfFormat);
               if ( miroConfMatch && miroConfMatch[1].length ) {
                 if ( miroConfMatch[5] ) {
+                  if ( newAppConf.modesAvailable.includes('hcube') ) {
+                    log.warn('Multiple Hypercube configurations found in app bundle. Invalid app.');
+                    errMsg = errMsgTemplate;
+                    break
+                  }
                   log.debug('Hypercube configuration in new MIRO app found.');
                   newAppConf.modesAvailable.push('hcube');
                 } else {
+                  if ( newAppConf.modesAvailable.includes('base') ) {
+                    log.warn('Multiple base configurations found in app bundle. Invalid app.');
+                    errMsg = errMsgTemplate;
+                    break
+                  }
                   log.debug('Base mode configuration in new MIRO app found.');
                   newAppConf.modesAvailable.push('base');
                   newAppConf.usetmpdir = miroConfMatch[2] === '1';
@@ -378,7 +388,7 @@ function validateMIROApp ( filePath ) {
                 newAppConf.id = miroConfMatch[1];
                 newAppConf.apiversion = parseInt(miroConfMatch[3], 10);
                 newAppConf.miroversion = miroConfMatch[4];
-                log.info(`New MIRO app successfully identified. Id: ${newAppConf.path}, \
+                log.info(`New MIRO app successfully identified. Id: ${newAppConf.id}, \
 API version: ${newAppConf.apiversion}, \
 MIRO version: ${newAppConf.miroversion}.`);
                 skipCnt++
