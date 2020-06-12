@@ -137,6 +137,18 @@ function expandAddAppForm(){
   addAppWrapper.css( 'z-index', 11 );
   $overlay.data('current', addAppWrapper).fadeIn(300);
   addAppWrapper.html(`<div class="app-box" id="expandedAddAppWrapper">
+                        <div id="addAppSpinner">
+                          <div class="lds-ellipsis" style="position:relative;top:50%;left:50%">
+                            <div>
+                            </div>
+                            <div>
+                            </div>
+                            <div>
+                            </div>
+                            <div>
+                            </div>
+                          </div>
+                        </div>
                         <div style="height:200px;">
                            <div class="drag-drop-area app-window" id="newAppFiles">
                               <div class="drag-drop-area-text empty">
@@ -170,7 +182,8 @@ function expandAddAppForm(){
                         <div style = "text-align:right;">
                             <input class="btn btn-secondary cancel-btn" id="btAddAppReset" value="${lang['btCancel']}" type="reset">
                             <button class="btn btn-secondary confirm-btn" id="btAddApp" type="button">${lang['btAddApp']}</button>
-                        </div>`);
+                        </div>
+                      </div>`);
 }
 
 $body.on('click', '.app-box', function(e) {
@@ -295,6 +308,7 @@ appsWrapper.on('click', '#btAddApp', () => {
     }
     newAppConfig.title       = titleTmp;
     newAppConfig.description = descTmp;
+    $('#addAppSpinner').show();
     ipcRenderer.send('add-app', newAppConfig);
 });
 appsWrapper.on('click', '.cancel-btn', function(){
