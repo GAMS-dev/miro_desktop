@@ -89,7 +89,6 @@ packageVersionMap <- list(
     c('readr', '1.3.1'),
     c('readxl', '1.3.1'),
     c('writexl', '1.3'),
-    c('jsonvalidate', '1.1.0'),
     c('rpivotTable', '0.3.0'),
     c('futile.logger', '1.4.3'),
     c('zip', '2.0.4'),

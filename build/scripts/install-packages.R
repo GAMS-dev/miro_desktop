@@ -17,7 +17,7 @@ if ( isLinux ) {
     Sys.setenv(BINPREF = paste0(RtoolsHome, "/mingw$(WIN)/bin/"))
 }
 requiredPackages <- c('devtools', 'remotes', 'jsonlite', 'V8', 
-    'jsonvalidate', 'zip', 'tibble', 'readr', 'R6', 'processx', 
+    'zip', 'tibble', 'readr', 'R6', 'processx', 
     'testthat', 'shinytest', 'Rcpp')
 if ( identical(Sys.getenv('BUILD_DOCKER'), 'true') ) {
     requiredPackages <- c(requiredPackages, 'DBI', 'blob')
