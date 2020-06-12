@@ -1301,7 +1301,7 @@ ipcMain.on('add-app', (e, app) => {
      }
      let appConf = app;
      const appDir = path.join(appDataPath, appConf.id)
-     unzip(appConf.path, appDir, () => {
+     unzip(appConf.path, appDir, async () => {
        delete appConf.path;
        if ( appConf.logoNeedsMove ) {
         const newLogoPath = path.join(`static_${appConf.id}`, 
@@ -1311,6 +1311,49 @@ ipcMain.on('add-app', (e, app) => {
          delete appConf.logoNeedsMove;
        }
        const updatedApps = appsData.addApp(appConf).apps;
+       try {
+          const rpath = await configData.get('rpath');
+          if ( rpath ) {
+            const internalPid = miroProcesses.length;
+            miroProcesses[internalPid] = execa(path.join(rpath, 'bin', 'Rscript'),
+              ['--vanilla', path.join(miroResourcePath, 'start-shiny.R')],
+              { env: {
+                'R_HOME_DIR': rpath,
+                'RE_SHINY_PATH': miroResourcePath,
+                'R_LIBS': libPath,
+                'R_LIBS_USER': libPath,
+                'R_LIBS_SITE': libPath,
+                'R_LIB_PATHS': libPath,
+                'MIRO_NO_DEBUG': "true",
+                'MIRO_USE_TMP': appConf.usetmpdir !== 'false',
+                'MIRO_WS_PATH': miroWorkspaceDir,
+                'MIRO_DB_PATH': getAppDbPath(appConf.dbpath),
+                'MIRO_BUILD': "false",
+                'MIRO_BUILD_ARCHIVE': "false",
+                'MIRO_LOG_PATH': await configData.get('logpath'),
+                'MIRO_POPULATE_DB': "true",
+                'LAUNCHINBROWSER': "true",
+                'MIRO_REMOTE_EXEC': "false",
+                'MIRO_VERSION_STRING': appConf.miroversion,
+                'MIRO_MODE': 'base',
+                'MIRO_MODEL_PATH': path.join(appDir, `${appConf.id}.gms`)},
+                stdout: 'pipe',
+                stderr: 'pipe',
+                 cleanup: false
+               });
+            await miroProcesses[internalPid];
+          } else {
+            log.info('No R path set.');
+            dialog.showMessageBox(mainWindow, {
+              type: 'info',
+              title: lang['main'].ErrorRNotFoundHdr,
+              message: lang['main'].ErrorRNotFoundMsg,
+              buttons: [ lang['main'].BtnOk ]
+            });
+          }
+       } catch(e) {
+         log.error(`Problems storing data: ${e}. Stdout: ${e.stdout}, Stderr: ${e.stderr}`)
+       }
        mainWindow.send('apps-received', updatedApps, appDataPath);
      });
   } catch (e) {
