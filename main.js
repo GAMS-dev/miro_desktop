@@ -87,7 +87,9 @@ const processIdMap = {};
 
 let applicationMenu;
 let rPackagesInstalled = true;
-let libPath = isMac && !DEVELOPMENT_MODE? path.join(process.resourcesPath, 'r', 'library'):
+let libPath = isMac && !DEVELOPMENT_MODE?
+   path.resolve(path.join(appRootDir, '..', 'Frameworks',
+    'R.framework', 'Resources', 'library')):
    path.join(appRootDir, 'r', 'library');
 
 const miroResourcePath = DEVELOPMENT_MODE? path.join(app.getAppPath(), 'miro'):
@@ -206,8 +208,8 @@ const tryStartWebserver = async (progressCallback, onErrorStartup,
 developMode: ${miroDevelopMode}.`);
   let shinyProcessAlreadyDead = false
   let noError = false
-  miroProcesses[internalPid] = execa(path.join(rpath, 'bin', 'Rscript'),
-    ['--vanilla', path.join(miroResourcePath, 'start-shiny.R')],
+  miroProcesses[internalPid] = execa(path.join(rpath, 'bin', 'R'),
+    ['--no-echo', '--no-restore', '--vanilla', '-f', path.join(miroResourcePath, 'start-shiny.R')],
     { env: {
       'WITHIN_ELECTRON': '1',
       'R_HOME_DIR': rpath,
@@ -1315,8 +1317,8 @@ ipcMain.on('add-app', (e, app) => {
           const rpath = await configData.get('rpath');
           if ( rpath ) {
             const internalPid = miroProcesses.length;
-            miroProcesses[internalPid] = execa(path.join(rpath, 'bin', 'Rscript'),
-              ['--vanilla', path.join(miroResourcePath, 'start-shiny.R')],
+            miroProcesses[internalPid] = execa(path.join(rpath, 'bin', 'R'),
+              ['--no-echo', '--no-restore', '--vanilla', '-f', path.join(miroResourcePath, 'start-shiny.R')],
               { env: {
                 'R_HOME_DIR': rpath,
                 'RE_SHINY_PATH': miroResourcePath,

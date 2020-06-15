@@ -22,7 +22,8 @@ const tryInstallRPackages = async (attempt = 0) => {
             rPath = path.join('.', 'r', 'bin', 'Rscript');
         }
         const subproc =  execa(rPath, [ path.join('.', 'build', 'scripts', 'install-packages.R') ],
-            { env: { 'LIB_PATH': path.join('.', 'r', 'library'), 
+            { env: { 'LIB_PATH': process.platform === 'darwin'? 
+            path.join('.', 'r', 'R.framework', 'Resources', 'library') : path.join('.', 'r', 'library'), 
             'BUILD_DOCKER': buildDocker? 'true': 'false'}});
         subproc.stderr.pipe(process.stderr);
         subproc.stdout.pipe(process.stderr);
@@ -88,13 +89,36 @@ const tryInstallRPackages = async (attempt = 0) => {
             process.exit(1);
         }
     } else {
+        if ( process.platform === 'darwin' && !rExists )  {
+            try {
+                const subproc = execa(path.join('.', 'build', 'scripts', 'get-r-mac.sh'), {shell: true});
+                subproc.stderr.pipe(process.stderr);
+                subproc.stdout.pipe(process.stderr);
+                await subproc;
+            } catch (e) {
+                console.log(`Problems installing R. Error message: ${e.message}`);
+                process.exit(1);
+            }
+        }
         try {
             await tryInstallRPackages()
         } catch (e) {
             console.log(`Problems installing R packages. Error message: ${e.message}`);
             process.exit(1);
         }
-        
+        if ( process.platform === 'darwin' ) {
+            try {
+                console.log(`Making R framework relocatable...`);
+                const subproc =  execa('python3', [ path.join('build', 'scripts', 'fw-relocatablizer.py'),
+                 path.join('r', 'R.framework')]);
+                subproc.stderr.pipe(process.stderr);
+                subproc.stdout.pipe(process.stderr);
+                await subproc;
+            } catch (e) {
+                console.log(`Problems making R framework relocatable. Error message: ${e.message}`);
+                process.exit(1);
+            }
+        }
     }
     if ( buildDocker ) {
         try {

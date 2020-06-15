@@ -50,6 +50,11 @@ const pathConfig = {
     });
 });
 
+if( ['darwin', 'win32'].includes(process.platform) ) {
+    // do not allow changing R path on macOS/Windows as R is bundled here
+    $('#rpathWrapper').hide();
+}
+
 saveButton.on('click', (e) => {
     if ( pathValidating === true ) {
         return;

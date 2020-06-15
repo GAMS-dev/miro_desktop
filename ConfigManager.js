@@ -130,9 +130,15 @@ class ConfigManager extends Store {
   async get (key, fallback = true) {
     let valTmp;
 
+    if (key === 'rpath' &&
+      [ 'darwin', 'win32' ].includes(process.platform) ) {
+      valTmp = await this.getDefault('rpath');
+      return valTmp;
+    }
+
     valTmp = this[key];
 
-    if ( [ 'gamspath', 'rpath' ].find(el => el === key) ) {
+    if ( [ 'gamspath', 'rpath' ].includes(key) ) {
       if ( valTmp && !fs.existsSync(valTmp) ) {
         this[key] = valTmp = '';
       }
@@ -239,7 +245,10 @@ class ConfigManager extends Store {
     }
     if ( process.platform === 'win32' ) {
       this.rpathDefault = path.join(this.appRootDir, 'r');
-    } 
+    } else if ( process.platform === 'darwin' ) {
+      this.rpathDefault = path.resolve(path.join(this.appRootDir, '..',
+        'Frameworks', 'R.framework', 'Resources'));
+    }
     try {
       if ( !this.rpathDefault || 
         !fs.existsSync(this.rpathDefault) ) {

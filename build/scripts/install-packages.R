@@ -170,7 +170,9 @@ if ( isWindows ) {
 # replace directories with periods in their names with symlinks 
 # as directories with periods must be frameworks for codesign to not nag
 if (isMac) {
-    dirsWithPeriod <- list.dirs(file.path('.', 'r'))
+    currWd <- getwd()
+    setwd(file.path('.', 'r', 'R.framework', 'Resources'))
+    dirsWithPeriod <- list.dirs(file.path('.'))
     dirsWithPeriod <- dirsWithPeriod[grepl('.*\\..*', basename(dirsWithPeriod), perl = TRUE)]
     dirsWithPeriod <- dirsWithPeriod[dirsWithPeriod != '.']
     dirsWithPeriod <- dirsWithPeriod[vapply(Sys.readlink(dirsWithPeriod), identical, logical(1L), USE.NAMES = FALSE, '')]
@@ -200,6 +202,7 @@ if (isMac) {
     }, finally = {
         setwd(currWorkDir)
     })
+    setwd(currWd)
 }
 # replace MIRO API version, MIRO version and MIRO release date in main.js and package.json with the one set in miro/app.R
 local({
