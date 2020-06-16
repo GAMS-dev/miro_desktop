@@ -13,16 +13,9 @@ pushd r > /dev/null
     cat R-fw.pkg/Payload | gunzip -dc | cpio -i
     rm -r R-fw.pkg
 
-    pushd R.framework/Versions/Current/Resources/ > /dev/null
-        # clean up directory a little
-        rm -rf bin/R.bak SVN-REVISION doc tests lib/*.dSYM
-    popd > /dev/null
+    mv R.framework/Versions/Current/Resources/* .
 
-    # somehow signtool does not like these symlinks to be in the
-    # top level of a framework..
-    rm -f R.framework/PrivateHeaders R.framework/Header R.framework/PrivateHeaders R.framework/Libraries
-
-    # make symlink to libraries folder for development
-    ln -s R.framework/Resources/libraries libraries
+    # clean up directory a little
+    rm -rf bin/R.bak SVN-REVISION doc tests lib/*.dSYM
 
 popd > /dev/null
