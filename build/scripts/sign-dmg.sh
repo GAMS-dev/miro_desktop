@@ -30,20 +30,13 @@ fi
 find "$1/Frameworks" -type f \( -name "*.so" -o -name "*.dylib" \) -exec sh -c "file '{}' \; | grep -q -e 'library x86_64\|bundle x86_64'" \; -print0 | \
    xargs -0 codesign --sign "$2" --force -v --timestamp || exit 1
 
-find "$1/MacOS" -type f \( -name "*.so" -o -name "*.dylib" \) -exec sh -c "file '{}' \; | grep -q -e 'library x86_64\|bundle x86_64'" \; -print0 | \
-   xargs -0 codesign --sign "$2" --force -v --timestamp || exit 1
-
 find "$1/Frameworks" -type f -perm +0100 -exec sh -c "file '{}' \; | grep -q 'Mach-O 64-bit executable'" \; -print0 | \
-   xargs -0 codesign --sign "$2" --force -v --options runtime --timestamp \
-        --entitlements "$3" || exit 1
-
-find "$1/MacOS" -type f -perm +0100 -exec sh -c "file '{}' \; | grep -q 'Mach-O 64-bit executable'" \; -print0 | \
    xargs -0 codesign --sign "$2" --force -v --options runtime --timestamp \
         --entitlements "$3" || exit 1
 
 find "$1/Frameworks" -type d -name "*.framework" -print0 | \
    xargs -0 codesign --sign "$2" --force --timestamp || exit 1
 
-codesign --sign "$2" --force --options runtime -v --timestamp --entitlements "$3" "$1/../../GAMS MIRO.app" || exit 1
+codesign --sign "$2" --deep --force --options runtime -v --timestamp --entitlements "$3" "$1/../../GAMS MIRO.app" || exit 1
 
 exit 0
