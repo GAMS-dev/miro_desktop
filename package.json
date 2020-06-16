@@ -62,7 +62,8 @@
         }
       ],
       "extraResources": [
-        "r/share"
+        "r/share",
+        "r/library"
       ],
       "category": "public.app-category.productivity",
       "icon": "./build/icon.icns",
