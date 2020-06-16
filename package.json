@@ -67,7 +67,7 @@
         }
       ],
       "extraResources": [
-        "r/library/MASS",
+        "r/library",
         "r/etc",
         "r/fontconfig",
         "r/include",
