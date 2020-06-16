@@ -51,8 +51,8 @@
     "mac": {
       "extraFiles": [
         {
-          "from": "r/libs",
-          "to": "MacOS/r/libs",
+          "from": "r/lib",
+          "to": "MacOS/r/lib",
           "filter": "**/*"
         },
         {
@@ -67,7 +67,12 @@
         }
       ],
       "extraResources": [
-        "r/library/cluster"
+        "r/library/MASS",
+        "r/etc",
+        "r/fontconfig",
+        "r/include",
+        "r/man1",
+        "r/share"
       ],
       "category": "public.app-category.productivity",
       "icon": "./build/icon.icns",
