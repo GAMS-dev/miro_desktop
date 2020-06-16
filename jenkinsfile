@@ -9,16 +9,6 @@ pipeline {
     stages {
         stage('Build') {
             parallel {
-                stage ('linux') {
-                    agent { label 'docker' }
-                    steps {
-                        sh '''
-                           yarn install --non-interactive
-                           yarn dist
-                           yarn docker-build
-                        '''
-                    }
-                }
                 stage ('windowsX64') {
                     agent { label 'windowsX64' }
                     steps {
@@ -34,21 +24,6 @@ pipeline {
                                    yarn dist
                                 '''
                             }
-                    }
-                }
-                stage ('macos') {
-                    agent { label 'macos' }
-                    steps {
-                        sh '''
-                           yarn install --non-interactive
-                        '''
-                        withCredentials([usernamePassword(credentialsId: '4568bda5-894f-4fa1-b9c5-a8d42f6e61ac', passwordVariable: 'APPLEIDPASS', usernameVariable: 'APPLEID'),
-                            string(credentialsId: '2e590f95-5e30-4101-93be-31a1b7402da4', variable: 'MACOS_KEYCHAIN_PASSWD')]) {
-                            sh '''
-                               security unlock-keychain -p ${MACOS_KEYCHAIN_PASSWD}
-                               yarn dist
-                            '''
-                        }
                     }
                 }
             }
@@ -69,50 +44,10 @@ pipeline {
                         junit allowEmptyResults: true, testResults: 'miro/test-out.xml'
                     }
                 }
-                stage ('macos') {
-                    agent { label 'macos' }
-                    options {
-                        skipDefaultCheckout()
-                    }
-                    steps {
-                        withCredentials([file(credentialsId: 'MIRO_TEST_GAMS_LICE', variable: 'MIRO_TEST_GAMS_LICE')]) {
-                            sh '''
-                               yarn test gams_sys_dir=${GAMS_CORE_PATH}
-                            '''
-                        }
-                        junit allowEmptyResults: true, testResults: 'miro/test-out.xml'
-                    }
-                }
             }
         }
         stage('Deploy') {
             parallel {
-                stage ('linux') {
-                    agent { label 'docker' }
-                    options {
-                        skipDefaultCheckout()
-                    }
-                    steps {
-                        script{
-                            if (env.BRANCH_NAME == 'master') {
-                                withCredentials([usernamePassword(credentialsId: 'dockerhub_login', passwordVariable: 'hub_pass', usernameVariable: 'hub_user')]){
-                                    sh '''
-                                        docker login hub.gams.com:443 --username="${hub_user}" --password="${hub_pass}"
-                                        yarn docker-publish
-                                    '''
-                                }
-                            } else {
-                                withCredentials([usernamePassword(credentialsId: 'dockerhub_login', passwordVariable: 'hub_pass', usernameVariable: 'hub_user')]){
-                                    sh '''
-                                        docker login hub.gams.com:443 --username="${hub_user}" --password="${hub_pass}"
-                                        yarn docker-publish-unstable
-                                    '''
-                                }
-                            }
-                        }
-                        archiveArtifacts artifacts: 'dist/*.AppImage', fingerprint: true
-                    }
-                }
                 stage ('windowsX64') {
                     agent { label 'windowsX64' }
                     options {
@@ -120,15 +55,6 @@ pipeline {
                     }
                     steps {
                         archiveArtifacts artifacts: 'dist/*.exe', fingerprint: true
-                    }
-                }
-                stage ('macos') {
-                    agent { label 'macos' }
-                    options {
-                        skipDefaultCheckout()
-                    }
-                    steps {
-                        archiveArtifacts artifacts: 'dist/*.dmg', fingerprint: true
                     }
                 }
             }
