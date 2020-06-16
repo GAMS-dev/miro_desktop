@@ -54,11 +54,6 @@
           "from": "r/library",
           "to": "Resources/r/library",
           "filter": "**/*"
-        },
-        {
-          "from": "r/lib",
-          "to": "Resources/r/lib",
-          "filter": "**/*"
         }
       ],
       "category": "public.app-category.productivity",
