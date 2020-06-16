@@ -51,8 +51,8 @@
     "mac": {
       "extraFiles": [
         {
-          "from": "r/library/datatable",
-          "to": "Resources/r/library/datatable",
+          "from": "r/libs",
+          "to": "MacOS/r/libs",
           "filter": "**/*"
         }
       ],
