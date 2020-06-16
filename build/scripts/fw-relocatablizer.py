@@ -45,7 +45,7 @@ def framework_dir(some_file):
     """Return parent path to framework dir"""
     temp_path = some_file
     while len(temp_path) > 1:
-        if temp_path.endswith(".framework"):
+        if temp_path.endswith("/r"):
             return temp_path
         temp_path = os.path.dirname(temp_path)
     return ""
@@ -181,19 +181,11 @@ def deps_contain_prefix(info_item, prefix):
 
 def base_install_name(full_framework_path):
     """Generates a base install name for the framework"""
-    versions_dir = os.path.join(full_framework_path, "Versions")
-    versions = [
-        os.path.join(versions_dir, item)
-        for item in os.listdir(versions_dir)
-        if os.path.isdir(os.path.join(versions_dir, item))
-        and not os.path.islink(os.path.join(versions_dir, item))
-    ]
-    for version_dir in versions:
-        dylib_name = os.path.join(version_dir, "R")
-        if os.path.exists(dylib_name):
-            install_name = get_install_name(dylib_name)
-            if not install_name.startswith("@"):
-                return framework_dir(install_name)
+    dylib_name = os.path.join(full_framework_path, "R")
+    if os.path.exists(dylib_name):
+        install_name = get_install_name(dylib_name)
+        if not install_name.startswith("@"):
+            return framework_dir(install_name)
     return ""
 
 
@@ -325,12 +317,12 @@ if __name__ == "__main__":
     import os
     import sys
 
-    if len(sys.argv) < 2 or not sys.argv[1].endswith('.framework'):
+    if len(sys.argv) < 2:
         print("Please provide path to R framework as first argument")
         sys.exit(1)
 
     framework_path = sys.argv[1]
-    exec_path = os.path.join(framework_path, 'Resources', 'R')
+    exec_path = os.path.join(framework_path, 'R')
 
     relocatablize(framework_path)
     make_r_portable(exec_path)
