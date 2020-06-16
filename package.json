@@ -59,11 +59,15 @@
           "from": "r/bin",
           "to": "MacOS/r/bin",
           "filter": "**/*"
+        },
+        {
+          "from": "r/modules",
+          "to": "MacOS/r/modules",
+          "filter": "**/*"
         }
       ],
       "extraResources": [
-        "r/share",
-        "r/library"
+        "r/library/cluster"
       ],
       "category": "public.app-category.productivity",
       "icon": "./build/icon.icns",
