@@ -171,7 +171,7 @@ if ( isWindows ) {
 # as directories with periods must be frameworks for codesign to not nag
 if (isMac) {
     currWd <- getwd()
-    setwd(file.path('.', 'r', 'R.framework', 'Resources'))
+    setwd(file.path('.', 'r'))
     dirsWithPeriod <- list.dirs(file.path('.'))
     dirsWithPeriod <- dirsWithPeriod[grepl('.*\\..*', basename(dirsWithPeriod), perl = TRUE)]
     dirsWithPeriod <- dirsWithPeriod[dirsWithPeriod != '.']
