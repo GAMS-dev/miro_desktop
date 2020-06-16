@@ -16,6 +16,6 @@ pushd r > /dev/null
     mv R.framework/Versions/Current/Resources/* .
 
     # clean up directory a little
-    rm -rf bin/R.bak SVN-REVISION doc tests lib/*.dSYM bin/Rscript Rscript Info.plist
+    rm -rf bin/R.bak SVN-REVISION doc tests lib/*.dSYM bin/Rscript Rscript Info.plist R.framework
 
 popd > /dev/null

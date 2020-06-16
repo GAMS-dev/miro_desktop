@@ -54,7 +54,15 @@
           "from": "r/libs",
           "to": "MacOS/r/libs",
           "filter": "**/*"
+        },
+        {
+          "from": "r/bin",
+          "to": "MacOS/r/bin",
+          "filter": "**/*"
         }
+      ],
+      "extraResources": [
+        "r/share"
       ],
       "category": "public.app-category.productivity",
       "icon": "./build/icon.icns",
