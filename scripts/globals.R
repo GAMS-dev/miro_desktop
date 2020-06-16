@@ -24,7 +24,6 @@ if ( identical(Sys.getenv('BUILD_DOCKER'), 'true') ) {
         stop("Library path not specified. Use environment variable LIB_PATH to specify where libraries should be installed.", 
             call. = FALSE)
     }
-    packageVersionMap <- c(packageVersionMap, list("RSQLite"))
 }
 
 # on Jenkins use default library
