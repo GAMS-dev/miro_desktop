@@ -172,7 +172,6 @@ if ( isWindows ) {
 if (isMac) {
     currWd <- getwd()
     setwd(file.path('.', 'r'))
-    write(list.files(file.path('.', 'library', 'foreign', 'files'), all.files=TRUE), stderr())
     dirsWithPeriod <- list.dirs(file.path('.'))
     dirsWithPeriod <- dirsWithPeriod[grepl('.*\\..*', basename(dirsWithPeriod), perl = TRUE)]
     dirsWithPeriod <- dirsWithPeriod[dirsWithPeriod != '.']
@@ -203,6 +202,16 @@ if (isMac) {
     }, finally = {
         setwd(currWorkDir)
     })
+    setwd(file.path('.', 'fontconfig', 'fonts', 'confd'))
+    # fix some symlinks that are hardlinked to /Library/Frameworks/R.frameworks
+    filesWithBadLink <- list.files('.')
+    filesWithBadLink <- filesWithBadLink[filesWithBadLink != "README"]
+    for ( fileWithBadLink in filesWithBadLink ) {
+        unlink(fileWithBadLink, force = TRUE)
+        file.symlink(file.path('..', '..', 'fontconfig', 
+            'conf.avail', fileWithBadLink),
+            fileWithBadLink)
+    }
     setwd(currWd)
 }
 # replace MIRO API version, MIRO version and MIRO release date in main.js and package.json with the one set in miro/app.R

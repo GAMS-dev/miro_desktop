@@ -55,6 +55,7 @@ packageVersionMap <- list(
     c('zeallot', '0.1.0'),
     'crosstalk',
     'DT',
+    'gdxrrwMIRO',
     'leaflet',
     c('pillar', '1.4.4'),
     c('tibble', '3.0.1'),
