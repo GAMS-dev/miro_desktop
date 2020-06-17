@@ -54,7 +54,7 @@
         "r/library/class",
         "r/library/foreign/libs",
         "r/library/foreign/Meta",
-        "r/library/foreign/R",
+        "r/library/foreign/files",
         "r/library/methods",
         "r/library/rpart",
         "r/library/survival",
