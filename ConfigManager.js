@@ -246,8 +246,9 @@ class ConfigManager extends Store {
     if ( process.platform === 'win32' ) {
       this.rpathDefault = path.join(this.appRootDir, 'r');
     } else if ( process.platform === 'darwin' ) {
-      this.rpathDefault = path.resolve(path.join(this.appRootDir, '..',
-        'Frameworks', 'R.framework', 'Resources'));
+      this.rpathDefault = app.isPackaged?
+      path.resolve(path.join(this.appRootDir, '..', 'Resources', 'r')) :
+      path.resolve(path.join(this.appRootDir, 'r'));
     }
     try {
       if ( !this.rpathDefault || 

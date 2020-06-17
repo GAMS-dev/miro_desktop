@@ -88,8 +88,7 @@ const processIdMap = {};
 let applicationMenu;
 let rPackagesInstalled = true;
 let libPath = isMac && !DEVELOPMENT_MODE?
-   path.resolve(path.join(appRootDir, '..', 'Frameworks',
-    'R.framework', 'Resources', 'library')):
+   path.resolve(path.join(process.resourcesPath, 'r', 'library')):
    path.join(appRootDir, 'r', 'library');
 
 const miroResourcePath = DEVELOPMENT_MODE? path.join(app.getAppPath(), 'miro'):
