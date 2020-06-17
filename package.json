@@ -49,23 +49,6 @@
       "mimeType": "application/miro"
     },
     "mac": {
-      "extraFiles": [
-        {
-          "from": "r/lib",
-          "to": "MacOS/r/lib",
-          "filter": "**/*"
-        },
-        {
-          "from": "r/bin",
-          "to": "MacOS/r/bin",
-          "filter": "**/*"
-        },
-        {
-          "from": "r/modules",
-          "to": "MacOS/r/modules",
-          "filter": "**/*"
-        }
-      ],
       "extraResources": [
         "r/library/KernSmooth",
         "r/library/class",
@@ -73,6 +56,20 @@
         "r/library/rpart",
         "r/library/survival",
         "r/library/MASS",
+        "r/library/cluster",
+        "r/library/grDevices",
+        "r/library/mgcv",
+        "r/library/spatial",
+        "r/library/tcltk",
+        "r/library/Matrix",
+        "r/library/codetools",
+        "r/library/graphics",
+        "r/library/nlme",
+        "r/library/splines",
+        "r/library/tools",
+        "r/modules",
+        "r/lib",
+        "r/bin",
         "r/etc",
         "r/fontconfig",
         "r/include",
