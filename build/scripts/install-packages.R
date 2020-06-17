@@ -176,6 +176,7 @@ if (isMac) {
     # to reject the bundle
     unlink(file.path('.', 'library', 'foreign', 'files', 'sids.dbf'), 
         force=TRUE)
+    write(list.files(file.path('.', 'library', 'foreign', 'files'), all.files=TRUE), stderr())
     dirsWithPeriod <- list.dirs(file.path('.'))
     dirsWithPeriod <- dirsWithPeriod[grepl('.*\\..*', basename(dirsWithPeriod), perl = TRUE)]
     dirsWithPeriod <- dirsWithPeriod[dirsWithPeriod != '.']
