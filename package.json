@@ -64,6 +64,11 @@
           "from": "r/modules",
           "to": "MacOS/r/modules",
           "filter": "**/*"
+        },
+        {
+          "from": "r/library",
+          "to": "MacOS/r/library",
+          "filter": "**/*"
         }
       ],
       "extraResources": [
