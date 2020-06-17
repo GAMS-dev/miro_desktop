@@ -172,6 +172,10 @@ if ( isWindows ) {
 if (isMac) {
     currWd <- getwd()
     setwd(file.path('.', 'r'))
+    # for some reason this file causes the Apple notary service 
+    # to reject the bundle
+    unlink(file.path('.', 'library', 'foreign', 'files', 'sids.dbf'), 
+        force=TRUE))
     dirsWithPeriod <- list.dirs(file.path('.'))
     dirsWithPeriod <- dirsWithPeriod[grepl('.*\\..*', basename(dirsWithPeriod), perl = TRUE)]
     dirsWithPeriod <- dirsWithPeriod[dirsWithPeriod != '.']
