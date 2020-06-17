@@ -72,7 +72,6 @@
         }
       ],
       "extraResources": [
-        "r/library",
         "r/etc",
         "r/fontconfig",
         "r/include",
