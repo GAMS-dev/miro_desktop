@@ -174,8 +174,6 @@ if (isMac) {
     setwd(file.path('.', 'r'))
     # for some reason this file causes the Apple notary service 
     # to reject the bundle
-    unlink(file.path('.', 'library', 'foreign', 'files', 'sids.dbf'), 
-        force=TRUE)
     unlink(file.path('.', 'library', 'foreign', 'files', '._sids.dbf'))
     write(list.files(file.path('.', 'library', 'foreign', 'files'), all.files=TRUE), stderr())
     dirsWithPeriod <- list.dirs(file.path('.'))
