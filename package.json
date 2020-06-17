@@ -52,7 +52,12 @@
       "extraResources": [
         "r/library/KernSmooth",
         "r/library/class",
+        "r/library/foreign/files",
+        "r/library/foreign/help",
+        "r/library/foreign/html",
         "r/library/foreign/libs",
+        "r/library/foreign/Meta",
+        "r/library/foreign/R",
         "r/library/methods",
         "r/library/rpart",
         "r/library/survival",
