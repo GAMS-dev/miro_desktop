@@ -69,8 +69,6 @@
       "extraResources": [
         "r/library/KernSmooth",
         "r/library/class",
-        "r/library/foreign",
-        "r/library/methods",
         "r/etc",
         "r/fontconfig",
         "r/include",
