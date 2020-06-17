@@ -89,6 +89,8 @@
         "r/library/stats4",
         "r/library/translations",
         "r/library/utils",
+        "r/library/datatable",
+        "r/library/backports",
         "r/modules",
         "r/lib",
         "r/bin",
