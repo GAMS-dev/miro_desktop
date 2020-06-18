@@ -105,19 +105,6 @@ const tryInstallRPackages = async (attempt = 0) => {
             console.log(`Problems installing R packages. Error message: ${e.message}`);
             process.exit(1);
         }
-        if ( process.platform === 'darwin' ) {
-            try {
-                console.log(`Making R framework relocatable...`);
-                const subproc =  execa('python3', [ path.join('build', 'scripts', 'fw-relocatablizer.py'),
-                 'r' ]);
-                subproc.stderr.pipe(process.stderr);
-                subproc.stdout.pipe(process.stderr);
-                await subproc;
-            } catch (e) {
-                console.log(`Problems making R framework relocatable. Error message: ${e.message}`);
-                process.exit(1);
-            }
-        }
     }
     if ( buildDocker ) {
         try {

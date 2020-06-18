@@ -21,6 +21,18 @@ exports.default = async function signing(context) {
   const appFile = path.join(context.appOutDir, `${appName}.app`);
   const contentDir = path.join(appFile, 'Contents');
 
+  try {
+      console.log(`Making R framework relocatable...`);
+      const subproc =  execa('python3', [ path.join('.', 'build', 'scripts', 'fw-relocatablizer.py'),
+       path.join(contentDir, 'Resources', 'r') ]);
+      subproc.stderr.pipe(process.stderr);
+      subproc.stdout.pipe(process.stderr);
+      await subproc;
+  } catch (e) {
+      console.log(`Problems making R framework relocatable. Error message: ${e.message}`);
+      throw e;
+  }
+
   try{
     const signProc = execa(path.join('.', 'build', 'scripts', 'sign-dmg.sh'), 
       [`"${contentDir}"`, codesignIdentity, `"${entitlementsFile}"`], {shell: true});
