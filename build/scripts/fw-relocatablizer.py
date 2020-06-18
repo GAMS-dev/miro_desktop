@@ -287,8 +287,6 @@ def make_r_portable(exec_path):
     modification = r'''#!/bin/sh
 # Shell wrapper for R executable.
 export R_HOME="${R_HOME_DIR}"
-echo "*** R_HOME_DIR ***"
-echo ${R_HOME_DIR}
 #R_SHARE_DIR=/Library/Frameworks/R.framework/Resources/share
 export R_SHARE_DIR
 #R_INCLUDE_DIR=/Library/Frameworks/R.framework/Resources/include
