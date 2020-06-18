@@ -232,4 +232,37 @@ local({
         paste0('"version": "', MIROVersion, '",'), packageJSON)
     writeLines(packageJSON, './package.json')
 })
+# build MIRO example apps
+examplesPath = file.path(getwd(), 'miro', 'examples')
+if (dir.exists(examplesPath)){
+    unlink(examplesPath, force = TRUE, recursive = TRUE)
+}
+if(length(RlibPathDevel)){
+    Sys.setenv(R_LIBS=file.path(getwd(), RlibPathDevel))
+}
+Sys.setenv(MIRO_BUILD='true')
+for ( modelName in c( 'pickstock', 'transport', 'sudoku', 'tsp', 'farming', 'inscribedsquare', 'cpack' ) ) {
+    if(modelName %in% c('inscribedsquare', 'cpack', 'tsp')){
+        Sys.setenv(MIRO_MODE='base')
+    }else{
+        Sys.setenv(MIRO_MODE='full')
+    }
+    if(!dir.exists(file.path(examplesPath, modelName)) &&
+        !dir.create(file.path(examplesPath, modelName), recursive = TRUE)){
+        stop(sprintf("Could not create path: %s", examplesPath))
+    }
+    modelPath = file.path(getwd(), 'miro', 'model', 
+                   modelName)
+    miroAppPath = file.path(modelPath, paste0(modelName, '.miroapp'))
 
+    Sys.setenv(MIRO_MODEL_PATH=file.path(modelPath, paste0(modelName, '.gms')))
+
+    buildProc = processx::run(file.path(R.home(), 'bin', 'Rscript'), 
+        c('--vanilla', './app.R'), error_on_status = FALSE,
+        wd = file.path(getwd(), 'miro'))
+    if(buildProc$status != 0L) {
+        stop(sprintf("Something went wrong while creating MIRO app for model: %s.\n\nStdout: %s\n\nStderr: %s", 
+            modelName, buildProc$stdout, buildProc$stderr))
+    }
+    zip::unzip(miroAppPath, exdir = file.path(examplesPath, modelName))
+}
