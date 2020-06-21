@@ -16,7 +16,6 @@ const miroVersion = '1.0.99';
 const miroRelease = 'Apr 08 2020';
 const libVersion = '1.0';
 const exampleAppsData = require('./components/example-apps.js')(miroVersion, requiredAPIVersion);
-
 const LangParser = require('./components/LangParser.js');
 const AppDataStore = require('./AppDataStore');
 const ConfigManager = require('./ConfigManager');
@@ -311,6 +310,20 @@ function validateMIROApp ( filePath ) {
     }
     try {
       yauzl.open(filePath[0], (err, zipfile) => {
+        const showZipfilError = (e) => {
+          log.debug(`Problems extracting and validating new MIRO app. Error message: ${e.message}`);
+          if ( mainWindow ) {
+            mainWindow.setProgressBar(-1);
+          }
+          showErrorMsg({
+              type: 'error',
+              title: lang['main'].ErrorUnexpectedHdr,
+              message: `${lang['main'].ErrorReadMsg} '${e.message}'`
+          });
+        }
+        if ( err ) {
+          return showZipfilError(err);
+        }
         let appFileNames = [];
         const incAmt = 0.8/zipfile.entryCount;
         let fileCnt = 0;
@@ -319,10 +332,9 @@ function validateMIROApp ( filePath ) {
           modesAvailable: [],
           usetmpdir: true
         }
-        if (err) throw err;
         zipfile.on('error', (err) => {
           log.error(`MIRO app could not be extracted. Error message: ${err.message}.`);
-          throw err;
+          return showZipfilError(err);
         });
         zipfile.on('entry', (entry) => {
           if ( !mainWindow ) {
