@@ -1318,100 +1318,108 @@ ipcMain.on('add-app', async (e, app) => {
      const rpath = await configData.get('rpath');
      if ( !rpath ) {
        log.info('No R path set.');
-       throw '404'
+       throw {message: '404'}
      }
-     const internalPid = miroProcesses.length;
-     miroProcesses[internalPid] = execa(path.join(rpath, 'bin', 'R'),
-       ['--no-echo', '--no-restore', '--vanilla', '-f', path.join(miroResourcePath, 'start-shiny.R')],
-       { env: {
-         'R_HOME_DIR': rpath,
-         'RE_SHINY_PATH': miroResourcePath,
-         'R_LIBS': libPath,
-         'R_LIBS_USER': libPath,
-         'R_LIBS_SITE': libPath,
-         'R_LIB_PATHS': libPath,
-         'MIRO_NO_DEBUG': "true",
-         'MIRO_USE_TMP': appConf.usetmpdir !== 'false',
-         'MIRO_WS_PATH': miroWorkspaceDir,
-         'MIRO_DB_PATH': getAppDbPath(appConf.dbpath),
-         'MIRO_BUILD': "false",
-         'MIRO_BUILD_ARCHIVE': "false",
-         'MIRO_LOG_PATH': await configData.get('logpath'),
-         'MIRO_POPULATE_DB': "true",
-         'LAUNCHINBROWSER': "true",
-         'MIRO_REMOTE_EXEC': "false",
-         'MIRO_VERSION_STRING': appConf.miroversion,
-         'MIRO_MODE': 'base',
-         'MIRO_MODEL_PATH': path.join(appDir, `${appConf.id}.gms`)},
-         stdout: 'pipe',
-         stderr: 'pipe',
-          cleanup: false
-        });
-     mainWindow.setProgressBar(0);
-     for await (const data of miroProcesses[internalPid].stderr) {
-        const msg = data.toString();
-        if ( msg.startsWith('merr:::') ) {
-           log.debug(`MIRO error message received: ${msg}`);
-           // MIRO error
-           const error = msg.trim().split(':::');
-           if ( error[1] === '409' ) {
-             if ( error.length < 3 ) {
-              log.error('MIRO signalled that there are inconsistent tables but no data was provided.');
-              throw {message: 'merr:::409'}
-             }
-             // split and decode base64 encoded table names
-             const tablesToRemove = error[2].split(',').map(el => 
-              Buffer.from(el, 'base64').toString());
-             log.debug(`Inconsistent tables to be removed are: ${tablesToRemove.join(',')}`);
+     let restartRProc = false;
+     const runRProc = async function(){
+        const internalPid = miroProcesses.length;
+        miroProcesses[internalPid] = execa(path.join(rpath, 'bin', 'R'),
+         ['--no-echo', '--no-restore', '--vanilla', '-f', path.join(miroResourcePath, 'start-shiny.R')],
+         { env: {
+           'R_HOME_DIR': rpath,
+           'RE_SHINY_PATH': miroResourcePath,
+           'R_LIBS': libPath,
+           'R_LIBS_USER': libPath,
+           'R_LIBS_SITE': libPath,
+           'R_LIB_PATHS': libPath,
+           'MIRO_NO_DEBUG': "true",
+           'MIRO_USE_TMP': appConf.usetmpdir !== 'false',
+           'MIRO_WS_PATH': miroWorkspaceDir,
+           'MIRO_DB_PATH': getAppDbPath(appConf.dbpath),
+           'MIRO_BUILD': "false",
+           'MIRO_BUILD_ARCHIVE': "false",
+           'MIRO_LOG_PATH': await configData.get('logpath'),
+           'MIRO_POPULATE_DB': "true",
+           'LAUNCHINBROWSER': "true",
+           'MIRO_REMOTE_EXEC': "false",
+           'MIRO_VERSION_STRING': appConf.miroversion,
+           'MIRO_MODE': 'base',
+           'MIRO_MODEL_PATH': path.join(appDir, `${appConf.id}.gms`)},
+           stdout: 'pipe',
+           stderr: 'pipe',
+            cleanup: false
+          });
+       mainWindow.setProgressBar(0);
+       for await (const data of miroProcesses[internalPid].stderr) {
+          const msg = data.toString();
+          if ( msg.startsWith('merr:::') ) {
+             log.debug(`MIRO error message received: ${msg}`);
+             // MIRO error
+             const error = msg.trim().split(':::');
+             if ( error[1] === '409' ) {
+               if ( error.length < 3 ) {
+                log.error('MIRO signalled that there are inconsistent tables but no data was provided.');
+                throw {message: 'merr:::409'}
+               }
+               // split and decode base64 encoded table names
+               const tablesToRemove = error[2].split(',').map(el => 
+                Buffer.from(el, 'base64').toString());
+               log.debug(`Inconsistent tables to be removed are: ${tablesToRemove.join(',')}`);
 
-             const datasetsToRemove = tablesToRemove.map(el => el.replace(`${MiroDb.escapeAppId(appConf.id)}_`, ''))
-                .join("' , '");
-             log.debug(`Datasets to be removed are: ${datasetsToRemove}`);
+               const datasetsToRemove = tablesToRemove.map(el => el.replace(`${MiroDb.escapeAppId(appConf.id)}_`, ''))
+                  .join("' , '");
+               log.debug(`Datasets to be removed are: ${datasetsToRemove}`);
 
-             const deleteInconsistentDbTables = dialog.showMessageBoxSync(mainWindow, {
-                type: 'info',
-                title: lang['main'].ErrorInconsistentDbTablesHdr,
-                message: String.format(lang['main'].ErrorInconsistentDbTablesMsg, datasetsToRemove),
-                buttons: [lang['main'].BtnCancel, lang['main'].BtnOk]
-             }) === 1;
-             if ( deleteInconsistentDbTables ) {
-               log.debug('Request to remove inconsistent tables received.');
-               try {
-                const miroDb = new MiroDb(path.join(getAppDbPath(appConf.dbpath), 
-                   'miro.sqlite3'));
-                try {
-                  miroDb.removeTables(tablesToRemove);
-                  log.debug('Inconsistent tables removed.');
+               const deleteInconsistentDbTables = dialog.showMessageBoxSync(mainWindow, {
+                  type: 'info',
+                  title: lang['main'].ErrorInconsistentDbTablesHdr,
+                  message: String.format(lang['main'].ErrorInconsistentDbTablesMsg, datasetsToRemove),
+                  buttons: [lang['main'].BtnCancel, lang['main'].BtnOk]
+               }) === 1;
+               if ( deleteInconsistentDbTables ) {
+                 log.debug('Request to remove inconsistent tables received.');
+                 try {
+                  const miroDb = new MiroDb(path.join(getAppDbPath(appConf.dbpath), 
+                     'miro.sqlite3'));
+                  try {
+                    miroDb.removeTables(tablesToRemove);
+                    log.debug('Inconsistent tables removed.');
+                    restartRProc = true;
+                  } catch (e) {
+                    throw {message: e};
+                  } finally {
+                    miroDb.close()
+                  }
                 } catch (e) {
+                  log.error(`Problems removing inconsistent database tables. Error message: ${e.message}`);
                   throw {message: e};
-                } finally {
-                  miroDb.close()
                 }
-              } catch (e) {
-                log.error(`Problems removing inconsistent database tables. Error message: ${e.message}`);
-                throw {message: e};
-              }
+               } else {
+                 throw {message: 'suppress'};
+               }
              } else {
-               throw {message: 'suppress'};
+               throw {message: msg};
              }
-           } else {
-             throw {message: msg};
-           }
-        } else if ( msg.startsWith('mprog:::') ) {
-           // MIRO progress
-           const progress = parseInt(msg.substring(8), 10);
-           if ( !isNaN(progress) ) {
-             mainWindow.setProgressBar(progress >= 100? -1: progress/100);
-           }
-           mainWindow.send('add-app-progress', progress);
-        }
-     };
-     try {
-        await miroProcesses[internalPid];
-        mainWindow.setProgressBar(-1);
-     } catch(e) {
-       log.error(`Problems storing data: ${e}. Stdout: ${e.stdout}, Stderr: ${e.stderr}`);
-       throw {message: 'suppress'};
+          } else if ( msg.startsWith('mprog:::') ) {
+             // MIRO progress
+             const progress = parseInt(msg.substring(8), 10);
+             if ( !isNaN(progress) ) {
+               mainWindow.setProgressBar(progress >= 100? -1: progress/100);
+             }
+             mainWindow.send('add-app-progress', progress);
+          }
+       };
+       try {
+          await miroProcesses[internalPid];
+          mainWindow.setProgressBar(-1);
+       } catch(e) {
+         log.error(`Problems storing data: ${e}. Stdout: ${e.stdout}, Stderr: ${e.stderr}`);
+         throw {message: 'suppress'};
+       }
+     }
+     await runRProc()
+     if (restartRProc) {
+      await runRProc();
      }
      unzip(appConf.path, appDir, () => {
        delete appConf.path;
