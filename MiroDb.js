@@ -51,7 +51,7 @@ class MiroDb {
     }
     _tableBelongsToApp (tableName, appName) {
         return tableName.startsWith(`${MiroDb.escapeAppId(appName)}_`) || 
-                (tableName.startsWith('_sys_') && tableName.endsWith(`_${appName}`));
+                (tableName.startsWith('_sys_') && tableName.endsWith(`_${appName.toLowerCase()}`));
     }
     static escapeAppId (appId) {
         return appId.toLowerCase().replace(/_/g, '')
