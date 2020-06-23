@@ -31,6 +31,17 @@ const miroDevelopMode = process.env.MIRO_DEV_MODE === 'true' || miroBuildMode;
 if ( !DEVELOPMENT_MODE ) {
   log.transports.console.level = false;
 }
+if (!String.format) {
+  String.format = function(format) {
+    var args = Array.prototype.slice.call(arguments, 1);
+    return format.replace(/{(\d+)}/g, function(match, number) { 
+      return typeof args[number] != 'undefined'
+        ? args[number] 
+        : match
+      ;
+    });
+  };
+}
 (async () => {
   try{
     if ( !fs.existsSync(miroWorkspaceDir) ) {
@@ -1296,15 +1307,113 @@ ipcMain.on('browse-app', (e, options, callback, id = null) => {
   }
 })
 
-ipcMain.on('add-app', (e, app) => {
+ipcMain.on('add-app', async (e, app) => {
   log.debug('Add app request received.');
   try {
      if ( !appsData.isUniqueId(app.id) ) {
        throw new Error('DuplicatedId');
      }
      let appConf = app;
-     const appDir = path.join(appDataPath, appConf.id)
-     unzip(appConf.path, appDir, async () => {
+     const appDir = path.join(appDataPath, appConf.id);
+     const rpath = await configData.get('rpath');
+     if ( !rpath ) {
+       log.info('No R path set.');
+       throw '404'
+     }
+     const internalPid = miroProcesses.length;
+     miroProcesses[internalPid] = execa(path.join(rpath, 'bin', 'R'),
+       ['--no-echo', '--no-restore', '--vanilla', '-f', path.join(miroResourcePath, 'start-shiny.R')],
+       { env: {
+         'R_HOME_DIR': rpath,
+         'RE_SHINY_PATH': miroResourcePath,
+         'R_LIBS': libPath,
+         'R_LIBS_USER': libPath,
+         'R_LIBS_SITE': libPath,
+         'R_LIB_PATHS': libPath,
+         'MIRO_NO_DEBUG': "true",
+         'MIRO_USE_TMP': appConf.usetmpdir !== 'false',
+         'MIRO_WS_PATH': miroWorkspaceDir,
+         'MIRO_DB_PATH': getAppDbPath(appConf.dbpath),
+         'MIRO_BUILD': "false",
+         'MIRO_BUILD_ARCHIVE': "false",
+         'MIRO_LOG_PATH': await configData.get('logpath'),
+         'MIRO_POPULATE_DB': "true",
+         'LAUNCHINBROWSER': "true",
+         'MIRO_REMOTE_EXEC': "false",
+         'MIRO_VERSION_STRING': appConf.miroversion,
+         'MIRO_MODE': 'base',
+         'MIRO_MODEL_PATH': path.join(appDir, `${appConf.id}.gms`)},
+         stdout: 'pipe',
+         stderr: 'pipe',
+          cleanup: false
+        });
+     mainWindow.setProgressBar(0);
+     for await (const data of miroProcesses[internalPid].stderr) {
+        const msg = data.toString();
+        if ( msg.startsWith('merr:::') ) {
+           log.debug(`MIRO error message received: ${msg}`);
+           // MIRO error
+           const error = msg.trim().split(':::');
+           if ( error[1] === '409' ) {
+             if ( error.length < 3 ) {
+              log.error('MIRO signalled that there are inconsistent tables but no data was provided.');
+              throw {message: 'merr:::409'}
+             }
+             // split and decode base64 encoded table names
+             const tablesToRemove = error[2].split(',').map(el => 
+              Buffer.from(el, 'base64').toString());
+             log.debug(`Inconsistent tables to be removed are: ${tablesToRemove.join(',')}`);
+
+             const datasetsToRemove = tablesToRemove.map(el => el.replace(`${MiroDb.escapeAppId(appConf.id)}_`, ''))
+                .join("' , '");
+             log.debug(`Datasets to be removed are: ${datasetsToRemove}`);
+
+             const deleteInconsistentDbTables = dialog.showMessageBoxSync(mainWindow, {
+                type: 'info',
+                title: lang['main'].ErrorInconsistentDbTablesHdr,
+                message: String.format(lang['main'].ErrorInconsistentDbTablesMsg, datasetsToRemove),
+                buttons: [lang['main'].BtnCancel, lang['main'].BtnOk]
+             }) === 1;
+             if ( deleteInconsistentDbTables ) {
+               log.debug('Request to remove inconsistent tables received.');
+               try {
+                const miroDb = new MiroDb(path.join(getAppDbPath(appConf.dbpath), 
+                   'miro.sqlite3'));
+                try {
+                  miroDb.removeTables(tablesToRemove);
+                  log.debug('Inconsistent tables removed.');
+                } catch (e) {
+                  throw {message: e};
+                } finally {
+                  miroDb.close()
+                }
+              } catch (e) {
+                log.error(`Problems removing inconsistent database tables. Error message: ${e.message}`);
+                throw {message: e};
+              }
+             } else {
+               throw {message: 'suppress'};
+             }
+           } else {
+             throw {message: msg};
+           }
+        } else if ( msg.startsWith('mprog:::') ) {
+           // MIRO progress
+           const progress = parseInt(msg.substring(8), 10);
+           if ( !isNaN(progress) ) {
+             mainWindow.setProgressBar(progress >= 100? -1: progress/100);
+           }
+           mainWindow.send('add-app-progress', progress);
+        }
+     };
+     try {
+        await miroProcesses[internalPid];
+        mainWindow.setProgressBar(-1);
+     } catch(e) {
+       log.error(`Problems storing data: ${e}. Stdout: ${e.stdout}, Stderr: ${e.stderr}`);
+       throw {message: 'suppress'};
+     }
+     unzip(appConf.path, appDir, () => {
        delete appConf.path;
        if ( appConf.logoNeedsMove ) {
         const newLogoPath = path.join(`static_${appConf.id}`, 
@@ -1314,54 +1423,24 @@ ipcMain.on('add-app', (e, app) => {
          delete appConf.logoNeedsMove;
        }
        const updatedApps = appsData.addApp(appConf).apps;
-       try {
-          const rpath = await configData.get('rpath');
-          if ( rpath ) {
-            const internalPid = miroProcesses.length;
-            miroProcesses[internalPid] = execa(path.join(rpath, 'bin', 'R'),
-              ['--no-echo', '--no-restore', '--vanilla', '-f', path.join(miroResourcePath, 'start-shiny.R')],
-              { env: {
-                'R_HOME_DIR': rpath,
-                'RE_SHINY_PATH': miroResourcePath,
-                'R_LIBS': libPath,
-                'R_LIBS_USER': libPath,
-                'R_LIBS_SITE': libPath,
-                'R_LIB_PATHS': libPath,
-                'MIRO_NO_DEBUG': "true",
-                'MIRO_USE_TMP': appConf.usetmpdir !== 'false',
-                'MIRO_WS_PATH': miroWorkspaceDir,
-                'MIRO_DB_PATH': getAppDbPath(appConf.dbpath),
-                'MIRO_BUILD': "false",
-                'MIRO_BUILD_ARCHIVE': "false",
-                'MIRO_LOG_PATH': await configData.get('logpath'),
-                'MIRO_POPULATE_DB': "true",
-                'LAUNCHINBROWSER': "true",
-                'MIRO_REMOTE_EXEC': "false",
-                'MIRO_VERSION_STRING': appConf.miroversion,
-                'MIRO_MODE': 'base',
-                'MIRO_MODEL_PATH': path.join(appDir, `${appConf.id}.gms`)},
-                stdout: 'pipe',
-                stderr: 'pipe',
-                 cleanup: false
-               });
-            await miroProcesses[internalPid];
-          } else {
-            log.info('No R path set.');
-            dialog.showMessageBox(mainWindow, {
-              type: 'info',
-              title: lang['main'].ErrorRNotFoundHdr,
-              message: lang['main'].ErrorRNotFoundMsg,
-              buttons: [ lang['main'].BtnOk ]
-            });
-          }
-       } catch(e) {
-         log.error(`Problems storing data: ${e}. Stdout: ${e.stdout}, Stderr: ${e.stderr}`)
-       }
        mainWindow.send('apps-received', updatedApps, appDataPath);
      });
   } catch (e) {
+    mainWindow.send('add-app-progress', -1);
+    mainWindow.setProgressBar(-1);
+    if ( e.message === "suppress" ) {
+      return;
+    }
     log.error(`Add app request failed. Error message: ${e.message}`);
-     if ( e.message === 'DuplicatedId' ) {
+     if ( e.message === '404' ) {
+      dialog.showMessageBox(mainWindow, {
+         type: 'info',
+         title: lang['main'].ErrorRNotFoundHdr,
+         message: lang['main'].ErrorRNotFoundMsg,
+         buttons: [ lang['main'].BtnOk ]
+      });
+      return;
+     } else if ( e.message === 'DuplicatedId' ) {
       showErrorMsg({
         type: 'info',
           title: lang['main'].ErrorModelExistsHdr,
@@ -1375,10 +1454,11 @@ ipcMain.on('add-app', (e, app) => {
             message: `${lang['main'].ErrorWritePerm2Msg} '${configData.getConfigPath()}.'`})
       return
      }
+     
      showErrorMsg({
-        type: 'error',
-        title: lang['main'].ErrorUnexpectedHdr,
-        message: `${lang['main'].ErrorUnexpectedMsg2} '${e.message}'`});
+       type: 'error',
+       title: lang['main'].ErrorUnexpectedHdr,
+       message: `${lang['main'].ErrorUnexpectedMsg2} '${e.message}'`});
      return
   }
 });

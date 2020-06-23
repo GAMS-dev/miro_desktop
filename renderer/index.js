@@ -138,15 +138,8 @@ function expandAddAppForm(){
   $overlay.data('current', addAppWrapper).fadeIn(300);
   addAppWrapper.html(`<div class="app-box" id="expandedAddAppWrapper">
                         <div id="addAppSpinner">
-                          <div class="lds-ellipsis" style="position:relative;top:50%;left:50%">
-                            <div>
-                            </div>
-                            <div>
-                            </div>
-                            <div>
-                            </div>
-                            <div>
-                            </div>
+                          <div class="progress" style="position:relative;top:50%;margin-left:auto;margin-right:auto;width:90%">
+                            <div id="addAppProgress" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
                           </div>
                         </div>
                         <div style="height:200px;">
@@ -699,6 +692,13 @@ ipcRenderer.on('app-validated', (e, appConf) => {
     }
     $('#newAppFiles').css('display', 'none');
     $('#newAppLogo').css('display', 'block');
+});
+ipcRenderer.on('add-app-progress', (e, progress) => {
+  if ( progress === -1 ) {
+    $('#addAppSpinner').hide();
+  } else {
+    $('#addAppProgress').css('width', `${progress}%`).attr('aria-valuenow', progress);
+  }
 });
 ipcRenderer.on('activate-edit-mode', (e, openNewAppForm, scrollToBottom = false) => {
   if ( openNewAppForm ) {

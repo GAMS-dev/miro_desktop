@@ -10,7 +10,7 @@ const { tmpdir } = require('os');
 const log = require('electron-log');
 
 const minGams = '30.2';
-const minR = '3.6';
+const minR = '4.0';
 const gamsDirNameRegex = /^(GAMS)?(\d+\.\d+)$/;
 
 const schema = {
@@ -245,10 +245,8 @@ class ConfigManager extends Store {
     }
     if ( process.platform === 'win32' ) {
       this.rpathDefault = path.join(this.appRootDir, 'r');
-    } else if ( process.platform === 'darwin' ) {
-      this.rpathDefault = app.isPackaged?
-      path.resolve(path.join(this.appRootDir, '..', 'Resources', 'r')) :
-      path.resolve(path.join(this.appRootDir, 'r'));
+    } else if ( process.platform === 'darwin' && app.isPackaged ) {
+      this.rpathDefault = path.resolve(path.join(this.appRootDir, '..', 'Resources', 'r'));
     }
     try {
       if ( !this.rpathDefault || 

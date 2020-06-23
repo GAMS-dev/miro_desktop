@@ -276,8 +276,24 @@ const schema = {
                "type":"string",
                "minLength":1
            },
+           "ErrorInconsistentDbTablesHdr": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorInconsistentDbTablesMsg": {
+               "type":"string",
+               "minLength":1
+           },
          },
-         "required": ["ErrorUnexpectedHdr", "ErrorUnexpectedMsg", "ErrorUnexpectedMsg2", "BtnCancel", "BtnOk", "BtnRemove", "ErrorInvalidHdr", "ErrorInvalidMsg", "ErrorInvalidTwoMsg", "ErrorInvalidThreeMsg", "ErrorAPIHdr", "ErrorAPIMsg", "ErrorVersionMsg", "ErrorReadMsg","ErrorLogoHdr", "ErrorLogoMsg", "ErrorLogoMultiMsg", "ErrorLogoLargeHdr", "ErrorLogoLargeMsg", "ErrorExampleExistsHdr", "ErrorModelExistsHdr", "ErrorModelExistsMsg", "ErrorModelExistsMsg2", "ErrorWriteHdr", "ErrorWriteMsg", "ErrorWriteMsg2", "ErrorAppRunningHdr", "ErrorAppRunningMsg", "ErrorAppIncompMsg", "ErrorMsgLaunch", "ErrorInstallStartMsg", "ErrorInstallPermHdr", "ErrorInstallPerm1Msg", "ErrorInstallPerm2Msg", "ErrorInstallPerm3Msg", "ErrorInstallPerm4Msg", "ErrorInstallPermBtnYes", "ErrorInstallPermBtnNo", "ErrorWritePerm2Msg", "ErrorNoWritePermMsg", "ErrorInvalidPathHdr", "ErrorInvalidPathMsg", "ErrorInvalidPathMsgMac", "ErrorInvalidPathMsg2", "ErrorMessage", "SuccessUpdateHdr", "SuccessUpdateMsg", "ErrorUnexpectedWriteMsg", "DeleteMsg", "DeleteDataMsg", "ErrorInit", "ErrorRInstallHdr", "ErrorRInstallMsg", "ErrorModelPathHdr", "ErrorModelPathMsg", "ErrorRNotFoundHdr", "ErrorRNotFoundMsg"]
+         "required": ["ErrorUnexpectedHdr", "ErrorUnexpectedMsg", "ErrorUnexpectedMsg2", "BtnCancel", "BtnOk", "BtnRemove", "ErrorInvalidHdr",
+         "ErrorInvalidMsg", "ErrorInvalidTwoMsg", "ErrorInvalidThreeMsg", "ErrorAPIHdr", "ErrorAPIMsg", "ErrorVersionMsg", "ErrorReadMsg",
+         "ErrorLogoHdr", "ErrorLogoMsg", "ErrorLogoMultiMsg", "ErrorLogoLargeHdr", "ErrorLogoLargeMsg", "ErrorExampleExistsHdr", "ErrorModelExistsHdr",
+         "ErrorModelExistsMsg", "ErrorModelExistsMsg2", "ErrorWriteHdr", "ErrorWriteMsg", "ErrorWriteMsg2", "ErrorAppRunningHdr", "ErrorAppRunningMsg",
+         "ErrorAppIncompMsg", "ErrorMsgLaunch", "ErrorInstallStartMsg", "ErrorInstallPermHdr", "ErrorInstallPerm1Msg", "ErrorInstallPerm2Msg",
+         "ErrorInstallPerm3Msg", "ErrorInstallPerm4Msg", "ErrorInstallPermBtnYes", "ErrorInstallPermBtnNo", "ErrorWritePerm2Msg", "ErrorNoWritePermMsg",
+         "ErrorInvalidPathHdr", "ErrorInvalidPathMsg", "ErrorInvalidPathMsgMac", "ErrorInvalidPathMsg2", "ErrorMessage", "SuccessUpdateHdr",
+         "SuccessUpdateMsg", "ErrorUnexpectedWriteMsg", "DeleteMsg", "DeleteDataMsg", "ErrorInit", "ErrorRInstallHdr", "ErrorRInstallMsg",
+         "ErrorModelPathHdr", "ErrorModelPathMsg", "ErrorRNotFoundHdr", "ErrorRNotFoundMsg", "ErrorInconsistentDbTablesHdr", "ErrorInconsistentDbTablesMsg"]
      },
      "general":{
        "type":"object",
@@ -834,7 +850,9 @@ const en = {
         "ErrorRNotFoundMsg": "In order to use MIRO, you have to have R installed. You can add the path to your R installations in the Preferences menu.",
         "BtnCancel": "Cancel",
         "BtnOk": "OK",
-        "BtnRemove": "Remove"
+        "BtnRemove": "Remove",
+        "ErrorInconsistentDbTablesHdr": "Inconsistent data",
+        "ErrorInconsistentDbTablesMsg": "Your database contains records that are inconsistent with the new version of the MIRO application you want to add. Do you want to remove all inconsistent data? The records to be removed are: '{0}'."
     },
     "general": {
         "title": "MIRO Library",
@@ -1025,7 +1043,9 @@ const de = {
         "ErrorRNotFoundMsg": "Um MIRO verwenden zu können, müssen Sie R installiert haben. Sie können den Pfad zu Ihren R-Installationen im Einstellungs-Menü hinzufügen.",
         "BtnCancel": "Abbrechen",
         "BtnOk": "OK",
-        "BtnRemove": "Entfernen"
+        "BtnRemove": "Entfernen",
+        "ErrorInconsistentDbTablesHdr": "Inkonsistente Daten",
+        "ErrorInconsistentDbTablesMsg": "Ihre Datenbank enthält Datensätze, die mit der neuen Version der MIRO-Anwendung, die Sie hinzufügen möchten, nicht konsistent sind. Möchten Sie alle inkonsistenten Daten entfernen? Die zu entfernenden Datensätze sind: '{0}'."
     },
     "general": {
         "title": "MIRO Bibliothek",
@@ -1215,7 +1235,9 @@ const cn = {
         "ErrorRNotFoundMsg": "为了使用MIRO，你必须安装了R。你可以在 \"首选项 \"菜单中添加到你的R安装路径。",
         "BtnCancel": "取消",
         "BtnOk": "确认",
-        "BtnRemove": "删除"
+        "BtnRemove": "删除",
+        "ErrorInconsistentDbTablesHdr": "数据不一致",
+        "ErrorInconsistentDbTablesMsg": "您的数据库中包含的记录与您要添加的MIRO应用程序的新版本不一致。你想删除所有不一致的数据吗？需要删除的记录有： '{0}'."
     },
     "general": {
         "title": "MIRO库",

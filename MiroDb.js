@@ -18,6 +18,9 @@ class MiroDb {
         const tablesToRemove = data.map((row) => row.name).filter((tableName) =>
             this._tableBelongsToApp(tableName, appName)
         );
+        return this.removeTables(tablesToRemove)
+    }
+    removeTables (tablesToRemove) {
         try {
             this.db.pragma('foreign_keys = OFF');
             for ( const tableToRemove of tablesToRemove ) {
@@ -29,6 +32,7 @@ class MiroDb {
         } finally {
             this.db.pragma('foreign_keys = ON');
         }
+        return this;
     }
     appTablesExist (appName) {
         const data = this._getAllTables();
@@ -46,8 +50,11 @@ class MiroDb {
         return '`' + identifier.replace(/`/g, '``') + '`'
     }
     _tableBelongsToApp (tableName, appName) {
-        return tableName.startsWith(`${appName.replace(/_/g, '')}_`) || 
+        return tableName.startsWith(`${MiroDb.escapeAppId(appName)}_`) || 
                 (tableName.startsWith('_sys_') && tableName.endsWith(`_${appName}`));
+    }
+    static escapeAppId (appId) {
+        return appId.toLowerCase().replace(/_/g, '')
     }
 }
 
