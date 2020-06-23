@@ -4,6 +4,7 @@ CRANMirrors <- c('https://cloud.r-project.org/',
 
 RLibPath <- Sys.getenv('LIB_PATH')
 packageVersionMap <- list(
+    c('data.table', '1.12.2'),
     c('backports', '1.1.7'),
     c('assertthat', '0.2.1'),
     c('crayon', '1.3.4'),
@@ -100,7 +101,6 @@ packageVersionMap <- list(
     'rhandsontable',
     'sortable',
     'chartjs')
-dataTableVersionMap <- c('data.table', '1.12.2')
 
 isMac <- Sys.info()['sysname'] == 'Darwin' || grepl("^darwin", R.version$os)
 isWindows <- .Platform$OS.type == 'windows'

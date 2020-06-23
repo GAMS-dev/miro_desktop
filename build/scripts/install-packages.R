@@ -100,40 +100,6 @@ downloadPackage <- function(package) {
             package[1], packageFileNameTmp, packageFileName))
     }
 }
-# data.table needs some special attention on OSX due to lacking openmp support in clang
-# see https://github.com/Rdatatable/data.table/wiki/Installation#openmp-enabled-compiler-for-mac
-if ( !packageIsInstalled(dataTableVersionMap) ){
-    if ( isMac ) {
-        makevarsPath <- '~/.R/Makevars'
-        if ( file.exists(makevarsPath) ) {
-            stop("Makevars already exist. Won't overwrite!")
-        }
-        if (!dir.exists(dirname(makevarsPath)) && 
-            !dir.create(dirname(makevarsPath), showWarnings = TRUE, recursive = TRUE)){
-            stop(sprintf('Could not create directory: %s', dirname(makevarsPath)))
-        }
-        writeLines(c('LLVM_LOC = /usr/local/opt/llvm', 
-            'CC=$(LLVM_LOC)/bin/clang -fopenmp',
-           'CXX=$(LLVM_LOC)/bin/clang++ -fopenmp', 
-           '# -O3 should be faster than -O2 (default) level optimisation ..',
-           'CFLAGS=-g -O3 -Wall -pedantic -std=gnu99 -mtune=native -pipe', 
-           'CXXFLAGS=-g -O3 -Wall -pedantic -std=c++11 -mtune=native -pipe',
-           'LDFLAGS=-L/usr/local/opt/gettext/lib -L$(LLVM_LOC)/lib -Wl,-rpath,$(LLVM_LOC)/lib',
-            'CPPFLAGS=-I/usr/local/opt/gettext/include -I$(LLVM_LOC)/include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include'), 
-        makevarsPath)
-    }
-    tryCatch({
-        installPackage(dataTableVersionMap)
-    }, error = function(e){
-        stop(sprintf('Problems installing data.table: %s', conditionMessage(e)))
-    }, finally = {
-        if( isMac ){
-            unlink(makevarsPath)
-        }
-    })    
-} else {
-    print(sprintf("Skipping '%s' as it is already installed.", dataTableVersionMap[1]))
-}
 
 for(package in packageVersionMap){
     if ( packageIsInstalled(package) ) {
