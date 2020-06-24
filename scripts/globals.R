@@ -65,7 +65,7 @@ packageVersionMap <- list(
     c('askpass', '1.1'),
     c('prettyunits', '1.1.1'),
     c('stringi', '1.4.6'),
-    c('DBI', '1.1.0'),
+    'DBI',
     c('blob', '1.2.1'),
     c('hms', '0.5.3'),
     c('tidyr', '1.1.0'),
