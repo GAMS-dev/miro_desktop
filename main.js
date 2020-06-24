@@ -7,6 +7,7 @@ const yauzl = require('yauzl');
 const http = require('axios');
 const execa = require('execa');
 const util = require('util');
+const os = require('os');
 const kill = util.promisify(require('tree-kill'));
 const log = require('electron-log');
 const menu = require('./components/menu.js');
@@ -21,6 +22,7 @@ const AppDataStore = require('./AppDataStore');
 const ConfigManager = require('./ConfigManager');
 const MiroDb = require('./MiroDb');
 const unzip     = require('./Unzip');
+const unzipPromise = util.promisify(unzip);
 const { randomPort, waitFor, isNull } = require('./helpers');
 
 const isMac = process.platform === 'darwin';
@@ -1314,14 +1316,18 @@ ipcMain.on('add-app', async (e, app) => {
        throw new Error('DuplicatedId');
      }
      let appConf = app;
+     const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'miro'));
+     await unzipPromise(appConf.path, tmpDir);
+
      const appDir = path.join(appDataPath, appConf.id);
      const rpath = await configData.get('rpath');
      if ( !rpath ) {
        log.info('No R path set.');
        throw {message: '404'}
      }
-     let restartRProc = false;
+     let restartRProc;
      const runRProc = async function(){
+        restartRProc = false;
         const internalPid = miroProcesses.length;
         miroProcesses[internalPid] = execa(path.join(rpath, 'bin', 'R'),
          ['--no-echo', '--no-restore', '--vanilla', '-f', path.join(miroResourcePath, 'start-shiny.R')],
@@ -1332,19 +1338,19 @@ ipcMain.on('add-app', async (e, app) => {
            'R_LIBS_USER': libPath,
            'R_LIBS_SITE': libPath,
            'R_LIB_PATHS': libPath,
-           'MIRO_NO_DEBUG': "true",
+           'MIRO_NO_DEBUG': 'true',
            'MIRO_USE_TMP': appConf.usetmpdir !== 'false',
            'MIRO_WS_PATH': miroWorkspaceDir,
            'MIRO_DB_PATH': getAppDbPath(appConf.dbpath),
-           'MIRO_BUILD': "false",
-           'MIRO_BUILD_ARCHIVE': "false",
+           'MIRO_BUILD': 'false',
+           'MIRO_BUILD_ARCHIVE': 'false',
            'MIRO_LOG_PATH': await configData.get('logpath'),
-           'MIRO_POPULATE_DB': "true",
-           'LAUNCHINBROWSER': "true",
-           'MIRO_REMOTE_EXEC': "false",
+           'MIRO_POPULATE_DB': 'true',
+           'LAUNCHINBROWSER': 'true',
+           'MIRO_REMOTE_EXEC': 'false',
            'MIRO_VERSION_STRING': appConf.miroversion,
            'MIRO_MODE': 'base',
-           'MIRO_MODEL_PATH': path.join(appDir, `${appConf.id}.gms`)},
+           'MIRO_MODEL_PATH': path.join(tmpDir, `${appConf.id}.gms`)},
            stdout: 'pipe',
            stderr: 'pipe',
             cleanup: false
@@ -1352,6 +1358,7 @@ ipcMain.on('add-app', async (e, app) => {
        mainWindow.setProgressBar(0);
        for await (const data of miroProcesses[internalPid].stderr) {
           const msg = data.toString();
+          log.debug(msg);
           if ( msg.startsWith('merr:::') ) {
              log.debug(`MIRO error message received: ${msg}`);
              // MIRO error
@@ -1362,13 +1369,12 @@ ipcMain.on('add-app', async (e, app) => {
                 throw {message: 'merr:::409'}
                }
                // split and decode base64 encoded table names
-               const tablesToRemove = error[2].split(',').map(el => 
+               const datasetsToRemove = error[2].split(',').map(el => 
                 Buffer.from(el, 'base64').toString());
-               log.debug(`Inconsistent tables to be removed are: ${tablesToRemove.join(',')}`);
+               log.debug(`Datasets to be removed are: '${datasetsToRemove.join("','")}'`);
 
-               const datasetsToRemove = tablesToRemove.map(el => el.replace(`${MiroDb.escapeAppId(appConf.id)}_`, ''))
-                  .join("' , '");
-               log.debug(`Datasets to be removed are: ${datasetsToRemove}`);
+               const tablesToRemove = datasetsToRemove.map(el => `${MiroDb.escapeAppId(appConf.id)}_${el}`);
+               log.debug(`Inconsistent tables to be removed are: '${tablesToRemove.join("','")}'`);
 
                const deleteInconsistentDbTables = dialog.showMessageBoxSync(mainWindow, {
                   type: 'info',
@@ -1413,8 +1419,10 @@ ipcMain.on('add-app', async (e, app) => {
           await miroProcesses[internalPid];
           mainWindow.setProgressBar(-1);
        } catch(e) {
-         log.error(`Problems storing data: ${e}. Stdout: ${e.stdout}, Stderr: ${e.stderr}`);
-         throw {message: 'suppress'};
+         if (!restartRProc) {
+           log.error(`Problems storing data: ${e}. Stdout: ${e.stdout}, Stderr: ${e.stderr}`);
+           throw e;
+         }
        }
      }
      await runRProc()
