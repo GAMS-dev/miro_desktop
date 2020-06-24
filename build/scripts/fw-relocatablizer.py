@@ -330,7 +330,7 @@ if __name__ == "__main__":
 
     # workaround as fixing rpaths somehow modifies original files as well, which leads to failing tests
     copy_and_overwrite(os.path.join('.', 'r', 'library'), os.path.join('.', 'library'))
-    os.exit()
+
     relocatablize(framework_path)
     make_r_portable(exec_path)
 
