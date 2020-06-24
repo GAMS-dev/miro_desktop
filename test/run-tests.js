@@ -12,21 +12,23 @@ if (typeof process.argv[2] === 'string' && process.argv[2].startsWith('gams_sys_
 }
 
 (async () => {
-    try {
-        const subproc = execa('rm', ['-rf', 'r/library'], {shell: true});
-        subproc.stderr.pipe(process.stderr);
-        subproc.stdout.pipe(process.stderr);
-        await subproc;
-    } catch (e) {
-        console.log(`Problems removing old library files. Error message: ${e.message}`);
-    }
-    try {
-        const subproc = execa('mv', ['-f', 'library', 'r/library'], {shell: true});
-        subproc.stderr.pipe(process.stderr);
-        subproc.stdout.pipe(process.stderr);
-        await subproc;
-    } catch (e) {
-        console.log(`Problems replacing R library directory. Error message: ${e.message}`);
+    if ( process.platform === 'darwin' ) {
+        try {
+            const subproc = execa('rm', ['-rf', 'r/library'], {shell: true});
+            subproc.stderr.pipe(process.stderr);
+            subproc.stdout.pipe(process.stderr);
+            await subproc;
+        } catch (e) {
+            console.log(`Problems removing old library files. Error message: ${e.message}`);
+        }
+        try {
+            const subproc = execa('mv', ['-f', 'library', 'r/library'], {shell: true});
+            subproc.stderr.pipe(process.stderr);
+            subproc.stdout.pipe(process.stderr);
+            await subproc;
+        } catch (e) {
+            console.log(`Problems replacing R library directory. Error message: ${e.message}`);
+        }
     }
     try {
         let rPath = 'Rscript';
