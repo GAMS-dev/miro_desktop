@@ -12,9 +12,9 @@ if (typeof process.argv[2] === 'string' && process.argv[2].startsWith('gams_sys_
 }
 
 (async () => {
-    if ( process.platform === 'darwin' ) {
+    if ( process.platform === 'darwin' && fs.existsSync(path.join(__dirname, '..', 'library'))) {
         try {
-            const subproc = execa('rm', ['-rf', 'r/library'], {shell: true});
+            const subproc = execa('rm', ['-rf', path.join(__dirname, '..', 'r', 'library')], {shell: true});
             subproc.stderr.pipe(process.stderr);
             subproc.stdout.pipe(process.stderr);
             await subproc;
@@ -22,7 +22,8 @@ if (typeof process.argv[2] === 'string' && process.argv[2].startsWith('gams_sys_
             console.log(`Problems removing old library files. Error message: ${e.message}`);
         }
         try {
-            const subproc = execa('mv', ['-f', 'library', 'r/library'], {shell: true});
+            const subproc = execa('mv', ['-f', path.join(__dirname, '..', 'library'),
+                path.join(__dirname, '..', 'r', 'library')], {shell: true});
             subproc.stderr.pipe(process.stderr);
             subproc.stdout.pipe(process.stderr);
             await subproc;
