@@ -13,6 +13,14 @@ if (typeof process.argv[2] === 'string' && process.argv[2].startsWith('gams_sys_
 
 (async () => {
     try {
+        const subproc = execa('mv', ['-f', 'library', 'r/library'], {shell: true});
+        subproc.stderr.pipe(process.stderr);
+        subproc.stdout.pipe(process.stderr);
+        await subproc;
+    } catch (e) {
+        console.log(`Problems replacing R library directory. Error message: ${e.message}`);
+    }
+    try {
         let rPath = 'Rscript';
         if ( process.platform === 'win32' ) {
             rPath = path.join(__dirname, '..', 'r', 'bin', 'Rscript');

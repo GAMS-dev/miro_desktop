@@ -311,9 +311,15 @@ export R_DOC_DIR
         f.write(modification + ''.join(executable_contents))
 
 
+def copy_and_overwrite(from_path, to_path):
+        if os.path.exists(to_path):
+            shutil.rmtree(to_path)
+        shutil.copytree(from_path, to_path)
+
 if __name__ == "__main__":
     import os
     import sys
+    import shutil
 
     if len(sys.argv) < 2:
         print("Please provide path to R framework as first argument")
@@ -322,6 +328,9 @@ if __name__ == "__main__":
     framework_path = sys.argv[1]
     exec_path = os.path.join(framework_path, 'R')
 
+    # workaround as fixing rpaths somehow modifies original files as well, which leads to failing tests
+    copy_and_overwrite(os.path.join('.', 'r', 'library'), os.path.join('.', 'library'))
+    os.exit()
     relocatablize(framework_path)
     make_r_portable(exec_path)
 
