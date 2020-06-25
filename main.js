@@ -1348,7 +1348,7 @@ ipcMain.on('add-app', async (e, app) => {
            'MIRO_REMOTE_EXEC': 'false',
            'MIRO_VERSION_STRING': appConf.miroversion,
            'MIRO_MODE': 'base',
-           'MIRO_MODEL_PATH': path.join(tmpDir, `${appConf.id}.gms`)},
+           'MIRO_MODEL_PATH': path.join(appDir, `${appConf.id}.gms`)},
            stdout: 'pipe',
            stderr: 'pipe',
             cleanup: false
