@@ -21,8 +21,7 @@ const LangParser = require('./components/LangParser.js');
 const AppDataStore = require('./AppDataStore');
 const ConfigManager = require('./ConfigManager');
 const MiroDb = require('./MiroDb');
-const unzip     = require('./Unzip');
-const unzipPromise = util.promisify(unzip);
+const unzip = util.promisify(require('./Unzip'));
 const { randomPort, waitFor, isNull } = require('./helpers');
 
 const isMac = process.platform === 'darwin';
@@ -1311,15 +1310,14 @@ ipcMain.on('browse-app', (e, options, callback, id = null) => {
 
 ipcMain.on('add-app', async (e, app) => {
   log.debug('Add app request received.');
+  let appConf = app;
+  const appDir = path.join(appDataPath, appConf.id);
   try {
      if ( !appsData.isUniqueId(app.id) ) {
        throw new Error('DuplicatedId');
      }
-     let appConf = app;
-     const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'miro'));
-     await unzipPromise(appConf.path, tmpDir);
+     await unzip(appConf.path, appDir);
 
-     const appDir = path.join(appDataPath, appConf.id);
      const rpath = await configData.get('rpath');
      if ( !rpath ) {
        log.info('No R path set.');
@@ -1429,21 +1427,26 @@ ipcMain.on('add-app', async (e, app) => {
      if (restartRProc) {
       await runRProc();
      }
-     unzip(appConf.path, appDir, () => {
-       delete appConf.path;
-       if ( appConf.logoNeedsMove ) {
-        const newLogoPath = path.join(`static_${appConf.id}`, 
-          appConf.id + '_logo' + path.extname(appConf.logoPath));
-         fs.copyFileSync(appConf.logoPath, path.join(appDir, newLogoPath));
-         appConf.logoPath = newLogoPath;
-         delete appConf.logoNeedsMove;
-       }
-       const updatedApps = appsData.addApp(appConf).apps;
-       mainWindow.send('apps-received', updatedApps, appDataPath);
-     });
+     delete appConf.path;
+     if ( appConf.logoNeedsMove ) {
+      const newLogoPath = path.join(`static_${appConf.id}`,
+        appConf.id + '_logo' + path.extname(appConf.logoPath));
+       fs.copyFileSync(appConf.logoPath, path.join(appDir, newLogoPath));
+       appConf.logoPath = newLogoPath;
+       delete appConf.logoNeedsMove;
+     }
+     const updatedApps = appsData.addApp(appConf).apps;
+     mainWindow.send('apps-received', updatedApps, appDataPath);
   } catch (e) {
     mainWindow.send('add-app-progress', -1);
     mainWindow.setProgressBar(-1);
+    try {
+      if (fs.existsSync(appDir)) {
+        fs.removeSync(appDir);
+      }
+    } catch (e) {
+      flog.error(`Problems removing app directory: ${appDir}. Error message: ${e.message}.`)
+    }
     if ( e.message === "suppress" ) {
       return;
     }
