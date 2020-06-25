@@ -1692,6 +1692,7 @@ app.on('ready', async () => {
       }
       libPath = path.join(rPathTmp,
         'miro-library', libVersion);
+      log.debug(`Lib path set to: ${libPath}`);
     } catch (e) {
       errMsg = `Couldn't retrieve R path. Error message: ${e.message}.`;
     }
