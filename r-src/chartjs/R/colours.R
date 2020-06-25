@@ -28,6 +28,9 @@ NULL
 # Format a list of colours for a type of graph and possible existing series
 cjs_get_colours <- function(chartjs, n){
   if (!is.null(chartjs$x$customColors)) {
+    if(length(chartjs$x$customColors) < 2*(n+1)){
+      return(chartjs %>% cjs_get_chart_colours(rep.int("#666", 2*(n+1)), n))
+    }
     chartjs %>% cjs_get_chart_colours(chartjs$x$customColors, n)
   } else if (!is.list(chartjs$x$palette)) {
     vecColors <- baseColors(chartjs$x$palette)
