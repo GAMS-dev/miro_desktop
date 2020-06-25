@@ -15,7 +15,7 @@ const installRPackages = require('./components/install-r.js');
 const requiredAPIVersion = 1;
 const miroVersion = '1.0.99';
 const miroRelease = 'Apr 08 2020';
-const libVersion = '1.0';
+const libVersion = '1.1';
 const exampleAppsData = require('./components/example-apps.js')(miroVersion, requiredAPIVersion);
 const LangParser = require('./components/LangParser.js');
 const AppDataStore = require('./AppDataStore');
@@ -1686,7 +1686,11 @@ app.on('will-finish-launching', () => {
 app.on('ready', async () => {
   if ( process.platform === 'linux') {
     try {
-      libPath = path.join(await configData.get('rpath'),
+      const rPathTmp = await configData.get('rpath');
+      if (!rPathTmp) {
+        throw {message: `R${lang['main'].ErrorInvalidPathMsg} ${configData.getMinimumVersion('r')}`}
+      }
+      libPath = path.join(rPathTmp,
         'miro-library', libVersion);
     } catch (e) {
       errMsg = `Couldn't retrieve R path. Error message: ${e.message}.`;
