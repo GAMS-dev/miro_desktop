@@ -156,9 +156,9 @@ class ConfigManager extends Store {
 
   async getDefault (key) {
     if ( key === 'rpath' ) {
-      return await this.findR();
+      return this.findR();
     } else if ( key === 'gamspath' ) {
-      return await this.findGAMS();
+      return this.findGAMS();
     } else if ( key === 'logpath' ) {
       return this.logpathDefault;
     } else if ( key === 'configpath' ) {
@@ -457,6 +457,7 @@ ${latestGamsInstalled}`);
     }
     if ( contentGamsDir.find(el => el.isFile() && 
       (el.name === 'gams' || el.name === 'gams.exe')) ) {
+      log.debug('GAMS executable found.');
       if ( process.platform === 'win32' ) {
         gamsExecDir = path.join(gamsDir, 'gams.exe');
       } else {
@@ -464,6 +465,7 @@ ${latestGamsInstalled}`);
       }
     } else {
       // gams executable not in selected folder
+      log.debug('GAMS executable not found in the selected folder.');
       contentGamsDir = contentGamsDir
         .filter(el => el.isDirectory() || el.isSymbolicLink());
       const gamsDirName = contentGamsDir.find(el => {
@@ -525,9 +527,9 @@ ${latestGamsInstalled}`);
 
   async validate(id, pathToValidate){
     if ( id === 'gams' ) {
-      return await this.validateGAMS(pathToValidate);
+      return this.validateGAMS(pathToValidate);
     }
-    return await this.validateR(pathToValidate);
+    return this.validateR(pathToValidate);
   }
 
   vComp(v1, v2, compR = false) {
