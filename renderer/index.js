@@ -554,7 +554,7 @@ ipcRenderer.on('apps-received', (e, apps, appDataPath, startup = false, deactiva
                    <div>
                      <div style="height:200px;">
                          <div id="appLogo_${app.id}" style="background-image:url('${pathToFileURL(logoPath)}?v=${new Date().getTime()}');" \
-title="${app.title} logo" data-id="${app.id}" class="app-logo">
+data-id="${app.id}" class="app-logo">
                         </div>
                      </div>
                      <div>
