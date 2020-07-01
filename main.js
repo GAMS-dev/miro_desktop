@@ -1265,6 +1265,7 @@ ipcMain.on('settings-select-new-path', async (e, id, defaultPath) => {
           const validatedPath = await configData.validate(configId, pathSelected[0]);
           if ( validatedPath !== false && validatedPath != null && settingsWindow ) {
             log.debug(`${idUpper} path is valid!`);
+            settingsWindow.webContents.send('settings-new-path-selected', id, validatedPath);
           } else {
             log.debug(`${idUpper} path is invalid!`);
             dialog.showMessageBoxSync(settingsWindow, 
@@ -1291,7 +1292,6 @@ ipcMain.on('settings-select-new-path', async (e, id, defaultPath) => {
            return;
         }
     }
-    settingsWindow.webContents.send('settings-new-path-selected', id, pathSelected[0]);
   }
 })
 
