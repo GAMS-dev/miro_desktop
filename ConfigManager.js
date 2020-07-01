@@ -505,7 +505,7 @@ ${latestGamsInstalled}`);
     try {
       let { stdout } = await execa(gamsExecDir, ['/??', 'lo=3', 
         `curdir=${tmpdir}`], 
-        process.platform === 'linux'? {env: {XDG_DATA_DIRS: '', XDG_CONFIG_DIRS: ''}}: {});
+        process.platform === 'linux'? {env: {XDG_DATA_DIRS: ''}}: {});
       stdout = stdout.split('\n');
       if ( stdout.length < 2 ) {
         log.info(`Invalid stdout from GAMS: ${stdout.slice(0,5).join("\n")}`);
