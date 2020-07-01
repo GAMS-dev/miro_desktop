@@ -501,37 +501,28 @@ ${latestGamsInstalled}`);
         return false;
       }
     }
-    // We have to do it so complicated as on Linux (inside AppImage) 
-    // the GAMS process gets stuck for whatever reason..
-    const gamsproc = execa(gamsExecDir, ['/??', 'lo=3', 
-        `curdir=${tmpdir()}`], {stdout:'pipe'});
+    
     try {
-      let stdout = [];
-      for await (const data of gamsproc.stdout) {
-        if ( data.toString().trim() === '' ) {
-           continue
-        }
-        stdout = stdout.concat(data.toString().trim().split('\n'));
-        if(stdout.length >=2){
-          const selectedGamsVer = stdout[1]
-            .match(/^GAMS Release: (\d+\.\d+\.\d+)/);
-          if ( selectedGamsVer && 
-            this.vComp(selectedGamsVer[1], minGams) ) {
-            return path.dirname(gamsExecDir);
-          } else {
-            log.info(`Invalid stdout from GAMS: ${stdout.slice(0,5).join("\n")}`);
-            return false;
-          }
-        }
+      let { stdout } = await execa(gamsExecDir, ['/??', 'lo=3', 
+        `curdir=${tmpdir}`], 
+        process.platform === 'linux'? {env: {XDG_DATA_DIRS: '', XDG_CONFIG_DIRS: ''}}: {});
+      stdout = stdout.split('\n');
+      if ( stdout.length < 2 ) {
+        log.info(`Invalid stdout from GAMS: ${stdout.slice(0,5).join("\n")}`);
+        return false;
       }
-      await gamsproc
-      log.info(`Invalid stdout from GAMS: ${stdout.slice(0,5).join("\n")}`);
-      return false
+      const selectedGamsVer = stdout[1]
+        .match(/^GAMS Release: (\d+\.\d+\.\d+)/);
+      if ( selectedGamsVer && 
+        this.vComp(selectedGamsVer[1], minGams) ) {
+        return path.dirname(gamsExecDir);
+      } else {
+        log.info(`Invalid stdout from GAMS: ${stdout.slice(0,5).join("\n")}`);
+        return false;
+      }
     } catch(e) {
       log.error(e);
       return false;
-    } finally {
-      gamsproc.kill();
     }
   }
 
