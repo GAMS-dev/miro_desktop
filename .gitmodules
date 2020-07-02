@@ -1,6 +1,6 @@
 [submodule "miro"]
 	path = miro
-	url = https://github.com/GAMS-dev/miro.git
+	url = git@git.gams.com:fproske/gmswebui.git
 [submodule "r-src/shiny"]
 	path = r-src/shiny
 	url = https://github.com/GAMS-dev/shiny.git
@@ -44,3 +44,7 @@
 [submodule "r-src/jsonlite"]
 	path = r-src/jsonlite
 	url = https://github.com/GAMS-dev/jsonlite.git
+[submodule "r-src/sortable"]
+	path = r-src/sortable
+	url = https://github.com/GAMS-dev/sortable.git
+	branch = master

@@ -1,14 +1,12 @@
 'use strict'
-const { remote, shell } = require('electron');
+const { ipcRenderer, shell } = require('electron');
+const querystring = require('querystring');
 const https = require('https');
 const $ = require('jquery');
-const lang = remote.getGlobal('lang').update;
-const installedVersion = remote.getGlobal('miroVersion').split('.');
-
-$('#btClose').text(lang['btClose']);
+const installedVersion = querystring.parse(global.location.search)['?miroVersion'].split('.');
 
 $('#btClose').on('click', () => {
-    remote.getCurrentWindow().close();
+    ipcRenderer.send('close-window', 'update');
 });
 
 function updateStatus(status, text = true){
@@ -20,7 +18,14 @@ function updateStatus(status, text = true){
     }
 }
 
-https.get('https://gams.com/miro/latest.ver', (res) => {
+$('.site-wrapper').on('click', '#downloadMIRO', () => {
+    shell.openExternal('https://gams.com/miro');
+});
+
+ipcRenderer.on('lang-data-received', (e, lang) => {
+  $('#btClose').text(lang['btClose']);
+  
+  https.get('https://gams.com/miro/latest.ver', (res) => {
     if ( res.statusCode !== 200 ) {
         updateStatus(lang['error']);
         return;
@@ -60,9 +65,7 @@ https.get('https://gams.com/miro/latest.ver', (res) => {
            return;
         }
     });
-}).on('error', (e) => {
-    updateStatus(lang['error']);
-});
-$('.site-wrapper').on('click', '#downloadMIRO', () => {
-    shell.openExternal('https://gams.com/miro');
+  }).on('error', (e) => {
+      updateStatus(lang['error']);
+  });
 });

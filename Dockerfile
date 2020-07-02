@@ -8,7 +8,7 @@ com.gamsmiro.license="GPL-3.0"\
 com.gamsmiro.description="GAMS MIRO Docker image"\
 maintainer="rschuchmann@gams.com"
 
-ARG R_BASE_VERSION=3.6.3
+ARG R_BASE_VERSION=4.0.2
 ARG BUILD_DOCKER=true
 ARG SCRIPTS_PATH=/home/miro/scripts
 
@@ -41,7 +41,7 @@ RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen \
 ENV LC_ALL en_US.UTF-8
 ENV LANG en_US.UTF-8
 
-RUN echo "deb https://cloud.r-project.org/bin/linux/ubuntu xenial-cran35/" > /etc/apt/sources.list.d/cran.list
+RUN echo "deb https://cloud.r-project.org/bin/linux/ubuntu xenial-cran40/" > /etc/apt/sources.list.d/cran.list
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
 
 
@@ -69,9 +69,9 @@ RUN add-apt-repository ppa:deadsnakes/ppa
 RUN apt-get update && apt-get install -y \
     sudo \
     libcurl4-gnutls-dev \
-    libv8-3.14-dev \
+    libv8-dev \
     libpq-dev \
-    python3.6 \
+    python3.8 \
     python3-pip
 
 RUN pip3 install --upgrade pip
