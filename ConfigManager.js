@@ -416,10 +416,25 @@ ${latestGamsInstalled}`);
     }
 
     if ( !this.gamspathDefault  && process.platform === 'win32' ) {
-      let latestGamsInstalled = fs.readdirSync('C:\\GAMS\\win64', 
+      let latestGamsInstalled = fs.readdirSync('C:\\GAMS', 
+            { withFileTypes: true })
+        .filter(el => {
+          if ( !el.isDirectory() ) {
+            return false;
+          }
+          const gamsVer = parseInt(el.name);
+          if ( isNaN(gamsVer) || gamsVer < 32 ) {
+            return false;
+          }
+          return true;
+        })
+        .map(el => el.name);
+      if ( !latestGamsInstalled ) {
+        latestGamsInstalled = fs.readdirSync('C:\\GAMS\\win64', 
             { withFileTypes: true })
             .filter(el => el.isDirectory() && gamsDirNameRegex.test(el.name))
             .map(el => el.name);
+      }
       if ( latestGamsInstalled ) {
         latestGamsInstalled = latestGamsInstalled
         .reduce(vCompReducer);
