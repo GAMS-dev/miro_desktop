@@ -416,7 +416,8 @@ ${latestGamsInstalled}`);
     }
 
     if ( !this.gamspathDefault  && process.platform === 'win32' ) {
-      let latestGamsInstalled = fs.readdirSync('C:\\GAMS', 
+      let GAMSRootPath = 'C:\\GAMS';
+      let latestGamsInstalled = fs.readdirSync(GAMSRootPath, 
             { withFileTypes: true })
         .filter(el => {
           if ( !el.isDirectory() ) {
@@ -430,7 +431,8 @@ ${latestGamsInstalled}`);
         })
         .map(el => el.name);
       if ( !latestGamsInstalled ) {
-        latestGamsInstalled = fs.readdirSync('C:\\GAMS\\win64', 
+        GAMSRootPath = 'C:\\GAMS\\win64';
+        latestGamsInstalled = fs.readdirSync(GAMSRootPath, 
             { withFileTypes: true })
             .filter(el => el.isDirectory() && gamsDirNameRegex.test(el.name))
             .map(el => el.name);
@@ -442,7 +444,7 @@ ${latestGamsInstalled}`);
 
       if ( latestGamsInstalled && 
         this.vComp(latestGamsInstalled, minGams) ) {
-        this.gamspathDefault = path.join('C:\\GAMS\\win64', 
+        this.gamspathDefault = path.join(GAMSRootPath, 
           latestGamsInstalled);
       } else if ( latestGamsInstalled ) {
         log.info(`Latest installed GAMS version found: \
