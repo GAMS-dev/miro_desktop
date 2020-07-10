@@ -271,7 +271,7 @@ class ConfigManager extends Store {
               rVersionsAvailable[0], 'Resources');
           }
         } else {
-          let rpathTmp = await which('Rscript', {nothrow: true});
+          let rpathTmp = which.sync('Rscript', {nothrow: true});
           rpathTmp = await this.validateR(rpathTmp);
           if ( rpathTmp !== false ) {
             this.rpathDefault = rpathTmp;
@@ -369,14 +369,14 @@ class ConfigManager extends Store {
     };
 
     if ( process.platform === 'darwin' ) {
-      let latestGamsInstalled;
+      let latestGamsInstalled = [];
       let isFramework;
       if (fs.existsSync('/Library/Frameworks/GAMS.framework/Versions')) {
         isFramework = true;
         latestGamsInstalled = fs.readdirSync('/Library/Frameworks/GAMS.framework/Versions',
           { withFileTypes: true })
           .filter(el => el.isDirectory());
-        if (latestGamsInstalled) {
+        if (latestGamsInstalled.length > 0) {
           latestGamsInstalled = latestGamsInstalled
             .map(el => el.name)
             .reduce(vCompReducer);
@@ -386,14 +386,14 @@ class ConfigManager extends Store {
         latestGamsInstalled = fs.readdirSync('/Applications',
           { withFileTypes: true })
           .filter(el => el.isDirectory() && gamsDirNameRegex.test(el.name));
-        if ( latestGamsInstalled ) {
+        if ( latestGamsInstalled.length > 0 ) {
           latestGamsInstalled = latestGamsInstalled
           .map(el => el.name.slice(4))
           .reduce(vCompReducer);
         }
       }
 
-      if ( latestGamsInstalled && 
+      if ( latestGamsInstalled.length > 0 && 
         this.vComp(latestGamsInstalled, minGams) ) {
         if (isFramework) {
           this.gamspathDefault = path.join('/Library/Frameworks/GAMS.framework/Versions', 
@@ -404,13 +404,13 @@ class ConfigManager extends Store {
             `GAMS${latestGamsInstalled}`,
             'GAMS Terminal.app', 'Contents', 'MacOS');
         }
-      } else if ( latestGamsInstalled ) {
+      } else if ( latestGamsInstalled.length > 0 ) {
         log.info(`Latest installed GAMS version found: \
 ${latestGamsInstalled}`);
       }
     } else {
       try {
-        this.gamspathDefault = path.dirname(await which('gams',
+        this.gamspathDefault = path.dirname(which.sync('gams',
           {nothrow: true}));
       } catch ( e ) { }
     }
@@ -430,23 +430,23 @@ ${latestGamsInstalled}`);
           return true;
         })
         .map(el => el.name);
-      if ( !latestGamsInstalled ) {
+      if ( latestGamsInstalled.length === 0 ) {
         GAMSRootPath = 'C:\\GAMS\\win64';
         latestGamsInstalled = fs.readdirSync(GAMSRootPath, 
             { withFileTypes: true })
             .filter(el => el.isDirectory() && gamsDirNameRegex.test(el.name))
             .map(el => el.name);
       }
-      if ( latestGamsInstalled ) {
+      if ( latestGamsInstalled.length > 0 ) {
         latestGamsInstalled = latestGamsInstalled
         .reduce(vCompReducer);
       }
 
-      if ( latestGamsInstalled && 
+      if ( latestGamsInstalled.length > 0 && 
         this.vComp(latestGamsInstalled, minGams) ) {
         this.gamspathDefault = path.join(GAMSRootPath, 
           latestGamsInstalled);
-      } else if ( latestGamsInstalled ) {
+      } else if ( latestGamsInstalled.length > 0 ) {
         log.info(`Latest installed GAMS version found: \
   ${latestGamsInstalled}`);
       }
