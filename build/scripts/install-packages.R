@@ -197,6 +197,12 @@ local({
     packageJSON = gsub('"version": "[^"]+",',
         paste0('"version": "', MIROVersion, '",'), packageJSON)
     writeLines(packageJSON, './package.json')
+    adminConfig = readLines('./admin/global.R', warn = FALSE)
+    adminConfig = gsub('MIRO_VERSION[[:space:]]*<-[[:space:]]*"[^"]+"',
+        paste0('MIRO_VERSION      <- "', MIROVersion, '"'), adminConfig)
+    adminConfig = gsub("REQUIRED_API_VERSION[[:space:]]*<-.*",
+        paste0("REQUIRED_API_VERSION <- ", APIVersion), adminConfig)
+    writeLines(adminConfig, './admin/global.R')
 })
 # build MIRO example apps
 examplesPath = file.path(getwd(), 'miro', 'examples')
