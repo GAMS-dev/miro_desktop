@@ -353,8 +353,37 @@ function validateMIROApp ( filePath ) {
         }
         mainWindow.setProgressBar(++fileCnt * incAmt);
         appFileNames.push(entry.fileName);
-        if ( skipCnt < 1 ) {
+        if ( skipCnt < 2 ) {
           if ( path.dirname(entry.fileName).startsWith('static_') ) {
+            if ( path.basename(entry.fileName.toLowerCase()) === 'app_info.json' ) {
+              log.debug('App info file in new MIRO app found.');
+              skipCnt++;
+              zipfile.openReadStream(entry, function(err, readStream) {
+                if (err) {
+                  return showZipfilError(err);
+                }
+                const appInfoData = [];
+                readStream.on('data', (chunk) => {
+                  appInfoData.push(chunk);
+                });
+                readStream.on('end', () => {
+                  try{
+                    const appInfo = JSON.parse(Buffer
+                      .concat(appInfoData)
+                      .toString('utf8'));
+                    newAppConf.title = appInfo.title;
+                    newAppConf.description = appInfo.description;
+                  } catch ( e ) {
+                    if (e instanceof SyntaxError) {
+                      log.debug(`Invalid JSON syntax in app info file. File will be ignored. Error message: ${e.message}`);
+                    } else {
+                      log.warn(`Unexpected error occurred while reading app info file. Error message: ${e.message}`);
+                    }
+                  }
+                });
+              });
+              return;
+            }
             const logoExt = entry.fileName.toLowerCase().match(/.*_logo\.(jpg|jpeg|png)$/);
             if ( logoExt ) {
               newAppConf.logoPath = entry.fileName;
