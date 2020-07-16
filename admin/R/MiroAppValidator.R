@@ -107,8 +107,8 @@ MiroAppValidator <- R6::R6Class("MiroAppValidator", public = list(
     }
     private$logoB64 <- private$readLogo(miroAppFile, filesInBundle)
     appInfo <- private$readAppInfo(miroAppFile, filesInBundle)
-    private$appTitle <- appInfo$name
-    private$appDesc <- paste(appInfo$desc, collapse = "\n")
+    private$appTitle <- appInfo$title
+    private$appDesc <- paste(appInfo$description, collapse = "\n")
     return(invisible(self))
   }), private = list(
     modesSupported = NULL,
@@ -142,7 +142,7 @@ MiroAppValidator <- R6::R6Class("MiroAppValidator", public = list(
         }))
     },
     readAppInfo = function(miroAppFile, filesInBundle){
-        appInfoFile <- filesInBundle == file.path(private$getStaticFilePath(), "app_info.json")
+        appInfoFile <- tolower(filesInBundle) == file.path(private$getStaticFilePath(), "app_info.json")
         if(sum(appInfoFile) == 0){
             return(list())
         }
