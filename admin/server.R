@@ -6,7 +6,7 @@ db               <- MiroDb$new(list(host = Sys.getenv("MIRO_DB_HOST", "localhost
     name = Sys.getenv("MIRO_DB_NAME"),
     username = Sys.getenv("MIRO_DB_USERNAME"),
     password = Sys.getenv("MIRO_DB_PASSWORD")))
-DEFAULT_LOGO_B64 <- getLogoB64(file.path("www", "default_logo.png"))
+DEFAULT_LOGO_B64 <<- getLogoB64(file.path("www", "default_logo.png"))
 
 server <- function(input, output, session){
     isLoggedIn <- FALSE
@@ -99,9 +99,15 @@ server <- function(input, output, session){
             }
 
             supportedModes <- miroAppValidator$getModesSupported()
-
+            logoPath <- miroAppValidator$getLogoFile()
+            logoURL  <- "default_logo.png"
+            if(length(logoPath)){
+                logoURL <- basename(logoPath)
+            }else{
+                logoPath <- NULL
+            }
             newAppConfig <- list(id = appId, displayName = newAppTitle, description = newAppDesc,
-                logoURL = basename(miroAppValidator$getLogoFile()),
+                logoURL = logoURL,
                 containerVolumes = c(sprintf("/%s:/home/miro/app/model/%s:ro", appId, appId), 
                     sprintf("/data_%s:%s", appId, MIRO_CONTAINER_DATA_DIR)),
                 containerEnv = list(
@@ -127,7 +133,7 @@ server <- function(input, output, session){
             dataDir  <- file.path(getwd(), MIRO_DATA_DIR, paste0("data_", appId))
 
             extractAppData(isolate(input$miroAppFile$datapath), appId,
-                        miroAppValidator$getLogoFile())
+                        logoPath)
 
             miroProc$run(appId, miroAppValidator$getMIROVersion(), appDir, dataDir, function(){
                 tryCatch({
