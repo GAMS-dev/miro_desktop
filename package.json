@@ -98,7 +98,7 @@
   "author": "GAMS Development Corp.",
   "license": "GPL-3.0-only",
   "devDependencies": {
-    "electron": "^9.0.0",
+    "electron": "^9.1.0",
     "electron-builder": "^22.7.0"
   },
   "dependencies": {
