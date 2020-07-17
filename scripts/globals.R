@@ -125,10 +125,10 @@ if ( identical(Sys.getenv('BUILD_DOCKER'), 'true') ) {
 
 # on Jenkins use default library
 RlibPathDevel <- NULL
-CIBuild <- FALSE
+CIBuild <- TRUE
 if(identical(Sys.getenv("BUILD_NUMBER"), "")){
     RlibPathDevel <-  './build/lib_devel'
-    CIBuild <- TRUE
+    CIBuild <- FALSE
 } else if(isWindows) {
     # on Windows, we use the R version we ship, so we need to set library path explicitly, or
     # it will install development libraries inside ./r/library
