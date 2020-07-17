@@ -3,7 +3,7 @@ source('./scripts/globals.R')
 if(CIBuild){
     installedPackages <- c(installedPackages, installedPackagesTmp)
     
-unlink(installedPackagesTmp, force = TRUE, recursive = TRUE)
+unlink(RlibPathTmp, force = TRUE, recursive = TRUE)
 }
 for ( libPath in c(RLibPath, RlibPathDevel, RlibPathTmp) ) {
     if (!dir.exists(libPath) && 
