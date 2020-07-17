@@ -1,10 +1,11 @@
 # install required packages for MIRO
 source('./scripts/globals.R')
+RlibPathTmp <- NULL
 if(CIBuild){
-    RlibPathDevel <- file.path(.libPaths()[1], "miro_lib")
+    RlibPathTmp <- file.path(.libPaths()[1], "miro_lib")
     installedPackages <- c(installedPackages, installedPackagesDevel)
 }
-for ( libPath in c(RLibPath, RlibPathDevel) ) {
+for ( libPath in c(RLibPath, RlibPathDevel, RlibPathTmp) ) {
     if (!dir.exists(libPath) && 
         !dir.create(libPath, showWarnings = TRUE, recursive = TRUE)){
         stop(sprintf('Could not create directory: %s', libPath))
@@ -82,10 +83,10 @@ installPackage <- function(package, attempt = 0) {
             downloadPackage(package)
         } else if ( isMac && identical(package[1], "V8") ) {
             # use binary from CRAN to avoid having absolute path to v8 dylib compiled into binary
-            install.packages(package[1], if(CIBuild) RlibPathDevel else RLibPath, repos = CRANMirrors[attempt + 1],
+            install.packages(package[1], if(CIBuild) RlibPathTmp else RLibPath, repos = CRANMirrors[attempt + 1],
                 dependencies = FALSE, INSTALL_opts = '--no-multiarch')
         } else {
-            withr::with_libpaths(if(CIBuild) RlibPathDevel else RLibPath, install_version(package[1], package[2], out = './dist/dump',
+            withr::with_libpaths(if(CIBuild) RlibPathTmp else RLibPath, install_version(package[1], package[2], out = './dist/dump',
                 dependencies = FALSE, repos = CRANMirrors[attempt + 1],
                 INSTALL_opts = '--no-multiarch'))
         }
@@ -129,10 +130,10 @@ for(package in packageVersionMap){
 if(CIBuild){
     # install packages to lib path devel and copy over
     for(installedPackageDevel in installedPackagesDevel){
-        if(any(!file.copy(file.path(RlibPathDevel, installedPackageDevel),
+        if(any(!file.copy(file.path(RlibPathTmp, installedPackageDevel),
             RLibPath, overwrite = TRUE, recursive = TRUE))){
             stop(sprintf("Failed to copy: %s to: %s",
-                file.path(RlibPathDevel, installedPackageDevel),
+                file.path(RlibPathTmp, installedPackageDevel),
                 RLibPath), call. = FALSE)
         }
     }
