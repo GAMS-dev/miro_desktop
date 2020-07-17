@@ -1,14 +1,14 @@
 # install required packages for MIRO
 source('./scripts/globals.R')
+if(CIBuild){
+    RlibPathDevel <- file.path(.libPaths()[1], "miro_lib")
+    installedPackages <- c(installedPackages, installedPackagesDevel)
+}
 for ( libPath in c(RLibPath, RlibPathDevel) ) {
     if (!dir.exists(libPath) && 
         !dir.create(libPath, showWarnings = TRUE, recursive = TRUE)){
         stop(sprintf('Could not create directory: %s', libPath))
     }
-}
-if(CIBuild){
-    RlibPathDevel <- .libPaths()[1]
-    installedPackages <- c(installedPackages, installedPackagesDevel)
 }
 if ( isLinux ) {
     # workaround since electron builder does 
