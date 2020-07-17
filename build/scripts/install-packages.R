@@ -2,6 +2,8 @@
 source('./scripts/globals.R')
 if(CIBuild){
     installedPackages <- c(installedPackages, installedPackagesTmp)
+    
+unlink(installedPackagesTmp, force = TRUE, recursive = TRUE)
 }
 for ( libPath in c(RLibPath, RlibPathDevel, RlibPathTmp) ) {
     if (!dir.exists(libPath) && 
@@ -18,12 +20,6 @@ if ( isLinux ) {
     RtoolsHome <- "C:/rtools40"
     Sys.setenv(PATH = paste(paste0(RtoolsHome, "/usr/bin/"), Sys.getenv("PATH"), sep=";"))
     Sys.setenv(BINPREF = paste0(RtoolsHome, "/mingw$(WIN)/bin/"))
-}
-if(isWindows){
-    unlink("C:/Windows/System32/config/systemprofile/Documents/R/win-library/4.0/00LOCK-backports", force = TRUE, recursive = TRUE)
-    install.packages("backports", repos = CRANMirrors[1], lib = RlibPathDevel,
-        dependencies = c("Depends", "Imports", "LinkingTo"),
-        INSTALL_opts = "--no-multiarch")
 }
 requiredPackages <- c('devtools', 'remotes', 'jsonlite', 'V8', 
     'zip', 'tibble', 'readr', 'R6', 'processx', 
