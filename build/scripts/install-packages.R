@@ -7,6 +7,7 @@ for ( libPath in c(RLibPath, RlibPathDevel) ) {
     }
 }
 if(CIBuild){
+    RlibPathDevel <- .libPaths()[1]
     installedPackages <- c(installedPackages, installedPackagesDevel)
 }
 if ( isLinux ) {
