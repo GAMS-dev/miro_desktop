@@ -141,7 +141,7 @@ RlibPathTmp <- NULL
 if(CIBuild){
     RlibPathTmp <- file.path(.libPaths()[1], "miro_lib")
 }
-installedPackagesTmp <- installed.packages(RlibPathDevel)
+installedPackagesTmp <- installed.packages(RlibPathTmp)
 # install packages to lib path devel and copy over
 installedPackagesTmp <- packageVersionMap[vapply(packageVersionMap, function(packageVersion){
     packageId <- match(packageVersion[1], installedPackagesTmp[, "Package"])
