@@ -35,7 +35,7 @@ for ( newPackage in newPackages ) {
 }
 
 options(warn = 2)
-.libPaths( c( RlibPathDevel, .libPaths()) )
+.libPaths( c( RlibPathDevel, .libPaths(), if(CIBuild) RlibPathTmp) )
 
 listOfLibs <- character(0L)
 if ( isLinux ) {
