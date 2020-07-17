@@ -137,15 +137,19 @@ if(identical(Sys.getenv("BUILD_NUMBER"), "")){
 }
 RlibPathSrc <- file.path('.', 'r', 'library_src')
 
-installedPackagesDevel <- installed.packages(RlibPathDevel)
+RlibPathTmp <- NULL
+if(CIBuild){
+    RlibPathTmp <- file.path(.libPaths()[1], "miro_lib")
+}
+installedPackagesTmp <- installed.packages(RlibPathDevel)
 # install packages to lib path devel and copy over
-installedPackagesDevel <- packageVersionMap[vapply(packageVersionMap, function(packageVersion){
-    packageId <- match(packageVersion[1], installedPackagesDevel[, "Package"])
+installedPackagesTmp <- packageVersionMap[vapply(packageVersionMap, function(packageVersion){
+    packageId <- match(packageVersion[1], installedPackagesTmp[, "Package"])
     !is.na(packageId) &&
-    identical(packageVersion[2], installedPackagesDevel[packageId, "Version"]) &&
-    identical(Rversion, installedPackagesDevel[packageId, "Built"])
+    identical(packageVersion[2], installedPackagesTmp[packageId, "Version"]) &&
+    identical(Rversion, installedPackagesTmp[packageId, "Built"])
 }, logical(1), USE.NAMES = FALSE)]
-installedPackagesDevel <- vapply(installedPackagesDevel, "[[",
+installedPackagesTmp <- vapply(installedPackagesTmp, "[[",
     character(1), 1, USE.NAMES = FALSE)
 
 installedPackages <- installed.packages(RLibPath)[, "Package"]

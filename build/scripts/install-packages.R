@@ -1,9 +1,7 @@
 # install required packages for MIRO
 source('./scripts/globals.R')
-RlibPathTmp <- NULL
 if(CIBuild){
-    RlibPathTmp <- file.path(.libPaths()[1], "miro_lib")
-    installedPackages <- c(installedPackages, installedPackagesDevel)
+    installedPackages <- c(installedPackages, installedPackagesTmp)
 }
 for ( libPath in c(RLibPath, RlibPathDevel, RlibPathTmp) ) {
     if (!dir.exists(libPath) && 
@@ -135,11 +133,11 @@ for(package in packageVersionMap){
 }
 if(CIBuild){
     # install packages to lib path devel and copy over
-    for(installedPackageDevel in installedPackagesDevel){
-        if(any(!file.copy(file.path(RlibPathTmp, installedPackageDevel),
+    for(installedPackageTmp in installedPackagesTmp){
+        if(any(!file.copy(file.path(RlibPathTmp, installedPackageTmp),
             RLibPath, overwrite = TRUE, recursive = TRUE))){
             stop(sprintf("Failed to copy: %s to: %s",
-                file.path(RlibPathTmp, installedPackageDevel),
+                file.path(RlibPathTmp, installedPackageTmp),
                 RLibPath), call. = FALSE)
         }
     }
