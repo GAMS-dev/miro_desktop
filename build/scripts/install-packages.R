@@ -2,6 +2,9 @@
 source('./scripts/globals.R')
 if(CIBuild){
     installedPackages <- installedPackagesTmp
+    customPackages <- packageVersionMap[vapply(packageVersionMap, function(package){
+        return(length(package) == 1L)
+        }, logical(1), USE.NAMES = FALSE)]
 }
 for ( libPath in c(RLibPath, RlibPathDevel, RlibPathTmp) ) {
     if (!dir.exists(libPath) && 
@@ -35,7 +38,7 @@ for ( newPackage in newPackages ) {
 }
 
 options(warn = 2)
-.libPaths( c( RlibPathDevel, .libPaths(), if(CIBuild) RlibPathTmp) )
+.libPaths( c( RlibPathDevel, .libPaths()) )
 
 listOfLibs <- character(0L)
 if ( isLinux ) {
@@ -118,7 +121,7 @@ for(package in packageVersionMap){
             file.rename(packagePath, 
                 file.path(RlibPathSrc, basename(packagePath)))
         }else{
-            install.packages(packagePath, lib = RLibPath, repos = NULL, 
+            install.packages(packagePath, lib = if(CIBuild) RlibPathTmp else RLibPath, repos = NULL, 
                          type = "source", dependencies = FALSE, INSTALL_opts = "--no-multiarch")
         }
     } else {
@@ -127,7 +130,7 @@ for(package in packageVersionMap){
 }
 if(CIBuild){
     # install packages to lib path devel and copy over
-    for(installedPackageTmp in installedPackagesTmp){
+    for(installedPackageTmp in c(installedPackagesTmp, customPackages)){
         if(any(!file.copy(file.path(RlibPathTmp, installedPackageTmp),
             RLibPath, overwrite = TRUE, recursive = TRUE))){
             stop(sprintf("Failed to copy: %s to: %s",
