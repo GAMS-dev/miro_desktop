@@ -21,6 +21,12 @@ if ( isLinux ) {
     Sys.setenv(PATH = paste(paste0(RtoolsHome, "/usr/bin/"), Sys.getenv("PATH"), sep=";"))
     Sys.setenv(BINPREF = paste0(RtoolsHome, "/mingw$(WIN)/bin/"))
 }
+if(isWindows){
+    unlink("C:/Windows/System32/config/systemprofile/Documents/R/win-library/4.0/00LOCK-backports", force = TRUE, recursive = TRUE)
+    install.packages("backports", repos = CRANMirrors[1], lib = RlibPathDevel,
+        dependencies = c("Depends", "Imports", "LinkingTo"),
+        INSTALL_opts = "--no-multiarch")
+}
 requiredPackages <- c('devtools', 'remotes', 'jsonlite', 'V8', 
     'zip', 'tibble', 'readr', 'R6', 'processx', 
     'testthat', 'shinytest', 'Rcpp')
