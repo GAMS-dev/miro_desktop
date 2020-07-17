@@ -6,6 +6,9 @@ for ( libPath in c(RLibPath, RlibPathDevel) ) {
         stop(sprintf('Could not create directory: %s', libPath))
     }
 }
+if(CIBuild){
+    installedPackages <- c(installedPackages, installedPackagesDevel)
+}
 if ( isLinux ) {
     # workaround since electron builder does 
     # not include empty directories in app image
@@ -78,10 +81,10 @@ installPackage <- function(package, attempt = 0) {
             downloadPackage(package)
         } else if ( isMac && identical(package[1], "V8") ) {
             # use binary from CRAN to avoid having absolute path to v8 dylib compiled into binary
-            install.packages(package[1], RLibPath, repos = CRANMirrors[attempt + 1],
+            install.packages(package[1], if(CIBuild) RlibPathDevel else RLibPath, repos = CRANMirrors[attempt + 1],
                 dependencies = FALSE, INSTALL_opts = '--no-multiarch')
         } else {
-            withr::with_libpaths(RLibPath, install_version(package[1], package[2], out = './dist/dump',
+            withr::with_libpaths(if(CIBuild) RlibPathDevel else RLibPath, install_version(package[1], package[2], out = './dist/dump',
                 dependencies = FALSE, repos = CRANMirrors[attempt + 1],
                 INSTALL_opts = '--no-multiarch'))
         }
@@ -120,6 +123,17 @@ for(package in packageVersionMap){
         }
     } else {
         installPackage(package)
+    }
+}
+if(CIBuild){
+    # install packages to lib path devel and copy over
+    for(installedPackageDevel in installedPackagesDevel){
+        if(any(!file.copy(file.path(RlibPathDevel, installedPackageDevel),
+            RLibPath, overwrite = TRUE, recursive = TRUE))){
+            stop(sprintf("Failed to copy: %s to: %s",
+                file.path(RlibPathDevel, installedPackageDevel),
+                RLibPath), call. = FALSE)
+        }
     }
 }
 # clean up unncecessary files

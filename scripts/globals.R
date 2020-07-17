@@ -1,3 +1,4 @@
+Rversion <- "4.0.2"
 CRANMirrors <- c('https://cloud.r-project.org/',
     'https://ftp.fau.de/cran/',
     'https://stat.ethz.ch/CRAN/')
@@ -124,8 +125,10 @@ if ( identical(Sys.getenv('BUILD_DOCKER'), 'true') ) {
 
 # on Jenkins use default library
 RlibPathDevel <- NULL
+CIBuild <- FALSE
 if(identical(Sys.getenv("BUILD_NUMBER"), "")){
     RlibPathDevel <-  './build/lib_devel'
+    CIBuild <- TRUE
 } else if(isWindows) {
     # on Windows, we use the R version we ship, so we need to set library path explicitly, or
     # it will install development libraries inside ./r/library
@@ -133,5 +136,16 @@ if(identical(Sys.getenv("BUILD_NUMBER"), "")){
         strsplit(R.version[['minor']], '.', fixed = TRUE)[[1]][1])
 }
 RlibPathSrc <- file.path('.', 'r', 'library_src')
+
+installedPackagesDevel <- installed.packages(RlibPathDevel)
+# install packages to lib path devel and copy over
+installedPackagesDevel <- packageVersionMap[vapply(packageVersionMap, function(packageVersion){
+    packageId <- match(packageVersion[1], installedPackagesDevel[, "Package"])
+    !is.na(packageId) &&
+    identical(packageVersion[2], installedPackagesDevel[packageId, "Version"]) &&
+    identical(Rversion, installedPackagesDevel[packageId, "Built"])
+}, logical(1), USE.NAMES = FALSE)]
+installedPackagesDevel <- vapply(installedPackagesDevel, "[[",
+    character(1), 1, USE.NAMES = FALSE)
 
 installedPackages <- installed.packages(RLibPath)[, "Package"]
