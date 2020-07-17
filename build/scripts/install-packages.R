@@ -21,11 +21,6 @@ if ( isLinux ) {
     Sys.setenv(PATH = paste(paste0(RtoolsHome, "/usr/bin/"), Sys.getenv("PATH"), sep=";"))
     Sys.setenv(BINPREF = paste0(RtoolsHome, "/mingw$(WIN)/bin/"))
 }
-if(isWindows){
-    install.packages("backports", repos = CRANMirrors[1], lib = RlibPathDevel,
-        dependencies = c("Depends", "Imports", "LinkingTo"),
-        INSTALL_opts = "--no-multiarch")
-}
 requiredPackages <- c('devtools', 'remotes', 'jsonlite', 'V8', 
     'zip', 'tibble', 'readr', 'R6', 'processx', 
     'testthat', 'shinytest', 'Rcpp')
