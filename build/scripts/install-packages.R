@@ -1,9 +1,7 @@
 # install required packages for MIRO
 source('./scripts/globals.R')
 if(CIBuild){
-    installedPackages <- c(installedPackages, installedPackagesTmp)
-    
-unlink(RlibPathTmp, force = TRUE, recursive = TRUE)
+    installedPackages <- installedPackagesTmp
 }
 for ( libPath in c(RLibPath, RlibPathDevel, RlibPathTmp) ) {
     if (!dir.exists(libPath) && 
