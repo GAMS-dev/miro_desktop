@@ -128,7 +128,7 @@ for(package in packageVersionMap){
         installPackage(package)
     }
 }
-if(CIBuild){
+if(CIBuild && !isLinux){
     # install packages to lib path devel and copy over
     for(installedPackageTmp in c(installedPackagesTmp, customPackages)){
         if(any(!file.copy(file.path(RlibPathTmp, installedPackageTmp),
