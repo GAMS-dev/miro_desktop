@@ -64,7 +64,7 @@
         "r/**"
       ],
       "target": "nsis",
-      "rfc3161TimeStampServer": "https://freetsa.org",
+      "rfc3161TimeStampServer": "http://timestamp.apple.com/ts01",
       "icon": "./build/icon.ico"
     },
     "nsis": {
