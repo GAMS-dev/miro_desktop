@@ -253,6 +253,9 @@ developMode: ${miroDevelopMode}.`);
     shinyProcessAlreadyDead = true
     onError(e)
   }).then(async () => {
+    if ( shinyProcessAlreadyDead ) {
+      return;
+    }
     shinyProcessAlreadyDead = true
     noError = true
     if ( miroBuildMode ) {
