@@ -137,7 +137,6 @@ pipeline {
             agent { label 'master' }
             when {
                 expression { return currentBuild.currentResult == "SUCCESS" }
-                branch 'master'
             }
             options {
                 skipDefaultCheckout()
@@ -185,7 +184,6 @@ pipeline {
             agent { label 'master' }
             when {
                 expression { return currentBuild.currentResult == "SUCCESS" }
-                branch 'master'
             }
             options {
                 skipDefaultCheckout()
@@ -206,6 +204,7 @@ pipeline {
                     sed -e 's/__VERSION__/'${MIRO_VERSION_SHORT}'/g' ./doc/download_template.html |\
                     sed -e 's/__VERSION_FULL__/'${MIRO_VERSION_FULL}'/g'>./doc/download.html
                     git add ./doc/schema.html ./doc/download.html ./doc/license.html ./doc/index.html ./doc/latest.ver ./doc/miroDemoApps.zip
+                    git status
                     git commit -m "Update documentation"
                     git push
 
