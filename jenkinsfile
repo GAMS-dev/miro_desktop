@@ -157,9 +157,6 @@ pipeline {
             when {
                 expression { return currentBuild.currentResult == "SUCCESS" }
             }
-            options {
-                skipDefaultCheckout()
-            }
             steps {
                 sh '''#!/bin/bash -xe
                     pushd miro > /dev/null
