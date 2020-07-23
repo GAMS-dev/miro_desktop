@@ -139,6 +139,9 @@ pipeline {
                 expression { return currentBuild.currentResult == "SUCCESS" }
                 tag pattern: "v\\d+\\.\\d+.*", comparator: "REGEXP"
             }
+            options {
+                skipDefaultCheckout()
+            }
             steps {
                 withCredentials([string(credentialsId: 'b994bcd8-e2fe-4e97-9950-d7149bb51479', variable: 'S3_URL'),
                     string(credentialsId: '3ca54edd-0357-407f-84bf-317fa1b4c20d', variable: 'S3_ACCESS_KEY'),
@@ -183,6 +186,9 @@ pipeline {
             when {
                 expression { return currentBuild.currentResult == "SUCCESS" }
                 tag pattern: "v\\d+\\.\\d+.*", comparator: "REGEXP"
+            }
+            options {
+                skipDefaultCheckout()
             }
             steps {
                 sh '''#!/bin/bash -xe
