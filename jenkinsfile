@@ -125,7 +125,7 @@ pipeline {
                         MIRO_VERSION_PATCH=$(echo $MIRO_VERSION | cut -f3 -d".")
 
                         ## change to artifact location
-                        pushd artifacts > /dev/null
+                        pushd artifacts/dist > /dev/null
                         ls -la
 
                         FOLDER_NAME="${MIRO_VERSION_MAJOR}.${MIRO_VERSION_MINOR}"
