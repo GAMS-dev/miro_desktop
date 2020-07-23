@@ -64,7 +64,7 @@
         "r/**"
       ],
       "target": "nsis",
-      "rfc3161TimeStampServer": "http://tsa.startssl.com/rfc3161",
+      "rfc3161TimeStampServer": "http://timestamp.apple.com/ts01",
       "icon": "./build/icon.ico"
     },
     "nsis": {
