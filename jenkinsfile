@@ -3,6 +3,7 @@ pipeline {
 
     options {
         buildDiscarder(logRotator(numToKeepStr: '4'))
+        parallelsAlwaysFailFast()
         disableConcurrentBuilds()
     }
 
@@ -48,38 +49,6 @@ pipeline {
                                yarn dist
                             '''
                         }
-                    }
-                }
-            }
-        }
-        stage('Test') {
-            parallel {
-                stage ('windowsX64') {
-                    agent { label 'windowsX64' }
-                    options {
-                        skipDefaultCheckout()
-                    }
-                    steps {
-                        withCredentials([file(credentialsId: 'MIRO_TEST_GAMS_LICE', variable: 'MIRO_TEST_GAMS_LICE')]) {
-                            bat '''
-                               yarn test gams_sys_dir="%GAMS_CORE_PATH%"
-                            '''
-                        }
-                        junit allowEmptyResults: true, testResults: 'miro/test-out.xml'
-                    }
-                }
-                stage ('macos') {
-                    agent { label 'macos' }
-                    options {
-                        skipDefaultCheckout()
-                    }
-                    steps {
-                        withCredentials([file(credentialsId: 'MIRO_TEST_GAMS_LICE', variable: 'MIRO_TEST_GAMS_LICE')]) {
-                            sh '''
-                               yarn test gams_sys_dir=${GAMS_CORE_PATH}
-                            '''
-                        }
-                        junit allowEmptyResults: true, testResults: 'miro/test-out.xml'
                     }
                 }
             }
@@ -152,6 +121,7 @@ pipeline {
                         MIRO_VERSION_PATCH=$(echo $MIRO_VERSION | cut -f3 -d".")
 
                         ## change to artifact location
+                        ls -la
                         pushd dist > /dev/null
 
                         FOLDER_NAME="${MIRO_VERSION_MAJOR}.${MIRO_VERSION_MINOR}"
