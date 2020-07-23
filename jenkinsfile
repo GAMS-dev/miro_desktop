@@ -113,7 +113,7 @@ pipeline {
                 sh '''
                     mkdir -p artifacts
                 '''
-                copyArtifacts filter: '*.AppImage, *.dmg, *.exe', fingerprintArtifacts: true, projectName: '${JOB_NAME}', selector: specific('${BUILD_NUMBER}'), target: 'artifacts'
+                copyArtifacts filter: '**/*.AppImage, **/*.dmg, **/*.exe', fingerprintArtifacts: true, projectName: '${JOB_NAME}', selector: specific('${BUILD_NUMBER}'), target: 'artifacts'
                 withCredentials([string(credentialsId: 'b994bcd8-e2fe-4e97-9950-d7149bb51479', variable: 'S3_URL'),
                     string(credentialsId: '3ca54edd-0357-407f-84bf-317fa1b4c20d', variable: 'S3_ACCESS_KEY'),
                     string(credentialsId: 'f4bd9039-889c-401b-b0c6-455b73147c7c', variable: 'S3_SECRET_KEY')]) {
