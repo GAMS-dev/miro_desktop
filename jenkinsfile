@@ -158,27 +158,35 @@ pipeline {
                 expression { return currentBuild.currentResult == "SUCCESS" }
             }
             steps {
-                sh '''#!/bin/bash -xe
-                    pushd miro > /dev/null
-                    ls -la
+                sshagent(['d60edbb5-9329-4eba-81b2-448d800c4002']) {
+                    sh '''#!/bin/bash -xe
+                        pushd miro > /dev/null
+                        ls -la
 
-                    ./create_miro_lib.sh > /dev/null
-                    MIRO_VERSION_FULL=$(grep -m 1 -e "^MIROVersion" app.R|cut -f3 -d" "|xargs) 
-                    MIRO_VERSION_MAJOR=$(echo $MIRO_VERSION_FULL | cut -f1 -d".")
-                    MIRO_VERSION_MINOR=$(echo $MIRO_VERSION_FULL | cut -f2 -d".")
-                    MIRO_VERSION_SHORT="${MIRO_VERSION_MAJOR}.${MIRO_VERSION_MINOR}"
-                    echo $MIRO_VERSION_FULL | sed 's/\\./,/g'> ./doc/latest.ver
-                    sed -e '/<code class="language-json">/r./conf/config_schema.json' ./doc/schema_template.html >./doc/schema.html
-                    sed -e '/<pre id="miro-license">/r./LICENSE' ./doc/license_template.html >./doc/license.html
-                    sed -i -e "s/\\.\\/download\\.html\\">Get GAMS MIRO .*<\\/a>/\\.\\/download\\.html\\">Get GAMS MIRO $MIRO_VERSION_FULL<\\/a>/g" ./doc/index.html
-                    sed -e 's/__VERSION__/'${MIRO_VERSION_SHORT}'/g' ./doc/download_template.html | sed -e 's/__VERSION_FULL__/'${MIRO_VERSION_FULL}'/g'>./doc/download.html
-                    git add ./doc/schema.html ./doc/download.html ./doc/license.html ./doc/index.html ./doc/latest.ver ./doc/miroDemoApps.zip
-                    git status
-                    git commit -m "Update documentation"
-                    git push
+                        ./create_miro_lib.sh > /dev/null
+                        MIRO_VERSION_FULL=$(grep -m 1 -e "^MIROVersion" app.R|cut -f3 -d" "|xargs) 
+                        MIRO_VERSION_MAJOR=$(echo $MIRO_VERSION_FULL | cut -f1 -d".")
+                        MIRO_VERSION_MINOR=$(echo $MIRO_VERSION_FULL | cut -f2 -d".")
+                        MIRO_VERSION_SHORT="${MIRO_VERSION_MAJOR}.${MIRO_VERSION_MINOR}"
+                        echo $MIRO_VERSION_FULL | sed 's/\\./,/g'> ./doc/latest.ver
+                        sed -e '/<code class="language-json">/r./conf/config_schema.json' ./doc/schema_template.html >./doc/schema.html
+                        sed -e '/<pre id="miro-license">/r./LICENSE' ./doc/license_template.html >./doc/license.html
+                        sed -i -e "s/\\.\\/download\\.html\\">Get GAMS MIRO .*<\\/a>/\\.\\/download\\.html\\">Get GAMS MIRO $MIRO_VERSION_FULL<\\/a>/g" ./doc/index.html
+                        sed -e 's/__VERSION__/'${MIRO_VERSION_SHORT}'/g' ./doc/download_template.html | sed -e 's/__VERSION_FULL__/'${MIRO_VERSION_FULL}'/g'>./doc/download.html
+                        git add ./doc/schema.html ./doc/download.html ./doc/license.html ./doc/index.html ./doc/latest.ver ./doc/miroDemoApps.zip
+                        git status
+                        git config user.name 'jenkins'
+                        git config user.email 'jenkins@berlin.noreply.gams.com'
+                        git checkout -B $BRANCH_NAME
+                        git commit -m "[Jenkins CI] Update documentation"
 
-                    popd > /dev/null
-                '''
+                        set +x
+                        export GIT_SSH_COMMAND="ssh -oStrictHostKeyChecking=no"
+                        git push origin
+
+                        popd > /dev/null
+                    '''
+                }
             }
         }
     }
