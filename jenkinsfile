@@ -137,7 +137,7 @@ pipeline {
             agent { label 'master' }
             when {
                 expression { return currentBuild.currentResult == "SUCCESS" }
-                tag pattern: "v\\d+\\.\\d+.*", comparator: "REGEXP"
+                branch 'master'
             }
             options {
                 skipDefaultCheckout()
@@ -185,7 +185,7 @@ pipeline {
             agent { label 'master' }
             when {
                 expression { return currentBuild.currentResult == "SUCCESS" }
-                tag pattern: "v\\d+\\.\\d+.*", comparator: "REGEXP"
+                branch 'master'
             }
             options {
                 skipDefaultCheckout()
