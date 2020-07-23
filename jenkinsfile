@@ -15,7 +15,6 @@ pipeline {
                         sh '''
                            yarn install --non-interactive
                            yarn dist
-                           yarn docker-build
                         '''
                     }
                 }
@@ -147,7 +146,7 @@ pipeline {
                     string(credentialsId: 'f4bd9039-889c-401b-b0c6-455b73147c7c', variable: 'S3_SECRET_KEY')]) {
                     sh '''#!/bin/bash -xe
                         ## get MIRO version information for artifact and tag name
-                        MIRO_VERSION=$(grep -e '"version": .*' package.json |cut -f4 -d"\"")
+                        MIRO_VERSION=$(grep -e '"version": .*' package.json |cut -f4 -d"\\"")
                         MIRO_VERSION_MAJOR=$(echo $MIRO_VERSION | cut -f1 -d".")
                         MIRO_VERSION_MINOR=$(echo $MIRO_VERSION | cut -f2 -d".")
                         MIRO_VERSION_PATCH=$(echo $MIRO_VERSION | cut -f3 -d".")
@@ -200,9 +199,8 @@ pipeline {
                     echo $MIRO_VERSION_FULL | sed 's/\\./,/g'> ./doc/latest.ver
                     sed -e '/<code class="language-json">/r./conf/config_schema.json' ./doc/schema_template.html >./doc/schema.html
                     sed -e '/<pre id="miro-license">/r./LICENSE' ./doc/license_template.html >./doc/license.html
-                    sed -i -e "s/\\.\\/download\\.html\">Get GAMS MIRO .*<\\/a>/\\.\\/download\\.html\">Get GAMS MIRO $MIRO_VERSION_FULL<\\/a>/g" ./doc/index.html
-                    sed -e 's/__VERSION__/'${MIRO_VERSION_SHORT}'/g' ./doc/download_template.html |\
-                    sed -e 's/__VERSION_FULL__/'${MIRO_VERSION_FULL}'/g'>./doc/download.html
+                    sed -i -e "s/\\.\\/download\\.html\\">Get GAMS MIRO .*<\\/a>/\\.\\/download\\.html\\">Get GAMS MIRO $MIRO_VERSION_FULL<\\/a>/g" ./doc/index.html
+                    sed -e 's/__VERSION__/'${MIRO_VERSION_SHORT}'/g' ./doc/download_template.html | sed -e 's/__VERSION_FULL__/'${MIRO_VERSION_FULL}'/g'>./doc/download.html
                     git add ./doc/schema.html ./doc/download.html ./doc/license.html ./doc/index.html ./doc/latest.ver ./doc/miroDemoApps.zip
                     git status
                     git commit -m "Update documentation"
