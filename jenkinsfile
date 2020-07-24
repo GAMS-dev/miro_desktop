@@ -11,7 +11,7 @@ pipeline {
         stage('Build') {
             parallel {
                 stage ('linux') {
-                    agent { label 'docker' }
+                    agent { label 'master' }
                     steps {
                         sshagent(['d60edbb5-9329-4eba-81b2-448d800c4002']) {
                             sh '''
