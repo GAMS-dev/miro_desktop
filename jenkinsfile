@@ -17,6 +17,7 @@ pipeline {
                             sh '''
                                yarn install --non-interactive
                                yarn dist
+                               yarn docker-build
 
                                git status
                                git add ./main.js ./package.json
