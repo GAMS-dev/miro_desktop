@@ -10,18 +10,11 @@ pipeline {
     stages {
         stage('Build') {
             parallel {
-                stage ('master') {
+                stage ('linux') {
                     agent { label 'master' }
                     steps {
                         sshagent(['d60edbb5-9329-4eba-81b2-448d800c4002']) {
-                            sh '''#!/bin/bash -xe
-                                pushd miro > /dev/null
-
-                              ./create_miro_lib.sh
-                               exit 1
-
-
-
+                            sh '''
                                yarn install --non-interactive
                                yarn dist
                                yarn docker-build
