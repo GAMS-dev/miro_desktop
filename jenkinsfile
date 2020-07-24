@@ -185,6 +185,8 @@ pipeline {
                         git push origin
 
                         popd > /dev/null
+
+                        git status
                     '''
                 }
             }
