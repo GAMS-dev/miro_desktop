@@ -17,7 +17,6 @@ pipeline {
                             sh '''
                                yarn install --non-interactive
                                yarn dist
-                               yarn docker-build
 
                                git status
                                git add ./main.js ./package.json
@@ -25,7 +24,9 @@ pipeline {
                                git config user.name 'jenkins'
                                git config user.email 'jenkins@berlin.noreply.gams.com'
                                git checkout -B $BRANCH_NAME
-                               git commit -m "[Jenkins CI] Update version number"
+                               git commit -m "[Jenkins CI] Update version number" || {
+                                 exit 0
+                               }
 
                                set +x
                                export GIT_SSH_COMMAND="ssh -oStrictHostKeyChecking=no"
@@ -226,18 +227,22 @@ pipeline {
                         git config user.name 'jenkins'
                         git config user.email 'jenkins@berlin.noreply.gams.com'
                         git checkout -B $BRANCH_NAME
-                        git commit -m "[Jenkins CI] Update documentation"
-
-                        git tag -a v${MIRO_VERSION_FULL} -m "version ${MIRO_VERSION_FULL}"
+                        git commit -m "[Jenkins CI] Update documentation" || {
+                            git push origin :refs/tags/v${MIRO_VERSION_FULL}
+                        }
+                        git tag -fa v${MIRO_VERSION_FULL} -m "version ${MIRO_VERSION_FULL}"
 
                         set +x
                         export GIT_SSH_COMMAND="ssh -oStrictHostKeyChecking=no"
-                        git push origin HEAD:$BRANCH_NAME
+                        git push origin HEAD:$BRANCH_NAME || true
                         git push origin v${MIRO_VERSION_FULL}
 
                         popd > /dev/null
 
-                        git tag -a v${MIRO_VERSION_FULL} -m "version ${MIRO_VERSION_FULL}"
+                        git tag -a v${MIRO_VERSION_FULL} -m "version ${MIRO_VERSION_FULL}" || {
+                            git push origin :refs/tags/v${MIRO_VERSION_FULL}
+                            git tag -fa v${MIRO_VERSION_FULL} -m "version ${MIRO_VERSION_FULL}"
+                        }
                         git push origin v${MIRO_VERSION_FULL}
                     '''
                 }
