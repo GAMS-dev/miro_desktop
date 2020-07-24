@@ -67,6 +67,38 @@ pipeline {
                 }
             }
         }
+        stage('Test') {
+            parallel {
+                stage ('windowsX64') {
+                    agent { label 'windowsX64' }
+                    options {
+                        skipDefaultCheckout()
+                    }
+                    steps {
+                        withCredentials([file(credentialsId: 'MIRO_TEST_GAMS_LICE', variable: 'MIRO_TEST_GAMS_LICE')]) {
+                            bat '''
+                               yarn test gams_sys_dir="%GAMS_CORE_PATH%"
+                            '''
+                        }
+                        junit allowEmptyResults: true, testResults: 'miro/test-out.xml'
+                    }
+                }
+                stage ('macos') {
+                    agent { label 'macos' }
+                    options {
+                        skipDefaultCheckout()
+                    }
+                    steps {
+                        withCredentials([file(credentialsId: 'MIRO_TEST_GAMS_LICE', variable: 'MIRO_TEST_GAMS_LICE')]) {
+                            sh '''
+                               yarn test gams_sys_dir=${GAMS_CORE_PATH}
+                            '''
+                        }
+                        junit allowEmptyResults: true, testResults: 'miro/test-out.xml'
+                    }
+                }
+            }
+        }
         stage('Deploy') {
             parallel {
                 stage ('linux') {
@@ -195,13 +227,17 @@ pipeline {
                         git checkout -B $BRANCH_NAME
                         git commit -m "[Jenkins CI] Update documentation"
 
+                        git tag -a v${MIRO_VERSION_FULL} -m "version ${MIRO_VERSION_FULL}"
+
                         set +x
                         export GIT_SSH_COMMAND="ssh -oStrictHostKeyChecking=no"
                         git push origin HEAD:$BRANCH_NAME
+                        git push origin v${MIRO_VERSION_FULL}
 
                         popd > /dev/null
 
-                        git status
+                        git tag -a v${MIRO_VERSION_FULL} -m "version ${MIRO_VERSION_FULL}"
+                        git push origin v${MIRO_VERSION_FULL}
                     '''
                 }
             }
