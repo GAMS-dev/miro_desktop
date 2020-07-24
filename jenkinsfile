@@ -16,6 +16,15 @@ pipeline {
                         sh '''
                            yarn install --non-interactive
                            yarn dist
+                           git add ./main.js ./package.json
+                           git config user.name 'jenkins'
+                           git config user.email 'jenkins@berlin.noreply.gams.com'
+                           git checkout -B $BRANCH_NAME
+                           git commit -m "[Jenkins CI] Update version number"
+
+                           set +x
+                           export GIT_SSH_COMMAND="ssh -oStrictHostKeyChecking=no"
+                           git push origin
                         '''
                     }
                 }
