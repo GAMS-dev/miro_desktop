@@ -17,7 +17,7 @@ pipeline {
                             sh '''#!/bin/bash -xe
                                 pushd miro > /dev/null
 
-                              ./create_miro_lib.sh > /dev/null
+                              ./create_miro_lib.sh
                                exit 1
 
 
