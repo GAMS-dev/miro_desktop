@@ -26,7 +26,7 @@ pipeline {
 
                            set +x
                            export GIT_SSH_COMMAND="ssh -oStrictHostKeyChecking=no"
-                           git push origin
+                           git push origin HEAD:$BRANCH_NAME
                         '''
                     }
                 }
@@ -172,7 +172,6 @@ pipeline {
                 sshagent(['d60edbb5-9329-4eba-81b2-448d800c4002']) {
                     sh '''#!/bin/bash -xe
                         pushd miro > /dev/null
-                        ls -la
 
                         ./create_miro_lib.sh > /dev/null
                         MIRO_VERSION_FULL=$(grep -m 1 -e "^MIROVersion" app.R|cut -f3 -d" "|xargs) 
@@ -193,7 +192,7 @@ pipeline {
 
                         set +x
                         export GIT_SSH_COMMAND="ssh -oStrictHostKeyChecking=no"
-                        git push origin
+                        git push origin HEAD:$BRANCH_NAME
 
                         popd > /dev/null
 
