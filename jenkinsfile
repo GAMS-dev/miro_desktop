@@ -16,7 +16,9 @@ pipeline {
                         sh '''
                            yarn install --non-interactive
                            yarn dist
+                           git status
                            git add ./main.js ./package.json
+                           git status
                            git config user.name 'jenkins'
                            git config user.email 'jenkins@berlin.noreply.gams.com'
                            git checkout -B $BRANCH_NAME
