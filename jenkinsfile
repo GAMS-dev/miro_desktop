@@ -13,21 +13,24 @@ pipeline {
                 stage ('linux') {
                     agent { label 'docker' }
                     steps {
-                        sh '''
-                           yarn install --non-interactive
-                           yarn dist
-                           git status
-                           git add ./main.js ./package.json
-                           git status
-                           git config user.name 'jenkins'
-                           git config user.email 'jenkins@berlin.noreply.gams.com'
-                           git checkout -B $BRANCH_NAME
-                           git commit -m "[Jenkins CI] Update version number"
+                        sshagent(['d60edbb5-9329-4eba-81b2-448d800c4002']) {
+                            sh '''
+                               yarn install --non-interactive
+                               yarn dist
 
-                           set +x
-                           export GIT_SSH_COMMAND="ssh -oStrictHostKeyChecking=no"
-                           git push origin HEAD:$BRANCH_NAME
-                        '''
+                               git status
+                               git add ./main.js ./package.json
+                               git status
+                               git config user.name 'jenkins'
+                               git config user.email 'jenkins@berlin.noreply.gams.com'
+                               git checkout -B $BRANCH_NAME
+                               git commit -m "[Jenkins CI] Update version number"
+
+                               set +x
+                               export GIT_SSH_COMMAND="ssh -oStrictHostKeyChecking=no"
+                               git push origin HEAD:$BRANCH_NAME
+                            '''
+                        }
                     }
                 }
                 stage ('windowsX64') {
@@ -116,6 +119,7 @@ pipeline {
             agent { label 'master' }
             when {
                 expression { return currentBuild.currentResult == "SUCCESS" }
+                branch 'master'
             }
             options {
                 skipDefaultCheckout()
@@ -167,6 +171,7 @@ pipeline {
             agent { label 'master' }
             when {
                 expression { return currentBuild.currentResult == "SUCCESS" }
+                branch 'master'
             }
             steps {
                 sshagent(['d60edbb5-9329-4eba-81b2-448d800c4002']) {
