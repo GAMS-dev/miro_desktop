@@ -107,6 +107,17 @@ downloadPackage <- function(package) {
     }
 }
 
+if(CIBuild){
+    dirsInLibPath <- dir(RlibPathTmp)
+    lockedLibs <- startsWith(dirsInLibPath, "00LOCK-")
+    if(any(lockedLibs)){
+        print(paste0("Locked libraries found. Will remove locks for these libraries: ",
+            paste(dirsInLibPath[lockedLibs], collapse = ", ")))
+        unlink(file.path(RlibPathTmp, dirsInLibPath[lockedLibs]),
+            force = TRUE, recursive = TRUE)
+    }
+}
+
 for(package in packageVersionMap){
     if ( packageIsInstalled(package) ) {
         print(sprintf("Skipping '%s' as it is already installed.", package[1]))
