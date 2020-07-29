@@ -1337,7 +1337,7 @@ ipcMain.on('add-app', async (e, app) => {
            'R_LIBS_SITE': libPath,
            'R_LIB_PATHS': libPath,
            'MIRO_NO_DEBUG': 'true',
-           'MIRO_USE_TMP': appConf.usetmpdir !== 'false',
+           'MIRO_USE_TMP': appConf.usetmpdir !== false,
            'MIRO_WS_PATH': miroWorkspaceDir,
            'MIRO_DB_PATH': getAppDbPath(appConf.dbpath),
            'MIRO_BUILD': 'false',
