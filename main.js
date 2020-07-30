@@ -22,7 +22,7 @@ const AppDataStore = require('./AppDataStore');
 const ConfigManager = require('./ConfigManager');
 const MiroDb = require('./MiroDb');
 const unzip = util.promisify(require('./Unzip'));
-const { randomPort, waitFor, isNull } = require('./helpers');
+const { randomPort, waitFor, isNull, isFalse } = require('./helpers');
 
 const isMac = process.platform === 'darwin';
 const DEVELOPMENT_MODE = !app.isPackaged;
@@ -1369,7 +1369,7 @@ ipcMain.on('add-app', async (e, app) => {
            'R_LIBS_SITE': libPath,
            'R_LIB_PATHS': libPath,
            'MIRO_NO_DEBUG': 'true',
-           'MIRO_USE_TMP': appConf.usetmpdir !== false,
+           'MIRO_USE_TMP': !isFalse(appConf.usetmpdir),
            'MIRO_WS_PATH': miroWorkspaceDir,
            'MIRO_DB_PATH': getAppDbPath(appConf.dbpath),
            'MIRO_BUILD': 'false',
@@ -1379,7 +1379,7 @@ ipcMain.on('add-app', async (e, app) => {
            'LAUNCHINBROWSER': 'true',
            'MIRO_REMOTE_EXEC': 'false',
            'MIRO_VERSION_STRING': appConf.miroversion,
-           'MIRO_MODE': 'base',
+           'MIRO_MODE': appConf.modesAvailable.includes('base')? 'base': 'hcube',
            'MIRO_MODEL_PATH': path.join(appDir, `${appConf.id}.gms`)},
            stdout: 'pipe',
            stderr: 'pipe',
