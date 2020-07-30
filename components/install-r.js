@@ -47,7 +47,7 @@ async function installRPackages(rpath, apppath, libpath, mainWindow, devMode = f
     }
   } else {
     for await (const data of rproc.all) {
-      mainWindow.send('install-r-packages-stdout', data);
+      mainWindow.send('install-r-packages-stdout', data.toString());
     };
     try {
       await rproc;

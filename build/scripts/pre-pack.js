@@ -22,7 +22,7 @@ const tryInstallRPackages = async (attempt = 0) => {
             rPath = path.join('.', 'r', 'bin', 'Rscript');
         }
         const subproc =  execa(rPath, [ path.join('.', 'build', 'scripts', 'install-packages.R') ],
-            { env: { 'LIB_PATH': path.join('.', 'r', 'library'), 
+            { env: { 'LIB_PATH': path.join('.', 'r', 'library'),
             'BUILD_DOCKER': buildDocker? 'true': 'false'}});
         subproc.stderr.pipe(process.stderr);
         subproc.stdout.pipe(process.stderr);
@@ -41,7 +41,7 @@ const tryInstallRPackages = async (attempt = 0) => {
         try {
             console.log('Installing R...');
             const file = fs.createWriteStream(path.join('r', 'latest_r.exe'));
-            const request = https.get('https://cloud.r-project.org/bin/windows/base/R-3.6.3-win.exe', function(response) {
+            const request = https.get('https://cloud.r-project.org/bin/windows/base/R-4.0.2-win.exe', function(response) {
                 response.pipe(file);
 
                 file.on('finish', function() {
@@ -88,13 +88,23 @@ const tryInstallRPackages = async (attempt = 0) => {
             process.exit(1);
         }
     } else {
+        if ( process.platform === 'darwin' && !rExists )  {
+            try {
+                const subproc = execa(path.join('.', 'build', 'scripts', 'get-r-mac.sh'), {shell: true});
+                subproc.stderr.pipe(process.stderr);
+                subproc.stdout.pipe(process.stderr);
+                await subproc;
+            } catch (e) {
+                console.log(`Problems installing R. Error message: ${e.message}`);
+                process.exit(1);
+            }
+        }
         try {
             await tryInstallRPackages()
         } catch (e) {
             console.log(`Problems installing R packages. Error message: ${e.message}`);
             process.exit(1);
         }
-        
     }
     if ( buildDocker ) {
         try {

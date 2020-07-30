@@ -15,8 +15,6 @@ if ( !length(RLibPath) ) {
   RLibPath <- .libPaths()[1]
 }
 
-packageVersionMap <- c(list(dataTableVersionMap), 
-  packageVersionMap)
 for(package in packageVersionMap){
     if ( package[1] %in% installedPackages){
         print(sprintf("Skipping '%s' as it is already installed.", package[1]))

@@ -19,48 +19,30 @@ exports.default = async function signing(context) {
   const entitlementsFile = path.join(context.packager.info['_buildResourcesDir'], 
       'entitlements.mac.plist');
   const appFile = path.join(context.appOutDir, `${appName}.app`);
-  const frameworksDir = path.join(appFile, 'Contents', 'Frameworks');
+  const contentDir = path.join(appFile, 'Contents');
 
-  const objectsToSign = [
-  {
-      file: path.join(frameworksDir, 'Electron Framework.framework', 'Versions', 'A', 'Libraries', 'libEGL.dylib'),
-      flags: []
-  },
-  {
-      file: path.join(frameworksDir, 'Electron Framework.framework', 'Versions', 'A', 'Libraries', 'libffmpeg.dylib'),
-      flags: []
-  },
-  {
-      file: path.join(frameworksDir, 'Electron Framework.framework', 'Versions', 'A', 'Libraries', 'libGLESv2.dylib'),
-      flags: []
-  },
-  {
-      file: path.join(frameworksDir, 'Electron Framework.framework', 'Versions', 'A', 'Libraries', 'libswiftshader_libEGL.dylib'),
-      flags: []
-  },
-  {
-      file: path.join(frameworksDir, 'Electron Framework.framework', 'Versions', 'A', 'Libraries', 'libswiftshader_libGLESv2.dylib'),
-      flags: []
-  },
-  {
-      file: path.join(frameworksDir, 'Electron Framework.framework', 'Versions', 'A', 'Resources', 'crashpad_handler'),
-      flags: ['--options', 'runtime', '--entitlements', entitlementsFile]
-  },
-  {
-      file: path.join(frameworksDir, 'Squirrel.framework', 'Versions', 'A', 'Resources', 'ShipIt'),
-      flags: ['--options', 'runtime', '--entitlements', entitlementsFile]
-  },
-  {
-      file: appFile,
-      flags: ['--options', 'runtime', '--entitlements', entitlementsFile, '--deep']
-  }];
-
-  for ( const objectToSign of objectsToSign ) {
-      const signProc = execa('codesign', ['--sign', codesignIdentity, '--force', 
-         '--timestamp'].concat(objectToSign.flags, objectToSign.file));
-      signProc.stderr.pipe(process.stderr);
-      signProc.stdout.pipe(process.stderr);
-      await signProc;
+  try {
+      console.log(`Making R framework relocatable...`);
+      const subproc =  execa('python3', [ path.join('.', 'build', 'scripts', 'fw-relocatablizer.py'),
+       path.join(contentDir, 'Resources', 'r') ]);
+      subproc.stderr.pipe(process.stderr);
+      subproc.stdout.pipe(process.stderr);
+      await subproc;
+  } catch (e) {
+      console.log(`Problems making R framework relocatable. Error message: ${e.message}`);
+      throw e;
   }
+
+  try{
+    const signProc = execa(path.join('.', 'build', 'scripts', 'sign-dmg.sh'), 
+      [`"${contentDir}"`, codesignIdentity, `"${entitlementsFile}"`], {shell: true});
+    signProc.stderr.pipe(process.stderr);
+    signProc.stdout.pipe(process.stderr);
+    await signProc;
+  } catch (e) {
+      console.log(`Problems signing app. Error message: ${e.message}`);
+      throw e;
+  }
+
   return;
 };

@@ -244,6 +244,10 @@ const schema = {
                "type":"string",
                "minLength":1
            },
+           "DeleteDataMsg": {
+               "type":"string",
+               "minLength":1
+           },
            "ErrorInit": {
                "type":"string",
                "minLength":1
@@ -263,9 +267,33 @@ const schema = {
            "ErrorModelPathMsg": {
                "type":"string",
                "minLength":1
-           }
+           },
+           "ErrorRNotFoundHdr": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorRNotFoundMsg": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorInconsistentDbTablesHdr": {
+               "type":"string",
+               "minLength":1
+           },
+           "ErrorInconsistentDbTablesMsg": {
+               "type":"string",
+               "minLength":1
+           },
          },
-         "required": ["ErrorUnexpectedHdr", "ErrorUnexpectedMsg", "ErrorUnexpectedMsg2", "BtnCancel", "BtnOk", "BtnRemove", "ErrorInvalidHdr", "ErrorInvalidMsg", "ErrorInvalidTwoMsg", "ErrorInvalidThreeMsg", "ErrorAPIHdr", "ErrorAPIMsg", "ErrorVersionMsg", "ErrorReadMsg","ErrorLogoHdr", "ErrorLogoMsg", "ErrorLogoMultiMsg", "ErrorLogoLargeHdr", "ErrorLogoLargeMsg", "ErrorExampleExistsHdr", "ErrorModelExistsHdr", "ErrorModelExistsMsg", "ErrorModelExistsMsg2", "ErrorWriteHdr", "ErrorWriteMsg", "ErrorWriteMsg2", "ErrorAppRunningHdr", "ErrorAppRunningMsg", "ErrorAppIncompMsg", "ErrorMsgLaunch", "ErrorInstallStartMsg", "ErrorInstallPermHdr", "ErrorInstallPerm1Msg", "ErrorInstallPerm2Msg", "ErrorInstallPerm3Msg", "ErrorInstallPerm4Msg", "ErrorInstallPermBtnYes", "ErrorInstallPermBtnNo", "ErrorWritePerm2Msg", "ErrorNoWritePermMsg", "ErrorInvalidPathHdr", "ErrorInvalidPathMsg", "ErrorInvalidPathMsgMac", "ErrorInvalidPathMsg2", "ErrorMessage", "SuccessUpdateHdr", "SuccessUpdateMsg", "ErrorUnexpectedWriteMsg", "DeleteMsg", "ErrorInit", "ErrorRInstallHdr", "ErrorRInstallMsg", "ErrorModelPathHdr", "ErrorModelPathMsg"]
+         "required": ["ErrorUnexpectedHdr", "ErrorUnexpectedMsg", "ErrorUnexpectedMsg2", "BtnCancel", "BtnOk", "BtnRemove", "ErrorInvalidHdr",
+         "ErrorInvalidMsg", "ErrorInvalidTwoMsg", "ErrorInvalidThreeMsg", "ErrorAPIHdr", "ErrorAPIMsg", "ErrorVersionMsg", "ErrorReadMsg",
+         "ErrorLogoHdr", "ErrorLogoMsg", "ErrorLogoMultiMsg", "ErrorLogoLargeHdr", "ErrorLogoLargeMsg", "ErrorExampleExistsHdr", "ErrorModelExistsHdr",
+         "ErrorModelExistsMsg", "ErrorModelExistsMsg2", "ErrorWriteHdr", "ErrorWriteMsg", "ErrorWriteMsg2", "ErrorAppRunningHdr", "ErrorAppRunningMsg",
+         "ErrorAppIncompMsg", "ErrorMsgLaunch", "ErrorInstallStartMsg", "ErrorInstallPermHdr", "ErrorInstallPerm1Msg", "ErrorInstallPerm2Msg",
+         "ErrorInstallPerm3Msg", "ErrorInstallPerm4Msg", "ErrorInstallPermBtnYes", "ErrorInstallPermBtnNo", "ErrorWritePerm2Msg", "ErrorNoWritePermMsg",
+         "ErrorInvalidPathHdr", "ErrorInvalidPathMsg", "ErrorInvalidPathMsgMac", "ErrorInvalidPathMsg2", "ErrorMessage", "SuccessUpdateHdr",
+         "SuccessUpdateMsg", "ErrorUnexpectedWriteMsg", "DeleteMsg", "DeleteDataMsg", "ErrorInit", "ErrorRInstallHdr", "ErrorRInstallMsg",
+         "ErrorModelPathHdr", "ErrorModelPathMsg", "ErrorRNotFoundHdr", "ErrorRNotFoundMsg", "ErrorInconsistentDbTablesHdr", "ErrorInconsistentDbTablesMsg"]
      },
      "general":{
        "type":"object",
@@ -812,14 +840,19 @@ const en = {
         "SuccessUpdateMsg": "Your configuration was successfully updated. MIRO must be restarted for your changes to take effect. Do you want to restart MIRO now?",
         "ErrorUnexpectedWriteMsg": "Configuration data could not be saved. Do you miss write permissions in this location:",
         "DeleteMsg": "Are you sure you want to permanently remove the app?",
+        "DeleteDataMsg": "Do you want to permanently remove all data belonging to this app? This cannot be undone.",
         "ErrorInit": "Error initialising MIRO",
         "ErrorRInstallHdr": "Failed to install R packages",
         "ErrorRInstallMsg": "The R packages required to run MIRO could not be installed. Check log file for more information.",
         "ErrorModelPathHdr": "No model path",
         "ErrorModelPathMsg": "You need to specify the path to the main gms file via the environment variable: MIRO_MODEL_PATH",
+        "ErrorRNotFoundHdr": "R not found",
+        "ErrorRNotFoundMsg": "In order to use MIRO, you have to have R installed. You can add the path to your R installations in the Preferences menu.",
         "BtnCancel": "Cancel",
         "BtnOk": "OK",
-        "BtnRemove": "Remove"
+        "BtnRemove": "Remove",
+        "ErrorInconsistentDbTablesHdr": "Inconsistent data",
+        "ErrorInconsistentDbTablesMsg": "Your database contains records that are inconsistent with the new version of the MIRO application you want to add. Do you want to remove all inconsistent data? The records to be removed are: '{0}'."
     },
     "general": {
         "title": "MIRO Library",
@@ -1000,14 +1033,19 @@ const de = {
         "SuccessUpdateMsg": "Ihre Konfiguration wurde erfolgreich aktualisiert. MIRO muss neu gestartet werden, damit Ihre Änderungen wirksam werden. Wollen Sie MIRO jetzt neu starten?",
         "ErrorUnexpectedWriteMsg": "Konfigurationsdaten konnten nicht gespeichert werden. Fehlen Ihnen an dieser Stelle Schreibrechte:",
         "DeleteMsg": "Sind Sie sicher, dass Sie die App dauerhaft entfernen möchten?",
+        "DeleteDataMsg": "Möchten Sie alle Daten, die zu dieser App gehören, dauerhaft entfernen? Dies kann nicht rückgängig gemacht werden.",
         "ErrorInit": "Fehler bei der Initialisierung von MIRO",
         "ErrorRInstallHdr": "Installation von R Paketen fehlgeschlagen",
         "ErrorRInstallMsg": "Die zum Betrieb von MIRO erforderlichen R Pakete konnten nicht installiert werden. Prüfen Sie die Logdatei für weitere Informationen.",
         "ErrorModelPathHdr": "Kein Modellpfad",
         "ErrorModelPathMsg": "Sie müssen den Pfad zur Haupt .gms Datei über die Umgebungsvariable angeben: MIRO_MODEL_PATH",
+        "ErrorRNotFoundHdr": "R nicht gefunden",
+        "ErrorRNotFoundMsg": "Um MIRO verwenden zu können, müssen Sie R installiert haben. Sie können den Pfad zu Ihren R-Installationen im Einstellungs-Menü hinzufügen.",
         "BtnCancel": "Abbrechen",
         "BtnOk": "OK",
-        "BtnRemove": "Entfernen"
+        "BtnRemove": "Entfernen",
+        "ErrorInconsistentDbTablesHdr": "Inkonsistente Daten",
+        "ErrorInconsistentDbTablesMsg": "Ihre Datenbank enthält Datensätze, die mit der neuen Version der MIRO-Anwendung, die Sie hinzufügen möchten, nicht konsistent sind. Möchten Sie alle inkonsistenten Daten entfernen? Die zu entfernenden Datensätze sind: '{0}'."
     },
     "general": {
         "title": "MIRO Bibliothek",
@@ -1187,14 +1225,19 @@ const cn = {
         "SuccessUpdateMsg": "配置已成功更新。必须重新启动MIRO才能使配置的更改生效。是否要立即重启MIRO？",
         "ErrorUnexpectedWriteMsg": "无法保存配置数据。您是否缺少此位置的写入权限：",
         "DeleteMsg": "要永久删除该应用程序吗？",
+        "DeleteDataMsg": "你想永久删除属于这个应用程序的所有数据吗？这一点是无法挽回的。",
         "ErrorInit": "初始化MIRO时出错",
         "ErrorRInstallHdr": "无法安装R软件包",
         "ErrorRInstallMsg": "无法安装运行MIRO所需的R软件包。检查日志文件以获取更多信息。",
         "ErrorModelPathHdr": "无模型路径",
         "ErrorModelPathMsg": "您需要通过环境变量指定主gms文件的路径：MIRO_MODEL_PATH",
+        "ErrorRNotFoundHdr": "未找到R",
+        "ErrorRNotFoundMsg": "为了使用MIRO，你必须安装了R。你可以在 \"首选项 \"菜单中添加到你的R安装路径。",
         "BtnCancel": "取消",
         "BtnOk": "确认",
-        "BtnRemove": "删除"
+        "BtnRemove": "删除",
+        "ErrorInconsistentDbTablesHdr": "数据不一致",
+        "ErrorInconsistentDbTablesMsg": "您的数据库中包含的记录与您要添加的MIRO应用程序的新版本不一致。你想删除所有不一致的数据吗？需要删除的记录有： '{0}'."
     },
     "general": {
         "title": "MIRO库",

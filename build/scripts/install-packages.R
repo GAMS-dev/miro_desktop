@@ -12,11 +12,12 @@ if ( isLinux ) {
     writeLines('', file.path(RLibPath, 'EMPTY'))
 } else if ( isWindows ) {
     # make sure Rtools compilers are used on Windows
-    Sys.setenv(PATH = paste("C:/Rtools/bin", Sys.getenv("PATH"), sep=";"))
-    Sys.setenv(BINPREF = "C:/Rtools/mingw_$(WIN)/bin/")
+    RtoolsHome <- "C:/rtools40"
+    Sys.setenv(PATH = paste(paste0(RtoolsHome, "/usr/bin/"), Sys.getenv("PATH"), sep=";"))
+    Sys.setenv(BINPREF = paste0(RtoolsHome, "/mingw$(WIN)/bin/"))
 }
 requiredPackages <- c('devtools', 'remotes', 'jsonlite', 'V8', 
-    'jsonvalidate', 'zip', 'tibble', 'readr', 'R6', 'processx', 
+    'zip', 'tibble', 'readr', 'R6', 'processx', 
     'testthat', 'shinytest', 'Rcpp')
 if ( identical(Sys.getenv('BUILD_DOCKER'), 'true') ) {
     requiredPackages <- c(requiredPackages, 'DBI', 'blob')
@@ -49,7 +50,7 @@ packageIsInstalled <- function(package) {
     return(package[1] %in% installedPackages)
 }
 
-dontDisplayMe <- lapply(requiredPackages, library, character.only = TRUE)
+dontDisplayMe <- lapply(c('devtools', 'remotes'), library, character.only = TRUE)
 
 if ( isLinux && !dir.exists(RlibPathSrc) && 
     !dir.create(RlibPathSrc, showWarnings = TRUE, recursive = TRUE)) {
@@ -99,40 +100,6 @@ downloadPackage <- function(package) {
             package[1], packageFileNameTmp, packageFileName))
     }
 }
-# data.table needs some special attention on OSX due to lacking openmp support in clang
-# see https://github.com/Rdatatable/data.table/wiki/Installation#openmp-enabled-compiler-for-mac
-if ( !packageIsInstalled(dataTableVersionMap) ){
-    if ( isMac ) {
-        makevarsPath <- '~/.R/Makevars'
-        if ( file.exists(makevarsPath) ) {
-            stop("Makevars already exist. Won't overwrite!")
-        }
-        if (!dir.exists(dirname(makevarsPath)) && 
-            !dir.create(dirname(makevarsPath), showWarnings = TRUE, recursive = TRUE)){
-            stop(sprintf('Could not create directory: %s', dirname(makevarsPath)))
-        }
-        writeLines(c('LLVM_LOC = /usr/local/opt/llvm', 
-            'CC=$(LLVM_LOC)/bin/clang -fopenmp',
-           'CXX=$(LLVM_LOC)/bin/clang++ -fopenmp', 
-           '# -O3 should be faster than -O2 (default) level optimisation ..',
-           'CFLAGS=-g -O3 -Wall -pedantic -std=gnu99 -mtune=native -pipe', 
-           'CXXFLAGS=-g -O3 -Wall -pedantic -std=c++11 -mtune=native -pipe',
-           'LDFLAGS=-L/usr/local/opt/gettext/lib -L$(LLVM_LOC)/lib -Wl,-rpath,$(LLVM_LOC)/lib',
-            'CPPFLAGS=-I/usr/local/opt/gettext/include -I$(LLVM_LOC)/include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include'), 
-        makevarsPath)
-    }
-    tryCatch({
-        installPackage(dataTableVersionMap)
-    }, error = function(e){
-        stop(sprintf('Problems installing data.table: %s', conditionMessage(e)))
-    }, finally = {
-        if( isMac ){
-            unlink(makevarsPath)
-        }
-    })    
-} else {
-    print(sprintf("Skipping '%s' as it is already installed.", dataTableVersionMap[1]))
-}
 
 for(package in packageVersionMap){
     if ( packageIsInstalled(package) ) {
@@ -169,7 +136,9 @@ if ( isWindows ) {
 # replace directories with periods in their names with symlinks 
 # as directories with periods must be frameworks for codesign to not nag
 if (isMac) {
-    dirsWithPeriod <- list.dirs(file.path('.', 'r'))
+    currWd <- getwd()
+    setwd(file.path('.', 'r'))
+    dirsWithPeriod <- list.dirs(file.path('.'))
     dirsWithPeriod <- dirsWithPeriod[grepl('.*\\..*', basename(dirsWithPeriod), perl = TRUE)]
     dirsWithPeriod <- dirsWithPeriod[dirsWithPeriod != '.']
     dirsWithPeriod <- dirsWithPeriod[vapply(Sys.readlink(dirsWithPeriod), identical, logical(1L), USE.NAMES = FALSE, '')]
@@ -199,6 +168,17 @@ if (isMac) {
     }, finally = {
         setwd(currWorkDir)
     })
+    setwd(file.path('.', 'fontconfig', 'fonts', 'confd'))
+    # fix some symlinks that are hardlinked to /Library/Frameworks/R.frameworks
+    filesWithBadLink <- list.files('.')
+    filesWithBadLink <- filesWithBadLink[filesWithBadLink != "README"]
+    for ( fileWithBadLink in filesWithBadLink ) {
+        unlink(fileWithBadLink, force = TRUE)
+        file.symlink(file.path('..', '..', 'fontconfig', 
+            'conf.avail', fileWithBadLink),
+            fileWithBadLink)
+    }
+    setwd(currWd)
 }
 # replace MIRO API version, MIRO version and MIRO release date in main.js and package.json with the one set in miro/app.R
 local({
@@ -210,8 +190,8 @@ local({
         paste0('const requiredAPIVersion = ', APIVersion, ';'), mainJS)
     mainJS = gsub("const miroVersion = '[^']+';",
         paste0("const miroVersion = '", MIROVersion, "';"), mainJS)
-    mainJS = gsub("global.miroRelease = '[^']+';",
-        paste0("global.miroRelease = '", MIRORDate, "';"), mainJS)
+    mainJS = gsub("const miroRelease = '[^']+';",
+        paste0("const miroRelease = '", MIRORDate, "';"), mainJS)
     writeLines(mainJS, './main.js')
     packageJSON = readLines('./package.json', warn = FALSE)
     packageJSON = gsub('"version": "[^"]+",',
@@ -243,7 +223,7 @@ for ( modelName in c( 'pickstock', 'transport', 'sudoku', 'tsp', 'farming', 'ins
 
     Sys.setenv(MIRO_MODEL_PATH=file.path(modelPath, paste0(modelName, '.gms')))
 
-    buildProc = run(file.path(R.home(), 'bin', 'Rscript'), 
+    buildProc = processx::run(file.path(R.home(), 'bin', 'Rscript'), 
         c('--vanilla', './app.R'), error_on_status = FALSE,
         wd = file.path(getwd(), 'miro'))
     if(buildProc$status != 0L) {
@@ -252,4 +232,3 @@ for ( modelName in c( 'pickstock', 'transport', 'sudoku', 'tsp', 'farming', 'ins
     }
     zip::unzip(miroAppPath, exdir = file.path(examplesPath, modelName))
 }
-

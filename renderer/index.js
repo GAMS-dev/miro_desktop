@@ -1,14 +1,16 @@
 'use strict'
 
-const { remote, ipcRenderer, shell } = require('electron')
+const { ipcRenderer, shell } = require('electron')
 const path = require('path');
 const { pathToFileURL } = require('url');
 const fs = require('fs');
+const querystring = require('querystring');
 window.Bootstrap = require('bootstrap');
 const jQuery = require('jquery');
 const $ = require('jquery');
 
-let lang = remote.getGlobal('lang').general;
+let lang = {};
+const appPath = querystring.parse(global.location.search)['?appPath'];
 const btRemoveConfirm = document.getElementById('btRemoveModel');
 const appsWrapper = $('#appsWrapper');
 const noAppsNotice = $('#noAppsDiv');
@@ -28,20 +30,9 @@ const addAppWrapperHTML = `<div id="addAppBox" class="add-app-box app-box-fixed-
                              </div>
                             <a class="btn-add-app" id="addApp"><i class="fas fa-plus-circle"></i></a>
                           </div>`;
-const appFilesPlaceholder = lang['appFilesPlaceholder'];
-const appNamePlaceholder = lang['appNamePlaceholder'];
-const appDescPlaceholder = lang['appDescPlaceholder'];
-const appDbPathPlaceholder = lang['appDbPathPlaceholder'];
-const appDbPathReset = lang['appDbPathReset'];
-const appLogoPlaceholder = lang['appLogoPlaceholder'];
-const editHelper = `<div class="edit-info" style="display:none;">
-                        <p class="edit-info-text"><img class="edit-info-img img-fluid" \ 
-                        src="${pathToFileURL(path.join(remote.app.getAppPath(),
-                        'static', 'arrow.png'))}" width="45px" align="middle" alt="arrow">${lang['editAppInfoText']}</p>
-                    </div>`;  
-let appData
-let dataPath
-let newAppConfig
+let appData;
+let dataPath;
+let newAppConfig;
 
 let dragAddAppCounter = 0;
 let isInEditMode = false;
@@ -61,20 +52,13 @@ jQuery.fn.swapWith = function(to) {
     });
 };
 
-['title', 'btEdit', 'noApps', 'btAddExamples'].forEach(id => {
-  const el = document.getElementById(id);
-  if ( el ) {
-    el.innerText = lang[id];
-  }
-});
-
 function resetAppConfig(appID) {
   if ( !appID ) {
     return;
   }
   const oldAppData = appData.find(app => app.id === appID);
-  const appDbPath = oldAppData.dbpath? oldAppData.dbpath: appDbPathPlaceholder;
-  let logoPath = path.join(remote.app.getAppPath(), 'static', 'default_logo.png');
+  const appDbPath = oldAppData.dbpath? oldAppData.dbpath: lang['appDbPathPlaceholder'];
+  let logoPath = path.join(appPath, 'static', 'default_logo.png');
   if ( oldAppData.logoPath ) {
       logoPath = path.join(dataPath, appID, oldAppData.logoPath);
   }
@@ -83,7 +67,7 @@ function resetAppConfig(appID) {
   $(`#appTitle_${appID}`).text(oldAppData.title);
   $(`#appDesc_${appID}`).text(oldAppData.description);
   $(`#appDbPathLabel_${appID}`).text(appDbPath);
-  if ( appDbPath === appDbPathPlaceholder ) {
+  if ( appDbPath === lang['appDbPathPlaceholder'] ) {
     $(`#appDbPathLabel_${appID}`).siblings('.reset-db-path').hide();
   }
 }
@@ -153,25 +137,30 @@ function expandAddAppForm(){
   addAppWrapper.css( 'z-index', 11 );
   $overlay.data('current', addAppWrapper).fadeIn(300);
   addAppWrapper.html(`<div class="app-box" id="expandedAddAppWrapper">
+                        <div id="addAppSpinner">
+                          <div class="progress" style="position:relative;top:50%;margin-left:auto;margin-right:auto;width:90%">
+                            <div id="addAppProgress" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                          </div>
+                        </div>
                         <div style="height:200px;">
                            <div class="drag-drop-area app-window" id="newAppFiles">
                               <div class="drag-drop-area-text empty">
                                 <div><i class="fas fa-plus-circle drag-drop-area-icon"></i></div>
-                                 ${appFilesPlaceholder}
+                                 ${lang['appFilesPlaceholder']}
                               </div>
                            </div>
                             <div class="drag-drop-area add-app-logo app-logo" id="newAppLogo" style="display:none">
                               <div class="drag-drop-area-text not-empty">
-                               ${appLogoPlaceholder}
+                               ${lang['appLogoPlaceholder']}
                               </div>
                            </div>
                         </div>
                         <div>
                         <h3 id="newAppName" class="app-title editable" style="margin-top:15pt;" contenteditable="true">
-                           ${appNamePlaceholder}
+                           ${lang['appNamePlaceholder']}
                         </h3>
                         <p id="newAppDesc" class="app-desc editable" contenteditable="true">
-                           ${appDescPlaceholder}
+                           ${lang['appDescPlaceholder']}
                         </p>
                         </div>
                         <div class="input-group mb-3" style="visibility:hidden;">
@@ -186,7 +175,8 @@ function expandAddAppForm(){
                         <div style = "text-align:right;">
                             <input class="btn btn-secondary cancel-btn" id="btAddAppReset" value="${lang['btCancel']}" type="reset">
                             <button class="btn btn-secondary confirm-btn" id="btAddApp" type="button">${lang['btAddApp']}</button>
-                        </div>`);
+                        </div>
+                      </div>`);
 }
 
 $body.on('click', '.app-box', function(e) {
@@ -210,13 +200,13 @@ $body.on('click', '.app-box', function(e) {
         return;
       }
       $(`#appBox_${appID}`).removeClass('app-box-fixed-height');
-      $(`#appLogo_${appID}`).html(`<div class='drag-drop-area-text'>${appLogoPlaceholder}</div>`).addClass('drag-drop-area');
+      $(`#appLogo_${appID}`).html(`<div class='drag-drop-area-text'>${lang['appLogoPlaceholder']}</div>`).addClass('drag-drop-area');
       $(`#appTitle_${appID}`).addClass('editable').removeClass('app-title-fixed').attr('contenteditable', true);
       const appDescField = $(`#appDesc_${appID}`);
       const appTitleField = $(`#appTitle_${appID}`);
       appDescField.addClass('editable').removeClass('app-desc-fixed').attr('contenteditable', true);
       if ( !appDescField.text().trim() ) {
-        appDescField.text(appDescPlaceholder);
+        appDescField.text(lang['appDescPlaceholder']);
       }
     }
     $(`#appBox_${appID} .db-path-field`).slideDown(200);
@@ -227,26 +217,26 @@ $body.on('click', '.app-box', function(e) {
 });
 appsWrapper.on('focus', '.app-title', (e) => {
   const $target = $(e.target);
-  if ( $target.text().trim() === appNamePlaceholder ) {
+  if ( $target.text().trim() === lang['appNamePlaceholder'] ) {
     $target.text('');
   }
 });
 appsWrapper.on('focusout', '.app-title', (e) => {
   const $target = $(e.target);
   if ( $target.text().trim() === '' ) {
-    $target.text(appNamePlaceholder);
+    $target.text(lang['appNamePlaceholder']);
   }
 });
 appsWrapper.on('focus', '.app-desc', (e) => {
   const $target = $(e.target);
-  if ( $target.text().trim() === appDescPlaceholder ) {
+  if ( $target.text().trim() === lang['appDescPlaceholder'] ) {
     $target.text('');
   }
 });
 appsWrapper.on('focusout', '.app-desc', (e) => {
   const $target = $(e.target);
   if ( $target.text().trim() === '' ) {
-    $target.text(appDescPlaceholder);
+    $target.text(lang['appDescPlaceholder']);
   }
 });
 appsWrapper.on('click', '.btn-save-changes', function(){
@@ -263,7 +253,7 @@ appsWrapper.on('click', '.btn-save-changes', function(){
     return
   }
   const appTitle = $(`#appTitle_${appID}`).text().trim();
-  if ( !appTitle || appTitle === appNamePlaceholder ) {
+  if ( !appTitle || appTitle === lang['appNamePlaceholder'] ) {
     ipcRenderer.send('show-error-msg', {
         type: 'info',
         title: lang['errNoAppTitleHdr'],
@@ -273,14 +263,14 @@ appsWrapper.on('click', '.btn-save-changes', function(){
   }
   newAppConfig.title = appTitle;
   const appDescription = $(`#appDesc_${appID}`).text().trim();
-  if ( appDescription && appDescription !== appDescPlaceholder ) {
+  if ( appDescription && appDescription !== lang['appDescPlaceholder'] ) {
     newAppConfig.description = appDescription;
   }
   ipcRenderer.send('update-app', newAppConfig);
 });
 appsWrapper.on('click', '.reset-db-path', function(){
   const appID = this.dataset.id;
-  $(`#appDbPathLabel_${appID}`).text(appDbPathPlaceholder);
+  $(`#appDbPathLabel_${appID}`).text(lang['appDbPathPlaceholder']);
   $(this).hide();
   if ( newAppConfig ) {
     delete newAppConfig.dbpath;
@@ -298,7 +288,7 @@ appsWrapper.on('click', '#btAddApp', () => {
         });
     }
     const titleTmp = $('#newAppName').text().trim();
-    if ( titleTmp === appNamePlaceholder || titleTmp.length < 1 ) {
+    if ( titleTmp === lang['appNamePlaceholder'] || titleTmp.length < 1 ) {
         return ipcRenderer.send('show-error-msg', {
             type: 'info',
             title: lang['errNoAppTitleHdr'],
@@ -306,11 +296,12 @@ appsWrapper.on('click', '#btAddApp', () => {
         });
     }
     let descTmp  = $('#newAppDesc').text().trim();
-    if ( descTmp === appDescPlaceholder ) {
+    if ( descTmp === lang['appDescPlaceholder'] ) {
         descTmp = '';
     }
     newAppConfig.title       = titleTmp;
     newAppConfig.description = descTmp;
+    $('#addAppSpinner').show();
     ipcRenderer.send('add-app', newAppConfig);
 });
 appsWrapper.on('click', '.cancel-btn', function(){
@@ -330,7 +321,7 @@ appsWrapper.on('drop', '.app-logo', function(e){
     dragAddAppCounter = 0;
 
     const $this = $(this);
-    $this.removeClass('index-dragover').text(appLogoPlaceholder);
+    $this.removeClass('index-dragover').text(lang['appLogoPlaceholder']);
     const filePath = [...e.originalEvent.dataTransfer.files].map(el => el.path);
     ipcRenderer.send('validate-logo', filePath, this.dataset.id);
 });
@@ -417,7 +408,7 @@ appsWrapper.on('drop', '#newAppFiles', function(e){
   e.preventDefault();
   e.stopPropagation();
   dragAddAppCounter = 0;
-  $('#newAppFiles').removeClass('index-dragover').text(appFilesPlaceholder);
+  $('#newAppFiles').removeClass('index-dragover').text(lang['appFilesPlaceholder']);
   const filePaths = [...e.originalEvent.dataTransfer.files].map(el => el.path);
   ipcRenderer.send('validate-app', filePaths);
 });
@@ -522,16 +513,25 @@ appsWrapper.on('click', '.launch-app', function(){
   $(`#appLoadingScreen_${appID}`).show();
   runningProcesses.push(appID);
   btEditWrapper.addClass('bt-disabled');
-  ipcRenderer.send('launch-app', this.dataset);
+  ipcRenderer.send('launch-app', Object.assign({}, this.dataset));
 });
-ipcRenderer.on('apps-received', (e, apps, appDataPath, startup = false, deactivateEditMode = true, appsActive = []) => {
+ipcRenderer.on('apps-received', (e, apps, appDataPath, startup = false, deactivateEditMode = true, appsActive = [], langData = null) => {
   if ( isInEditMode ) {
     toggleEditMode();
+  }
+  if ( langData != null && lang['btLaunch'] == null) {
+    lang = langData;
+    ['title', 'btEdit', 'noApps', 'btAddExamples'].forEach(id => {
+      const el = document.getElementById(id);
+      if ( el ) {
+        el.innerText = lang[id];
+      }
+    });
   }
   appData = apps;
   dataPath = appDataPath;
   const appItems = apps.reduce((html, app) => {
-    let logoPath = path.join(remote.app.getAppPath(), 'static', 'default_logo.png');
+    let logoPath = path.join(appPath, 'static', 'default_logo.png');
     if ( app.logoPath ) {
         logoPath = path.join(appDataPath, app.id, app.logoPath);
     }
@@ -554,7 +554,7 @@ ipcRenderer.on('apps-received', (e, apps, appDataPath, startup = false, deactiva
                    <div>
                      <div style="height:200px;">
                          <div id="appLogo_${app.id}" style="background-image:url('${pathToFileURL(logoPath)}?v=${new Date().getTime()}');" \
-title="${app.title} logo" data-id="${app.id}" class="app-logo">
+data-id="${app.id}" class="app-logo">
                         </div>
                      </div>
                      <div>
@@ -564,8 +564,8 @@ title="${app.title} logo" data-id="${app.id}" class="app-logo">
                          </div>
                          <div class="custom-file db-path-field" style="display:none;">
                            <div id="appDbPath_${app.id}" class="custom-file-input browseFiles app-db-path" data-id="${app.id}" aria-describedby="resetDbPath"></div>
-                           <label id="appDbPathLabel_${app.id}" class="custom-file-label dbpath" for="appDbPath_${app.id}">${app.dbpath? app.dbpath: appDbPathPlaceholder}</label>
-                           <small data-id="${app.id}" class="form-text reset-db-path" style="${app.dbpath? '': 'display:none'}">${appDbPathReset}</small>
+                           <label id="appDbPathLabel_${app.id}" class="custom-file-label dbpath" for="appDbPath_${app.id}">${app.dbpath? app.dbpath: lang['appDbPathPlaceholder']}</label>
+                           <small data-id="${app.id}" class="form-text reset-db-path" style="${app.dbpath? '': 'display:none'}">${lang['appDbPathReset']}</small>
                          </div>
                      </div>
                      <div class="dropdown mb-3 btn-launch-wrapper">
@@ -597,12 +597,16 @@ title="${app.title} logo" data-id="${app.id}" class="app-logo">
              </div>`
     return html
   }, '');
-  const addAppWrapperHTMLFull = `<div id="addAppWrapper" class="col-lg-4 col-6" style="display:none;">
+  const addAppWrapperHTMLFull = `<div id="addAppWrapper" class="col-xxl-3 col-lg-4 col-6" style="display:none;">
                                   ${addAppWrapperHTML}
                                 </div>`;
   loadingScreen.hide();
   if (appItems.length !== 0) {
-        appsWrapper.html(appItems + addAppWrapperHTMLFull + editHelper);
+        appsWrapper.html(`${appItems}${addAppWrapperHTMLFull}<div class="edit-info" style="display:none;">
+                        <p class="edit-info-text"><img class="edit-info-img img-fluid" \ 
+                        src="${pathToFileURL(path.join(appPath,
+                        'static', 'arrow.png'))}" width="45px" align="middle" alt="arrow">${lang['editAppInfoText']}</p>
+                    </div>`);
         noAppsNotice.hide();
     } else {
         if ( startup ) {
@@ -683,11 +687,18 @@ ipcRenderer.on('app-validated', (e, appConf) => {
         $('#newAppLogo').css('background-image', `url('${pathToFileURL(appConf.logoPathTmp)}')`);
         delete newAppConfig.logoPathTmp;
     }
-    if ( appNameField.text().trim() === appNamePlaceholder ) {
+    if ( appNameField.text().trim() === lang['appNamePlaceholder'] ) {
         appNameField.text(appConf.id);
     }
     $('#newAppFiles').css('display', 'none');
     $('#newAppLogo').css('display', 'block');
+});
+ipcRenderer.on('add-app-progress', (e, progress) => {
+  if ( progress === -1 ) {
+    $('#addAppSpinner').hide();
+  } else {
+    $('#addAppProgress').css('width', `${progress}%`).attr('aria-valuenow', progress);
+  }
 });
 ipcRenderer.on('activate-edit-mode', (e, openNewAppForm, scrollToBottom = false) => {
   if ( openNewAppForm ) {

@@ -87,6 +87,14 @@ class AppDataStore extends Store {
     return this.apps
   }
 
+  getAppConfigValue (id, key) {
+    const appIdx = this.apps.findIndex(t => t.id === id);
+    if ( appIdx === -1 ) {
+      throw Error('App ID not found');
+    }
+    return this.apps[appIdx][key];
+  }
+
   isUniqueId (id) {
     if ( this.apps.filter(t => t.id === id).length ) {
       return false;

@@ -3,7 +3,7 @@ node_modules/
 dist/
 build/lib_devel
 .env
-r/library
-r/library_src
+/r
 *.log
 version
+.Rproj.user

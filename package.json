@@ -1,6 +1,6 @@
 {
   "name": "com.gams.miro",
-  "version": "1.0.4",
+  "version": "1.1.2",
   "description": "GAMS MIRO is an interactive web application for GAMS models. It is designed for people working with GAMS looking for an easy and automated way to deploy their models. Extensive visualization options support you to make decisions based on optimization.",
   "homepage": "https://gams.com/miro",
   "main": "main.js",
@@ -49,12 +49,8 @@
       "mimeType": "application/miro"
     },
     "mac": {
-      "extraFiles": [
-        {
-          "from": "r",
-          "to": "MacOS/r",
-          "filter": "**/*"
-        }
+      "extraResources": [
+        "r"
       ],
       "category": "public.app-category.productivity",
       "icon": "./build/icon.icns",
@@ -68,6 +64,7 @@
         "r/**"
       ],
       "target": "nsis",
+      "rfc3161TimeStampServer": "http://timestamp.apple.com/ts01",
       "icon": "./build/icon.ico"
     },
     "nsis": {
@@ -101,19 +98,20 @@
   "author": "GAMS Development Corp.",
   "license": "GPL-3.0-only",
   "devDependencies": {
-    "electron": "^6.0.11",
-    "electron-builder": "^21.2.0"
+    "electron": "^9.0.0",
+    "electron-builder": "^22.6.1"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.11.2",
     "ajv": "^6.10.2",
     "axios": "^0.19.0",
-    "bootstrap": "^4.3.1",
-    "electron-log": "^3.0.8",
+    "better-sqlite3": "^7.1.0",
+    "bootstrap": "^4.5.0",
+    "electron-log": "^4.1.2",
     "electron-store": "^5.0.0",
-    "execa": "^3.0.0",
-    "fs-extra": "^8.1.0",
-    "jquery": "^3.4.1",
+    "execa": "^4.0.1",
+    "fs-extra": "^9.0.0",
+    "jquery": "^3.5.1",
     "popper.js": "^1.15.0",
     "portscanner": "^2.2.0",
     "tree-kill": "^1.2.2",

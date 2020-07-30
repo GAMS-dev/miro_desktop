@@ -50,8 +50,15 @@ const waitFor = (milliseconds) => {
     setTimeout(resolve, milliseconds);
   })
 }
+
+const isFalse = (val) => {
+  return val === 'false' ||
+  val === false || val === 0;
+}
+
 module.exports = {
     waitFor: waitFor,
     randomPort: randomPort,
-    isNull: isNull
+    isNull: isNull,
+    isFalse: isFalse
 }
