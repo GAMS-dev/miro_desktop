@@ -71,9 +71,9 @@
   integrity sha512-Z4U8yDAl5TFkmYsZdFPdjeMa57NOvnaf1tljHzhouaPEp7LCj2JKkejpI1ODviIAQuW4CcQmxkQ77rnLsOOoKw==
 
 "@types/node@^12.0.12":
-  version "12.12.52"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.12.52.tgz#ed7a845116bf496a9937228cb9c2a0f74092aeb1"
-  integrity sha512-oNJSI5bzuAH4f4I5JatPf4jytM6vQPWMw8JDOH68mNMyOmSqBkctHBfsyaBU3Su+dhYd8E+tDtPJWUXsyO5Msg==
+  version "12.12.53"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.12.53.tgz#be0d375933c3d15ef2380dafb3b0350ea7021129"
+  integrity sha512-51MYTDTyCziHb70wtGNFRwB4l+5JNvdqzFSkbDvpbftEgVUBEE+T5f7pROhWMp/fxp07oNIEQZd5bbfAH22ohQ==
 
 "@types/yargs-parser@*":
   version "15.0.0"
@@ -714,9 +714,9 @@ electron-store@^5.0.0:
     type-fest "^0.7.1"
 
 electron@^9.1.0:
-  version "9.1.1"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-9.1.1.tgz#d52c9873be4113287c3eb2b02f85bad6644b100e"
-  integrity sha512-BYvroBLV9x7G4iN33P/IxeZqwjl62/9VuBAF1CoM0m6OeheaiLog1ZMKLlCqVXycJvvrAvLHc454DDEmwnqqhA==
+  version "9.1.2"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-9.1.2.tgz#bfa26d6b192ea13abb6f1461371fd731a8358988"
+  integrity sha512-xEYadr3XqIqJ4ktBPo0lhzPdovv4jLCpiUUGc2M1frUhFhwqXokwhPaTUcE+zfu5+uf/ONDnQApwjzznBsRrgQ==
   dependencies:
     "@electron/get" "^1.0.1"
     "@types/node" "^12.0.12"
