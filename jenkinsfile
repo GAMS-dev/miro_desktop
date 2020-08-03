@@ -33,12 +33,17 @@ pipeline {
                 stage ('linux') {
                     agent { label 'docker' }
                     steps {
-                        sshagent(['d60edbb5-9329-4eba-81b2-448d800c4002']) {
-                            sh '''
+                        sh '''
                                yarn install --non-interactive
                                yarn dist
-                               yarn docker-build
-
+                        '''
+                        if (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'develop') {
+                            sh '''
+                                yarn docker-build
+                            '''
+                        }
+                        sshagent(['d60edbb5-9329-4eba-81b2-448d800c4002']) {
+                            sh '''
                                git status
                                git add ./main.js ./package.json
                                git status
