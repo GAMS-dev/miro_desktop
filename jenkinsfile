@@ -118,7 +118,7 @@ pipeline {
                                         yarn docker-publish
                                     '''
                                 }
-                            } else {
+                            } else if (env.BRANCH_NAME == 'develop') {
                                 withCredentials([usernamePassword(credentialsId: 'dockerhub_login', passwordVariable: 'hub_pass', usernameVariable: 'hub_user')]){
                                     sh '''
                                         docker login hub.gams.com:443 --username="${hub_user}" --password="${hub_pass}"
