@@ -15,12 +15,7 @@ pipeline {
             }
             steps {
                 catchError {
-                    sh '''#!/bin/bash -xe
-                        git show -s --format='%an' $GIT_COMMIT | grep -w "jenkins" && {
-                                echo "Skipping build";
-                                exit 1
-                        }
-                    '''
+                    sh 'git show -s --format=%an $GIT_COMMIT | grep -w "jenkins" && {exit 1}'
                 }
             }
             post {
