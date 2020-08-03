@@ -25,7 +25,7 @@ pipeline {
             }
             post {
                 failure {
-                    currentBuild.result = 'ABORTED'
+                    script {currentBuild.result = 'ABORTED'}
                     error('Aborting build')
                 }
             }
