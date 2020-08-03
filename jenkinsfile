@@ -9,7 +9,7 @@ pipeline {
 
     stages {
         stage('Skip build check') {
-            agent { label 'linux' }
+            agent { label 'docker' }
             steps {
                 catchError {
                     sh '''#!/bin/bash -xe
