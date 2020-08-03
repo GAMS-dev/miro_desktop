@@ -10,10 +10,13 @@ pipeline {
     stages {
         stage('Skip build check') {
             agent { label 'master' }
+            options {
+                skipDefaultCheckout()
+            }
             steps {
                 catchError {
                     sh '''#!/bin/bash -xe
-                        git show -s --format=%an $GIT_COMMIT | grep -w "jenkins" && {
+                        git show -s --format='%an' $GIT_COMMIT | grep -w "jenkins" && {
                                 echo "Skipping build";
                                 exit 1
                         }
@@ -22,7 +25,8 @@ pipeline {
             }
             post {
                 failure {
-                  error('Aborting build')
+                    currentBuild.result = 'ABORTED'
+                    error('Aborting build')
                 }
             }
         }
