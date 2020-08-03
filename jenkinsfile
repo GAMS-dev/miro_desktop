@@ -8,6 +8,17 @@ pipeline {
     }
 
     stages {
+        stage ('Skip build') {
+            agent { label 'master' }
+            steps {
+                    sh '''#!/bin/bash -xe
+                        git show --format=%an $GIT_COMMIT | grep -w "jenkins" && {
+                                echo "Skipping build";
+                                exit 1
+                        }
+                    '''
+                }
+        }
         stage('Build') {
             parallel {
                 stage ('linux') {
