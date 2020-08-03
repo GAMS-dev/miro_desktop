@@ -230,16 +230,12 @@ pipeline {
             }
         }
         stage('Update documentation'){
-            agent { label 'master' }
+            agent { label 'docker' }
             when {
                 expression { return currentBuild.currentResult == "SUCCESS" }
                 branch 'master'
             }
-            options {
-                skipDefaultCheckout()
-            }
             steps {
-                checkout scm
                 sshagent(['d60edbb5-9329-4eba-81b2-448d800c4002']) {
                     sh '''#!/bin/bash -xe
                         pushd miro > /dev/null
