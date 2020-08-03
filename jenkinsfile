@@ -8,10 +8,10 @@ pipeline {
     }
 
     stages {
-        try {
-            stage('Skip build check') {
-                agent { label 'master' }
-                steps {
+        stage('Skip build check') {
+            agent { label 'master' }
+            steps {
+                catchError {
                     sh '''#!/bin/bash -xe
                         git show -s --format=%an $GIT_COMMIT | grep -w "jenkins" && {
                                 echo "Skipping build";
@@ -20,9 +20,11 @@ pipeline {
                     '''
                 }
             }
-        } catch (e) {
-            currentBuild.result = 'ABORTED'
-            return
+            post {
+                failure {
+                  error('Aborting build')
+                }
+            }
         }
         stage('Build') {
             parallel {
