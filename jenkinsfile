@@ -10,16 +10,18 @@ pipeline {
     stages {
         stage('Skip build check') {
             agent { label 'master' }
-            try {
-                sh '''#!/bin/bash -xe
-                    git show -s --format=%an $GIT_COMMIT | grep -w "jenkins" && {
-                            echo "Skipping build";
-                            exit 1
-                    }
-                '''
-            } catch (Exception err) {
-                currentBuild.result = 'ABORTED'
-                return
+            steps {
+                try {
+                    sh '''#!/bin/bash -xe
+                        git show -s --format=%an $GIT_COMMIT | grep -w "jenkins" && {
+                                echo "Skipping build";
+                                exit 1
+                        }
+                    '''
+                } catch (Exception err) {
+                    currentBuild.result = 'ABORTED'
+                    return
+                }
             }
         }
         stage('Build') {
