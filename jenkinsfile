@@ -8,17 +8,20 @@ pipeline {
     }
 
     stages {
-        node('linux'){
-            try {
+        stage('Skip build check') {
+            agent { label 'master' }
+            options {
+                skipDefaultCheckout()
+            }
+            steps {
                 sh '''#!/bin/bash -xe
-                    git show -s --format=%an $GIT_COMMIT | grep -w "jenkins" && {
-                            echo "Skipping build";
-                            exit 1
+                    git show -s --format=%an $GIT_COMMIT | grep -w "jenkins" || {
+                            exit 0
                     }
+                    echo "Skipping build";
+                    exit 1
                 '''
-            } catch (Exception err) {
-                currentBuild.result = 'SUCCESS'
-                return
+                currentBuild.result = 'ABORTED'
             }
         }
         stage('Build') {
