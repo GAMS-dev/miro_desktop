@@ -37,10 +37,12 @@ pipeline {
                                yarn install --non-interactive
                                yarn dist
                         '''
-                        if (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'develop') {
-                            sh '''
-                                yarn docker-build
-                            '''
+                        script{
+                            if (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'develop') {
+                                sh '''
+                                    yarn docker-build
+                                '''
+                            }
                         }
                         sshagent(['d60edbb5-9329-4eba-81b2-448d800c4002']) {
                             sh '''
