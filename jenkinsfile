@@ -10,9 +10,6 @@ pipeline {
     stages {
         stage('Skip build check') {
             agent { label 'master' }
-            options {
-                skipDefaultCheckout()
-            }
             steps {
                 catchError {
                     sh '''#!/bin/bash -xe
