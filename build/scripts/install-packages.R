@@ -231,6 +231,14 @@ local({
     adminConfig = gsub("REQUIRED_API_VERSION[[:space:]]*<-.*",
         paste0("REQUIRED_API_VERSION <- ", APIVersion), adminConfig)
     writeLines(adminConfig, './admin/global.R')
+    dockerImageMiro = readLines('./Dockerfile', warn = FALSE)
+    dockerImageMiro = gsub('com\\.gamsmiro\\.version="[^"]+"',
+        paste0('com.gamsmiro.version="', MIROVersion, '"'), dockerImageMiro)
+    writeLines(dockerImageMiro, './Dockerfile')
+    dockerImageAdmin = readLines('./Dockerfile-admin', warn = FALSE)
+    dockerImageAdmin = gsub('com\\.gamsmiroadmin\\.version="[^"]+"',
+        paste0('com.gamsmiroadmin.version="', MIROVersion, '"'), dockerImageAdmin)
+    writeLines(dockerImageAdmin, './Dockerfile-admin')
 })
 # build MIRO example apps
 examplesPath = file.path(getwd(), 'miro', 'examples')

@@ -1,9 +1,9 @@
 FROM gamsmiro-ui
 
-LABEL com.gamsmiro.vendor="GAMS Development Corp."\
-com.gamsmiro.version="0.0.9"\
-com.gamsmiro.license="GPL-3.0"\
-com.gamsmiro.description="GAMS MIRO Docker image for admin panel"\
+LABEL com.gamsmiroadmin.vendor="GAMS Development Corp."\
+com.gamsmiroadmin.version="1.1.99"\
+com.gamsmiroadmin.license="GPL-3.0"\
+com.gamsmiroadmin.description="GAMS MIRO Docker image for admin panel"\
 maintainer="fproske@gams.com"
 
 
