@@ -1,10 +1,20 @@
 pipeline {
     agent none
 
+    post {
+      failure {
+        updateGitlabCommitStatus name: 'build', state: 'failed'
+      }
+      success {
+        updateGitlabCommitStatus name: 'build', state: 'success'
+      }
+    }
+
     options {
         buildDiscarder(logRotator(numToKeepStr: '4'))
         parallelsAlwaysFailFast()
         disableConcurrentBuilds()
+        gitLabConnection('GAMS GitLab')
     }
 
     stages {
