@@ -15,6 +15,7 @@ pipeline {
         parallelsAlwaysFailFast()
         disableConcurrentBuilds()
         gitLabConnection('GAMS GitLab')
+        gitlabBuilds(builds: ['build', 'test'])
     }
 
     stages {
@@ -93,15 +94,17 @@ pipeline {
                 stage ('macos') {
                     agent { label 'macos' }
                     steps {
-                        sh '''
-                           yarn install --non-interactive
-                        '''
-                        withCredentials([usernamePassword(credentialsId: '4568bda5-894f-4fa1-b9c5-a8d42f6e61ac', passwordVariable: 'APPLEIDPASS', usernameVariable: 'APPLEID'),
-                            string(credentialsId: '2e590f95-5e30-4101-93be-31a1b7402da4', variable: 'MACOS_KEYCHAIN_PASSWD')]) {
+                        gitlabCommitStatus(name: 'build') {
                             sh '''
-                               security unlock-keychain -p ${MACOS_KEYCHAIN_PASSWD}
-                               yarn dist
+                               yarn install --non-interactive
                             '''
+                            withCredentials([usernamePassword(credentialsId: '4568bda5-894f-4fa1-b9c5-a8d42f6e61ac', passwordVariable: 'APPLEIDPASS', usernameVariable: 'APPLEID'),
+                                string(credentialsId: '2e590f95-5e30-4101-93be-31a1b7402da4', variable: 'MACOS_KEYCHAIN_PASSWD')]) {
+                                sh '''
+                                   security unlock-keychain -p ${MACOS_KEYCHAIN_PASSWD}
+                                   yarn dist
+                                '''
+                            }
                         }
                     }
                 }
@@ -129,12 +132,14 @@ pipeline {
                         skipDefaultCheckout()
                     }
                     steps {
-                        withCredentials([file(credentialsId: 'MIRO_TEST_GAMS_LICE', variable: 'MIRO_TEST_GAMS_LICE')]) {
-                            sh '''
-                               yarn test gams_sys_dir=${GAMS_CORE_PATH}
-                            '''
+                        gitlabCommitStatus(name: 'test') {
+                            withCredentials([file(credentialsId: 'MIRO_TEST_GAMS_LICE', variable: 'MIRO_TEST_GAMS_LICE')]) {
+                                sh '''
+                                   yarn test gams_sys_dir=${GAMS_CORE_PATH}
+                                '''
+                            }
+                            junit allowEmptyResults: true, testResults: 'miro/test-out.xml'
                         }
-                        junit allowEmptyResults: true, testResults: 'miro/test-out.xml'
                     }
                 }
             }
