@@ -130,10 +130,10 @@ pipeline {
                                 '''
                             }
                             junit allowEmptyResults: true, testResults: 'miro/test-out.xml'
-                            script {
-                                if (currentBuild.result == 'UNSTABLE') {
-                                    updateGitlabCommitStatus name: 'test', state: 'failed'
-                                }
+                        }
+                        script {
+                            if (currentBuild.result == 'UNSTABLE') {
+                                updateGitlabCommitStatus name: 'test', state: 'failed'
                             }
                         }
                     }
