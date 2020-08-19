@@ -4,7 +4,6 @@ local({
     packageVersionMapTmp <- deparse(lapply(seq_len(nrow(packageVersionMapTmp)), function(pkgIdx){
         pkgInfo <- packageVersionMapTmp[pkgIdx, ]
         pkgInfo <- trimws(c(pkgInfo[[1]], pkgInfo[[2]]))
-        print(pkgInfo)
         if(identical(pkgInfo[2], "")){
           return(pkgInfo[1])
         }
