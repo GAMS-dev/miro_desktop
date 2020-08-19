@@ -8,6 +8,13 @@ local({
         }
         return(pkgInfo)
     }))
+    print(lapply(seq_len(nrow(packageVersionMapTmp)), function(pkgIdx){
+        pkgInfo <- trimws(as.character(as.vector(packageVersionMapTmp[pkgIdx, ])))
+        if(identical(pkgInfo[2], "")){
+          return(pkgInfo[1])
+        }
+        return(pkgInfo)
+    }))
     print(packageVersionMapTmp)
     packageVersionMapTmp[1] <- paste0("packageVersionMap <- ", packageVersionMapTmp[1])
     globalsSrc = readLines('./scripts/globals.R', warn = FALSE)
