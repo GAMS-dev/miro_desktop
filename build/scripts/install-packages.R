@@ -20,6 +20,7 @@ local({
 })
 
 source('./scripts/globals.R')
+print(packageVersionMap)
 if(CIBuild){
     installedPackages <- installedPackagesTmp
     customPackages <- packageVersionMap[vapply(packageVersionMap, function(package){
