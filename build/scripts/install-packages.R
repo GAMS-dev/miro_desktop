@@ -2,9 +2,9 @@
 local({
     packageVersionMapTmp <- read.csv('./miro/miro-pkg-lock.csv', header = FALSE)
     packageVersionMapTmp <- deparse(lapply(seq_len(nrow(packageVersionMapTmp)), function(pkgIdx){
-        pkgInfo <- trimws(as.character(as.vector(packageVersionMapTmp[pkgIdx, ])))
+        pkgInfo <- trimws(as.character(packageVersionMapTmp[pkgIdx, ]))
         print(packageVersionMapTmp[pkgIdx, ])
-        print(pkgInfo)
+        print(as.character(packageVersionMapTmp[pkgIdx, ]))
         if(identical(pkgInfo[2], "")){
           return(pkgInfo[1])
         }
