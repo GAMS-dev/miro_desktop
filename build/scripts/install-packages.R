@@ -3,19 +3,13 @@ local({
     packageVersionMapTmp <- read.csv('./miro/miro-pkg-lock.csv', header = FALSE)
     packageVersionMapTmp <- deparse(lapply(seq_len(nrow(packageVersionMapTmp)), function(pkgIdx){
         pkgInfo <- trimws(as.character(as.vector(packageVersionMapTmp[pkgIdx, ])))
+        print(packageVersionMapTmp[pkgIdx, ])
+        print(pkgInfo)
         if(identical(pkgInfo[2], "")){
           return(pkgInfo[1])
         }
         return(pkgInfo)
     }))
-    print(lapply(seq_len(nrow(packageVersionMapTmp)), function(pkgIdx){
-        pkgInfo <- trimws(as.character(as.vector(packageVersionMapTmp[pkgIdx, ])))
-        if(identical(pkgInfo[2], "")){
-          return(pkgInfo[1])
-        }
-        return(pkgInfo)
-    }))
-    print(packageVersionMapTmp)
     packageVersionMapTmp[1] <- paste0("packageVersionMap <- ", packageVersionMapTmp[1])
     globalsSrc = readLines('./scripts/globals.R', warn = FALSE)
     linesToReplaceLo <- grep("packageVersionMap", globalsSrc)[1] - 1
@@ -24,12 +18,10 @@ local({
     globalsSrc <- c(globalsSrc[seq_len(linesToReplaceLo)],
         packageVersionMapTmp,
         globalsSrc[seq(linesToReplaceUp, length(globalsSrc))])
-    print(globalsSrc)
     writeLines(globalsSrc, './scripts/globals.R')
 })
 
 source('./scripts/globals.R')
-print(packageVersionMap)
 if(CIBuild){
     installedPackages <- installedPackagesTmp
     customPackages <- packageVersionMap[vapply(packageVersionMap, function(package){
