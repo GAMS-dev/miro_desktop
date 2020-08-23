@@ -72,6 +72,8 @@ pipeline {
                                    git status
                                    git add ./conf/language_schema.json
                                    git status
+                                   git config user.name 'jenkins'
+                                   git config user.email 'jenkins@berlin.noreply.gams.com'
                                    git checkout -B $BRANCH_NAME
                                    git commit -m "[Jenkins CI] Fix language schema" || {
                                      exit 0
