@@ -93,6 +93,10 @@ pipeline {
                                    set +x
                                    git push origin HEAD:$BRANCH_NAME
                                popd > /dev/null
+                               git add ./miro
+                               git commit -m "[Jenkins CI] Update MIRO version" 
+                               set +x
+                               git push origin HEAD:$BRANCH_NAME
                             '''
                         }
                     }
