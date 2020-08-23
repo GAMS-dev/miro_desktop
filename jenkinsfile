@@ -36,6 +36,7 @@ pipeline {
                     agent { label 'docker' }
                     steps {
                         sh '''
+                               R -f ./miro/scripts/checkLicense.R
                                yarn install --non-interactive
                                yarn dist
                         '''
