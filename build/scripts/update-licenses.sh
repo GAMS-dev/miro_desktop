@@ -2,7 +2,7 @@
 
 LICENSE_FILE=LICENSE_Launcher.txt
 npm list -g npm-license-crawler > /dev/null || {
-    npm install npm-license-crawler
+    npm install -g npm-license-crawler
 }
 npm-license-crawler --exclude dist --exclude build --exclude r --exclude miro --exclude admin --exclude r-src --dependencies --production --csv licenses.csv > /dev/null
 cat >$LICENSE_FILE <<EOL
