@@ -61,13 +61,13 @@ pipeline {
                                git config user.email 'jenkins@berlin.noreply.gams.com'
                                git checkout -B $BRANCH_NAME
                                git commit -m "[Jenkins CI] Update version number and package list" || {
-                                 exit 0
+                                 true
+                               } && {
+                                   set +x
+                                   export GIT_SSH_COMMAND="ssh -oStrictHostKeyChecking=no"
+                                   git push origin HEAD:$BRANCH_NAME
+                                   set -x
                                }
-
-                               set +x
-                               export GIT_SSH_COMMAND="ssh -oStrictHostKeyChecking=no"
-                               git push origin HEAD:$BRANCH_NAME
-                               set -x
                                pushd miro > /dev/null
                                    git status
                                    git add ./conf/language_schema.json
