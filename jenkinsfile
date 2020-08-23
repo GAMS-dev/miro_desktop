@@ -44,6 +44,7 @@ pipeline {
                         sh '''
                                yarn install --non-interactive
                                yarn dist
+                               ./build/scripts/update-licenses.sh
                         '''
                         script{
                             if (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'develop') {
@@ -61,6 +62,17 @@ pipeline {
                                git config user.email 'jenkins@berlin.noreply.gams.com'
                                git checkout -B $BRANCH_NAME
                                git commit -m "[Jenkins CI] Update version number and package list" || {
+                                 true
+                               } && {
+                                   set +x
+                                   export GIT_SSH_COMMAND="ssh -oStrictHostKeyChecking=no"
+                                   git push origin HEAD:$BRANCH_NAME
+                                   set -x
+                               }
+                               git status
+                               git add ./LICENSE_Launcher.txt
+                               git status
+                               git commit -m "[Jenkins CI] Update third-party licenses" || {
                                  true
                                } && {
                                    set +x
