@@ -35,9 +35,16 @@ pipeline {
                 stage ('linux') {
                     agent { label 'docker' }
                     steps {
+                        sh '''#!/bin/bash
+                              pushd miro > /dev/null
+                                  R -f ./scripts/checkLicense.R
+                                  R -f ./scripts/fixSchema.R
+                              popd > /dev/null
+                        '''
                         sh '''
                                yarn install --non-interactive
                                yarn dist
+                               ./build/scripts/update-licenses.sh
                         '''
                         script{
                             if (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'develop') {
@@ -47,20 +54,45 @@ pipeline {
                             }
                         }
                         sshagent(['d60edbb5-9329-4eba-81b2-448d800c4002']) {
-                            sh '''
+                            sh '''#!/bin/bash
                                git status
-                               git add ./main.js ./package.json
+                               git add ./main.js ./package.json ./scripts/globals.R
                                git status
                                git config user.name 'jenkins'
                                git config user.email 'jenkins@berlin.noreply.gams.com'
                                git checkout -B $BRANCH_NAME
-                               git commit -m "[Jenkins CI] Update version number" || {
-                                 exit 0
+                               git commit -m "[Jenkins CI] Update version number and package list" || {
+                                 true
+                               } && {
+                                   set +x
+                                   export GIT_SSH_COMMAND="ssh -oStrictHostKeyChecking=no"
+                                   git push origin HEAD:$BRANCH_NAME
+                                   set -x
                                }
-
-                               set +x
-                               export GIT_SSH_COMMAND="ssh -oStrictHostKeyChecking=no"
-                               git push origin HEAD:$BRANCH_NAME
+                               git status
+                               git add ./LICENSE_Launcher.txt
+                               git status
+                               git commit -m "[Jenkins CI] Update third-party licenses" || {
+                                 true
+                               } && {
+                                   set +x
+                                   export GIT_SSH_COMMAND="ssh -oStrictHostKeyChecking=no"
+                                   git push origin HEAD:$BRANCH_NAME
+                                   set -x
+                               }
+                               pushd miro > /dev/null
+                                   git status
+                                   git add ./conf/language_schema.json
+                                   git status
+                                   git config user.name 'jenkins'
+                                   git config user.email 'jenkins@berlin.noreply.gams.com'
+                                   git checkout -B $BRANCH_NAME
+                                   git commit -m "[Jenkins CI] Fix language schema" || {
+                                     exit 0
+                                   }
+                                   set +x
+                                   git push origin HEAD:$BRANCH_NAME
+                               popd > /dev/null
                             '''
                         }
                     }
