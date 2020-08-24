@@ -47,9 +47,6 @@ if (!String.format) {
   try{
     if ( !fs.existsSync(miroWorkspaceDir) ) {
         fs.mkdirSync(miroWorkspaceDir);
-        if ( process.platform === 'win32' ) {
-          await execa("attrib", ["+h", miroWorkspaceDir]);
-        }
     }
   } catch (e) {
     log.error('Could not create miro workspace!');
