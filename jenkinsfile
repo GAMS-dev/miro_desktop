@@ -141,10 +141,13 @@ pipeline {
                         skipDefaultCheckout()
                     }
                     steps {
-                        withCredentials([file(credentialsId: 'MIRO_TEST_GAMS_LICE', variable: 'MIRO_TEST_GAMS_LICE')]) {
-                            bat '''
-                               yarn test gams_sys_dir="%GAMS_CORE_PATH%"
-                            '''
+                        withCredentials([file(credentialsId: 'MIRO_TEST_GAMS_LICE', variable: 'MIRO_TEST_GAMS_LICE'),
+                                         usernamePassword(credentialsId: '499f81ca-b9bc-4078-b428-303b753ab312', passwordVariable: 'ENGINE_PASSWORD', usernameVariable: 'ENGINE_USER')]) {
+                            withEnv(['ENGINE_NS=tests', 'ENGINE_URL=https://miro.gams.com/engine/api']) {
+                                bat '''
+                                   yarn test gams_sys_dir="%GAMS_CORE_PATH%"
+                                '''
+                            }
                         }
                         junit allowEmptyResults: true, testResults: 'miro/test-out.xml'
                     }
@@ -156,10 +159,13 @@ pipeline {
                     }
                     steps {
                         gitlabCommitStatus(name: 'test') {
-                            withCredentials([file(credentialsId: 'MIRO_TEST_GAMS_LICE', variable: 'MIRO_TEST_GAMS_LICE')]) {
-                                sh '''
-                                   yarn test gams_sys_dir=${GAMS_CORE_PATH}
-                                '''
+                            withCredentials([file(credentialsId: 'MIRO_TEST_GAMS_LICE', variable: 'MIRO_TEST_GAMS_LICE'),
+                                             usernamePassword(credentialsId: '499f81ca-b9bc-4078-b428-303b753ab312', passwordVariable: 'ENGINE_PASSWORD', usernameVariable: 'ENGINE_USER')]) {
+                                withEnv(['ENGINE_NS=tests', 'ENGINE_URL=https://miro.gams.com/engine/api']) {
+                                    sh '''
+                                       yarn test gams_sys_dir=${GAMS_CORE_PATH}
+                                    '''
+                                }
                             }
                             junit allowEmptyResults: true, testResults: 'miro/test-out.xml'
                         }
