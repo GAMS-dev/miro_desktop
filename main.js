@@ -1674,6 +1674,10 @@ ipcMain.on('delete-app', async (e, appId) => {
         } finally {
           miroDb.close()
         }
+        const rmPromiseHcube = fs.remove(path.join(miroWorkspaceDir, 'hcube_jobs', appId));
+        const rmPromiseCred = fs.remove(path.join(miroWorkspaceDir, `.cred_${appId}`));
+        await rmPromiseHcube;
+        await rmPromiseCred;
       } catch (e) {
         log.error(`Problems removing data (app ID: ${appId}). Error message: ${e.message}`);
         showErrorMsg({
