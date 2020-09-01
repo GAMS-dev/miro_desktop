@@ -44,6 +44,9 @@ ModelConfig <- R6::R6Class("ModelConfig", public = list(
   getAppId = function(appIndex){
     return(private$currentModelConfigs[[appIndex]]$id)
   },
+  getModelName = function(appIndex){
+    return(tools::file_path_sans_ext(basename(private$currentModelConfigs[[appIndex]][["containerEnv"]][["MIRO_MODEL_PATH"]])))
+  },
   getAppLogo = function(appIndex){
     return(private$currentModelConfigs[[appIndex]]$logoURL)
   },
