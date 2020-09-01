@@ -49,7 +49,7 @@ pipeline {
                                yarn dist
                         '''
                         script{
-                            if (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'develop') {
+                            if (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'develop' || env.BRANCH_NAME == 'neos') {
                                 sh '''
                                     yarn docker-build
                                 '''
