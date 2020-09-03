@@ -53,13 +53,16 @@ installedPackagesDevel <- installed.packages(RlibPathDevel)
 newPackages <- requiredPackages[!requiredPackages %in% 
   installedPackagesDevel[, "Package"]]
 
-# need to make sure shinytest >= 1.4.0 is installed
-if(!'shinytest' %in% newPackages){
-    shinytestPkgId <- match('shinytest', installedPackagesDevel[, "Package"])
-    if(!is.na(shinytestPkgId)){
-        shinytestVersionInstalled <- as.integer(strsplit(installedPackagesDevel[shinytestPkgId, "Version"], ".", fixed = TRUE)[[1]][c(1,2)])
-        if(shinytestVersionInstalled[1] == 1L && shinytestVersionInstalled[2] <= 3L){
-            newPackages <- c(newPackages, 'shinytest')
+# make sure correct version of packages is installed
+devPkgVersionMap <- list(list('shinytest', c(1,4)), list('htmltools', c(0,5)))
+for(devPkgToInstall in devPkgVersionMap){
+    if(!devPkgToInstall[[1]] %in% newPackages){
+        pkgId <- match(devPkgToInstall[[1]], installedPackagesDevel[, "Package"])
+        if(!is.na(pkgId)){
+            versionInstalled <- as.integer(strsplit(installedPackagesDevel[pkgId, "Version"], ".", fixed = TRUE)[[1]][c(1,2)])
+            if(versionInstalled[1] == devPkgToTest[[2]][1] && versionInstalled[2] < devPkgToTest[[2]][2]){
+                newPackages <- c(newPackages, devPkgToInstall[[1]])
+            }
         }
     }
 }
