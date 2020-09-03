@@ -54,7 +54,7 @@ newPackages <- requiredPackages[!requiredPackages %in%
   installedPackagesDevel[, "Package"]]
 
 # make sure correct version of packages is installed
-devPkgVersionMap <- list(list('shinytest', c(1,4)), list('htmltools', c(0,5)))
+devPkgVersionMap <- list(list('shinytest', c(1,4)))
 for(devPkgToInstall in devPkgVersionMap){
     if(!devPkgToInstall[[1]] %in% newPackages){
         pkgId <- match(devPkgToInstall[[1]], installedPackagesDevel[, "Package"])
