@@ -60,7 +60,7 @@ for(devPkgToInstall in devPkgVersionMap){
         pkgId <- match(devPkgToInstall[[1]], installedPackagesDevel[, "Package"])
         if(!is.na(pkgId)){
             versionInstalled <- as.integer(strsplit(installedPackagesDevel[pkgId, "Version"], ".", fixed = TRUE)[[1]][c(1,2)])
-            if(versionInstalled[1] == devPkgToTest[[2]][1] && versionInstalled[2] < devPkgToTest[[2]][2]){
+            if(versionInstalled[1] == devPkgToInstall[[2]][1] && versionInstalled[2] < devPkgToInstall[[2]][2]){
                 newPackages <- c(newPackages, devPkgToInstall[[1]])
             }
         }
