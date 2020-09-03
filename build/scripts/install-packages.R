@@ -49,8 +49,20 @@ requiredPackages <- c('devtools', 'remotes', 'jsonlite', 'V8',
 if ( identical(Sys.getenv('BUILD_DOCKER'), 'true') ) {
     requiredPackages <- c(requiredPackages, 'DBI', 'blob')
 }
+installedPackagesDevel <- installed.packages(RlibPathDevel)
 newPackages <- requiredPackages[!requiredPackages %in% 
-  installed.packages(RlibPathDevel)[, "Package"]]
+  installedPackagesDevel[, "Package"]]
+
+# need to make sure shinytest >= 1.4.0 is installed
+if(!'shinytest' %in% newPackages){
+    shinytestPkgId <- match('shinytest', installedPackagesDevel[, "Package"])
+    if(!is.na(shinytestPkgId)){
+        shinytestVersionInstalled <- as.integer(strsplit(installedPackagesDevel[shinytestPkgId, "Version"], ".", fixed = TRUE)[[1]][c(1,2)])
+        if(shinytestVersionInstalled[1] == 1L && shinytestVersionInstalled[2] <= 3L){
+            newPackages <- c(newPackages, 'shinytest')
+        }
+    }
+}
 
 for ( newPackage in newPackages ) {
     install.packages(newPackage, repos = CRANMirrors[1], lib = RlibPathDevel,
