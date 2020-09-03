@@ -158,6 +158,9 @@ for(package in packageVersionMap){
         }
     } else {
         installPackage(package)
+        if(CIBuild){
+            installedPackagesTmp <- c(installedPackagesTmp, package[1])
+        }
     }
 }
 if(CIBuild && !isLinux){
