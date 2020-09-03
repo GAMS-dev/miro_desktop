@@ -35,16 +35,10 @@ pipeline {
                 stage ('linux') {
                     agent { label 'docker' }
                     steps {
-                        sh '''#!/bin/bash
-                              pushd miro > /dev/null
-                                  R -f ./scripts/checkLicense.R
-                                  R -f ./scripts/fixSchema.R
-                              popd > /dev/null
-                        '''
                         sh '''
                                yarn install --non-interactive
-                               yarn dist
                                ./build/scripts/update-licenses.sh
+                               yarn dist
                         '''
                         script{
                             if (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'develop') {
@@ -80,19 +74,6 @@ pipeline {
                                    git push origin HEAD:$BRANCH_NAME
                                    set -x
                                }
-                               pushd miro > /dev/null
-                                   git status
-                                   git add ./conf/language_schema.json
-                                   git status
-                                   git config user.name 'jenkins'
-                                   git config user.email 'jenkins@berlin.noreply.gams.com'
-                                   git checkout -B $BRANCH_NAME
-                                   git commit -m "[Jenkins CI] Fix language schema" || {
-                                     exit 0
-                                   }
-                                   set +x
-                                   git push origin HEAD:$BRANCH_NAME
-                               popd > /dev/null
                             '''
                         }
                     }
