@@ -4,7 +4,7 @@ CRANMirrors <- c('https://cloud.r-project.org/',
     'https://stat.ethz.ch/CRAN/')
 
 RLibPath <- Sys.getenv('LIB_PATH')
-packageVersionMap <- list(c("data.table", "1.12.2"), c("backports", "1.1.9"), c("assertthat", 
+packageVersionMap <- list(c("data.table", "1.13.0"), c("backports", "1.1.9"), c("assertthat", 
 "0.2.1"), c("crayon", "1.3.4"), c("glue", "1.4.2"), c("fansi", 
 "0.4.1"), c("cli", "2.0.2"), c("utf8", "1.1.4"), c("Rcpp", "1.0.5"
 ), c("R6", "2.4.1"), c("BH", "1.72.0-3"), c("magrittr", "1.5"
@@ -12,7 +12,7 @@ packageVersionMap <- list(c("data.table", "1.12.2"), c("backports", "1.1.9"), c(
 "1.1.1"), c("httpuv", "1.5.4"), c("mime", "0.9"), "jsonlite", 
     c("digest", "0.6.25"), c("sourcetools", "0.1.7"), c("xtable", 
     "1.8-4"), c("fastmap", "1.0.1"), c("curl", "4.3"), c("V8", 
-    "3.1.0"), c("base64enc", "0.1-3"), c("htmltools", "0.5.0"
+    "3.2.0"), c("base64enc", "0.1-3"), c("htmltools", "0.5.0"
     ), c("withr", "2.2.0"), c("leaflet.providers", "1.9.0"), 
     c("commonmark", "1.7"), "shiny", c("colorspace", "1.4-1"), 
     c("purrr", "0.3.4"), c("yaml", "2.2.1"), c("labeling", "0.3"
@@ -33,7 +33,7 @@ packageVersionMap <- list(c("data.table", "1.12.2"), c("backports", "1.1.9"), c(
     ), c("cellranger", "1.1.0"), c("progress", "1.2.2"), c("lambda.r", 
     "1.2.4"), c("futile.options", "1.0.1"), c("zoo", "1.8-8"), 
     c("globals", "0.12.5"), c("listenv", "0.8.0"), c("processx", 
-    "3.4.3"), c("readr", "1.3.1"), c("readxl", "1.3.1"), c("writexl", 
+    "3.4.4"), c("readr", "1.3.1"), c("readxl", "1.3.1"), c("writexl", 
     "1.3.1"), c("rpivotTable", "0.3.0"), c("futile.logger", "1.4.3"
     ), c("zip", "2.1.1"), c("leaflet.minicharts", "0.6.0"), c("xts", 
     "0.12-0"), c("dygraphs", "1.1.1.6"), c("future", "1.18.0"
