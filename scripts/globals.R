@@ -70,7 +70,6 @@ if(identical(Sys.getenv("BUILD_NUMBER"), "")){
     # it will install development libraries inside ./r/library
     RlibPathDevel <- paste0('~/R/win-library/', R.version[['major']], ".",
         strsplit(R.version[['minor']], '.', fixed = TRUE)[[1]][1])
-    print(normalizePath(RlibPathDevel))
 }
 RlibPathSrc <- file.path('.', 'r', 'library_src')
 
