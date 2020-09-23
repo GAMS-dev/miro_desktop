@@ -144,7 +144,7 @@ pipeline {
                             withCredentials([file(credentialsId: 'MIRO_TEST_GAMS_LICE', variable: 'MIRO_TEST_GAMS_LICE'),
                                              usernamePassword(credentialsId: '9753687d-1cfe-473d-a4be-eb0273f82ff8', passwordVariable: 'ENGINE_PASSWORD', usernameVariable: 'ENGINE_USER'),
                                              usernamePassword(credentialsId: '26442d03-76b8-4cc0-b614-9e9fcdb44a88', passwordVariable: 'MIRO_REPORTER_PASS', usernameVariable: 'MIRO_REPORTER_USER')]) {
-                                withEnv(['ENGINE_NS=tests', 'ENGINE_URL=https://miro.gams.com/engine/api', 'MIRO_REPORTER_URL=https://miro.gams.com/miro-perf/']) {
+                                withEnv(['ENGINE_NS=tests', 'ENGINE_URL=https://miro.gams.com/engine/api', 'MIRO_REPORTER_URL=https://miro.gams.com/miro-perf/', 'LC_ALL=en_US.UTF-8']) {
                                     sh '''
                                        yarn test gams_sys_dir=${GAMS_CORE_PATH}
                                     '''
