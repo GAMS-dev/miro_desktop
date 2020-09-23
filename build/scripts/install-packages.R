@@ -298,6 +298,10 @@ local({
     dockerImageAdmin = gsub('com\\.gamsmiroadmin\\.version="[^"]+"',
         paste0('com.gamsmiroadmin.version="', MIROVersion, '"'), dockerImageAdmin)
     writeLines(dockerImageAdmin, './Dockerfile-admin')
+    aboutDialog = readLines('./renderer/about.js', warn = FALSE)
+    aboutDialog = gsub('__HASH__',
+        substr(Sys.getenv('GIT_COMMIT', '__HASH__'), 1, 8), aboutDialog, fixed = TRUE)
+    writeLines(aboutDialog, './renderer/about.js')
 })
 # build MIRO example apps
 examplesPath = file.path(getwd(), 'miro', 'examples')
