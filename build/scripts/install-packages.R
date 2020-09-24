@@ -49,8 +49,23 @@ requiredPackages <- c('devtools', 'remotes', 'jsonlite', 'V8',
 if ( identical(Sys.getenv('BUILD_DOCKER'), 'true') ) {
     requiredPackages <- c(requiredPackages, 'DBI', 'blob')
 }
+installedPackagesDevel <- installed.packages(RlibPathDevel)
 newPackages <- requiredPackages[!requiredPackages %in% 
-  installed.packages(RlibPathDevel)[, "Package"]]
+  installedPackagesDevel[, "Package"]]
+
+# make sure correct version of packages is installed
+devPkgVersionMap <- list(list('shinytest', c(1,4)), list('zip', c(2,1)))
+for(devPkgToInstall in devPkgVersionMap){
+    if(!devPkgToInstall[[1]] %in% newPackages){
+        pkgId <- match(devPkgToInstall[[1]], installedPackagesDevel[, "Package"])
+        if(!is.na(pkgId)){
+            versionInstalled <- as.integer(strsplit(installedPackagesDevel[pkgId, "Version"], ".", fixed = TRUE)[[1]][c(1,2)])
+            if(versionInstalled[1] == devPkgToInstall[[2]][1] && versionInstalled[2] < devPkgToInstall[[2]][2]){
+                newPackages <- c(newPackages, devPkgToInstall[[1]])
+            }
+        }
+    }
+}
 
 for ( newPackage in newPackages ) {
     install.packages(newPackage, repos = CRANMirrors[1], lib = RlibPathDevel,
@@ -108,6 +123,26 @@ installPackage <- function(package, attempt = 0) {
             install.packages(package[1], if(CIBuild) RlibPathTmp else RLibPath, repos = CRANMirrors[attempt + 1],
                 dependencies = FALSE, INSTALL_opts = '--no-multiarch')
         } else {
+            #if ( isMac && identical(package[1], 'data.table') ) {
+            #    makevarsPath <- '~/.R/Makevars'
+            #    if ( file.exists(makevarsPath) ) {
+            #        stop("Makevars already exist. Won't overwrite!")
+            #    }
+            #    on.exit(unlink(makevarsPath))
+            #    if (!dir.exists(dirname(makevarsPath)) && 
+            #        !dir.create(dirname(makevarsPath), showWarnings = TRUE, recursive = TRUE)){
+            #        stop(sprintf('Could not create directory: %s', dirname(makevarsPath)))
+            #    }
+            #    writeLines(c('LLVM_LOC = /usr/local/opt/llvm', 
+            #        'CC=$(LLVM_LOC)/bin/clang -fopenmp',
+            #       'CXX=$(LLVM_LOC)/bin/clang++ -fopenmp', 
+            #       '# -O3 should be faster than -O2 (default) level optimisation ..',
+            #       'CFLAGS=-g -O3 -Wall -pedantic -std=gnu99 -mtune=native -pipe', 
+            #       'CXXFLAGS=-g -O3 -Wall -pedantic -std=c++11 -mtune=native -pipe',
+            #       'LDFLAGS=-L/usr/local/opt/gettext/lib -L$(LLVM_LOC)/lib -Wl,-rpath,$(LLVM_LOC)/lib',
+            #        'CPPFLAGS=-I/usr/local/opt/gettext/include -I$(LLVM_LOC)/include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include'), 
+            #    makevarsPath)
+            #}
             withr::with_libpaths(if(CIBuild) RlibPathTmp else RLibPath, install_version(package[1], package[2], out = './dist/dump',
                 dependencies = FALSE, repos = CRANMirrors[attempt + 1],
                 INSTALL_opts = '--no-multiarch'))
@@ -158,6 +193,9 @@ for(package in packageVersionMap){
         }
     } else {
         installPackage(package)
+        if(CIBuild){
+            installedPackagesTmp <- c(installedPackagesTmp, package[1])
+        }
     }
 }
 if(CIBuild && !isLinux){
@@ -260,6 +298,10 @@ local({
     dockerImageAdmin = gsub('com\\.gamsmiroadmin\\.version="[^"]+"',
         paste0('com.gamsmiroadmin.version="', MIROVersion, '"'), dockerImageAdmin)
     writeLines(dockerImageAdmin, './Dockerfile-admin')
+    aboutDialog = readLines('./renderer/about.js', warn = FALSE)
+    aboutDialog = gsub('__HASH__',
+        substr(Sys.getenv('GIT_COMMIT', '__HASH__'), 1, 8), aboutDialog, fixed = TRUE)
+    writeLines(aboutDialog, './renderer/about.js')
 })
 # build MIRO example apps
 examplesPath = file.path(getwd(), 'miro', 'examples')

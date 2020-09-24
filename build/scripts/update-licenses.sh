@@ -4,7 +4,12 @@ LICENSE_FILE=LICENSE_Launcher.txt
 npm list -g npm-license-crawler > /dev/null || {
     npm install -g npm-license-crawler
 }
-npm-license-crawler --exclude dist --exclude build --exclude r --exclude miro --exclude admin --exclude r-src --dependencies --production --csv licenses.csv > /dev/null
+MORE_DIR_EXCL=""
+if [ -d "dist" ]; then
+    # on jenkins r and dist don't exist yet when this script is run
+    MORE_DIR_EXCL="--exclude dist --exclude r"
+fi
+npm-license-crawler ${MORE_DIR_EXCL}--exclude build --exclude miro --exclude admin --exclude r-src --dependencies --production --csv licenses.csv > /dev/null
 cat >$LICENSE_FILE <<EOL
 GAMS MIRO Launcher as a whole is distributed under GPL-3 (GNU GENERAL PUBLIC LICENSE version 3). A copy of this license is included below.
 
