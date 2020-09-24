@@ -14,7 +14,7 @@ if ( clArgs[0] === '--unstable' ) {
         console.error('Please publish images on Linux!');
         process.exit(1);
     }
-    let miroVersion = 'neos';
+    let miroVersion = 'unstable';
 
     if ( !unstableImages ) {
         miroVersion = fs.readFileSync('version', 'utf8').trim();
