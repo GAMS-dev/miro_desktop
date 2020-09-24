@@ -136,7 +136,7 @@ server <- function(input, output, session){
             extractAppData(isolate(input$miroAppFile$datapath), appId,
                         logoPath)
 
-            miroProc$run(appId, miroAppValidator$getMIROVersion(), appDir, dataDir, function(){
+            miroProc$run(appId, modelName, miroAppValidator$getMIROVersion(), appDir, dataDir, function(){
                 tryCatch({
                     engineClient$registerModel(modelName, appDir, overwrite = TRUE)
                     flog.debug("New MIRO app: %s registered at Engine.", modelName)

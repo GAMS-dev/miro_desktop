@@ -11,7 +11,7 @@ MiroProc <- R6::R6Class("MiroProc", public = list(
   getTablesToRemove = function(){
     return(private$tablesToRemove)
   },
-  run = function(appId, miroVersion, appDir, dataDir, successCallback){
+  run = function(appId, modelName, miroVersion, appDir, dataDir, successCallback){
     private$tablesToRemove <- NULL
     private$errorRaised <- FALSE
     private$stdErr <- ""
@@ -24,7 +24,7 @@ MiroProc <- R6::R6Class("MiroProc", public = list(
     }
     procEnv <- private$procEnv
     procEnv$MIRO_VERSION_STRING <- miroVersion
-    procEnv$MIRO_MODEL_PATH <- file.path(appDir, paste0(appId, ".gms"))
+    procEnv$MIRO_MODEL_PATH <- file.path(appDir, paste0(modelName, ".gms"))
     procEnv$MIRO_DATA_DIR <- dataDir
 
     private$miroProc <- processx::process$new("R", c("-e", 
