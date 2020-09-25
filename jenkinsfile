@@ -84,7 +84,6 @@ pipeline {
                         withCredentials([certificate(aliasVariable: '', credentialsId: '302df092-b329-47b9-8f7a-605da075126d', keystoreVariable: 'WIN_CERT_FILE', 
                             passwordVariable: 'CSC_KEY_PASSWORD')]) {
                                 bat '''
-                                   del /f .git\\modules\\r-src\\shinydashboard\\HEAD.lock
                                    yarn install --non-interactive
                                 '''
                                 bat '''
