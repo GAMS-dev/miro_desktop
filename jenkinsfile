@@ -272,6 +272,8 @@ pipeline {
                     sh '''#!/bin/bash -xe
                         pushd miro > /dev/null
 
+                        git checkout -B $BRANCH_NAME
+
                         ./create_miro_lib.sh > /dev/null
                         MIRO_VERSION_FULL=$(grep -m 1 -e "^MIROVersion" app.R|cut -f3 -d" "|xargs) 
                         MIRO_VERSION_MAJOR=$(echo $MIRO_VERSION_FULL | cut -f1 -d".")
@@ -296,13 +298,20 @@ pipeline {
                         export GIT_SSH_COMMAND="ssh -oStrictHostKeyChecking=no"
                         git push origin HEAD:$BRANCH_NAME || true
                         git push origin v${MIRO_VERSION_FULL}
+                        git checkout v${MIRO_VERSION_FULL}
 
                         popd > /dev/null
+
+                        git add miro
+                        git commit -m "[Jenkins CI] Update MIRO version" || {
+                            true
+                        }
 
                         git tag -a v${MIRO_VERSION_FULL} -m "version ${MIRO_VERSION_FULL}" || {
                             git push origin :refs/tags/v${MIRO_VERSION_FULL}
                             git tag -fa v${MIRO_VERSION_FULL} -m "version ${MIRO_VERSION_FULL}"
                         }
+                        git push origin HEAD:$BRANCH_NAME || true
                         git push origin v${MIRO_VERSION_FULL}
                     '''
                 }
