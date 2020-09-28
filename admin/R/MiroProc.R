@@ -43,7 +43,6 @@ MiroProc <- R6::R6Class("MiroProc", public = list(
             outputLines <- c(outputLines, private$miroProc$read_error_lines())
         }
         for(line in outputLines){
-            print(line)
             private$stdErr <- paste(private$stdErr, line, sep = "\n")
             if(startsWith(line, 'merr:::')){
                 flog.debug(paste0("MIRO error message received: ", line))

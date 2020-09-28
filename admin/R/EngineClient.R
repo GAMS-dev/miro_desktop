@@ -1,8 +1,8 @@
 EngineClient <- R6::R6Class("EngineClient", public = list(
   initialize = function(){
   },
-  registerModel = function(modelId, modelPath, overwrite = FALSE){
-    modelDataPath <- file.path(MIRO_MODEL_DIR, modelId, paste0(modelId, ".zip"))
+  registerModel = function(appId, modelId, modelPath, overwrite = FALSE){
+    modelDataPath <- file.path(MIRO_MODEL_DIR, appId, paste0(appId, ".zip"))
 
     ret <- httr::POST(paste0(ENGINE_URL, "/namespaces/", ENGINE_NAMESPACE, "/", modelId), 
                   encode = "multipart", 
@@ -15,7 +15,7 @@ EngineClient <- R6::R6Class("EngineClient", public = list(
     if(overwrite && status_code(ret) == 400){
         # model already exists, so overwrite it
         self$deregisterModel(modelId)
-        return(self$registerModel(modelId, modelPath))
+        return(self$registerModel(appId, modelId, modelPath))
     }
     if(status_code(ret) != 201){
         stop(sprintf("Unexpected return code from executor: %s when trying to register model. Error: %s",
