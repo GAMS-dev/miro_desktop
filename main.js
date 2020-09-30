@@ -227,6 +227,7 @@ developMode: ${miroDevelopMode}.`);
       'R_LIBS_SITE': libPath,
       'R_LIB_PATHS': libPath,
       'MIRO_NO_DEBUG': !miroDevelopMode,
+      'MIRO_FORCE_SCEN_IMPORT': miroDevelopMode && appData.forceScenImport,
       'MIRO_USE_TMP': appData.usetmpdir !== 'false' || appData.mode === 'hcube',
       'MIRO_WS_PATH': miroWorkspaceDir,
       'MIRO_DB_PATH': dbPath,
@@ -1366,6 +1367,7 @@ ipcMain.on('add-app', async (e, app) => {
            'R_LIBS_SITE': libPath,
            'R_LIB_PATHS': libPath,
            'MIRO_NO_DEBUG': 'true',
+           'MIRO_FORCE_SCEN_IMPORT': 'true',
            'MIRO_USE_TMP': !isFalse(appConf.usetmpdir),
            'MIRO_WS_PATH': miroWorkspaceDir,
            'MIRO_DB_PATH': getAppDbPath(appConf.dbpath),
@@ -1792,6 +1794,7 @@ app.on('ready', async () => {
       usetmpdir: process.env.MIRO_USE_TMP ? process.env.MIRO_USE_TMP: false,
       apiversion: requiredAPIVersion,
       miroversion: miroVersion,
+      forceScenImport: process.env.MIRO_FORCE_SCEN_IMPORT === 'true',
       buildArchive: process.env.MIRO_BUILD_ARCHIVE !== 'false'
     });
   } else {
