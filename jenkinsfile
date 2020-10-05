@@ -314,7 +314,8 @@ pipeline {
                             git push origin :refs/tags/v${MIRO_VERSION_FULL}
                             git tag -fa v${MIRO_VERSION_FULL} -m "version ${MIRO_VERSION_FULL}"
                         }
-                        git push origin HEAD:$BRANCH_NAME || true
+                        git pull --rebase
+                        git push || true
                         git push origin v${MIRO_VERSION_FULL}
 
                         git clone git@git.gams.com:smann/new.gams.com.git --single-branch
