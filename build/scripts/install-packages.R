@@ -1,6 +1,33 @@
 # install required packages for MIRO
+local({
+    packageVersionMapTmp <- read.csv('./miro/miro-pkg-lock.csv', header = FALSE, stringsAsFactors = FALSE)
+    packageVersionMapTmp <- deparse(lapply(seq_len(nrow(packageVersionMapTmp)), function(pkgIdx){
+        pkgInfo <- packageVersionMapTmp[pkgIdx, ]
+        pkgInfo <- trimws(c(pkgInfo[[1]], pkgInfo[[2]]))
+        if(identical(pkgInfo[2], "")){
+          return(pkgInfo[1])
+        }
+        return(pkgInfo)
+    }))
+    packageVersionMapTmp[1] <- paste0("packageVersionMap <- ", packageVersionMapTmp[1])
+    globalsSrc = readLines('./scripts/globals.R', warn = FALSE)
+    linesToReplaceLo <- grep("packageVersionMap", globalsSrc)[1] - 1
+    linesToReplaceUp <- which("" == trimws(globalsSrc))
+    linesToReplaceUp <- linesToReplaceUp[linesToReplaceUp > linesToReplaceLo][1]
+    globalsSrc <- c(globalsSrc[seq_len(linesToReplaceLo)],
+        packageVersionMapTmp,
+        globalsSrc[seq(linesToReplaceUp, length(globalsSrc))])
+    writeLines(globalsSrc, './scripts/globals.R')
+})
+
 source('./scripts/globals.R')
-for ( libPath in c(RLibPath, RlibPathDevel) ) {
+if(CIBuild){
+    installedPackages <- installedPackagesTmp
+    customPackages <- packageVersionMap[vapply(packageVersionMap, function(package){
+        return(length(package) == 1L)
+        }, logical(1), USE.NAMES = FALSE)]
+}
+for ( libPath in c(RLibPath, RlibPathDevel, RlibPathTmp) ) {
     if (!dir.exists(libPath) && 
         !dir.create(libPath, showWarnings = TRUE, recursive = TRUE)){
         stop(sprintf('Could not create directory: %s', libPath))
@@ -22,8 +49,23 @@ requiredPackages <- c('devtools', 'remotes', 'jsonlite', 'V8',
 if ( identical(Sys.getenv('BUILD_DOCKER'), 'true') ) {
     requiredPackages <- c(requiredPackages, 'DBI', 'blob')
 }
+installedPackagesDevel <- installed.packages(RlibPathDevel)
 newPackages <- requiredPackages[!requiredPackages %in% 
-  installed.packages(RlibPathDevel)[, "Package"]]
+  installedPackagesDevel[, "Package"]]
+
+# make sure correct version of packages is installed
+devPkgVersionMap <- list(list('shinytest', c(1,4)), list('zip', c(2,1)))
+for(devPkgToInstall in devPkgVersionMap){
+    if(!devPkgToInstall[[1]] %in% newPackages){
+        pkgId <- match(devPkgToInstall[[1]], installedPackagesDevel[, "Package"])
+        if(!is.na(pkgId)){
+            versionInstalled <- as.integer(strsplit(installedPackagesDevel[pkgId, "Version"], ".", fixed = TRUE)[[1]][c(1,2)])
+            if(versionInstalled[1] == devPkgToInstall[[2]][1] && versionInstalled[2] < devPkgToInstall[[2]][2]){
+                newPackages <- c(newPackages, devPkgToInstall[[1]])
+            }
+        }
+    }
+}
 
 for ( newPackage in newPackages ) {
     install.packages(newPackage, repos = CRANMirrors[1], lib = RlibPathDevel,
@@ -78,10 +120,30 @@ installPackage <- function(package, attempt = 0) {
             downloadPackage(package)
         } else if ( isMac && identical(package[1], "V8") ) {
             # use binary from CRAN to avoid having absolute path to v8 dylib compiled into binary
-            install.packages(package[1], RLibPath, repos = CRANMirrors[attempt + 1],
+            install.packages(package[1], if(CIBuild) RlibPathTmp else RLibPath, repos = CRANMirrors[attempt + 1],
                 dependencies = FALSE, INSTALL_opts = '--no-multiarch')
         } else {
-            withr::with_libpaths(RLibPath, install_version(package[1], package[2], out = './dist/dump',
+            #if ( isMac && identical(package[1], 'data.table') ) {
+            #    makevarsPath <- '~/.R/Makevars'
+            #    if ( file.exists(makevarsPath) ) {
+            #        stop("Makevars already exist. Won't overwrite!")
+            #    }
+            #    on.exit(unlink(makevarsPath))
+            #    if (!dir.exists(dirname(makevarsPath)) && 
+            #        !dir.create(dirname(makevarsPath), showWarnings = TRUE, recursive = TRUE)){
+            #        stop(sprintf('Could not create directory: %s', dirname(makevarsPath)))
+            #    }
+            #    writeLines(c('LLVM_LOC = /usr/local/opt/llvm', 
+            #        'CC=$(LLVM_LOC)/bin/clang -fopenmp',
+            #       'CXX=$(LLVM_LOC)/bin/clang++ -fopenmp', 
+            #       '# -O3 should be faster than -O2 (default) level optimisation ..',
+            #       'CFLAGS=-g -O3 -Wall -pedantic -std=gnu99 -mtune=native -pipe', 
+            #       'CXXFLAGS=-g -O3 -Wall -pedantic -std=c++11 -mtune=native -pipe',
+            #       'LDFLAGS=-L/usr/local/opt/gettext/lib -L$(LLVM_LOC)/lib -Wl,-rpath,$(LLVM_LOC)/lib',
+            #        'CPPFLAGS=-I/usr/local/opt/gettext/include -I$(LLVM_LOC)/include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include'), 
+            #    makevarsPath)
+            #}
+            withr::with_libpaths(if(CIBuild) RlibPathTmp else RLibPath, install_version(package[1], package[2], out = './dist/dump',
                 dependencies = FALSE, repos = CRANMirrors[attempt + 1],
                 INSTALL_opts = '--no-multiarch'))
         }
@@ -101,6 +163,17 @@ downloadPackage <- function(package) {
     }
 }
 
+if(CIBuild){
+    dirsInLibPath <- dir(RlibPathTmp)
+    lockedLibs <- startsWith(dirsInLibPath, "00LOCK-")
+    if(any(lockedLibs)){
+        print(paste0("Locked libraries found. Will remove locks for these libraries: ",
+            paste(dirsInLibPath[lockedLibs], collapse = ", ")))
+        unlink(file.path(RlibPathTmp, dirsInLibPath[lockedLibs]),
+            force = TRUE, recursive = TRUE)
+    }
+}
+
 for(package in packageVersionMap){
     if ( packageIsInstalled(package) ) {
         print(sprintf("Skipping '%s' as it is already installed.", package[1]))
@@ -115,11 +188,25 @@ for(package in packageVersionMap){
             file.rename(packagePath, 
                 file.path(RlibPathSrc, basename(packagePath)))
         }else{
-            install.packages(packagePath, lib = RLibPath, repos = NULL, 
+            install.packages(packagePath, lib = if(CIBuild) RlibPathTmp else RLibPath, repos = NULL, 
                          type = "source", dependencies = FALSE, INSTALL_opts = "--no-multiarch")
         }
     } else {
         installPackage(package)
+        if(CIBuild){
+            installedPackagesTmp <- c(installedPackagesTmp, package[1])
+        }
+    }
+}
+if(CIBuild && !isLinux){
+    # install packages to lib path devel and copy over
+    for(installedPackageTmp in c(installedPackagesTmp, customPackages)){
+        if(any(!file.copy(file.path(RlibPathTmp, installedPackageTmp),
+            RLibPath, overwrite = TRUE, recursive = TRUE))){
+            stop(sprintf("Failed to copy: %s to: %s",
+                file.path(RlibPathTmp, installedPackageTmp),
+                RLibPath), call. = FALSE)
+        }
     }
 }
 # clean up unncecessary files
@@ -197,6 +284,24 @@ local({
     packageJSON = gsub('"version": "[^"]+",',
         paste0('"version": "', MIROVersion, '",'), packageJSON)
     writeLines(packageJSON, './package.json')
+    adminConfig = readLines('./admin/global.R', warn = FALSE)
+    adminConfig = gsub('MIRO_VERSION[[:space:]]*<-[[:space:]]*"[^"]+"',
+        paste0('MIRO_VERSION      <- "', MIROVersion, '"'), adminConfig)
+    adminConfig = gsub("REQUIRED_API_VERSION[[:space:]]*<-.*",
+        paste0("REQUIRED_API_VERSION <- ", APIVersion), adminConfig)
+    writeLines(adminConfig, './admin/global.R')
+    dockerImageMiro = readLines('./Dockerfile', warn = FALSE)
+    dockerImageMiro = gsub('com\\.gamsmiro\\.version="[^"]+"',
+        paste0('com.gamsmiro.version="', MIROVersion, '"'), dockerImageMiro)
+    writeLines(dockerImageMiro, './Dockerfile')
+    dockerImageAdmin = readLines('./Dockerfile-admin', warn = FALSE)
+    dockerImageAdmin = gsub('com\\.gamsmiroadmin\\.version="[^"]+"',
+        paste0('com.gamsmiroadmin.version="', MIROVersion, '"'), dockerImageAdmin)
+    writeLines(dockerImageAdmin, './Dockerfile-admin')
+    aboutDialog = readLines('./renderer/about.js', warn = FALSE)
+    aboutDialog = gsub('__HASH__',
+        substr(Sys.getenv('GIT_COMMIT', '__HASH__'), 1, 8), aboutDialog, fixed = TRUE)
+    writeLines(aboutDialog, './renderer/about.js')
 })
 # build MIRO example apps
 examplesPath = file.path(getwd(), 'miro', 'examples')

@@ -13,8 +13,8 @@ const log = require('electron-log');
 const menu = require('./components/menu.js');
 const installRPackages = require('./components/install-r.js');
 const requiredAPIVersion = 1;
-const miroVersion = '1.1.3';
-const miroRelease = 'Jul 31 2020';
+const miroVersion = '1.2.0';
+const miroRelease = 'Oct 5 2020';
 const libVersion = '1.1';
 const exampleAppsData = require('./components/example-apps.js')(miroVersion, requiredAPIVersion);
 const LangParser = require('./components/LangParser.js');
@@ -47,9 +47,6 @@ if (!String.format) {
   try{
     if ( !fs.existsSync(miroWorkspaceDir) ) {
         fs.mkdirSync(miroWorkspaceDir);
-        if ( process.platform === 'win32' ) {
-          await execa("attrib", ["+h", miroWorkspaceDir]);
-        }
     }
   } catch (e) {
     log.error('Could not create miro workspace!');
@@ -230,6 +227,7 @@ developMode: ${miroDevelopMode}.`);
       'R_LIBS_SITE': libPath,
       'R_LIB_PATHS': libPath,
       'MIRO_NO_DEBUG': !miroDevelopMode,
+      'MIRO_FORCE_SCEN_IMPORT': miroDevelopMode && appData.forceScenImport,
       'MIRO_USE_TMP': appData.usetmpdir !== 'false' || appData.mode === 'hcube',
       'MIRO_WS_PATH': miroWorkspaceDir,
       'MIRO_DB_PATH': dbPath,
@@ -356,8 +354,37 @@ function validateMIROApp ( filePath ) {
         }
         mainWindow.setProgressBar(++fileCnt * incAmt);
         appFileNames.push(entry.fileName);
-        if ( skipCnt < 1 ) {
+        if ( skipCnt < 2 ) {
           if ( path.dirname(entry.fileName).startsWith('static_') ) {
+            if ( path.basename(entry.fileName.toLowerCase()) === 'app_info.json' ) {
+              log.debug('App info file in new MIRO app found.');
+              skipCnt++;
+              zipfile.openReadStream(entry, function(err, readStream) {
+                if (err) {
+                  return showZipfilError(err);
+                }
+                const appInfoData = [];
+                readStream.on('data', (chunk) => {
+                  appInfoData.push(chunk);
+                });
+                readStream.on('end', () => {
+                  try{
+                    const appInfo = JSON.parse(Buffer
+                      .concat(appInfoData)
+                      .toString('utf8'));
+                    newAppConf.title = appInfo.title;
+                    newAppConf.description = appInfo.description;
+                  } catch ( e ) {
+                    if (e instanceof SyntaxError) {
+                      log.debug(`Invalid JSON syntax in app info file. File will be ignored. Error message: ${e.message}`);
+                    } else {
+                      log.warn(`Unexpected error occurred while reading app info file. Error message: ${e.message}`);
+                    }
+                  }
+                });
+              });
+              return;
+            }
             const logoExt = entry.fileName.toLowerCase().match(/.*_logo\.(jpg|jpeg|png)$/);
             if ( logoExt ) {
               newAppConf.logoPath = entry.fileName;
@@ -1340,6 +1367,7 @@ ipcMain.on('add-app', async (e, app) => {
            'R_LIBS_SITE': libPath,
            'R_LIB_PATHS': libPath,
            'MIRO_NO_DEBUG': 'true',
+           'MIRO_FORCE_SCEN_IMPORT': 'true',
            'MIRO_USE_TMP': !isFalse(appConf.usetmpdir),
            'MIRO_WS_PATH': miroWorkspaceDir,
            'MIRO_DB_PATH': getAppDbPath(appConf.dbpath),
@@ -1648,6 +1676,10 @@ ipcMain.on('delete-app', async (e, appId) => {
         } finally {
           miroDb.close()
         }
+        const rmPromiseHcube = fs.remove(path.join(miroWorkspaceDir, 'hcube_jobs', appId));
+        const rmPromiseCred = fs.remove(path.join(miroWorkspaceDir, `.cred_${appId}`));
+        await rmPromiseHcube;
+        await rmPromiseCred;
       } catch (e) {
         log.error(`Problems removing data (app ID: ${appId}). Error message: ${e.message}`);
         showErrorMsg({
@@ -1762,6 +1794,7 @@ app.on('ready', async () => {
       usetmpdir: process.env.MIRO_USE_TMP ? process.env.MIRO_USE_TMP: false,
       apiversion: requiredAPIVersion,
       miroversion: miroVersion,
+      forceScenImport: process.env.MIRO_FORCE_SCEN_IMPORT === 'true',
       buildArchive: process.env.MIRO_BUILD_ARCHIVE !== 'false'
     });
   } else {

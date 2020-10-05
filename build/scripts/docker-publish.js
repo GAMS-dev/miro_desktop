@@ -23,6 +23,10 @@ if ( clArgs[0] === '--unstable' ) {
             subproc.stderr.pipe(process.stderr);
             subproc.stdout.pipe(process.stderr);
             await subproc;
+            const subprocAdmin =  execa('docker', [ 'tag', 'gamsmiro-admin', 'hub.gams.com/gamsmiro-admin' ]);
+            subprocAdmin.stderr.pipe(process.stderr);
+            subprocAdmin.stdout.pipe(process.stderr);
+            await subprocAdmin;
         } catch (e) {
             console.log(`Problems tagging docker image. Error message: ${e.message}`);
             process.exit(1);
@@ -34,6 +38,10 @@ if ( clArgs[0] === '--unstable' ) {
         subproc.stderr.pipe(process.stderr);
         subproc.stdout.pipe(process.stderr);
         await subproc;
+        const subprocAdmin =  execa('docker', [ 'tag', 'gamsmiro-admin', `hub.gams.com/gamsmiro-admin:${miroVersion}` ]);
+        subprocAdmin.stderr.pipe(process.stderr);
+        subprocAdmin.stdout.pipe(process.stderr);
+        await subprocAdmin;
     } catch (e) {
         console.log(`Problems tagging docker image. Error message: ${e.message}`);
         process.exit(1);
@@ -45,6 +53,10 @@ if ( clArgs[0] === '--unstable' ) {
             subproc.stderr.pipe(process.stderr);
             subproc.stdout.pipe(process.stderr);
             await subproc;
+            const subprocAdmin =  execa('docker', [ 'push', 'hub.gams.com/gamsmiro-admin' ]);
+            subprocAdmin.stderr.pipe(process.stderr);
+            subprocAdmin.stdout.pipe(process.stderr);
+            await subprocAdmin;
         } catch (e) {
             console.log(`Problems pushing docker image. Error message: ${e.message}`);
             process.exit(1);
@@ -56,6 +68,10 @@ if ( clArgs[0] === '--unstable' ) {
         subproc.stderr.pipe(process.stderr);
         subproc.stdout.pipe(process.stderr);
         await subproc;
+        const subprocAdmin =  execa('docker', [ 'push', `hub.gams.com/gamsmiro-admin:${miroVersion}` ]);
+        subprocAdmin.stderr.pipe(process.stderr);
+        subprocAdmin.stdout.pipe(process.stderr);
+        await subprocAdmin;
     } catch (e) {
         console.log(`Problems pushing docker image. Error message: ${e.message}`);
         process.exit(1);

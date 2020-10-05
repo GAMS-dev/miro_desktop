@@ -108,14 +108,18 @@ const tryInstallRPackages = async (attempt = 0) => {
     }
     if ( buildDocker ) {
         try {
-            console.log(`Building Docker image...`);
+            console.log(`Building Docker images...`);
             // `gamsmiro-ui:${process.env.npm_package_version}`
             const subproc =  execa('docker', [ 'build', '-t', `gamsmiro-ui`, '.' ]);
             subproc.stderr.pipe(process.stderr);
             subproc.stdout.pipe(process.stderr);
             await subproc;
+            const subprocAdmin =  execa('docker', [ 'build', '-t', 'gamsmiro-admin', '-f', 'Dockerfile-admin', '.' ]);
+            subprocAdmin.stderr.pipe(process.stderr);
+            subprocAdmin.stdout.pipe(process.stderr);
+            await subprocAdmin;
         } catch (e) {
-            console.log(`Problems building Docker image. Error message: ${e.message}`);
+            console.log(`Problems building Docker images. Error message: ${e.message}`);
             process.exit(1);
         }
     }

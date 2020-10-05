@@ -14,7 +14,7 @@ $('#btClose').on('click', () => {
 const miroRelease = globals['miroRelease'];
 const copyrightYear = miroRelease.substr(miroRelease.length - 4);
 
-const aboutText = `<b>GAMS MIRO v.${globals['?miroVersion']}</b><br/><br/>\
+const aboutText = `<b>GAMS MIRO v.${globals['?miroVersion']}</b>&nbsp;&nbsp;<sup>(__HASH__)</sup><br/><br/>\
 Release Date: ${miroRelease}<br/>\
 Copyright (c) 2019 - ${copyrightYear} GAMS Software GmbH &lt;support@gams.com&gt;<br/>\
 Copyright (c) 2019 - ${copyrightYear} GAMS Development Corp. &lt;support@gams.com&gt;<br/><br/>\

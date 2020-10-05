@@ -117,7 +117,7 @@ class ConfigManager extends Store {
        (key === 'remoteExecution' && value === false) ||
        (key === 'logLifeTime' && value === -1) ||
        (key === 'language' && value === 'en') ||
-       (key === 'logLevel' && value === 'TRACE') ) {
+       (key === 'logLevel' && value === 'INFO') ) {
         this[key] = '';
         super.delete(key); 
       } else {

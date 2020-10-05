@@ -682,13 +682,22 @@ ipcRenderer.on('app-validated', (e, appConf) => {
     expandAddAppForm();
     newAppConfig = appConf;
     const appNameField = $('#newAppName');
+    const appDescField = $('#newAppDesc');
     $('#btAddApp').disabled = false;
     if ( appConf.logoPathTmp ) {
         $('#newAppLogo').css('background-image', `url('${pathToFileURL(appConf.logoPathTmp)}')`);
         delete newAppConfig.logoPathTmp;
     }
     if ( appNameField.text().trim() === lang['appNamePlaceholder'] ) {
+      if ( appConf.title ) {
+        appNameField.text(appConf.title);
+      } else {
         appNameField.text(appConf.id);
+      }
+    }
+    if ( appConf.description && 
+      appDescField.text().trim() === lang['appDescPlaceholder'] ) {
+        appDescField.text(appConf.description);
     }
     $('#newAppFiles').css('display', 'none');
     $('#newAppLogo').css('display', 'block');
