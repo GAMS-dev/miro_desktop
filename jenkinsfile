@@ -226,14 +226,14 @@ pipeline {
                 withCredentials([string(credentialsId: 'b994bcd8-e2fe-4e97-9950-d7149bb51479', variable: 'S3_URL'),
                     usernamePassword(credentialsId: '3582cc15-1a25-4121-9fc5-8f7242f21dc7', passwordVariable: 'S3_SECRET_KEY', usernameVariable: 'S3_ACCESS_KEY')]) {
                     sh '''#!/bin/bash -xe
+                        ## change to artifact location
+                        pushd artifacts/dist > /dev/null
+
                         ## get MIRO version information for artifact and tag name
-                        MIRO_VERSION=$(grep -e '"version": .*' package.json |cut -f4 -d"\\"")
+                        MIRO_VERSION=$(find * -name '*.AppImage'|grep -Eo '[0-9]+\\.[0-9]+\\.[0-9]+')
                         MIRO_VERSION_MAJOR=$(echo $MIRO_VERSION | cut -f1 -d".")
                         MIRO_VERSION_MINOR=$(echo $MIRO_VERSION | cut -f2 -d".")
                         MIRO_VERSION_PATCH=$(echo $MIRO_VERSION | cut -f3 -d".")
-
-                        ## change to artifact location
-                        pushd artifacts/dist > /dev/null
 
                         FOLDER_NAME="${MIRO_VERSION_MAJOR}.${MIRO_VERSION_MINOR}"
 
@@ -319,8 +319,9 @@ pipeline {
 
                         git clone git@git.gams.com:smann/new.gams.com.git --single-branch
                         pushd new.gams.com > /dev/null
-                        sed -i '' -e 's/^\\( *miro_release *= *\\).*/\\1"'"${MIRO_VERSION_FULL}"'"/' config.toml
-                        sed -i '' -e 's/^\\( *miro_release_date *= *\\).*/\\1'"${MIRO_RELEASE_DATE}"'/' config.toml
+                        ls -la
+                        sed -i -e 's/^\\( *miro_release *= *\\).*/\\1"'"${MIRO_VERSION_FULL}"'"/' ./config.toml
+                        sed -i -e 's/^\\( *miro_release_date *= *\\).*/\\1'"${MIRO_RELEASE_DATE}"'/' ./config.toml
                         git add config.toml
                         git status
                         git config user.name 'jenkins'
