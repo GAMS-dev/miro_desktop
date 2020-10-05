@@ -220,8 +220,8 @@ pipeline {
                 skipDefaultCheckout()
             }
             steps {
-                step([$class: 'WsCleanup'])
                 sh '''
+                    rm -rf artifacts
                     mkdir -p artifacts
                 '''
                 copyArtifacts filter: '**/*.AppImage, **/*.dmg, **/*.exe', fingerprintArtifacts: true, projectName: '${JOB_NAME}', selector: specific('${BUILD_NUMBER}'), target: 'artifacts'
