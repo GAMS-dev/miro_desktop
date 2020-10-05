@@ -315,6 +315,7 @@ pipeline {
                         git push origin HEAD:$BRANCH_NAME || true
                         git push origin v${MIRO_VERSION_FULL}
 
+                        rm -rf new.gams.com
                         git clone git@git.gams.com:smann/new.gams.com.git --single-branch
                         pushd new.gams.com > /dev/null
                         ls -la
