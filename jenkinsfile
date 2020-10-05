@@ -220,6 +220,7 @@ pipeline {
                 skipDefaultCheckout()
             }
             steps {
+                step([$class: 'WsCleanup'])
                 sh '''
                     mkdir -p artifacts
                 '''
