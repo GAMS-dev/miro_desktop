@@ -13,6 +13,7 @@ pipeline {
         stage('Skip build check') {
             agent { label 'docker' }
             steps {
+                step([$class: 'WsCleanup'])
                 catchError {
                     sh '''#!/bin/bash -xe
                         COMMIT_AUTHOR=$(git show -s --format=%an $GIT_COMMIT)
@@ -316,7 +317,6 @@ pipeline {
                         git push origin HEAD:$BRANCH_NAME || true
                         git push origin v${MIRO_VERSION_FULL}
 
-                        rm -rf new.gams.com
                         git clone git@git.gams.com:smann/new.gams.com.git --single-branch
                         pushd new.gams.com > /dev/null
                         ls -la
