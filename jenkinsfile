@@ -47,7 +47,7 @@ pipeline {
                                 '''
                             }
                         }
-                        sshagent(['d60edbb5-9329-4eba-81b2-448d800c4002']) {
+                        sshagent(['a2576ca5-f8e0-4e28-9d42-b0c5603b213d']) {
                             sh '''#!/bin/bash
                                git status
                                git add ./main.js ./package.json ./scripts/globals.R
@@ -268,7 +268,7 @@ pipeline {
                 branch 'master'
             }
             steps {
-                sshagent(['d60edbb5-9329-4eba-81b2-448d800c4002']) {
+                sshagent(['a2576ca5-f8e0-4e28-9d42-b0c5603b213d']) {
                     sh '''#!/bin/bash -xe
                         pushd miro > /dev/null
 
@@ -279,6 +279,7 @@ pipeline {
                         MIRO_VERSION_MAJOR=$(echo $MIRO_VERSION_FULL | cut -f1 -d".")
                         MIRO_VERSION_MINOR=$(echo $MIRO_VERSION_FULL | cut -f2 -d".")
                         MIRO_VERSION_SHORT="${MIRO_VERSION_MAJOR}.${MIRO_VERSION_MINOR}"
+                        MIRO_RELEASE_DATE=$(grep -m 1 -e '<h2 class="section-title" style="display:inline-block">GAMS MIRO' doc/release.html | cut -f2 -d"("|cut -f1 -d ")"|xargs)
                         echo $MIRO_VERSION_FULL | sed 's/\\./,/g'> ./doc/latest.ver
                         sed -e '/<code class="language-json">/r./conf/config_schema.json' ./doc/schema_template.html >./doc/schema.html
                         sed -e '/<pre id="miro-license">/r./LICENSE' ./doc/license_template.html >./doc/license.html
@@ -313,6 +314,19 @@ pipeline {
                         }
                         git push origin HEAD:$BRANCH_NAME || true
                         git push origin v${MIRO_VERSION_FULL}
+
+                        git clone git@git.gams.com:smann/new.gams.com.git --single-branch
+                        pushd new.gams.com > /dev/null
+                        sed -i '' -e 's/^\\( *miro_release *= *\\).*/\\1"'"${MIRO_VERSION_FULL}"'"/' config.toml
+                        sed -i '' -e 's/^\\( *miro_release_date *= *\\).*/\\1'"${MIRO_RELEASE_DATE}"'/' config.toml
+                        git add config.toml
+                        git status
+                        git config user.name 'jenkins'
+                        git config user.email 'jenkins@berlin.noreply.gams.com'
+                        git commit -m "[Jenkins CI] Update MIRO version" || {
+                            git push origin
+                        }
+                        popd > /dev/null
                     '''
                 }
             }
