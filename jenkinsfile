@@ -271,8 +271,6 @@ pipeline {
                     sh '''#!/bin/bash -xe
                         pushd miro > /dev/null
 
-                        git checkout -B $BRANCH_NAME
-
                         ./create_miro_lib.sh > /dev/null
                         MIRO_VERSION_FULL=$(grep -m 1 -e "^MIROVersion" app.R|cut -f3 -d" "|xargs) 
                         MIRO_VERSION_MAJOR=$(echo $MIRO_VERSION_FULL | cut -f1 -d".")
