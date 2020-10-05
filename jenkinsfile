@@ -320,7 +320,10 @@ pipeline {
                         }
                         git pull --rebase
                         git push || true
-                        git push origin v${MIRO_VERSION_FULL}
+                        git push origin v${MIRO_VERSION_FULL} || {
+                            git push origin :refs/tags/v${MIRO_VERSION_FULL}
+                            git push origin v${MIRO_VERSION_FULL}
+                        }
 
                         git clone git@git.gams.com:smann/new.gams.com.git --single-branch
                         pushd new.gams.com > /dev/null
