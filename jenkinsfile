@@ -170,7 +170,7 @@ pipeline {
                     }
                     steps {
                         script{
-                            if (env.BRANCH_NAME == 'master') {
+                            if (env.BRANCH_NAME == 'master' && currentBuild.currentResult == "SUCCESS") {
                                 withCredentials([usernamePassword(credentialsId: 'dockerhub_login', passwordVariable: 'hub_pass', usernameVariable: 'hub_user')]){
                                     sh '''
                                         docker login hub.gams.com:443 --username="${hub_user}" --password="${hub_pass}"
