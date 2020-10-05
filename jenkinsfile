@@ -13,7 +13,6 @@ pipeline {
         stage('Skip build check') {
             agent { label 'docker' }
             steps {
-                step([$class: 'WsCleanup'])
                 catchError {
                     sh '''#!/bin/bash -xe
                         COMMIT_AUTHOR=$(git show -s --format=%an $GIT_COMMIT)
@@ -23,6 +22,7 @@ pipeline {
                         fi
                     '''
                 }
+                step([$class: 'WsCleanup'])
             }
             post {
                 failure {
