@@ -304,6 +304,9 @@ pipeline {
                         popd > /dev/null
 
                         git add miro
+                        git config user.name 'jenkins'
+                        git config user.email 'jenkins@berlin.noreply.gams.com'
+                        git checkout -B $BRANCH_NAME
                         git commit -m "[Jenkins CI] Update MIRO version" || {
                             true
                         }
