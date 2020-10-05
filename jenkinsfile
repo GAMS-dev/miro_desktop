@@ -294,6 +294,7 @@ pipeline {
 
                         set +x
                         export GIT_SSH_COMMAND="ssh -oStrictHostKeyChecking=no"
+                        git pull --rebase
                         git push origin HEAD:$BRANCH_NAME || true
                         git push origin v${MIRO_VERSION_FULL}
                         git checkout v${MIRO_VERSION_FULL}
