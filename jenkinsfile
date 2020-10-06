@@ -273,6 +273,7 @@ pipeline {
                     sh '''#!/bin/bash -xe
                         MIRO_VERSION_FULL=$(grep -e '"version": .*' package.json |cut -f4 -d"\\"")
                         pushd miro > /dev/null
+                            git fetch --force --tags || { echo "could not fetch tags of GAMS MIRO " ; exit 1 ; }
                             git checkout v${MIRO_VERSION_FULL} || {
                                 exit 1
                             }
