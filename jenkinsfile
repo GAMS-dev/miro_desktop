@@ -306,8 +306,8 @@ pipeline {
                         git status
                         git config user.name 'jenkins'
                         git config user.email 'jenkins@berlin.noreply.gams.com'
-                        git commit -m "[Jenkins CI] Update MIRO version" || {
-                            git push origin
+                        git commit -m "[Jenkins CI] Update MIRO version" && {
+                            git push origin HEAD:$BRANCH_NAME || true
                         }
                         popd > /dev/null
                     '''
