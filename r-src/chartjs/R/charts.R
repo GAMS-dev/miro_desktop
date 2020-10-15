@@ -14,7 +14,8 @@ NULL
 cjsBar <- function(chartjs, labels, stacked = FALSE){
   cjs_base_chart(chartjs, labels, "bar") %>%
     cjsAddScale("x", "category", stacked = stacked) %>%
-    cjsAddScale("y", "linear", stacked = stacked)
+    cjsAddScale("y", "linear", stacked = stacked,
+      ticks = list(beginAtZero = TRUE))
 }
 
 #' @export
