@@ -17,10 +17,10 @@ cjsSeries <- function(cjs, data, type, label, scale){
 #' @describeIn cjsSeries Add series to a bar chart
 #' @keywords internal
 #' @export
-cjsSeries.cjs_bar <- function(cjs, data, type = "bar", label = NULL, scale = NULL){
+cjsSeries.cjs_bar <- function(cjs, data, type = "bar", label = NULL, scale = NULL, ...){
   n <- length(cjs$x$data$datasets)
   colours <- cjs %>% cjs_get_colours(n)
-  dataset <- list(c(data = list(I(data)), colours, label = label))
+  dataset <- list(c(data = list(I(data)), colours, label = label, ...))
   if (!is.null(type)) dataset[[1]]$type <- type
   if (!is.null(scale)) dataset[[1]]$yAxisID <- paste0("y-axis-", scale - 1)
   cjs$x$data$datasets <- if (is.null(cjs$x$data$datasets)) dataset else c(cjs$x$data$datasets, dataset)
@@ -31,7 +31,7 @@ cjsSeries.cjs_bar <- function(cjs, data, type = "bar", label = NULL, scale = NUL
 #' @keywords internal
 #' @export
 cjsSeries.cjs_line <- function(cjs, data, type = "line", label = NULL, scale = NULL){
-  cjsSeries.cjs_bar(cjs, data, type, label, scale)
+  cjsSeries.cjs_bar(cjs, data, type, label, scale, lineTension = 0L)
 }
 
 #' @describeIn cjsSeries Add series to a horizontal bar chart
