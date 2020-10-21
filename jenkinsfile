@@ -273,20 +273,12 @@ pipeline {
                     sh '''#!/bin/bash -xe
                         MIRO_VERSION_FULL=$(grep -e '"version": .*' package.json |cut -f4 -d"\\"")
                         pushd miro > /dev/null
-                            git fetch --force --tags || { echo "could not fetch tags of GAMS MIRO " ; exit 1 ; }
-                            git checkout v${MIRO_VERSION_FULL} || {
-                                exit 1
-                            }
-                            MIRO_RELEASE_DATE=$(grep -m 1 -e 'MIRORDate' app.R | cut -f2 -d'"' | date -d'Oct 5 2020' +%Y-%m-%d |xargs)
+                           MIRO_RELEASE_DATE=$(grep -m 1 -e 'MIRORDate' app.R | cut -f2 -d'"' | date -d'Oct 5 2020' +%Y-%m-%d |xargs)
                         popd > /dev/null
 
-                        git add miro
                         git config user.name 'jenkins'
                         git config user.email 'jenkins@berlin.noreply.gams.com'
                         git checkout -B $BRANCH_NAME
-                        git commit -m "[Jenkins CI] Update MIRO version" || {
-                            true
-                        }
 
                         git tag -a v${MIRO_VERSION_FULL} -m "version ${MIRO_VERSION_FULL}" || {
                             git push origin :refs/tags/v${MIRO_VERSION_FULL}
