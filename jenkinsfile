@@ -273,7 +273,7 @@ pipeline {
                     sh '''#!/bin/bash -xe
                         MIRO_VERSION_FULL=$(grep -e '"version": .*' package.json |cut -f4 -d"\\"")
                         pushd miro > /dev/null
-                           MIRO_RELEASE_DATE=$(grep -m 1 -e 'MIRORDate' app.R | cut -f2 -d'"' | date -d'Oct 5 2020' +%Y-%m-%d |xargs)
+                           MIRO_RELEASE_DATE=$(grep -m 1 -e 'MIRORDate' app.R | cut -f2 -d'"' | xargs -0 date +%Y-%m-%d -d )
                         popd > /dev/null
 
                         git config user.name 'jenkins'
