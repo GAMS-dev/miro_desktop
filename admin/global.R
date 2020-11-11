@@ -11,7 +11,7 @@ ENGINE_ADMIN_PWD  <- Sys.getenv("MIRO_ENGINE_ADMIN_PASS")
 
 USERNAME          <- Sys.getenv("MIRO_ADMIN_USER")
 PASSWORD          <- Sys.getenv("SHINYPROXY_PASSWORD")
-LOGIN_REQUIRED    <- Sys.getenv("SHINYPROXY_NOAUTH", "true") == "true" && PASSWORD != ""
+LOGIN_REQUIRED    <- Sys.getenv("SHINYPROXY_NOAUTH") == "true" && PASSWORD != ""
 
 REQUIRED_API_VERSION <- 1
 MAX_LOGO_SIZE     <- 1e6
