@@ -6,6 +6,11 @@ MiroProc <- R6::R6Class("MiroProc", public = list(
 
     private$procEnv <- procEnv
 
+    if(!identical(Sys.getenv("SHINYPROXY_NOAUTH"), "true")){
+      # if not NOAUTH mode, admin user = SHINYPROXY_USERNAME
+      private$procEnv[["MIRO_ADMIN_USER"]] <- NULL
+    }
+
     return(invisible(self))
   },
   getTablesToRemove = function(){
