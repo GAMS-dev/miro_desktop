@@ -29,7 +29,6 @@ addAppLogo <- function(appId, logoFile = NULL, newLogoName = NULL){
             logoPath <- file.path(modelPath, logoFile)
             newLogoName <- basename(logoFile)
         }
-        print(logoPath)
         if(!file.exists(logoPath)){
             stop("Logo does not exist.", call. = FALSE)
         }
