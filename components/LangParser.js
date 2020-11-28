@@ -2,785 +2,785 @@
 
 const Ajv = require('ajv');
 const ajv = new Ajv();
-const schema = {  
-   "$schema":"http://json-schema.org/draft-07/schema#",
-   "title":"GAMS MIRO Launcher language file schema",
-   "type":"object",
-   "additionalProperties":false,
-   "properties":{
-     "update":{
-       "type":"object",
-       "additionalProperties":false,
-       "properties":{
-           "title": {
-               "type":"string",
-               "minLength":1
-           },
-           "updateAvailable": {
-               "type":"string",
-               "minLength":1
-           },
-           "downloadUpdate": {
-               "type":"string",
-               "minLength":1
-           },
-           "here": {
-               "type":"string",
-               "minLength":1
-           },
-           "upToDate": {
-               "type":"string",
-               "minLength":1
-           },
-           "error": {
-               "type":"string",
-               "minLength":1
-           },
-           "btClose": {
-               "type":"string",
-               "minLength":1
-           }
-         },
-         "required": ["title", "updateAvailable", "downloadUpdate", "here", "upToDate", "error",
-         "btClose"]
-     },
-     "main":{
-       "type":"object",
-       "additionalProperties":false,
-       "properties":{
-           "ErrorUnexpectedHdr": {
-               "type":"string",
-               "minLength":1
-           }, 
-           "ErrorUnexpectedMsg": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorUnexpectedMsg2": {
-               "type":"string",
-               "minLength":1
-           },
-           "BtnCancel": {
-               "type":"string",
-               "minLength":1
-           },
-           "BtnOk": {
-               "type":"string",
-               "minLength":1
-           },
-           "BtnRemove": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorInvalidHdr": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorInvalidMsg": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorInvalidTwoMsg": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorInvalidThreeMsg": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorAPIHdr": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorAPIMsg": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorVersionMsg": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorReadMsg": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorLogoHdr": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorLogoMsg": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorLogoMultiMsg": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorLogoLargeHdr": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorLogoLargeMsg": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorExampleExistsHdr": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorModelExistsHdr": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorModelExistsMsg": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorModelExistsMsg2": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorWriteHdr": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorWriteMsg": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorWriteMsg2": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorAppRunningHdr": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorAppRunningMsg": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorAppIncompMsg": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorMsgLaunch": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorInstallStartMsg": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorInstallPermHdr": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorInstallPerm1Msg": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorInstallPerm2Msg": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorInstallPerm3Msg": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorInstallPerm4Msg": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorInstallPermBtnYes": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorInstallPermBtnNo": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorWritePerm2Msg": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorNoWritePermMsg": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorInvalidPathHdr": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorInvalidPathMsg": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorInvalidPathMsg2": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorInvalidPathMsgMac": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorMessage": {
-               "type":"string",
-               "minLength":1
-           },
-           "SuccessUpdateHdr": {
-               "type":"string",
-               "minLength":1
-           },
-           "SuccessUpdateMsg": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorUnexpectedWriteMsg": {
-               "type":"string",
-               "minLength":1
-           },
-           "DeleteMsg": {
-               "type":"string",
-               "minLength":1
-           },
-           "DeleteDataMsg": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorInit": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorRInstallHdr": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorRInstallMsg": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorModelPathHdr": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorModelPathMsg": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorRNotFoundHdr": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorRNotFoundMsg": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorInconsistentDbTablesHdr": {
-               "type":"string",
-               "minLength":1
-           },
-           "ErrorInconsistentDbTablesMsg": {
-               "type":"string",
-               "minLength":1
-           },
-         },
-         "required": ["ErrorUnexpectedHdr", "ErrorUnexpectedMsg", "ErrorUnexpectedMsg2", "BtnCancel", "BtnOk", "BtnRemove", "ErrorInvalidHdr",
-         "ErrorInvalidMsg", "ErrorInvalidTwoMsg", "ErrorInvalidThreeMsg", "ErrorAPIHdr", "ErrorAPIMsg", "ErrorVersionMsg", "ErrorReadMsg",
-         "ErrorLogoHdr", "ErrorLogoMsg", "ErrorLogoMultiMsg", "ErrorLogoLargeHdr", "ErrorLogoLargeMsg", "ErrorExampleExistsHdr", "ErrorModelExistsHdr",
-         "ErrorModelExistsMsg", "ErrorModelExistsMsg2", "ErrorWriteHdr", "ErrorWriteMsg", "ErrorWriteMsg2", "ErrorAppRunningHdr", "ErrorAppRunningMsg",
-         "ErrorAppIncompMsg", "ErrorMsgLaunch", "ErrorInstallStartMsg", "ErrorInstallPermHdr", "ErrorInstallPerm1Msg", "ErrorInstallPerm2Msg",
-         "ErrorInstallPerm3Msg", "ErrorInstallPerm4Msg", "ErrorInstallPermBtnYes", "ErrorInstallPermBtnNo", "ErrorWritePerm2Msg", "ErrorNoWritePermMsg",
-         "ErrorInvalidPathHdr", "ErrorInvalidPathMsg", "ErrorInvalidPathMsgMac", "ErrorInvalidPathMsg2", "ErrorMessage", "SuccessUpdateHdr",
-         "SuccessUpdateMsg", "ErrorUnexpectedWriteMsg", "DeleteMsg", "DeleteDataMsg", "ErrorInit", "ErrorRInstallHdr", "ErrorRInstallMsg",
-         "ErrorModelPathHdr", "ErrorModelPathMsg", "ErrorRNotFoundHdr", "ErrorRNotFoundMsg", "ErrorInconsistentDbTablesHdr", "ErrorInconsistentDbTablesMsg"]
-     },
-     "general":{
-       "type":"object",
-       "additionalProperties":false,
-       "properties":{
-           "title": {
-               "type":"string",
-               "minLength":1
-           },
-           "noApps": {
-               "type":"string",
-               "minLength":1
-           },
-           "btEdit": {
-               "type":"string",
-               "minLength":1
-           },
-           "btEditDone": {
-               "type":"string",
-               "minLength":1
-           },
-           "btAddExamples": {
-               "type":"string",
-               "minLength":1
-           },
-           "appFilesPlaceholder": {
-               "type":"string",
-               "minLength":1
-           },
-           "appNamePlaceholder": {
-               "type":"string",
-               "minLength":1
-           },
-           "appDescPlaceholder": {
-               "type":"string",
-               "minLength":1
-           },
-           "appDbPathPlaceholder": {
-               "type":"string",
-               "minLength":1
-           },
-           "appLogoPlaceholder": {
-               "type":"string",
-               "minLength":1
-           },
-           "appDbPathReset": {
-               "type":"string",
-               "minLength":1
-           },
-           "editAppInfoText": {
-               "type":"string",
-               "minLength":1
-           },
-           "btLaunch": {
-               "type":"string",
-               "minLength":1
-           },
-           "btLaunchBase": {
-               "type":"string",
-               "minLength":1
-           },
-           "btLaunchHcube": {
-               "type":"string",
-               "minLength":1
-           },
-           "btCancel": {
-               "type":"string",
-               "minLength":1
-           },
-           "btSave": {
-               "type":"string",
-               "minLength":1
-           },
-           "btAddApp": {
-               "type":"string",
-               "minLength":1
-           },
-           "errNoAppTitleHdr": {
-               "type":"string",
-               "minLength":1
-           },
-           "errNoAppTitleMsg": {
-               "type":"string",
-               "minLength":1
-           },
-           "errInvalidDbPathHdr": {
-               "type":"string",
-               "minLength":1
-           },
-           "errInvalidDbPathMsg": {
-               "type":"string",
-               "minLength":1
-           },
-           "dialogSelectAppLogoHdr": {
-               "type":"string",
-               "minLength":1
-           },
-           "dialogSelectAppLogoMsg": {
-               "type":"string",
-               "minLength":1
-           },
-           "dialogSelectAppLogoBtn": {
-               "type":"string",
-               "minLength":1
-           },
-           "dialogSelectAppLogoFilter": {
-               "type":"string",
-               "minLength":1
-           },
-           "dialogSelectDbPathHdr": {
-               "type":"string",
-               "minLength":1
-           },
-           "dialogSelectDbPathMsg": {
-               "type":"string",
-               "minLength":1
-           },
-           "dialogSelectDbPathBtn": {
-               "type":"string",
-               "minLength":1
-           },
-           "dialogErrHdr": {
-               "type":"string",
-               "minLength":1
-           },
-           "dialogErrMsg": {
-               "type":"string",
-               "minLength":1
-           },
-           "dialogNewAppFilesHdr": {
-               "type":"string",
-               "minLength":1
-           },
-           "dialogNewAppFilesMsg": {
-               "type":"string",
-               "minLength":1
-           },
-           "dialogNewAppFilesBtn": {
-               "type":"string",
-               "minLength":1
-           },
-           "dialogNewAppFilesFilter": {
-               "type":"string",
-               "minLength":1
-           },
-       },
-       "required": ["title", "noApps", "btEdit", "btEditDone", "btAddExamples", "appFilesPlaceholder", "appNamePlaceholder", 
-       "appDescPlaceholder", "appDbPathPlaceholder", "appLogoPlaceholder", "appDbPathReset", "editAppInfoText", "btLaunch", "btLaunchBase", 
-       "btLaunchHcube", "btCancel", "btSave", "btAddApp", "errNoAppTitleHdr", "errNoAppTitleMsg" ,"errInvalidDbPathHdr",
-       "errInvalidDbPathMsg", "dialogSelectAppLogoHdr", "dialogSelectAppLogoMsg", "dialogSelectAppLogoBtn",
-       "dialogSelectAppLogoFilter", "dialogSelectDbPathHdr", "dialogSelectDbPathMsg", "dialogSelectDbPathBtn",
-       "dialogErrHdr", "dialogErrMsg", "dialogNewAppFilesHdr", "dialogNewAppFilesMsg", "dialogNewAppFilesBtn",
-       "dialogNewAppFilesFilter"]
-     },
-     "menu":{
-       "type":"object",
-       "additionalProperties":false,
-       "properties":{
-           "pref": {
-               "type":"string",
-               "minLength":1
-           },
-           "about": {
-               "type":"string",
-               "minLength":1
-           },
-           "services": {
-               "type":"string",
-               "minLength":1
-           },
-           "hide": {
-               "type":"string",
-               "minLength":1
-           },
-           "unhide": {
-               "type":"string",
-               "minLength":1
-           },
-           "hideothers": {
-               "type":"string",
-               "minLength":1
-           },
-           "file": {
-               "type":"string",
-               "minLength":1
-           },
-           "edit": {
-               "type":"string",
-               "minLength":1
-           },
-           "addApp": {
-               "type":"string",
-               "minLength":1
-           },
-           "editApp": {
-               "type":"string",
-               "minLength":1
-           },
-           "addExampleApps": {
-               "type":"string",
-               "minLength":1
-           },
-           "undo": {
-               "type":"string",
-               "minLength":1
-           },
-           "redo": {
-               "type":"string",
-               "minLength":1
-           },
-           "cut": {
-               "type":"string",
-               "minLength":1
-           },
-           "copy": {
-               "type":"string",
-               "minLength":1
-           },
-           "paste": {
-               "type":"string",
-               "minLength":1
-           },
-           "selectAll": {
-               "type":"string",
-               "minLength":1
-           },
-           "view": {
-               "type":"string",
-               "minLength":1
-           },
-           "window": {
-               "type":"string",
-               "minLength":1
-           },
-           "minimize": {
-               "type":"string",
-               "minLength":1
-           },
-           "zoom": {
-               "type":"string",
-               "minLength":1
-           },
-           "front": {
-               "type":"string",
-               "minLength":1
-           },
-           "close": {
-               "type":"string",
-               "minLength":1
-           },
-           "quit": {
-               "type":"string",
-               "minLength":1
-           },
-           "fullscreen": {
-               "type":"string",
-               "minLength":1
-           },
-           "resetZoom": {
-               "type":"string",
-               "minLength":1
-           },
-           "zoomIn": {
-               "type":"string",
-               "minLength":1
-           },
-           "zoomOut": {
-               "type":"string",
-               "minLength":1
-           },
-           "help": {
-               "type":"string",
-               "minLength":1
-           },
-           "doc": {
-               "type":"string",
-               "minLength":1
-           },
-           "update": {
-               "type":"string",
-               "minLength":1
-           }
-         },
-         "required": ["pref", "file", "edit", "addApp", "editApp", "addExampleApps", "undo",
-         "redo", "cut", "copy", "paste", "selectAll", "view", "window", "minimize", "zoom", "front", "close", "quit", "fullscreen", "resetZoom", "zoomIn", "zoomOut", "help", "doc", "update"]
-      },
-      "settings":{
-        "type":"object",
-        "additionalProperties":false,
-        "properties":{
-           "title": {
-               "type":"string",
-               "minLength":1
-           },
-           "general-tab": {
-               "type":"string",
-               "minLength":1
-           }, 
-           "paths-tab": {
-               "type":"string",
-               "minLength":1
-           }, 
-           "launchBrowser": {
-               "type":"string",
-               "minLength":1
-           }, 
-           "browserReset": {
-               "type":"string",
-               "minLength":1
-           }, 
-           "generalLanguage": {
-               "type":"string",
-               "minLength":1
-           }, 
-           "languageReset": {
-               "type":"string",
-               "minLength":1
-           },
-           "generalRemoteExec": {
-               "type":"string",
-               "minLength":1
-           },
-           "remoteExecReset": {
-               "type":"string",
-               "minLength":1
-           },
-           "generalLogging": {
-               "type":"string",
-               "minLength":1
-           }, 
-           "loggingReset": {
-               "type":"string",
-               "minLength":1
-           }, 
-           "generalLoglife": {
-               "type":"string",
-               "minLength":1
-           }, 
-           "loglifeReset": {
-               "type":"string",
-               "minLength":1
-           }, 
-           "pathMiroapp": {
-               "type":"string",
-               "minLength":1
-           }, 
-           "pathMiroappSelect": {
-               "type":"string",
-               "minLength":1
-           }, 
-           "resetPathMiroapp": {
-               "type":"string",
-               "minLength":1
-           }, 
-           "pathGams": {
-               "type":"string",
-               "minLength":1
-           }, 
-           "pathGamsSelect": {
-               "type":"string",
-               "minLength":1
-           }, 
-           "pathGamsReset": {
-               "type":"string",
-               "minLength":1
-           }, 
-           "pathLog": {
-               "type":"string",
-               "minLength":1
-           }, 
-           "pathLogSelect": {
-               "type":"string",
-               "minLength":1
-           }, 
-           "pathLogReset": {
-               "type":"string",
-               "minLength":1
-           }, 
-           "pathR": {
-               "type":"string",
-               "minLength":1
-           }, 
-           "pathRSelect": {
-               "type":"string",
-               "minLength":1
-           }, 
-           "pathRReset": {
-               "type":"string",
-               "minLength":1
-           }, 
-           "needHelp": {
-               "type":"string",
-               "minLength":1
-           }, 
-           "btSave": {
-               "type":"string",
-               "minLength":1
-           }, 
-           "btCancel": {
-               "type":"string",
-               "minLength":1
-           }, 
-           "dialogConfigPathHdr": {
-               "type":"string",
-               "minLength":1
-           }, 
-           "dialogConfigPathMsg": {
-               "type":"string",
-               "minLength":1
-           }, 
-           "dialogConfigPathBtn": {
-               "type":"string",
-               "minLength":1
-           }, 
-           "dialogConfigPathLabel": {
-               "type":"string",
-               "minLength":1
-           }, 
-           "dialogGamsPathHdr": {
-               "type":"string",
-               "minLength":1
-           }, 
-           "dialogGamsPathMsg": {
-               "type":"string",
-               "minLength":1
-           }, 
-           "dialogGamsPathLabel": {
-               "type":"string",
-               "minLength":1
-           }, 
-           "dialogGamsPathBtn": {
-               "type":"string",
-               "minLength":1
-           }, 
-           "dialogRPathHdr": {
-               "type":"string",
-               "minLength":1
-           }, 
-           "dialogRPathMsg": {
-               "type":"string",
-               "minLength":1
-           }, 
-           "dialogRPathLabel": {
-               "type":"string",
-               "minLength":1
-           }, 
-           "dialogRPathBtn": {
-               "type":"string",
-               "minLength":1
-           }, 
-           "dialogLogPathHdr": {
-               "type":"string",
-               "minLength":1
-           }, 
-           "dialogLogPathMsg": {
-               "type":"string",
-               "minLength":1
-           }, 
-           "dialogLogPathLabel": {
-               "type":"string",
-               "minLength":1
-           }, 
-           "dialogLogPathBtn": {
-               "type":"string",
-               "minLength":1
-           }, 
-           "dialogLogLifeErrHdr": {
-               "type":"string",
-               "minLength":1
-           }, 
-           "dialogLogLifeErrMsg": {
-               "type":"string",
-               "minLength":1
-           }, 
-           "dialogLogLifeErrBtn": {
-               "type":"string",
-               "minLength":1
-           }, 
-           "browseFiles": {
-               "type":"string",
-               "minLength":1
-           }
-         },
-         "required": ["title", "general-tab", "paths-tab", "launchBrowser", "browserReset", "generalLanguage", "languageReset", "generalRemoteExec", "remoteExecReset", "generalLogging", "loggingReset", "generalLoglife", "loglifeReset", "pathMiroapp", "pathMiroappSelect", "resetPathMiroapp", "pathGams", "pathGamsSelect", "pathGamsReset", "pathLog", "pathLogSelect", "pathLogReset", "pathR", "pathRSelect", "pathRReset", "needHelp", "btSave", "btCancel", "dialogConfigPathHdr", "dialogConfigPathMsg", "dialogConfigPathBtn", "dialogConfigPathLabel", "dialogGamsPathHdr", "dialogGamsPathMsg", "dialogGamsPathLabel", "dialogGamsPathBtn", "dialogRPathHdr", "dialogRPathMsg", "dialogRPathLabel", "dialogRPathBtn", "dialogLogPathHdr", "dialogLogPathMsg", "dialogLogPathLabel", "dialogLogPathBtn", "dialogLogLifeErrHdr", "dialogLogLifeErrMsg", "dialogLogLifeErrBtn", "browseFiles"]
-      }
-   },
-   "required": ["update", "main", "general", "menu", "settings"]
+const schema = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "GAMS MIRO Launcher language file schema",
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "update": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "title": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "updateAvailable": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "downloadUpdate": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "here": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "upToDate": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "error": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "btClose": {
+                    "type": "string",
+                    "minLength": 1
+                }
+            },
+            "required": ["title", "updateAvailable", "downloadUpdate", "here", "upToDate", "error",
+                "btClose"]
+        },
+        "main": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "ErrorUnexpectedHdr": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorUnexpectedMsg": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorUnexpectedMsg2": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "BtnCancel": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "BtnOk": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "BtnRemove": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorInvalidHdr": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorInvalidMsg": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorInvalidTwoMsg": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorInvalidThreeMsg": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorAPIHdr": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorAPIMsg": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorVersionMsg": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorReadMsg": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorLogoHdr": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorLogoMsg": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorLogoMultiMsg": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorLogoLargeHdr": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorLogoLargeMsg": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorExampleExistsHdr": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorModelExistsHdr": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorModelExistsMsg": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorModelExistsMsg2": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorWriteHdr": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorWriteMsg": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorWriteMsg2": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorAppRunningHdr": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorAppRunningMsg": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorAppIncompMsg": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorMsgLaunch": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorInstallStartMsg": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorInstallPermHdr": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorInstallPerm1Msg": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorInstallPerm2Msg": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorInstallPerm3Msg": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorInstallPerm4Msg": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorInstallPermBtnYes": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorInstallPermBtnNo": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorWritePerm2Msg": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorNoWritePermMsg": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorInvalidPathHdr": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorInvalidPathMsg": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorInvalidPathMsg2": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorInvalidPathMsgMac": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorMessage": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "SuccessUpdateHdr": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "SuccessUpdateMsg": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorUnexpectedWriteMsg": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "DeleteMsg": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "DeleteDataMsg": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorInit": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorRInstallHdr": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorRInstallMsg": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorModelPathHdr": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorModelPathMsg": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorRNotFoundHdr": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorRNotFoundMsg": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorInconsistentDbTablesHdr": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ErrorInconsistentDbTablesMsg": {
+                    "type": "string",
+                    "minLength": 1
+                },
+            },
+            "required": ["ErrorUnexpectedHdr", "ErrorUnexpectedMsg", "ErrorUnexpectedMsg2", "BtnCancel", "BtnOk", "BtnRemove", "ErrorInvalidHdr",
+                "ErrorInvalidMsg", "ErrorInvalidTwoMsg", "ErrorInvalidThreeMsg", "ErrorAPIHdr", "ErrorAPIMsg", "ErrorVersionMsg", "ErrorReadMsg",
+                "ErrorLogoHdr", "ErrorLogoMsg", "ErrorLogoMultiMsg", "ErrorLogoLargeHdr", "ErrorLogoLargeMsg", "ErrorExampleExistsHdr", "ErrorModelExistsHdr",
+                "ErrorModelExistsMsg", "ErrorModelExistsMsg2", "ErrorWriteHdr", "ErrorWriteMsg", "ErrorWriteMsg2", "ErrorAppRunningHdr", "ErrorAppRunningMsg",
+                "ErrorAppIncompMsg", "ErrorMsgLaunch", "ErrorInstallStartMsg", "ErrorInstallPermHdr", "ErrorInstallPerm1Msg", "ErrorInstallPerm2Msg",
+                "ErrorInstallPerm3Msg", "ErrorInstallPerm4Msg", "ErrorInstallPermBtnYes", "ErrorInstallPermBtnNo", "ErrorWritePerm2Msg", "ErrorNoWritePermMsg",
+                "ErrorInvalidPathHdr", "ErrorInvalidPathMsg", "ErrorInvalidPathMsgMac", "ErrorInvalidPathMsg2", "ErrorMessage", "SuccessUpdateHdr",
+                "SuccessUpdateMsg", "ErrorUnexpectedWriteMsg", "DeleteMsg", "DeleteDataMsg", "ErrorInit", "ErrorRInstallHdr", "ErrorRInstallMsg",
+                "ErrorModelPathHdr", "ErrorModelPathMsg", "ErrorRNotFoundHdr", "ErrorRNotFoundMsg", "ErrorInconsistentDbTablesHdr", "ErrorInconsistentDbTablesMsg"]
+        },
+        "general": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "title": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "noApps": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "btEdit": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "btEditDone": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "btAddExamples": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "appFilesPlaceholder": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "appNamePlaceholder": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "appDescPlaceholder": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "appDbPathPlaceholder": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "appLogoPlaceholder": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "appDbPathReset": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "editAppInfoText": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "btLaunch": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "btLaunchBase": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "btLaunchHcube": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "btCancel": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "btSave": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "btAddApp": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "errNoAppTitleHdr": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "errNoAppTitleMsg": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "errInvalidDbPathHdr": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "errInvalidDbPathMsg": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "dialogSelectAppLogoHdr": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "dialogSelectAppLogoMsg": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "dialogSelectAppLogoBtn": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "dialogSelectAppLogoFilter": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "dialogSelectDbPathHdr": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "dialogSelectDbPathMsg": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "dialogSelectDbPathBtn": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "dialogErrHdr": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "dialogErrMsg": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "dialogNewAppFilesHdr": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "dialogNewAppFilesMsg": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "dialogNewAppFilesBtn": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "dialogNewAppFilesFilter": {
+                    "type": "string",
+                    "minLength": 1
+                },
+            },
+            "required": ["title", "noApps", "btEdit", "btEditDone", "btAddExamples", "appFilesPlaceholder", "appNamePlaceholder",
+                "appDescPlaceholder", "appDbPathPlaceholder", "appLogoPlaceholder", "appDbPathReset", "editAppInfoText", "btLaunch", "btLaunchBase",
+                "btLaunchHcube", "btCancel", "btSave", "btAddApp", "errNoAppTitleHdr", "errNoAppTitleMsg", "errInvalidDbPathHdr",
+                "errInvalidDbPathMsg", "dialogSelectAppLogoHdr", "dialogSelectAppLogoMsg", "dialogSelectAppLogoBtn",
+                "dialogSelectAppLogoFilter", "dialogSelectDbPathHdr", "dialogSelectDbPathMsg", "dialogSelectDbPathBtn",
+                "dialogErrHdr", "dialogErrMsg", "dialogNewAppFilesHdr", "dialogNewAppFilesMsg", "dialogNewAppFilesBtn",
+                "dialogNewAppFilesFilter"]
+        },
+        "menu": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "pref": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "about": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "services": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "hide": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "unhide": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "hideothers": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "file": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "edit": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "addApp": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "editApp": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "addExampleApps": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "undo": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "redo": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "cut": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "copy": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "paste": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "selectAll": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "view": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "window": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "minimize": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "zoom": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "front": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "close": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "quit": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "fullscreen": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "resetZoom": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "zoomIn": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "zoomOut": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "help": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "doc": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "update": {
+                    "type": "string",
+                    "minLength": 1
+                }
+            },
+            "required": ["pref", "file", "edit", "addApp", "editApp", "addExampleApps", "undo",
+                "redo", "cut", "copy", "paste", "selectAll", "view", "window", "minimize", "zoom", "front", "close", "quit", "fullscreen", "resetZoom", "zoomIn", "zoomOut", "help", "doc", "update"]
+        },
+        "settings": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "title": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "general-tab": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "paths-tab": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "launchBrowser": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "browserReset": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "generalLanguage": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "languageReset": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "generalRemoteExec": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "remoteExecReset": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "generalLogging": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "loggingReset": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "generalLoglife": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "loglifeReset": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "pathMiroapp": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "pathMiroappSelect": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "resetPathMiroapp": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "pathGams": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "pathGamsSelect": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "pathGamsReset": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "pathLog": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "pathLogSelect": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "pathLogReset": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "pathR": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "pathRSelect": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "pathRReset": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "needHelp": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "btSave": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "btCancel": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "dialogConfigPathHdr": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "dialogConfigPathMsg": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "dialogConfigPathBtn": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "dialogConfigPathLabel": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "dialogGamsPathHdr": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "dialogGamsPathMsg": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "dialogGamsPathLabel": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "dialogGamsPathBtn": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "dialogRPathHdr": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "dialogRPathMsg": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "dialogRPathLabel": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "dialogRPathBtn": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "dialogLogPathHdr": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "dialogLogPathMsg": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "dialogLogPathLabel": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "dialogLogPathBtn": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "dialogLogLifeErrHdr": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "dialogLogLifeErrMsg": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "dialogLogLifeErrBtn": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "browseFiles": {
+                    "type": "string",
+                    "minLength": 1
+                }
+            },
+            "required": ["title", "general-tab", "paths-tab", "launchBrowser", "browserReset", "generalLanguage", "languageReset", "generalRemoteExec", "remoteExecReset", "generalLogging", "loggingReset", "generalLoglife", "loglifeReset", "pathMiroapp", "pathMiroappSelect", "resetPathMiroapp", "pathGams", "pathGamsSelect", "pathGamsReset", "pathLog", "pathLogSelect", "pathLogReset", "pathR", "pathRSelect", "pathRReset", "needHelp", "btSave", "btCancel", "dialogConfigPathHdr", "dialogConfigPathMsg", "dialogConfigPathBtn", "dialogConfigPathLabel", "dialogGamsPathHdr", "dialogGamsPathMsg", "dialogGamsPathLabel", "dialogGamsPathBtn", "dialogRPathHdr", "dialogRPathMsg", "dialogRPathLabel", "dialogRPathBtn", "dialogLogPathHdr", "dialogLogPathMsg", "dialogLogPathLabel", "dialogLogPathBtn", "dialogLogLifeErrHdr", "dialogLogLifeErrMsg", "dialogLogLifeErrBtn", "browseFiles"]
+        }
+    },
+    "required": ["update", "main", "general", "menu", "settings"]
 }
 
 const en = {
@@ -857,7 +857,7 @@ const en = {
     "general": {
         "title": "MIRO Library",
         "noApps": "No apps",
-        "btEdit": "Edit", 
+        "btEdit": "Edit",
         "btEditDone": "Done",
         "btAddExamples": "Add example apps",
         "appFilesPlaceholder": "Drop your MIRO app here or click to browse.",
@@ -890,8 +890,8 @@ const en = {
         "dialogNewAppFilesMsg": "Please select the MIRO app you want to add.",
         "dialogNewAppFilesBtn": "Add app",
         "dialogNewAppFilesFilter": "MIRO apps"
-   },
-   "menu": {
+    },
+    "menu": {
         "pref": "Preferences",
         "about": "About GAMS MIRO",
         "services": "Services",
@@ -923,34 +923,34 @@ const en = {
         "help": "Help",
         "doc": "Documentation",
         "update": "Check for Update"
-   },
-   "settings": {
+    },
+    "settings": {
         "title": "Preferences",
-        "general-tab": "General", 
-        "paths-tab": "Paths", 
-        "launchBrowser": "Launch MIRO apps in your browser?", 
-        "browserReset": "Reset to default", 
-        "generalLanguage": "Language", 
-        "languageReset": "Reset to default", 
+        "general-tab": "General",
+        "paths-tab": "Paths",
+        "launchBrowser": "Launch MIRO apps in your browser?",
+        "browserReset": "Reset to default",
+        "generalLanguage": "Language",
+        "languageReset": "Reset to default",
         "generalRemoteExec": "Execution of models on GAMS Engine?",
         "remoteExecReset": "Reset to default",
-        "generalLogging": "Logging Level", 
-        "loggingReset": "Reset to default", 
-        "generalLoglife": "Number of days log files are stored", 
-        "loglifeReset": "Reset to default", 
-        "pathMiroapp": "MIRO app path", 
-        "pathMiroappSelect": "Select MIRO app path", 
-        "resetPathMiroapp": "Reset to default", 
-        "pathGams": "GAMS path", 
-        "pathGamsSelect": "Select GAMS path", 
-        "pathGamsReset": "Reset to default", 
-        "pathLog": "Log path", 
-        "pathLogSelect": "Select log file path", 
-        "pathLogReset": "Reset to default", 
-        "pathR": "R path", 
-        "pathRSelect": "Select R path", 
-        "pathRReset": "Reset to default", 
-        "needHelp": "Need help?", 
+        "generalLogging": "Logging Level",
+        "loggingReset": "Reset to default",
+        "generalLoglife": "Number of days log files are stored",
+        "loglifeReset": "Reset to default",
+        "pathMiroapp": "MIRO app path",
+        "pathMiroappSelect": "Select MIRO app path",
+        "resetPathMiroapp": "Reset to default",
+        "pathGams": "GAMS path",
+        "pathGamsSelect": "Select GAMS path",
+        "pathGamsReset": "Reset to default",
+        "pathLog": "Log path",
+        "pathLogSelect": "Select log file path",
+        "pathLogReset": "Reset to default",
+        "pathR": "R path",
+        "pathRSelect": "Select R path",
+        "pathRReset": "Reset to default",
+        "needHelp": "Need help?",
         "btSave": "Apply",
         "btCancel": "Close",
         "dialogConfigPathHdr": "Select MIRO app path",
@@ -974,7 +974,7 @@ const en = {
 log file should be stored is invalid! Please enter only whole numbers!",
         "dialogLogLifeErrBtn": "OK",
         "browseFiles": "Browse"
-   }
+    }
 }
 const de = {
     "update": {
@@ -1050,7 +1050,7 @@ const de = {
     "general": {
         "title": "MIRO Bibliothek",
         "noApps": "Keine Apps",
-        "btEdit": "Bearbeiten", 
+        "btEdit": "Bearbeiten",
         "btEditDone": "Fertig",
         "btAddExamples": "Beispiel-Apps hinzufügen",
         "appFilesPlaceholder": "Legen Sie Ihre MIRO-App hier ab oder klicken Sie zum Durchsuchen.",
@@ -1083,8 +1083,8 @@ const de = {
         "dialogNewAppFilesMsg": "Bitte wählen Sie die MIRO-App, die Sie hinzufügen möchten.",
         "dialogNewAppFilesBtn": "App hinzufügen",
         "dialogNewAppFilesFilter": "MIRO-Apps"
-   },
-   "menu": {
+    },
+    "menu": {
         "about": "Über GAMS MIRO",
         "services": "Dienste",
         "hide": "GAMS MIRO ausblenden",
@@ -1116,34 +1116,34 @@ const de = {
         "help": "Hilfe",
         "doc": "Dokumentation",
         "update": "Auf Update prüfen"
-   },
-   "settings": {
+    },
+    "settings": {
         "title": "Einstellungen",
-        "general-tab": "Allgemein", 
-        "paths-tab": "Verzeichnisse", 
-        "launchBrowser": "MIRO-Apps in Ihrem Browser starten?", 
-        "browserReset": "Auf Standard zurücksetzen", 
-        "generalLanguage": "Sprache", 
-        "languageReset": "Auf Standard zurücksetzen", 
+        "general-tab": "Allgemein",
+        "paths-tab": "Verzeichnisse",
+        "launchBrowser": "MIRO-Apps in Ihrem Browser starten?",
+        "browserReset": "Auf Standard zurücksetzen",
+        "generalLanguage": "Sprache",
+        "languageReset": "Auf Standard zurücksetzen",
         "generalRemoteExec": "Ausführung der Modelle auf GAMS Engine?",
         "remoteExecReset": "Auf Standard zurücksetzen",
-        "generalLogging": "Log Level", 
-        "loggingReset": "Auf Standard zurücksetzen", 
-        "generalLoglife": "Speicherdauer von Logdateien (in Tagen)", 
-        "loglifeReset": "Auf Standard zurücksetzen", 
-        "pathMiroapp": "MIRO Apps", 
-        "pathMiroappSelect": "MIRO Applikationsverzeichnis auswählen", 
-        "resetPathMiroapp": "Auf Standard zurücksetzen", 
-        "pathGams": "GAMS", 
-        "pathGamsSelect": "GAMS Verzeichnis auswählen", 
-        "pathGamsReset": "Auf Standard zurücksetzen", 
-        "pathLog": "Log Dateien", 
-        "pathLogSelect": "Verzeichnis der Logdateien auswählen", 
-        "pathLogReset": "Auf Standard zurücksetzen", 
-        "pathR": "R", 
-        "pathRSelect": "R Verzeichnis auswählen", 
-        "pathRReset": "Auf Standard zurücksetzen", 
-        "needHelp": "Hilfe?", 
+        "generalLogging": "Log Level",
+        "loggingReset": "Auf Standard zurücksetzen",
+        "generalLoglife": "Speicherdauer von Logdateien (in Tagen)",
+        "loglifeReset": "Auf Standard zurücksetzen",
+        "pathMiroapp": "MIRO Apps",
+        "pathMiroappSelect": "MIRO Applikationsverzeichnis auswählen",
+        "resetPathMiroapp": "Auf Standard zurücksetzen",
+        "pathGams": "GAMS",
+        "pathGamsSelect": "GAMS Verzeichnis auswählen",
+        "pathGamsReset": "Auf Standard zurücksetzen",
+        "pathLog": "Log Dateien",
+        "pathLogSelect": "Verzeichnis der Logdateien auswählen",
+        "pathLogReset": "Auf Standard zurücksetzen",
+        "pathR": "R",
+        "pathRSelect": "R Verzeichnis auswählen",
+        "pathRReset": "Auf Standard zurücksetzen",
+        "needHelp": "Hilfe?",
         "btSave": "Anwenden",
         "btCancel": "Schließen",
         "dialogConfigPathHdr": "MIRO Applikationsverzeichnis auswählen",
@@ -1166,7 +1166,7 @@ const de = {
         "dialogLogLifeErrMsg": "Der von Ihnen eingegebene Wert für die Anzahl der Tage, die die Logdateien gespeichert werden soll, ist ungültig! Bitte nur ganze Zahlen eingeben!",
         "dialogLogLifeErrBtn": "OK",
         "browseFiles": "Durchsuchen"
-   }
+    }
 }
 const cn = {
     "update": {
@@ -1242,7 +1242,7 @@ const cn = {
     "general": {
         "title": "MIRO库",
         "noApps": "无应用程序",
-        "btEdit": "编辑", 
+        "btEdit": "编辑",
         "btEditDone": "完成",
         "btAddExamples": "添加示例应用程序",
         "appFilesPlaceholder": "将MIRO应用程序放在此处或单击以浏览。",
@@ -1275,8 +1275,8 @@ const cn = {
         "dialogNewAppFilesMsg": "请选择要添加的MIRO应用程序",
         "dialogNewAppFilesBtn": "添加应用程序",
         "dialogNewAppFilesFilter": "MIRO应用程序"
-   },
-   "menu": {
+    },
+    "menu": {
         "pref": "偏好设置",
         "about": "关于GAMS MIRO",
         "services": "服务",
@@ -1308,34 +1308,34 @@ const cn = {
         "help": "帮助",
         "doc": "文档",
         "update": "检查更新"
-   },
-   "settings": {
+    },
+    "settings": {
         "title": "偏好设置",
-        "general-tab": "通用", 
-        "paths-tab": "路径", 
-        "launchBrowser": "在浏览器中启动MIRO应用程序？", 
-        "browserReset": "重置为默认设置", 
-        "generalLanguage": "语言", 
-        "languageReset": "重置为默认设置", 
+        "general-tab": "通用",
+        "paths-tab": "路径",
+        "launchBrowser": "在浏览器中启动MIRO应用程序？",
+        "browserReset": "重置为默认设置",
+        "generalLanguage": "语言",
+        "languageReset": "重置为默认设置",
         "generalRemoteExec": "在GAMS Engine上执行模型?",
         "remoteExecReset": "重置为默认设置",
-        "generalLogging": "日志记录级别", 
-        "loggingReset": "重置为默认设置", 
-        "generalLoglife": "日志文件的存储天数", 
-        "loglifeReset": "重置为默认设置", 
-        "pathMiroapp": "MIRO应用程序路径", 
-        "pathMiroappSelect": "选择MIRO应用程序路径", 
-        "resetPathMiroapp": "重置为默认设置", 
-        "pathGams": "GAMS路径", 
-        "pathGamsSelect": "选择GAMS路径", 
-        "pathGamsReset": "重置为默认设置", 
-        "pathLog": "日志文件路径", 
-        "pathLogSelect": "选择日志文件路径", 
-        "pathLogReset": "重置为默认设置", 
-        "pathR": "R路径", 
-        "pathRSelect": "选择R路径", 
-        "pathRReset": "重置为默认设置", 
-        "needHelp": "需要帮助？", 
+        "generalLogging": "日志记录级别",
+        "loggingReset": "重置为默认设置",
+        "generalLoglife": "日志文件的存储天数",
+        "loglifeReset": "重置为默认设置",
+        "pathMiroapp": "MIRO应用程序路径",
+        "pathMiroappSelect": "选择MIRO应用程序路径",
+        "resetPathMiroapp": "重置为默认设置",
+        "pathGams": "GAMS路径",
+        "pathGamsSelect": "选择GAMS路径",
+        "pathGamsReset": "重置为默认设置",
+        "pathLog": "日志文件路径",
+        "pathLogSelect": "选择日志文件路径",
+        "pathLogReset": "重置为默认设置",
+        "pathR": "R路径",
+        "pathRSelect": "选择R路径",
+        "pathRReset": "重置为默认设置",
+        "needHelp": "需要帮助？",
         "btSave": "应用",
         "btCancel": "关闭",
         "dialogConfigPathHdr": "选择MIRO应用程序路径",
@@ -1356,32 +1356,32 @@ const cn = {
         "dialogLogPathBtn": "选择",
         "dialogLogLifeErrHdr": "无效的日志周期",
         "dialogLogLifeErrMsg": "输入的值无效（天\ 应储存的日志文件）！ 请仅输入整数！",
-		"dialogLogLifeErrBtn": "确定",
+        "dialogLogLifeErrBtn": "确定",
         "browseFiles": "浏览"
-	}
+    }
 }
 
 class LangParser {
-    constructor (lang) {
-        if ( lang === 'de' ) {
+    constructor(lang) {
+        if (lang === 'de') {
             this.lang = de;
-        } else if ( lang === 'cn' ) {
+        } else if (lang === 'cn') {
             this.lang = cn;
         } else {
             this.lang = en;
         }
-        if ( !ajv.validate(schema, this.lang) ) {
+        if (!ajv.validate(schema, this.lang)) {
             console.log(ajv.errors);
             throw new Error(ajv.errors);
         }
-      
-  }
-  get (subkey){
-     if ( subkey ) {
-        return this.lang[subkey];
-     }
-     return this.lang;
-  } 
+
+    }
+    get(subkey) {
+        if (subkey) {
+            return this.lang[subkey];
+        }
+        return this.lang;
+    }
 }
 module.exports = LangParser;
 

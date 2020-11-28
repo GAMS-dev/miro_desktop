@@ -8,7 +8,7 @@ const globals = querystring.parse(global.location.search);
 $('#btClose').text(globals['btClose']);
 
 $('#btClose').on('click', () => {
-    ipcRenderer.send('close-window', 'about');
+  ipcRenderer.send('close-window', 'about');
 });
 
 const miroRelease = globals['miroRelease'];

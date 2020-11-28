@@ -7,11 +7,11 @@ const Transform = require("stream").Transform;
 
 function mkdirp(dir, cb) {
   if (dir === ".") return cb();
-  fs.stat(dir, function(err) {
+  fs.stat(dir, function (err) {
     if (err == null) return cb(); // already exists
 
     var parent = path.dirname(dir);
-    mkdirp(parent, function() {
+    mkdirp(parent, function () {
       process.stdout.write(dir.replace(/\/$/, "") + "/\n");
       fs.mkdir(dir, cb);
     });
@@ -35,23 +35,23 @@ function unzip(zipname, destdir, callback) {
     }
 
     incrementHandleCount();
-    zipfile.on("close", function() {
+    zipfile.on("close", function () {
       console.log("closed input file");
       decrementHandleCount();
     });
 
     zipfile.readEntry();
-    zipfile.on("entry", function(entry) {
+    zipfile.on("entry", function (entry) {
       if (/\/$/.test(entry.fileName)) {
         // directory file names end with '/'
-        mkdirp(path.join(destdir, entry.fileName), function() {
+        mkdirp(path.join(destdir, entry.fileName), function () {
           if (err) throw err;
           zipfile.readEntry();
         });
       } else {
         // ensure parent directory exists
-        mkdirp(path.join(destdir, path.dirname(entry.fileName)), function() {
-          zipfile.openReadStream(entry, function(err, readStream) {
+        mkdirp(path.join(destdir, path.dirname(entry.fileName)), function () {
+          zipfile.openReadStream(entry, function (err, readStream) {
             if (err) throw err;
             // report progress through large files
             var byteCount = 0;
@@ -70,15 +70,15 @@ function unzip(zipname, destdir, callback) {
               lastReportedString = msg;
             }
             // report progress at 60Hz
-            var progressInterval = setInterval(function() {
+            var progressInterval = setInterval(function () {
               reportString(byteCount + "/" + totalBytes + "  " + ((byteCount / totalBytes * 100) | 0) + "%");
             }, 1000 / 60);
             var filter = new Transform();
-            filter._transform = function(chunk, encoding, cb) {
+            filter._transform = function (chunk, encoding, cb) {
               byteCount += chunk.length;
               cb(null, chunk);
             };
-            filter._flush = function(cb) {
+            filter._flush = function (cb) {
               clearInterval(progressInterval);
               reportString("");
               // delete the "..."
@@ -98,6 +98,6 @@ function unzip(zipname, destdir, callback) {
     });
     zipfile.once("end", callback);
   }
-  yauzl.open(zipname, {lazyEntries: true}, handleZipFile);
+  yauzl.open(zipname, { lazyEntries: true }, handleZipFile);
 }
 module.exports = unzip

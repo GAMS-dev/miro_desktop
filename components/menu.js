@@ -1,26 +1,26 @@
 'use strict'
-const {app, Menu, shell } = require('electron');
+const { app, Menu, shell } = require('electron');
 const isMac = process.platform === 'darwin';
 
-module.exports = function(addExampleAppsCallback,
-  activateEditCallback, 
+module.exports = function (addExampleAppsCallback,
+  activateEditCallback,
   showSettingsCallback,
   openCheckUpdateWindow,
-  openAboutDialog){
+  openAboutDialog) {
   const lang = global.lang.menu;
   return Menu.buildFromTemplate([
     // { role: 'appMenu' }
     ...(isMac ? [{
       label: app.getName(),
       submenu: [
-        { 
+        {
           label: lang['about'],
-          click: async() => {
+          click: async () => {
             await openAboutDialog();
-          } 
+          }
         },
         { type: 'separator' },
-        { 
+        {
           label: lang['pref'],
           accelerator: 'Cmd+,',
           click: async () => {
@@ -41,7 +41,7 @@ module.exports = function(addExampleAppsCallback,
       label: lang['file'],
       submenu: [
         isMac ? { label: lang['close'], role: 'close' } : { label: lang['quit'], role: 'quit' },
-        ...(isMac ? [] : [{ 
+        ...(isMac ? [] : [{
           label: lang['pref'],
           accelerator: 'F7',
           click: async () => {
@@ -53,34 +53,35 @@ module.exports = function(addExampleAppsCallback,
     {
       label: lang['edit'],
       submenu: [
-      {
-        label: lang['addApp'],
-        accelerator: 'CmdOrCtrl+O',
-        click: async () => {
+        {
+          label: lang['addApp'],
+          accelerator: 'CmdOrCtrl+O',
+          click: async () => {
             await activateEditCallback(true, true);
           }
-      },
-      {
-        label: lang['editApp'],
-        accelerator: 'CmdOrCtrl+E',
-        click: async () => {
+        },
+        {
+          label: lang['editApp'],
+          accelerator: 'CmdOrCtrl+E',
+          click: async () => {
             await activateEditCallback();
-        }
-      },
-      {
-        label: lang['addExampleApps'],
-        click: async () => {
+          }
+        },
+        {
+          label: lang['addExampleApps'],
+          click: async () => {
             await addExampleAppsCallback();
           }
-      },
-      { label: lang['undo'], accelerator: 'CmdOrCtrl+Z', selector: 'undo:' },
-      { label: lang['redo'], accelerator: 'Shift+CmdOrCtrl+Z', selector: 'redo:' },
-      { type: 'separator' },
-      { label: lang['cut'], accelerator: 'CmdOrCtrl+X', selector: 'cut:' },
-      { label: lang['copy'], accelerator: 'CmdOrCtrl+C', selector: 'copy:' },
-      { label: lang['paste'], accelerator: 'CmdOrCtrl+V', selector: 'paste:' },
-      { label: lang['selectAll'], accelerator: 'CmdOrCtrl+A', selector: 'selectAll:' }
-    ]},
+        },
+        { label: lang['undo'], accelerator: 'CmdOrCtrl+Z', selector: 'undo:' },
+        { label: lang['redo'], accelerator: 'Shift+CmdOrCtrl+Z', selector: 'redo:' },
+        { type: 'separator' },
+        { label: lang['cut'], accelerator: 'CmdOrCtrl+X', selector: 'cut:' },
+        { label: lang['copy'], accelerator: 'CmdOrCtrl+C', selector: 'copy:' },
+        { label: lang['paste'], accelerator: 'CmdOrCtrl+V', selector: 'paste:' },
+        { label: lang['selectAll'], accelerator: 'CmdOrCtrl+A', selector: 'selectAll:' }
+      ]
+    },
     // { role: 'viewMenu' }
     {
       label: lang['view'],
@@ -101,8 +102,8 @@ module.exports = function(addExampleAppsCallback,
           { type: 'separator' },
           { label: lang['front'], role: 'front' }
         ] : [
-          { label: lang['close'], role: 'close' }
-        ])
+            { label: lang['close'], role: 'close' }
+          ])
       ]
     },
     {
@@ -118,15 +119,15 @@ module.exports = function(addExampleAppsCallback,
         ...(isMac ? [
           { type: 'separator' }
         ] : [
-          { type: 'separator' },
-          { 
-            label: lang['about'],
-            click: async() => {
-              await openAboutDialog();
-            }
-          },
-          { type: 'separator' }
-        ]),
+            { type: 'separator' },
+            {
+              label: lang['about'],
+              click: async () => {
+                await openAboutDialog();
+              }
+            },
+            { type: 'separator' }
+          ]),
         {
           label: lang['update'],
           click: () => {

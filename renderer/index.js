@@ -38,45 +38,45 @@ let dragAddAppCounter = 0;
 let isInEditMode = false;
 let runningProcesses = [];
 let reorderAppsMode = false;
-  
+
 const $overlay = $('#overlayScreen');
 const $body = $('body');
 
 // credits to Paolo Bergantino @https://stackoverflow.com/questions/698301/is-there-a-native-jquery-function-to-switch-elements
-jQuery.fn.swapWith = function(to) {
-    return this.each(function() {
-        var copy_to = $(to).clone(true);
-        var copy_from = $(this).clone(true);
-        $(to).replaceWith(copy_from);
-        $(this).replaceWith(copy_to);
-    });
+jQuery.fn.swapWith = function (to) {
+  return this.each(function () {
+    var copy_to = $(to).clone(true);
+    var copy_from = $(this).clone(true);
+    $(to).replaceWith(copy_from);
+    $(this).replaceWith(copy_to);
+  });
 };
 
 function resetAppConfig(appID) {
-  if ( !appID ) {
+  if (!appID) {
     return;
   }
   const oldAppData = appData.find(app => app.id === appID);
-  const appDbPath = oldAppData.dbpath? oldAppData.dbpath: lang['appDbPathPlaceholder'];
+  const appDbPath = oldAppData.dbpath ? oldAppData.dbpath : lang['appDbPathPlaceholder'];
   let logoPath = path.join(appPath, 'static', 'default_logo.png');
-  if ( oldAppData.logoPath ) {
-      logoPath = path.join(dataPath, appID, oldAppData.logoPath);
+  if (oldAppData.logoPath) {
+    logoPath = path.join(dataPath, appID, oldAppData.logoPath);
   }
   newAppConfig = null;
   $(`#appLogo_${appID}`).css('background-image', `url('${pathToFileURL(logoPath)}')`);
   $(`#appTitle_${appID}`).text(oldAppData.title);
   $(`#appDesc_${appID}`).text(oldAppData.description);
   $(`#appDbPathLabel_${appID}`).text(appDbPath);
-  if ( appDbPath === lang['appDbPathPlaceholder'] ) {
+  if (appDbPath === lang['appDbPathPlaceholder']) {
     $(`#appDbPathLabel_${appID}`).siblings('.reset-db-path').hide();
   }
 }
 
-function toggleEditMode(){
-  if ( isInEditMode ) {
+function toggleEditMode() {
+  if (isInEditMode) {
     resetAppConfig($('.cancel-btn:visible').data('id'));
     exitOverlayMode();
-    if ( !appData.length ) {
+    if (!appData.length) {
       noAppsNotice.fadeIn(200);
     }
     btEdit.textContent = lang['btEdit'];
@@ -87,34 +87,38 @@ function toggleEditMode(){
     $('.db-path-field').hide();
     $('.btn-launch-wrapper').fadeIn(200);
     $('.launch-app-box').removeClass('app-box-hover');
-    $('.app-box').attr({'draggable': 'false',
-      'droppable': 'false'});
+    $('.app-box').attr({
+      'draggable': 'false',
+      'droppable': 'false'
+    });
     isInEditMode = false;
 
   } else {
-    if ( !appData.length ) {
+    if (!appData.length) {
       noAppsNotice.hide();
     }
     btEdit.textContent = lang['btEditDone'];
-    newAppConfig  = null;
+    newAppConfig = null;
     $('.edit-info').fadeIn(200);
     $('.delete-app-button').fadeIn(200);
     $('#addAppWrapper').fadeIn(200);
     $('.btn-launch-wrapper').fadeOut(200);
     $('.launch-app-box').addClass('app-box-hover');
-    $('.app-box').attr({'draggable': 'true',
-      'droppable': 'true'});
+    $('.app-box').attr({
+      'draggable': 'true',
+      'droppable': 'true'
+    });
     isInEditMode = true;
     reorderAppsMode = false;
     dragAddAppCounter = 0;
   }
   $('#editIcon').toggleClass('fa-lock fa-lock-open');
 }
-function exitOverlayMode(){
-  if ( $('#expandedAddAppWrapper').is(':visible') ) {
+function exitOverlayMode() {
+  if ($('#expandedAddAppWrapper').is(':visible')) {
     $('#addAppWrapper').html(addAppWrapperHTML);
   }
-  if ( $overlay.is(':visible') ) {
+  if ($overlay.is(':visible')) {
     $('.app-logo').empty().removeClass('drag-drop-area');
     $('.app-item-title').removeClass('editable').addClass('app-title-fixed').attr('contenteditable', false);
     $('.app-item-desc').removeClass('editable').addClass('app-desc-fixed').attr('contenteditable', false);
@@ -126,15 +130,15 @@ function exitOverlayMode(){
     $('.launch-app-box').addClass('app-box-hover');
   }
 }
-function expandAddAppForm(){
-  if ( $('#expandedAddAppWrapper').is(':visible') ) {
+function expandAddAppForm() {
+  if ($('#expandedAddAppWrapper').is(':visible')) {
     return
   }
-  if ( !isInEditMode ) {
+  if (!isInEditMode) {
     toggleEditMode();
   }
   const addAppWrapper = $('#addAppWrapper');
-  addAppWrapper.css( 'z-index', 11 );
+  addAppWrapper.css('z-index', 11);
   $overlay.data('current', addAppWrapper).fadeIn(300);
   addAppWrapper.html(`<div class="app-box" id="expandedAddAppWrapper">
                         <div id="addAppSpinner">
@@ -179,168 +183,168 @@ function expandAddAppForm(){
                       </div>`);
 }
 
-$body.on('click', '.app-box', function(e) {
+$body.on('click', '.app-box', function (e) {
   const $target = $(e.target);
-    if ( !isInEditMode || $overlay.is(':visible') || 
-      $target.hasClass('cancel-btn') || 
-      $target.hasClass('delete-app-button') || 
-      $target.parents('.delete-app-button').length ) {
-      return
+  if (!isInEditMode || $overlay.is(':visible') ||
+    $target.hasClass('cancel-btn') ||
+    $target.hasClass('delete-app-button') ||
+    $target.parents('.delete-app-button').length) {
+    return
+  }
+  const $this = $(this);
+  const appID = this.dataset.id;
+  if (appID) {
+    newAppConfig = $.extend(true, {}, appData.find(app => app.id === appID));
+    if (!newAppConfig) {
+      ipcRenderer.send('show-error-msg', {
+        type: 'error',
+        title: lang['dialogErrHdr'],
+        message: lang['dialogErrMsg']
+      });
+      return;
     }
-    const $this = $(this);
-    const appID = this.dataset.id;
-    if ( appID ) {
-      newAppConfig = $.extend(true, { }, appData.find(app => app.id === appID));
-      if ( !newAppConfig ) {
-        ipcRenderer.send('show-error-msg', {
-            type: 'error',
-            title: lang['dialogErrHdr'],
-            message: lang['dialogErrMsg']
-        });
-        return;
-      }
-      $(`#appBox_${appID}`).removeClass('app-box-fixed-height');
-      $(`#appLogo_${appID}`).html(`<div class='drag-drop-area-text'>${lang['appLogoPlaceholder']}</div>`).addClass('drag-drop-area');
-      $(`#appTitle_${appID}`).addClass('editable').removeClass('app-title-fixed').attr('contenteditable', true);
-      const appDescField = $(`#appDesc_${appID}`);
-      const appTitleField = $(`#appTitle_${appID}`);
-      appDescField.addClass('editable').removeClass('app-desc-fixed').attr('contenteditable', true);
-      if ( !appDescField.text().trim() ) {
-        appDescField.text(lang['appDescPlaceholder']);
-      }
+    $(`#appBox_${appID}`).removeClass('app-box-fixed-height');
+    $(`#appLogo_${appID}`).html(`<div class='drag-drop-area-text'>${lang['appLogoPlaceholder']}</div>`).addClass('drag-drop-area');
+    $(`#appTitle_${appID}`).addClass('editable').removeClass('app-title-fixed').attr('contenteditable', true);
+    const appDescField = $(`#appDesc_${appID}`);
+    const appTitleField = $(`#appTitle_${appID}`);
+    appDescField.addClass('editable').removeClass('app-desc-fixed').attr('contenteditable', true);
+    if (!appDescField.text().trim()) {
+      appDescField.text(lang['appDescPlaceholder']);
     }
-    $(`#appBox_${appID} .db-path-field`).slideDown(200);
-    $(`#appBox_${appID} .edit-bt-group`).slideDown(200);
-    $this.css( 'z-index', 11 );
-    $overlay.data('current', $this).fadeIn(300);
-    $('.launch-app-box').removeClass('app-box-hover');
+  }
+  $(`#appBox_${appID} .db-path-field`).slideDown(200);
+  $(`#appBox_${appID} .edit-bt-group`).slideDown(200);
+  $this.css('z-index', 11);
+  $overlay.data('current', $this).fadeIn(300);
+  $('.launch-app-box').removeClass('app-box-hover');
 });
 appsWrapper.on('focus', '.app-title', (e) => {
   const $target = $(e.target);
-  if ( $target.text().trim() === lang['appNamePlaceholder'] ) {
+  if ($target.text().trim() === lang['appNamePlaceholder']) {
     $target.text('');
   }
 });
 appsWrapper.on('focusout', '.app-title', (e) => {
   const $target = $(e.target);
-  if ( $target.text().trim() === '' ) {
+  if ($target.text().trim() === '') {
     $target.text(lang['appNamePlaceholder']);
   }
 });
 appsWrapper.on('focus', '.app-desc', (e) => {
   const $target = $(e.target);
-  if ( $target.text().trim() === lang['appDescPlaceholder'] ) {
+  if ($target.text().trim() === lang['appDescPlaceholder']) {
     $target.text('');
   }
 });
 appsWrapper.on('focusout', '.app-desc', (e) => {
   const $target = $(e.target);
-  if ( $target.text().trim() === '' ) {
+  if ($target.text().trim() === '') {
     $target.text(lang['appDescPlaceholder']);
   }
 });
-appsWrapper.on('click', '.btn-save-changes', function(){
+appsWrapper.on('click', '.btn-save-changes', function () {
   const appID = this.dataset.id;
-  if ( !appID ) {
+  if (!appID) {
     return;
   }
-  if ( !newAppConfig ) {
+  if (!newAppConfig) {
     ipcRenderer.send('show-error-msg', {
-        type: 'error',
-        title: lang['dialogErrHdr'],
-        message: lang['dialogErrMsg']
+      type: 'error',
+      title: lang['dialogErrHdr'],
+      message: lang['dialogErrMsg']
     });
     return
   }
   const appTitle = $(`#appTitle_${appID}`).text().trim();
-  if ( !appTitle || appTitle === lang['appNamePlaceholder'] ) {
+  if (!appTitle || appTitle === lang['appNamePlaceholder']) {
     ipcRenderer.send('show-error-msg', {
-        type: 'info',
-        title: lang['errNoAppTitleHdr'],
-        message: lang['errNoAppTitleMsg']
+      type: 'info',
+      title: lang['errNoAppTitleHdr'],
+      message: lang['errNoAppTitleMsg']
     });
     return
   }
   newAppConfig.title = appTitle;
   const appDescription = $(`#appDesc_${appID}`).text().trim();
-  if ( appDescription && appDescription !== lang['appDescPlaceholder'] ) {
+  if (appDescription && appDescription !== lang['appDescPlaceholder']) {
     newAppConfig.description = appDescription;
   }
   ipcRenderer.send('update-app', newAppConfig);
 });
-appsWrapper.on('click', '.reset-db-path', function(){
+appsWrapper.on('click', '.reset-db-path', function () {
   const appID = this.dataset.id;
   $(`#appDbPathLabel_${appID}`).text(lang['appDbPathPlaceholder']);
   $(this).hide();
-  if ( newAppConfig ) {
+  if (newAppConfig) {
     delete newAppConfig.dbpath;
   }
 });
-appsWrapper.on('click', '.delete-app-button', function(){
+appsWrapper.on('click', '.delete-app-button', function () {
   ipcRenderer.send('delete-app', this.dataset.id);
 });
 appsWrapper.on('click', '#btAddApp', () => {
-    if ( !newAppConfig ) {
-        return ipcRenderer.send('show-error-msg', {
-            type: 'error',
-            title: lang['dialogErrHdr'],
-            message: lang['dialogErrMsg']
-        });
-    }
-    const titleTmp = $('#newAppName').text().trim();
-    if ( titleTmp === lang['appNamePlaceholder'] || titleTmp.length < 1 ) {
-        return ipcRenderer.send('show-error-msg', {
-            type: 'info',
-            title: lang['errNoAppTitleHdr'],
-            message: lang['errNoAppTitleMsg']
-        });
-    }
-    let descTmp  = $('#newAppDesc').text().trim();
-    if ( descTmp === lang['appDescPlaceholder'] ) {
-        descTmp = '';
-    }
-    newAppConfig.title       = titleTmp;
-    newAppConfig.description = descTmp;
-    $('#addAppSpinner').show();
-    ipcRenderer.send('add-app', newAppConfig);
+  if (!newAppConfig) {
+    return ipcRenderer.send('show-error-msg', {
+      type: 'error',
+      title: lang['dialogErrHdr'],
+      message: lang['dialogErrMsg']
+    });
+  }
+  const titleTmp = $('#newAppName').text().trim();
+  if (titleTmp === lang['appNamePlaceholder'] || titleTmp.length < 1) {
+    return ipcRenderer.send('show-error-msg', {
+      type: 'info',
+      title: lang['errNoAppTitleHdr'],
+      message: lang['errNoAppTitleMsg']
+    });
+  }
+  let descTmp = $('#newAppDesc').text().trim();
+  if (descTmp === lang['appDescPlaceholder']) {
+    descTmp = '';
+  }
+  newAppConfig.title = titleTmp;
+  newAppConfig.description = descTmp;
+  $('#addAppSpinner').show();
+  ipcRenderer.send('add-app', newAppConfig);
 });
-appsWrapper.on('click', '.cancel-btn', function(){
+appsWrapper.on('click', '.cancel-btn', function () {
   const appID = this.dataset.id;
   resetAppConfig(appID);
   exitOverlayMode();
 });
-appsWrapper.on('click', '#addAppBox', function(){
+appsWrapper.on('click', '#addAppBox', function () {
   expandAddAppForm();
 });
-appsWrapper.on('drop', '.app-logo', function(e){
-    if ( !isInEditMode || reorderAppsMode ) {
-      return
-    }
-    e.preventDefault();
-    e.stopPropagation();
-    dragAddAppCounter = 0;
+appsWrapper.on('drop', '.app-logo', function (e) {
+  if (!isInEditMode || reorderAppsMode) {
+    return
+  }
+  e.preventDefault();
+  e.stopPropagation();
+  dragAddAppCounter = 0;
 
-    const $this = $(this);
-    $this.removeClass('index-dragover').text(lang['appLogoPlaceholder']);
-    const filePath = [...e.originalEvent.dataTransfer.files].map(el => el.path);
-    ipcRenderer.send('validate-logo', filePath, this.dataset.id);
+  const $this = $(this);
+  $this.removeClass('index-dragover').text(lang['appLogoPlaceholder']);
+  const filePath = [...e.originalEvent.dataTransfer.files].map(el => el.path);
+  ipcRenderer.send('validate-logo', filePath, this.dataset.id);
 });
-appsWrapper.on('click', '.app-logo', function(){
-  if ( !isInEditMode || !$overlay.is(':visible') ) {
+appsWrapper.on('click', '.app-logo', function () {
+  if (!isInEditMode || !$overlay.is(':visible')) {
     return
   }
   ipcRenderer.send('browse-app', {
-      title: lang['dialogSelectAppLogoHdr'],
-      message: lang['dialogSelectAppLogoMsg'],
-      buttonLabel: lang['dialogSelectAppLogoBtn'],
-      properties: [ 'openFile' ],
-      filters: [
-          { name: lang['dialogSelectAppLogoFilter'], extensions: ['jpg', 'png', 'jpeg'] }
-      ]
+    title: lang['dialogSelectAppLogoHdr'],
+    message: lang['dialogSelectAppLogoMsg'],
+    buttonLabel: lang['dialogSelectAppLogoBtn'],
+    properties: ['openFile'],
+    filters: [
+      { name: lang['dialogSelectAppLogoFilter'], extensions: ['jpg', 'png', 'jpeg'] }
+    ]
   }, 'validateLogo', this.dataset.id);
 });
-appsWrapper.on('dragenter', '#addAppBox', function(e){
-  if ( !isInEditMode || reorderAppsMode ) {
+appsWrapper.on('dragenter', '#addAppBox', function (e) {
+  if (!isInEditMode || reorderAppsMode) {
     return
   }
   e.preventDefault();
@@ -349,24 +353,24 @@ appsWrapper.on('dragenter', '#addAppBox', function(e){
   $('#addAppBox').addClass('index-dragover');
   $('#addApp').addClass('btn-add-app-dragover');
 });
-appsWrapper.on('dragover', '#addAppBox', function(e){
+appsWrapper.on('dragover', '#addAppBox', function (e) {
   e.preventDefault();
   e.stopPropagation();
 });
-appsWrapper.on('dragleave', '#addAppBox', function(e){
-  if ( !isInEditMode || reorderAppsMode ) {
+appsWrapper.on('dragleave', '#addAppBox', function (e) {
+  if (!isInEditMode || reorderAppsMode) {
     return
   }
   e.preventDefault();
   e.stopPropagation();
   dragAddAppCounter--;
-  if ( dragAddAppCounter === 0 ) {
+  if (dragAddAppCounter === 0) {
     $('#addAppBox').removeClass('index-dragover');
     $('#addApp').removeClass('btn-add-app-dragover');
   }
 });
-appsWrapper.on('drop', '#addAppBox', function(e){
-  if ( !isInEditMode || reorderAppsMode ) {
+appsWrapper.on('drop', '#addAppBox', function (e) {
+  if (!isInEditMode || reorderAppsMode) {
     return
   }
   e.preventDefault();
@@ -377,12 +381,12 @@ appsWrapper.on('drop', '#addAppBox', function(e){
   const filePaths = [...e.originalEvent.dataTransfer.files].map(el => el.path);
   ipcRenderer.send('validate-app', filePaths);
 });
-appsWrapper.on('dragover', '.drag-drop-area', function(e){
+appsWrapper.on('dragover', '.drag-drop-area', function (e) {
   e.preventDefault();
   e.stopPropagation();
 });
-appsWrapper.on('dragenter', '.drag-drop-area', function(e){
-  if ( !isInEditMode || reorderAppsMode ) {
+appsWrapper.on('dragenter', '.drag-drop-area', function (e) {
+  if (!isInEditMode || reorderAppsMode) {
     return
   }
   e.preventDefault();
@@ -390,19 +394,19 @@ appsWrapper.on('dragenter', '.drag-drop-area', function(e){
   dragAddAppCounter++;
   $(this).addClass('drag-drop-area-dragover');
 });
-appsWrapper.on('dragleave', '.drag-drop-area', function(e){
-  if ( !isInEditMode || reorderAppsMode ) {
+appsWrapper.on('dragleave', '.drag-drop-area', function (e) {
+  if (!isInEditMode || reorderAppsMode) {
     return
   }
   e.preventDefault();
   e.stopPropagation();
   dragAddAppCounter--;
-  if ( dragAddAppCounter === 0 ) {
+  if (dragAddAppCounter === 0) {
     $(this).removeClass('drag-drop-area-dragover');
   }
 });
-appsWrapper.on('drop', '#newAppFiles', function(e){
-  if ( !isInEditMode || reorderAppsMode ){
+appsWrapper.on('drop', '#newAppFiles', function (e) {
+  if (!isInEditMode || reorderAppsMode) {
     return
   }
   e.preventDefault();
@@ -414,25 +418,25 @@ appsWrapper.on('drop', '#newAppFiles', function(e){
 });
 appsWrapper.on('click', '#newAppFiles', () => {
   ipcRenderer.send('browse-app', {
-      title: lang['dialogNewAppFilesHdr'],
-      message: lang['dialogNewAppFilesMsg'],
-      buttonLabel: lang['dialogNewAppFilesBtn'],
-      properties: [ 'openFile' ],
-      filters: [
-          { name: lang['dialogNewAppFilesFilter'], extensions: ['miroapp'] }
-      ]
+    title: lang['dialogNewAppFilesHdr'],
+    message: lang['dialogNewAppFilesMsg'],
+    buttonLabel: lang['dialogNewAppFilesBtn'],
+    properties: ['openFile'],
+    filters: [
+      { name: lang['dialogNewAppFilesFilter'], extensions: ['miroapp'] }
+    ]
   }, 'validateApp');
 });
 appsWrapper.on('dragstart', '.app-box', (e) => {
   reorderAppsMode = true;
-  if ( !isInEditMode || !reorderAppsMode ) {
+  if (!isInEditMode || !reorderAppsMode) {
     return
   }
   e.originalEvent.dataTransfer.setData('text/plain', e.originalEvent.target.id);
   e.originalEvent.target.style.opacity = .5;
 });
-appsWrapper.on('dragenter', '.app-box', function(e) {
-  if ( !isInEditMode || !reorderAppsMode) {
+appsWrapper.on('dragenter', '.app-box', function (e) {
+  if (!isInEditMode || !reorderAppsMode) {
     return
   }
   e.preventDefault();
@@ -440,23 +444,23 @@ appsWrapper.on('dragenter', '.app-box', function(e) {
   dragAddAppCounter++;
   $(this).addClass('drag-drop-area-dragover');
 });
-appsWrapper.on('dragover', '.app-box', function(e){
+appsWrapper.on('dragover', '.app-box', function (e) {
   e.preventDefault();
   e.stopPropagation();
 });
-appsWrapper.on('dragleave', '.app-box', function(e) {
-  if ( !isInEditMode || !reorderAppsMode ) {
+appsWrapper.on('dragleave', '.app-box', function (e) {
+  if (!isInEditMode || !reorderAppsMode) {
     return
   }
   e.preventDefault();
   e.stopPropagation();
   dragAddAppCounter--;
-  if ( dragAddAppCounter === 0 ) {
+  if (dragAddAppCounter === 0) {
     $(this).removeClass('drag-drop-area-dragover');
   }
 });
-appsWrapper.on('dragend', '.app-box', function(e) {
-  if ( !isInEditMode || !reorderAppsMode ) {
+appsWrapper.on('dragend', '.app-box', function (e) {
+  if (!isInEditMode || !reorderAppsMode) {
     return
   }
   e.preventDefault();
@@ -465,8 +469,8 @@ appsWrapper.on('dragend', '.app-box', function(e) {
   e.originalEvent.dataTransfer.clearData();
   $('.app-box').removeClass('drag-drop-area-dragover').css('opacity', '');
 });
-appsWrapper.on('drop', '.app-box', function(e) {
-  if ( !isInEditMode || !reorderAppsMode ) {
+appsWrapper.on('drop', '.app-box', function (e) {
+  if (!isInEditMode || !reorderAppsMode) {
     return
   }
   e.preventDefault();
@@ -476,37 +480,37 @@ appsWrapper.on('drop', '.app-box', function(e) {
 
   const id_from_raw = e.originalEvent.dataTransfer.getData("text/plain");
   const id_from = id_from_raw.slice(7);
-  const id_to   = $(this).attr('id').slice(7);
+  const id_to = $(this).attr('id').slice(7);
   const idx_from = appData.findIndex(el => el.id === id_from);
-  const idx_to   = appData.findIndex(el => el.id === id_to);
+  const idx_to = appData.findIndex(el => el.id === id_to);
   [appData[idx_from], appData[idx_to]] = [appData[idx_to], appData[idx_from]];
   ipcRenderer.send('update-apps', appData);
   $(`#${id_from_raw}`).parent().swapWith($(this).parent());
 });
-btEditWrapper.on('click', function(e){
-  if ( $(this).hasClass('bt-disabled') ) {
+btEditWrapper.on('click', function (e) {
+  if ($(this).hasClass('bt-disabled')) {
     return;
   }
   toggleEditMode();
 });
-appsWrapper.on('click', '.app-db-path', function(){
+appsWrapper.on('click', '.app-db-path', function () {
   ipcRenderer.send('browse-app', {
-      title: lang['dialogSelectDbPathHdr'],
-      message: lang['dialogSelectDbPathMsg'],
-      buttonLabel: lang['dialogSelectDbPathBtn'],
-      properties: [ 'openDirectory', 'createDirectory' ]
+    title: lang['dialogSelectDbPathHdr'],
+    message: lang['dialogSelectDbPathMsg'],
+    buttonLabel: lang['dialogSelectDbPathBtn'],
+    properties: ['openDirectory', 'createDirectory']
   }, 'dbpath-received', this.dataset.id);
 });
-appsWrapper.on('click', '.launch-app', function(){
+appsWrapper.on('click', '.launch-app', function () {
   const appID = this.dataset.id;
-  if ( isInEditMode || $(`#appLoadingScreen_${appID}`).is(':visible') ) {
+  if (isInEditMode || $(`#appLoadingScreen_${appID}`).is(':visible')) {
     return;
   }
-  if ( !appID ) {
+  if (!appID) {
     ipcRenderer.send('show-error-msg', {
-        type: 'error',
-        title: lang['dialogErrHdr'],
-        message: lang['dialogErrMsg']
+      type: 'error',
+      title: lang['dialogErrHdr'],
+      message: lang['dialogErrMsg']
     });
     return;
   }
@@ -516,14 +520,14 @@ appsWrapper.on('click', '.launch-app', function(){
   ipcRenderer.send('launch-app', Object.assign({}, this.dataset));
 });
 ipcRenderer.on('apps-received', (e, apps, appDataPath, startup = false, deactivateEditMode = true, appsActive = [], langData = null) => {
-  if ( isInEditMode ) {
+  if (isInEditMode) {
     toggleEditMode();
   }
-  if ( langData != null && lang['btLaunch'] == null) {
+  if (langData != null && lang['btLaunch'] == null) {
     lang = langData;
     ['title', 'btEdit', 'noApps', 'btAddExamples'].forEach(id => {
       const el = document.getElementById(id);
-      if ( el ) {
+      if (el) {
         el.innerText = lang[id];
       }
     });
@@ -532,8 +536,8 @@ ipcRenderer.on('apps-received', (e, apps, appDataPath, startup = false, deactiva
   dataPath = appDataPath;
   const appItems = apps.reduce((html, app) => {
     let logoPath = path.join(appPath, 'static', 'default_logo.png');
-    if ( app.logoPath ) {
-        logoPath = path.join(appDataPath, app.id, app.logoPath);
+    if (app.logoPath) {
+      logoPath = path.join(appDataPath, app.id, app.logoPath);
     }
     html += `<div class="col-xxl-3 col-lg-4 col-6 miro-app-item" data-id="${app.id}" 
                data-usetmp="${app.usetmpdir}" data-mode="${app.modesAvailable[0]}" 
@@ -564,24 +568,24 @@ data-id="${app.id}" class="app-logo">
                          </div>
                          <div class="custom-file db-path-field" style="display:none;">
                            <div id="appDbPath_${app.id}" class="custom-file-input browseFiles app-db-path" data-id="${app.id}" aria-describedby="resetDbPath"></div>
-                           <label id="appDbPathLabel_${app.id}" class="custom-file-label dbpath" for="appDbPath_${app.id}">${app.dbpath? app.dbpath: lang['appDbPathPlaceholder']}</label>
-                           <small data-id="${app.id}" class="form-text reset-db-path" style="${app.dbpath? '': 'display:none'}">${lang['appDbPathReset']}</small>
+                           <label id="appDbPathLabel_${app.id}" class="custom-file-label dbpath" for="appDbPath_${app.id}">${app.dbpath ? app.dbpath : lang['appDbPathPlaceholder']}</label>
+                           <small data-id="${app.id}" class="form-text reset-db-path" style="${app.dbpath ? '' : 'display:none'}">${lang['appDbPathReset']}</small>
                          </div>
                      </div>
                      <div class="dropdown mb-3 btn-launch-wrapper">
-                           ${app.modesAvailable.length <= 1 ? 
-                            `<button class="btn btn-outline-secondary btn-launch launch-app" 
-                               type="button" data-id="${app.id}" data-dbpath="${app.dbpath == null? '': app.dbpath}" 
+                           ${app.modesAvailable.length <= 1 ?
+        `<button class="btn btn-outline-secondary btn-launch launch-app" 
+                               type="button" data-id="${app.id}" data-dbpath="${app.dbpath == null ? '' : app.dbpath}" 
                                data-usetmpdir="${app.usetmpdir}" data-mode="${app.modesAvailable[0]}" 
-                               data-apiversion="${app.apiversion}" data-miroversion="${app.miroversion}">${lang['btLaunch']}</button>` : 
-                            `<button class="btn btn-outline-secondary dropdown-toggle btn-launch" 
+                               data-apiversion="${app.apiversion}" data-miroversion="${app.miroversion}">${lang['btLaunch']}</button>` :
+        `<button class="btn btn-outline-secondary dropdown-toggle btn-launch" 
                                type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">${lang['btLaunch']}</button>
                              <div class="dropdown-menu dropdown-custom">
                                  <a class="dropdown-item launch-app" data-id="${app.id}" 
-                                   data-usetmpdir="${app.usetmpdir}" data-mode="base" data-dbpath="${app.dbpath == null? '': app.dbpath}"
+                                   data-usetmpdir="${app.usetmpdir}" data-mode="base" data-dbpath="${app.dbpath == null ? '' : app.dbpath}"
                                    data-apiversion="${app.apiversion}" data-miroversion="${app.miroversion}">${lang['btLaunchBase']}</a>
                                  <a class="dropdown-item launch-app" data-id="${app.id}" 
-                                   data-usetmpdir="${app.usetmpdir}" data-mode="hcube" data-dbpath="${app.dbpath == null? '': app.dbpath}"
+                                   data-usetmpdir="${app.usetmpdir}" data-mode="hcube" data-dbpath="${app.dbpath == null ? '' : app.dbpath}"
                                    data-apiversion="${app.apiversion}" data-miroversion="${app.miroversion}">${lang['btLaunchHcube']}</a>
                              </div>`}
                            
@@ -591,7 +595,7 @@ data-id="${app.id}" class="app-logo">
                      <input data-id="${app.id}" class="btn btn-secondary cancel-btn" id="btCancelChanges" value="${lang['btCancel']}" type="reset">
                      <button class="btn btn-secondary confirm-btn btn-save-changes" data-id="${app.id}" type="button">${lang['btSave']}</button>
                  </div>
-                 <div id="iconActive_${app.id}" class="running-app-icon app-corner-button" style="${appsActive.includes(app.id)? '': 'display:none;'}"><i class="fas fa-cog fa-spin"></i></div>
+                 <div id="iconActive_${app.id}" class="running-app-icon app-corner-button" style="${appsActive.includes(app.id) ? '' : 'display:none;'}"><i class="fas fa-cog fa-spin"></i></div>
                  <a class="delete-app-button app-corner-button" data-id="${app.id}" style="display:none;"><i class="fas fa-times"></i></a>
                </div>
              </div>`
@@ -602,46 +606,46 @@ data-id="${app.id}" class="app-logo">
                                 </div>`;
   loadingScreen.hide();
   if (appItems.length !== 0) {
-        appsWrapper.html(`${appItems}${addAppWrapperHTMLFull}<div class="edit-info" style="display:none;">
+    appsWrapper.html(`${appItems}${addAppWrapperHTMLFull}<div class="edit-info" style="display:none;">
                         <p class="edit-info-text"><img class="edit-info-img img-fluid" \ 
                         src="${pathToFileURL(path.join(appPath,
-                        'static', 'arrow.png'))}" width="45px" align="middle" alt="arrow">${lang['editAppInfoText']}</p>
+      'static', 'arrow.png'))}" width="45px" align="middle" alt="arrow">${lang['editAppInfoText']}</p>
                     </div>`);
-        noAppsNotice.hide();
-    } else {
-        if ( startup ) {
-          animationScreen.css('display', 'flex');
-          setTimeout(() => { animationScreen.fadeOut(200); }, 1800);
-        }
-        appsWrapper.html(addAppWrapperHTMLFull);
-       noAppsNotice.show();
+    noAppsNotice.hide();
+  } else {
+    if (startup) {
+      animationScreen.css('display', 'flex');
+      setTimeout(() => { animationScreen.fadeOut(200); }, 1800);
     }
-   if ( deactivateEditMode === false ) {
+    appsWrapper.html(addAppWrapperHTMLFull);
+    noAppsNotice.show();
+  }
+  if (deactivateEditMode === false) {
     toggleEditMode();
-   }
+  }
 });
 $('#downloadR').click((e) => {
-   shell.openExternal('https://gams.com/miro/download.html');
+  shell.openExternal('https://gams.com/miro/download.html');
 });
 $('#btAddExamples').click((e) => {
   ipcRenderer.send('add-example-apps');
 });
 
 ipcRenderer.on('dbpath-received', (e, dbpathData) => {
-  if ( !dbpathData.path ) {
+  if (!dbpathData.path) {
     return;
   }
-  if ( !newAppConfig ) {
+  if (!newAppConfig) {
     ipcRenderer.send('show-error-msg', {
-        type: 'error',
-        title: lang['dialogErrHdr'],
-        message: lang['dialogErrMsg']
+      type: 'error',
+      title: lang['dialogErrHdr'],
+      message: lang['dialogErrMsg']
     });
     return;
   }
   const appID = dbpathData.id;
   let dpPathFieldID;
-  if ( appID == null ) {
+  if (appID == null) {
     dpPathFieldID = '#newAppDbPathLabel';
   } else {
     dpPathFieldID = `#appDbPathLabel_${appID}`;
@@ -651,12 +655,12 @@ ipcRenderer.on('dbpath-received', (e, dbpathData) => {
   $(dpPathFieldID).text(dbpathData.path[0]);
 });
 ipcRenderer.on('validated-logopath-received', (e, logoData) => {
-  if ( !newAppConfig ) {
+  if (!newAppConfig) {
     return
   }
   const appID = logoData.id;
   let logoEl;
-  if ( appID == null ) {
+  if (appID == null) {
     logoEl = $('#newAppLogo');
   } else {
     logoEl = $(`#appLogo_${appID}`);
@@ -666,12 +670,12 @@ ipcRenderer.on('validated-logopath-received', (e, logoData) => {
   logoEl.css('background-image', `url('${pathToFileURL(newAppConfig.logoPath)}')`);
 });
 ipcRenderer.on('validated-logo-received', (e, logoData) => {
-  if ( !newAppConfig ) {
+  if (!newAppConfig) {
     return
   }
   const appID = logoData.id;
   let logoEl;
-  if ( appID == null ) {
+  if (appID == null) {
     logoEl = $('#newAppLogo');
   } else {
     logoEl = $(`appLogo_${appID}`);
@@ -679,60 +683,60 @@ ipcRenderer.on('validated-logo-received', (e, logoData) => {
   logoEl.css('background-image', `url('${pathToFileURL(logoData.path)}')`);
 });
 ipcRenderer.on('app-validated', (e, appConf) => {
-    expandAddAppForm();
-    newAppConfig = appConf;
-    const appNameField = $('#newAppName');
-    const appDescField = $('#newAppDesc');
-    $('#btAddApp').disabled = false;
-    if ( appConf.logoPathTmp ) {
-        $('#newAppLogo').css('background-image', `url('${pathToFileURL(appConf.logoPathTmp)}')`);
-        delete newAppConfig.logoPathTmp;
+  expandAddAppForm();
+  newAppConfig = appConf;
+  const appNameField = $('#newAppName');
+  const appDescField = $('#newAppDesc');
+  $('#btAddApp').disabled = false;
+  if (appConf.logoPathTmp) {
+    $('#newAppLogo').css('background-image', `url('${pathToFileURL(appConf.logoPathTmp)}')`);
+    delete newAppConfig.logoPathTmp;
+  }
+  if (appNameField.text().trim() === lang['appNamePlaceholder']) {
+    if (appConf.title) {
+      appNameField.text(appConf.title);
+    } else {
+      appNameField.text(appConf.id);
     }
-    if ( appNameField.text().trim() === lang['appNamePlaceholder'] ) {
-      if ( appConf.title ) {
-        appNameField.text(appConf.title);
-      } else {
-        appNameField.text(appConf.id);
-      }
-    }
-    if ( appConf.description && 
-      appDescField.text().trim() === lang['appDescPlaceholder'] ) {
-        appDescField.text(appConf.description);
-    }
-    $('#newAppFiles').css('display', 'none');
-    $('#newAppLogo').css('display', 'block');
+  }
+  if (appConf.description &&
+    appDescField.text().trim() === lang['appDescPlaceholder']) {
+    appDescField.text(appConf.description);
+  }
+  $('#newAppFiles').css('display', 'none');
+  $('#newAppLogo').css('display', 'block');
 });
 ipcRenderer.on('add-app-progress', (e, progress) => {
-  if ( progress === -1 ) {
+  if (progress === -1) {
     $('#addAppSpinner').hide();
   } else {
     $('#addAppProgress').css('width', `${progress}%`).attr('aria-valuenow', progress);
   }
 });
 ipcRenderer.on('activate-edit-mode', (e, openNewAppForm, scrollToBottom = false) => {
-  if ( openNewAppForm ) {
+  if (openNewAppForm) {
     expandAddAppForm();
-  }else if ( !isInEditMode ) {
+  } else if (!isInEditMode) {
     toggleEditMode();
   }
-  if ( scrollToBottom ) {
+  if (scrollToBottom) {
     $('html, body').scrollTop($(document).height());
   }
 });
 ipcRenderer.on('app-closed', (e, appID) => {
   $(`#iconActive_${appID}`).fadeOut(200);
   runningProcesses.pop(appID);
-  if ( !runningProcesses.length ) {
+  if (!runningProcesses.length) {
     btEditWrapper.removeClass('bt-disabled');
   }
 });
 ipcRenderer.on('hide-loading-screen', (e, appID, success = false) => {
   $(`#appLoadingScreen_${appID}`).hide();
-  if ( success ) {
+  if (success) {
     $(`#iconActive_${appID}`).show();
   } else {
     runningProcesses.pop(appID);
-    if ( !runningProcesses.length ) {
+    if (!runningProcesses.length) {
       btEditWrapper.removeClass('bt-disabled');
     }
   }
@@ -742,20 +746,20 @@ ipcRenderer.on('invalid-r', (e) => {
 });
 ipcRenderer.on('install-r-packages', (e) => {
   $('#installRPkgModal').modal({
-      backdrop: 'static',
-      keyboard: false
+    backdrop: 'static',
+    keyboard: false
   });
   $('#installRPkgModal').modal('show');
 });
-ipcRenderer.on('install-r-packages-stdout', 
+ipcRenderer.on('install-r-packages-stdout',
   (e, data) => {
-  const logBox = $('#updateRPkgStatusLog');
-  logBox.append(document.createTextNode(data));
-  setTimeout(()=> logBox[0].scrollTop = logBox[0].scrollHeight, 
-    200);
-});
+    const logBox = $('#updateRPkgStatusLog');
+    logBox.append(document.createTextNode(data));
+    setTimeout(() => logBox[0].scrollTop = logBox[0].scrollHeight,
+      200);
+  });
 ipcRenderer.on('install-r-packages-installed', (e) => {
-  setTimeout(()=> $('#installRPkgModal').modal('hide'), 
+  setTimeout(() => $('#installRPkgModal').modal('hide'),
     1000);
 });
 $('#cancelInstallRPkgBtn').click((e) => {

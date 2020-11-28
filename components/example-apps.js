@@ -1,7 +1,7 @@
 'use strict'
-const path  = require('path');
+const path = require('path');
 
-module.exports = function(miroVersion, apiVersion) {
+module.exports = function (miroVersion, apiVersion) {
   return [{
     id: 'pickstock',
     title: 'Stock Selection Optimization',
@@ -12,7 +12,7 @@ overall Dow Jones index.`,
     miroversion: miroVersion,
     apiversion: apiVersion,
     usetmpdir: true,
-    modesAvailable: [ 'base', 'hcube' ]
+    modesAvailable: ['base', 'hcube']
   },
   {
     id: 'sudoku',
@@ -22,7 +22,7 @@ overall Dow Jones index.`,
     miroversion: miroVersion,
     apiversion: apiVersion,
     usetmpdir: true,
-    modesAvailable: [ 'base' ]
+    modesAvailable: ['base']
   },
   {
     id: 'transport',
@@ -32,7 +32,7 @@ requirements at markets and supplies at factories.`,
     miroversion: miroVersion,
     apiversion: apiVersion,
     usetmpdir: true,
-    modesAvailable: [ 'base', 'hcube' ]
+    modesAvailable: ['base', 'hcube']
   },
   {
     id: 'tsp',
@@ -42,7 +42,7 @@ requirements at markets and supplies at factories.`,
     miroversion: miroVersion,
     apiversion: apiVersion,
     usetmpdir: true,
-    modesAvailable: [ 'base' ]
+    modesAvailable: ['base']
   },
   {
     id: 'cpack',
@@ -52,7 +52,7 @@ requirements at markets and supplies at factories.`,
     miroversion: miroVersion,
     apiversion: apiVersion,
     usetmpdir: true,
-    modesAvailable: [ 'base' ]
+    modesAvailable: ['base']
   },
   {
     id: 'farming',
@@ -62,7 +62,7 @@ requirements at markets and supplies at factories.`,
     miroversion: miroVersion,
     apiversion: apiVersion,
     usetmpdir: true,
-    modesAvailable: [ 'base', 'hcube' ]
+    modesAvailable: ['base', 'hcube']
   },
   {
     id: 'inscribedsquare',
@@ -72,6 +72,6 @@ requirements at markets and supplies at factories.`,
     miroversion: miroVersion,
     apiversion: apiVersion,
     usetmpdir: true,
-    modesAvailable: [ 'base' ]
+    modesAvailable: ['base']
   }]
 }
